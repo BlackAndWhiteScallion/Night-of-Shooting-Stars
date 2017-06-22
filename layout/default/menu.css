@@ -1,0 +1,885 @@
+.menu-container{
+	z-index:8;
+}
+.menu-container div{
+    position: relative;
+}
+.menu-container.hidden{
+    pointer-events: none;
+}
+#menu-button{
+	z-index:6;
+}
+.popup-container{
+	z-index:10;
+}
+
+.menu-container,.popup-container{
+	width:100%;
+	height:100%;
+	left:0;
+	top:0;
+	position: absolute;
+}
+.menu-buttons,.menu-sym{
+	padding-bottom: 5px !important;
+	width: calc(100% - 10px) !important;
+	padding-right: 5px !important;
+}
+.menu-buttons div{
+	position: absolute;
+}
+.menu-buttons>.glow{
+	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(0, 133, 255, 0.8) 0 0 10px, rgba(0, 133, 255, 0.8) 0 0 10px, rgba(0, 133, 255, 0.8) 0 0 15px !important;
+}
+.menu-cheat>div{
+	margin:5px;
+}
+.menu-cheat>.selecting{
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(255, 0, 0, 0.8) 0 0 5px, rgba(255, 0, 0, 0.8) 0 0 5px !important
+}
+.menu-cheat.config>.menubutton{
+	height:16px;
+	line-height: 16px;
+    transform: translateY(-10px);
+}
+.menu-cheat.config{
+	transition-property: opacity;
+}
+.menu-buttons>.toggle,
+.menu-buttons>.config.more{
+	position:relative;
+	margin-bottom: 10px !important;
+	margin-left: 10px !important;
+	margin-right: 10px !important;
+	width: calc(100% - 25px) !important;
+	display: inline-block;
+}
+.menu-buttons>.config.more,
+.menu-buttons>.toggle.cardpilecfg{
+	margin-bottom: 0 !important;
+	display: block;
+}
+.menu-buttons>.toggle.cardpilecfgadd:not(.hidden){
+	margin-top: 0 !important;
+}
+.menu-buttons>.toggle.cardpilecfg:not(.nomarginleft){
+	margin-left: 20px !important;
+	width: calc(100% - 35px) !important;
+}
+.menu-buttons>.config.more *{
+	position: relative;
+}
+.menu-buttons>.button{
+	zoom:0.75;
+}
+.menu-buttons .cardpiledelete,
+.toggle>.cardpiledelete{
+	display: inline-block;
+	position: relative;
+	float: right;
+	margin-right: 4px;
+}
+.menu-help{
+	width: calc(100% - 30px) !important;
+	text-align: left !important;
+}
+.menu-help li{
+	margin-bottom: 10px !important;
+}
+.menu-container>.menu.main{
+	left: 15px;
+	top: 52px;
+}
+.menu-container>.menu.main.center{
+	left:calc(50% - 200px);
+	top:calc(50% - 150px);
+}
+.menu-container.hidden>.menu.main{
+	transform:scale(0.5);
+	transform-origin:2px -35px;
+	opacity:0;
+}
+.menu-container>.menu.main{
+	transition: all 0.3s;
+	transform-origin:2px -35px;
+}
+.menu-container.hidden>.menu.main.center{
+	/*transform:translateY(300px);*/
+	transform-origin: center center;
+}
+.menu-container>.menu.main.center{
+	transform-origin: center center;
+}
+.menu.main{
+	width: 400px;
+	height:300px;
+	position: absolute;
+	overflow:hidden;
+	padding:0;
+}
+.menu.main>.menu-tab{
+	height:37px;
+	text-align:center;
+	width:calc(100% - 30px);
+	padding-left:15px;
+	padding-right:15px;
+	position:relative;
+	text-align:center;
+
+	border-width: 0 0 1px;
+	border-style:solid;
+	border-image:linear-gradient(to right, transparent,rgba(0,0,0,0.2) 10%,rgba(0,0,0,0.2) 90%,transparent) 0 1 100%;
+}
+.menu.main>.menu-tab-bar{
+	width:45px;
+	height:2px;
+	top:35px;
+	position:absolute;
+	background-color:rgb(0, 133, 255);
+	transition:left 0.3s;
+}
+.menu.main>.menu-tab>div{
+	display:inline-block;
+	height:32px;
+	line-height:30px;
+	padding-top:5px;
+	width:45px;
+	margin-left:5px;
+	margin-right:5px;
+	transition:color 0.5s;
+}
+.menu.main>.menu-tab>div:not(.active):not(*:hover),
+.menu.main>.menu-tab>.disabled{
+	color:rgba(255,255,255,0.6);
+}
+.menu.main>.menu-content{
+	height:calc(100% - 38px);
+	position:relative;
+	width:100%;
+}
+.menu.main>.menu-content>div{
+	width:100%;
+	height:100%;
+}
+.menu.main>.menu-content>div>.pane{
+	position:absolute;
+	display:inline-block;
+	height:100%;
+}
+.menu.main>.menu-content>div>.left.pane{
+	width:34%;
+    left:0;
+    overflow: scroll;
+}
+.menu.main>.menu-content>div>.left.pane>div{
+	width:calc(100% - 30px);
+	margin-top:9px;
+	margin-left:10px;
+	transition:all 0.3s;
+    height: 23px;
+    font-size: 26px;
+    line-height: 26px;
+	white-space: nowrap;
+}
+.menu.main>.menu-content>div>.left.pane>.menubutton.off{
+	opacity: 0.5;
+}
+.menu.main>.menu-content>div>.left.pane>.lefttext{
+    font-family: 'xinwei';
+    font-size: 20px;
+}
+.menu.main>.menu-content>div>.left.pane>div:last-child{
+	margin-bottom: 9px;
+}
+.menu.main>.menu-content>div>.left.pane.dim>div:not(.active){
+	color:rgba(255,255,255,0.5);
+}
+.menu.main>.menu-content>div>.right.pane{
+	left:34%;
+	width:66%;
+	overflow:scroll;
+}
+.menu.main>.menu-content>div>.right.pane>div{
+	width:calc(100% - 5px);
+	position:absolute;
+	top:0;
+	left:0;
+	padding-left:5px;
+	padding-top:5px;
+}
+.menu.main>.menu-content>div>.right.pane>.expanded{
+	padding-bottom:80px;
+}
+.menu.main>.menu-content>div>.right.pane>.expanded.expanded2{
+	padding-bottom:12px;
+}
+.menu.main>.menu-content>div>.right.pane>.morenodes{
+	padding-bottom:10px;
+}
+.menu.main>.menu-content>div>.right.pane>div>.config{
+    left:2px;
+	margin-top:10px;
+	margin-left: 3px;
+	transition:all 0.3s;
+	width:calc(100% - 20px);
+    overflow: visible;
+}
+.menu.main>.menu-content>div>.right.pane>div>.config.banskilladd{
+	height: 50px;
+	transition: all 0s;
+}
+.menu.main>.menu-content>div>.right.pane>div>.config.banskilladd.hidden{
+	margin-top: -50px;
+}
+.menu.main>.menu-content>div>.right.pane>div>.config.banskilladd:not(.hidden),
+.menu.main>.menu-content>div>.right.pane>div>.config.cardpileadd:not(.hidden){
+	margin-top:0;
+}
+.menu.main>.menu-content>div>.right.pane>div>.config.banskilladd>select{
+	margin-right: 3px;
+}
+.menu.main>.menu-content>div>.right.pane>div>.config.toggle{
+    left:2px !important;
+    text-align: left !important;
+}
+.menu.main>.menu-content>div>.right.pane>div>.config.indent,
+.menu.main>.menu-content>div>.right.pane>div>.config.toggle.indent{
+    left:12px !important;
+	width: calc(100% - 32px) !important;
+}
+.menu.main>.menu-content>div>.right.pane>div:not(.expanded)>.config.auto-hide,
+.menu.main>.menu-content>div>.right.pane>div>.config.hidden{
+	margin-top:-25px;
+	opacity:0;
+	z-index:-1;
+}
+.menu.main>.menu-content>div>.menubutton.round{
+	left:335px;
+	top:197px;
+	z-index:3;
+    transition-property: color, box-shadow;
+	transition-duration:0.3s;
+	position:absolute;
+}
+.menu.main>.menu-content>div>.menubutton.round.glowing{
+	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(0, 133, 255, 0.8) 0 0 10px, rgba(0, 133, 255, 0.8) 0 0 15px !important;
+}
+
+.popup-container.hidden{
+	pointer-events:none;
+}
+.popup-container>.menu{
+	position:absolute;
+	overflow:scroll;
+	max-height: 400px;
+	transition-property: opacity;
+}
+.popup-container>.menu>div{
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:10px;
+	padding-right:10px;
+    position: relative;
+    display: block;
+    transition: all 0s;
+}
+.popup-container>.menu>div:first-child{
+	margin-top:5px;
+}
+.popup-container>.menu>div:last-child{
+	margin-bottom:5px;
+}
+
+.config{
+	height:25px;
+	line-height:25px;
+	position:relative;
+}
+.config.switcher>div,
+.config.toggle>div{
+	position:absolute;
+	right:0;
+    left:auto;
+	display:inline-block;
+	transition:all 0.3s;
+	height:25px;
+}
+.config.switcher>div{
+	border-bottom-width:2px;
+	border-bottom-style:solid;
+	border-bottom-color:transparent;
+	margin-right: 4px;
+}
+.config.switcher.on>div{
+	border-bottom-color:rgb(0, 133, 255);
+}
+.config.toggle>div{
+	width:60px;
+}
+.config.toggle>div>div{
+	display:inline-block;
+	position:relative;
+	width:25px;
+	height:25px;
+	top:0;
+	left:0;
+	transition:all 0.3s;
+    padding: 0;
+}
+.config.toggle.on>div>div{
+	left:calc(100% - 25px);
+}
+.config.more{
+	z-index:1;
+}
+.config.more>div{
+	display:inline-block;
+	transition:transform 0.3s
+}
+.config.more>div{
+	transform:translateY(-2px);
+    font-family: 'huangcao','xinwei';
+}
+.config.more.on>div{
+	transform:rotate(90deg) translateX(-2px);
+}
+
+.menubutton{
+	text-align:center;
+	display:inline-block;
+	padding:5px;
+}
+.menubutton.large{
+	font-size:30px;
+	line-height:30px;
+	font-family:'STXinwei','xinwei';
+}
+.menubutton.round{
+	width:40px;
+	height:40px;
+	border-radius:100%;
+	font-size:36px;
+	line-height:40px;
+	font-family:'xinwei'
+}
+.menubutton.left{
+	float:left;
+}
+.menubutton.right{
+	float:right;
+}
+.menubutton.search{
+	text-align:left;
+}
+.menubutton.search:not(.focus){
+	color:rgba(255,255,255,0.5);
+}
+.menubutton.dim{
+	color:rgba(255,255,255,0.5);
+}
+
+@keyframes fadein{from{opacity:0}}
+@-webkit-keyframes fadein{from{opacity:0}}
+@keyframes menuslideup{from{top:100%}}
+@-webkit-keyframes menuslideup{from{top:100%}}
+@keyframes menuslidedown{to{top:100%}}
+@-webkit-keyframes menuslidedown{to{top:100%}}
+@keyframes menuzoomin{from{transform:scale(0.5);opacity:0;transform-origin:2px -35px}to{transform-origin:2px -35px}}
+@-webkit-keyframes menuzoomin{from{transform:scale(0.5);opacity:0;transform-origin:2px -35px}to{transform-origin:2px -35px}}
+@keyframes menuzoomout{from{transform-origin:2px -35px}to{transform:scale(0.5);opacity:0;transform-origin:2px -35px}}
+@-webkit-keyframes menuzoomout{from{transform-origin:2px -35px}to{transform:scale(0.5);opacity:0;transform-origin:2px -35px}}
+
+
+
+
+
+
+
+.menu-buttons>.new_character{
+	display: block;
+	position: relative;
+	width: 100%;
+}
+.menu-buttons>.new_character>.avatar{
+	background-size: cover;
+}
+.menu-buttons>.new_character>.avatar,
+.menu-buttons>.new_character>.card{
+	top:8px;
+	left:12px;
+	position: absolute;
+	width: 100px;
+	height: 120px;
+	margin: 0;
+}
+.menu-buttons>.new_character>.card{
+	height: 100px;
+}
+.menu-buttons>.new_character>.card:not(.fullskin){
+	color: white;
+	text-shadow: black 0px 0px 2px;
+	transform: translateX(0px);
+	background-image: url("image/card/hslingjian_jinjilengdong.jpg");
+	background-size: cover;
+}
+.menu-buttons>.new_character>.avatar>input,
+.menu-buttons>.new_character>.card>input{
+	z-index: 3;
+	border-radius: 8px;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	left:0;
+	top:0;
+	position: absolute;
+}
+#window.reduce_radius .menu-buttons>.new_character>.avatar>input,
+#window.reduce_radius .menu-buttons>.new_character>.card>input{
+	border-radius: 4px;
+}
+.menu-buttons>.new_character>.avatar>.select_avatar,
+.menu-buttons>.new_character>.card>.select_avatar{
+	font-family: 'xinwei';
+	font-size: 20px;
+	width: 100%;
+	height: 20px;
+	line-height: 20px;
+	top:50px;
+	left:0;
+	text-align: center;
+}
+.menu-buttons>.new_character>.card>.select_avatar{
+	top:40px;
+}
+.menu-buttons>.new_character>.avatar.inited>.select_avatar,
+.menu-buttons>.new_character>.card.inited>.select_avatar{
+	display: none;
+}
+.menu-buttons>.new_character>.indent{
+	display: block;
+	margin-left: 123px;
+	width: calc(100% - 135px);
+	position: relative;
+	padding-top: 7px;
+	text-align: left;
+	white-space: nowrap;
+}
+.menu-buttons>.new_character>.indent>input{
+	width: 60px;
+}
+.menu-buttons>.new_character>div>select{
+	margin-right: 3px;
+}
+.menu-buttons>.new_character>.add_skill{
+	position: absolute;
+	left: 12px;
+	top:170px;
+	text-align: left;
+	line-height: 20px;
+	white-space: nowrap;
+}
+.menu-buttons>.new_character>.add_skill.options{
+	top:145px;
+}
+.menu-buttons>.new_character>.add_skill.options>span{
+	margin-right: 10px;
+}
+.menu-buttons>.new_character>.add_skill.create{
+	top: 220px;
+}
+.menu-buttons>.new_character>.add_skill.create>div{
+	position: relative;
+}
+.menu-buttons>.new_character>.add_skill.create>div.hidden{
+	display: none;
+}
+.menu-buttons>.new_character>.add_skill.create>div>textarea{
+	resize: none;
+    width: 200px;
+    height: 100px;
+    margin-top: 5px;
+}
+.menu-buttons>.new_character>.add_skill.create>div>div{
+	position: relative;
+	margin-top: 5px;
+}
+.menu-buttons>.new_character>.add_skill.create>div>div>input{
+	width: 120px;
+}
+.menu-buttons>.new_character>.skill_list{
+	position: absolute;
+	left: 12px;
+	top: 240px;
+	text-align: left;
+	height: auto;
+	width: calc(100% - 20px);
+	padding-bottom: 30px;
+	transition: all 0s;
+}
+.menu-buttons>.new_character>.skill_list>div{
+	position: relative;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	height: auto;
+}
+.menu-buttons>.new_character>.skill_list>div>div{
+	position: relative;
+}
+.menu-buttons>.new_character>.skill_list>div:first-child{
+	margin-bottom: 10px;
+}
+.menu-buttons>.new_character>.skill_list>div:first-child>div{
+	width: calc(50% - 10px);
+	margin-right: 10px;
+	margin-top: 6px;
+}
+.menu-buttons>.new_character>.skill_list>div:first-child>div>div{
+	position: relative;
+}
+.menu-buttons>.new_character>.skill_list>div:first-child>div>div:last-child{
+	float: right;
+}
+
+.menu-buttons>.new_character.export{
+	text-align: left;
+}
+.menu-buttons>.new_character.export>div{
+	position: relative;
+	margin-left: 12px;
+	margin-top: 5px;
+}
+.menu-buttons>.new_character.export>div>input{
+	width: 100px;
+	margin-right: 5px;
+}
+.menu-buttons>.new_character.export.import>div>input{
+	width: 153px;
+}
+
+.menubutton{
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+    border-radius:4px;
+    background-image: linear-gradient(rgba(75,75,75,1), rgba(70,70,70,1));
+}
+.menubutton.large.blue,
+.menubutton.large.red{
+	color:white !important;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.3) 0 3px 10px !important;
+}
+.menubutton.active,
+.menubutton.blue{
+	background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1));
+}
+#system>div>.pressdown{
+	transform: scale(0.97);
+}
+.controlpressdownx{
+	transition: all 0.1s;
+}
+#system>div>.pressdown2{
+	background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1));
+}
+.menubutton.highlight,
+.menubutton.red{
+	background-image: linear-gradient(rgba(150, 47, 47, 1), rgba(132, 43, 43, 1));
+}
+.menubutton.large.active,
+.menubutton.large.lighlight{
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.3) 0 3px 10px;
+}
+
+.config.toggle>div{
+	border-radius:25px;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 0 10px inset;
+}
+.config.toggle.on>div{
+	background-color:rgba(47,101,150,1);
+}
+.config.toggle>div>div{
+	border-radius:25px;
+	background-image: linear-gradient(rgba(75,75,75,1), rgba(70,70,70,1));
+	box-shadow: rgba(51, 51, 51, 1) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+}
+
+.popup-container>.menu>div:hover{
+    color:white;
+	background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1));
+	box-shadow: rgba(0,0,0,0.2) 0 0 0 1px;
+}
+.videonode.menubutton{
+	width: calc(100% - 50px);
+	height: 70px;
+	margin-bottom: 6px;
+	margin-left: -10px;
+	margin-top: 6px;
+	overflow: hidden;
+}
+.videonode.menubutton.extension{
+	text-align: left;
+	height: auto;
+	max-height: 90px;
+}
+.videonode.menubutton.extension.active{
+	max-height: 200px;
+}
+.videonode.menubutton>div{
+	position: absolute;
+}
+.videonode.menubutton.extension>div{
+	position: relative;
+	display: block;
+}
+.videonode.menubutton.extension>.caption>.menubutton{
+	position: relative;
+	float: right;
+	font-size: 16px;
+	padding: 0;
+	text-align: center;
+	width: 80px;
+	font-family:'STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei',Helvetica,Arial,sans-serif;
+}
+.videonode.menubutton>.videoavatar{
+	width: 56px;
+	height: 56px;
+	top:7px;
+	left:7px;
+	background-size: cover;
+}
+.videonode.menubutton>.videoavatar2{
+	width: 20px;
+	height: 20px;
+	top:47px;
+	left:3px;
+	background-size: cover;
+	border-radius: 100%;
+}
+.videonode.menubutton>.caption{
+	display: inline-block;
+	left: 84px;
+	top: 6px;
+	padding-top: 0;
+	white-space: nowrap;
+}
+.videonode.menubutton.extension>.caption{
+	left: 0;
+	top: 0;
+	margin-left: 2px;
+}
+.videonode.menubutton>.text{
+	font-size: 14px;
+	left: 85px;
+	top: 35px;
+	line-height: 20px;
+	text-align: left;
+	font-family:'STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei',Helvetica,Arial,sans-serif
+}
+.videonode.menubutton.extension>.text{
+	left: 0;
+	top: 0;
+	margin-left: 5px;
+}
+.videonode.menubutton>.victory{
+	font-family: 'huangcao','xinwei';
+	font-size: 25px;
+	text-shadow: black 0 0 1px,rgba(255, 203, 0,1) 0 0 2px,rgba(255, 203, 0,1) 0 0 5px,rgba(255, 203, 0,1) 0 0 5px,
+		rgba(255, 203, 0,1) 0 0 5px,black 0 0 1px;
+	color:white;
+	position: absolute;
+	left: 48px;
+	top: 48px;
+}
+.videonode>.video_star{
+	opacity: 0;
+	position: absolute;
+	left: 196px;
+	top: 4px;
+	font-size: 16px;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+}
+.videonode:not(.starred):hover>.video_star{
+	opacity: 0.5;
+}
+.videonode.starred>.video_star{
+	opacity: 1
+}
+.button-downloading>.button-progress{
+	width: 0;
+	border-radius: 4px;
+	background: linear-gradient(rgb(29,206,68),rgb(1,148,46));
+	z-index: 1;
+}
+.button-downloading>div:not(.button-progress){
+	width: 100% !important;
+	z-index: 2;
+}
+.button-downloading>span{
+	opacity: 0;
+}
+.button-downloading>div{
+	height: 100%;
+	margin: 0 !important;
+	padding: 0 !important;
+	position: absolute !important;
+	left: 0 !important;
+	top:0;
+}
+
+.menubutton.large.dashboard{
+	width: 80px;
+	height: 80px;
+	margin: 6px;
+	position: relative !important;
+}
+.menubutton.large.dashboard>div:first-child{
+	font-family: 'lishu','xiaozhuan';
+	font-size: 60px;
+	line-height: 60px;
+	position: absolute;
+	left: 0;
+	top: 7px;
+	width: 100%;
+	height: 60px;
+}
+.menubutton.large.dashboard>div:last-child{
+	font-size: 18px;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+}
+#create-extension{
+	height: calc(100% - 5px);
+	width: calc(100% - 10px);
+	overflow: hidden;
+}
+#create-extension>div{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: scroll;
+	left: 0;
+	top: 0;
+}
+#create-extension>.menu-buttons{
+	left:10px;
+	height: calc(100% - 5px);
+	width: calc(100% - 15px) !important;
+}
+#create-extension>.menu-buttons>.config.more{
+	margin-left: 0px !important;
+	margin-top: 10px !important;
+}
+#create-extension>.menu-buttons>.config.more.margin-bottom{
+	margin-left: 0px !important;
+	margin-top: 10px !important;
+	margin-bottom: 5px !important;
+}
+#create-extension>.hidden{
+	pointer-events: none;
+}
+#create-extension>div:not(*:first-child).hidden{
+	transform: translateX(200px);
+}
+#create-extension>.menu-buttons>.new_character>.skill_list{
+    top: 210px;
+}
+#create-extension>.menu-buttons>.new_character>.skill_list>div:first-child{
+	transition: all 0s;
+}
+#create-extension>.menu-buttons>.new_character>.skill_list>div:first-child:not(*:empty){
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+#create-extension>.menu-buttons>.new_character>.skill_list>div:first-child>button{
+	margin-right: 3px;
+	margin-bottom: 3px;
+}
+.popup-container.editor>div{
+	width: 80%;
+	height: 90%;
+	position: absolute;
+	left: 10%;
+	top: 5%;
+	border-radius: 4px;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 0 10px;
+	background: white;
+	overflow: hidden;
+}
+.popup-container.editor>div>.editbutton{
+	font-family: 'lishu';
+	font-size: 18px;
+	color: rgb(60,60,60);
+	text-shadow: none;
+	position: absolute;
+	left: 0;
+	padding: 7px;
+	font-size: 24px;
+}
+.popup-container.editor>div>.editbutton:first-child{
+	left: auto;
+	right: 0;
+}
+.popup-container.editor>div>div:last-child{
+	width: 100%;
+	height: calc(100% - 40px);
+	position: absolute;
+	top:40px;
+	border-radius: 0 0 4px 4px;
+	border-top: 1px solid rgba(0,0,0,0.2);
+}
+.popup-container.editor>div>div:last-child>textarea{
+	width: 100%;
+	height: 100%;
+	border:none;
+	margin:0;
+	padding: 0;
+	resize: none;
+}
+.menubutton.large.new_card,
+.menubutton.large.new_card_delete{
+	left: 12px;
+	top: 130px;
+	margin-bottom: 20px;
+}
+.menubutton.large.new_card_delete{
+	left: 155px;
+}
+.edit_pile{
+	width: 100%;
+	left: 0;
+	padding-bottom: 20px;
+}
+.edit_pile>div:last-child{
+	width: 100%;
+	position: relative;
+}
+.edit_pile>div:last-child>button{
+	margin-right: 3px;
+    margin-top: 3px;
+}
+.new_character.new_skill>div{
+	position: relative;
+	margin-top: 2px;
+	white-space: nowrap;
+	overflow: visible;
+}
+.new_character.new_skill>div>button{
+	margin-right: 3px;
+}
+.menu-buttons.new_skill>.menubutton{
+	position: relative;
+	margin:5px;
+}
+.new_character.new_skill>.menubutton.large{
+	left: 13px;
+	position: absolute;
+	top: 88px;
+}
+.new_character.new_skill>.menubutton.large.new_card_delete{
+	left: 155px;
+}

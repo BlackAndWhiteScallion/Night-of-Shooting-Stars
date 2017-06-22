@@ -1,0 +1,135 @@
+html{
+	color: white;
+	text-shadow: black 0 0 2px;
+	min-height: 100%;
+	background-image: url('../../image/background/shengshi_bg.jpg');
+	background-size: cover;
+}
+body{
+	width: 100%;
+	height: 100%;
+	min-height: 100%;
+	left: 0;
+	top: 0;
+	position: absolute;
+	display: block;
+}
+#system>div>div,#mebg,.control,.player,.card,.avatar,.avatar2,.button,#window>.dialog.popped,
+.player.unseen .equips:not(*:empty),.menu,.menubutton,#splash>div,
+#arena.mobile:not(.chess) .player[data-position='0'] .equips,.playerbg,.menubg,.mebg{
+	box-shadow: rgba(0, 0, 0, 0.4) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));
+	border-radius: 8px;
+}
+#arena.mobile.textequip:not(.chess) .player[data-position='0'] .equips{
+	background-image: none;
+	box-shadow: rgba(0, 0, 0, 0.2) -1px 0px 0px 0px;
+}
+#arena:not(.chess).textequip .player[data-position='0'] .equips>.card{
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)) !important;
+}
+#arena.observe .handcards>.card{
+	background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)) !important;
+}
+
+#window.reduce_radius #system>div>div,
+#window.reduce_radius #mebg,
+#window.reduce_radius .control,
+#window.reduce_radius .player,
+#window.reduce_radius .card,
+#window.reduce_radius .avatar,
+#window.reduce_radius .avatar2,
+#window.reduce_radius .button,
+#window.reduce_radius #window>.dialog.popped,
+#window.reduce_radius .player.unseen .equips:not(*:empty),
+#window.reduce_radius .menu,.menubutton,
+#window.reduce_radius #splash>div,
+#window.reduce_radius.mobile:not(.chess) .player[data-position='0'] .equips{
+	border-radius: 4px;
+}
+
+/*.player.current_action{
+	background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1));
+}*/
+.menubutton{
+	border-radius: 4px;
+}
+/*.player{
+	background-image: url('card.png');
+	background-size: cover;
+}*/
+#window>.dialog.popped{
+	border-radius: 6px;
+}
+.control,#system>div>div,.judges>div,.marks>div,
+.player.unseen .equips:not(*:empty){
+	border-radius:4px;
+}
+#arena.mobile:not(.oldlayout) .player.unseen:not([data-position="0"]) .equips:not(*:empty)>.card,
+#arena:not(.mobile):not(.oldlayout) .player.unseen .equips:not(*:empty)>.card{
+	background: none !important;
+}
+#arena:not(.chess) .player[data-position='0']>.equips>.equip5 {
+    border-radius: 4px;
+}
+.cardbg{
+	background-size: 100% 100% !important;
+}
+.card{
+	color:white;
+}
+.card:not(*:empty),.cardbg{
+	color:rgb(77, 60, 51);
+	text-shadow:none;
+	background: url('card.png');
+	background-size:cover;
+}
+.card .markcount{
+	box-shadow: rgba(0, 0, 0, 0.8) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+	background: url('card.png');
+	background-size: cover;
+	/*color: white;*/
+}
+#me>div>div>.card,#arena>.card:not(*:empty){
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 3px 10px;
+}
+/*.player{
+	background:repeating-linear-gradient(
+      135deg,
+      rgba(0,0,0,0.4),
+      rgba(0,0,0,0.4) 2px,
+      rgba(0,0,0,0.2) 2px,
+      rgba(0,0,0,0.2) 4px
+    );
+}*/
+
+.card:empty,.card.infohidden{
+    background: url('../style/cardback/image/official.png');
+    background-size: cover;
+}
+.card.infohidden:not(.infoflip){
+	background: url('../style/cardback/image/official2.png');
+	background-size: cover;
+}
+
+#system>div>.glow{
+    background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1));
+	box-shadow: rgba(0, 0, 0, 0.4) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px !important;
+}
+
+.menupaused{
+	opacity: 0.3 !important;
+}
+
+.fire{
+	color: rgb(255,119,63);
+}
+.thunder{
+	color: rgb(117,186,255);
+}
+.poison{
+	color: rgb(104,221,127);
+}
+.brown{
+	color: rgb(195,161,223);
+}
