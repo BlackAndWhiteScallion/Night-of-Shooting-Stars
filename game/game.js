@@ -12502,8 +12502,7 @@
 					card.classList.remove('drawinghidden');
 					var player=this;
 					//var equipNum=get.equipNum(card);
-					//var equipNum = player.num('e');
-					var equipNum = 1;
+					var equipNum = player.num('e');
 					var equipped = false;
 					for(var i=0;i<player.node.equips.childNodes.length;i++){
 						if(get.equipNum(player.node.equips.childNodes[i])>=equipNum){
