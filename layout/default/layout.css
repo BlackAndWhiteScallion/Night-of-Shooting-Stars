@@ -964,7 +964,7 @@ margin-bottom: 5px;
 /*--描述框--*/
 .caption{padding-top: 8px;font-size: 20px;display: block;}	/*-- 姓名位置和大小 --*/
 .caption:only-child{padding-bottom:8px;}
-.caption:not(.normal)>div{text-align: left;display: block;width: 135%;}  /*-- 描述字体长度和位置 --*/
+.caption:not(.normal)>div{text-align: left;display: block;width: 135%;}  /*-- 描述字体长度和位置 -这里的width 调过了-*/
 .caption>div{position: relative;}
 .caption>.text{font-size:14px;text-align:left}
 .caption>.text.center{text-align:center}
@@ -989,8 +989,8 @@ margin-bottom: 5px;
 }
 .button.nodisplay{display: none;}
 .dialog .content>.nodisplay{display: none;}
-.button.character>.intro{top:71px;left:0;}
-.button.character>.identity{top:-6px;left:72px;}
+.button.character>.intro{top:71px;left:5;}
+.button.character>.identity{top:-6px;left:72px;}	/* 右上角那个势力的玩意 */
 /*--------确认--------*/
 #control{text-align: center;z-index: 5;top: calc(200% / 3);left: calc(5% + 240px);width: calc(90% - 480px);pointer-events: none}
 #control>*{pointer-events: auto;}

@@ -271,11 +271,11 @@
 					},
 					show_splash:{
 						name:'显示开始界面',
-						init:false,
+						init:true,
 					},
 					game_speed:{
 						name:'游戏速度',
-						init:'mid',
+						init:'fast',
 						item:{
 							vslow:'慢',
 							slow:'较慢',
@@ -27998,7 +27998,7 @@
 							name:ui.create.div('.name',node),
 							hp:ui.create.div('.hp',node),
 							intro:ui.create.div('.intro',node),
-							group:ui.create.div('.identity',node)
+							group:ui.create.div('.identity',node).hide(),
 						}
 						var infoitem=lib.character[item];
 						if(!infoitem){
