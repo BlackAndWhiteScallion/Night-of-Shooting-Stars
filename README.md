@@ -1,3 +1,8 @@
 # noname
 New game currently under development.
- It is a Touhou fan game, which took its inspiration from the popular chinese table top game, Three Kingdom Kill. Although, at this point, the game plays nothing like its original inspiration source. I say that, but technically not a single person on earth has even played the thing yet, as it is still under development. But anyhow. The frame of the game's code comes from the no name kill 1.9.2.2, which I will put up a link to soon.
+It is a Touhou fan game, which took its inspiration from the popular chinese table top game, Three Kingdom Kill. 
+At this point, the game plays nothing like its original inspiration source. 
+A physical version of the game has already finished development, and is currently undergoing playtesting.
+The framework of code in this repository comes from the no name kill 1.9.2.2.
+
+I will put up a link to both the physical copy of the game and the no name kill soon.
