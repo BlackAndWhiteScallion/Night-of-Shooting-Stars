@@ -8604,13 +8604,13 @@
 					}
 					var info=lib.character[character];
                     if(!info){
-                        info=['','',1,[],[]];
+                        info=['','',1,[],[]];	// 名字，势力，体力上限，技能，和什么东西？
                     }
                     if(!info[4]){
                         info[4]=[];
                     }
 					var skills=info[3];
-					this.clearSkills(true);
+					this.clearSkills(true);	// 应该是清掉原有的技能
 					this.classList.add('fullskin');
 					if(!game.minskin&&lib.isNewLayout()&&!info[4].contains('minskin')){
 						this.classList.remove('minskin');
@@ -8637,6 +8637,8 @@
 					this.group=info[1];
 					this.hp=info[2];
 					this.maxHp=info[2];
+					// this.sp = info[6]; 灵力值在这里写上吧
+					this.sp = 3;
 					this.hujia=0;
 					this.node.intro.innerHTML=lib.config.intro;
 					switch(this.group){
@@ -8665,6 +8667,7 @@
 					// 	if(name[i]!='s'&&name[i]!='p')
 					// 	this.node.name.innerHTML+=name[i]+'<br/>';
 					// }
+					// 这一大段是给双将的吧
 					if(character2&&lib.character[character2]){
 						var info2=lib.character[character2];
                         if(!info2){
@@ -8680,6 +8683,7 @@
 						this.name2=character2;
 						var hp1=info[2],hp2=info2[2];
 						switch(get.config('double_hp')){
+							// 这里是双将的体力上限的计算方法
 							case 'pingjun':{
 								this.maxHp=Math.floor((hp1+hp2)/2);
 								this.singleHp=((hp1+hp2)%2===1);
@@ -8692,7 +8696,7 @@
 						}
 						this.hp=this.maxHp;
 						this.node.count.classList.add('p2');
-						skills=skills.concat(info2[3]);
+						skills=skills.concat(info2[3]);	// 把副将的技能加上来
 
 						// var name=get.translation(character2);
 						this.node.name2.innerHTML=get.slimName(character2);
@@ -27952,6 +27956,7 @@
 				// });
 				return node;
 			},
+			// button是略缩图，比如选将时的武将图片。
 			button:function(item,type,position,noclick){
 				var node;
 				switch(type){
@@ -27993,12 +27998,14 @@
 					node=ui.create.div('.button.character',position);
 					node.link=item;
 					if(type=='character'){
+						// 这里是给选将框添加属性的地方
 						node.setBackground(item,'character');
 						node.node={
-							name:ui.create.div('.name',node),
-							hp:ui.create.div('.hp',node),
-							intro:ui.create.div('.intro',node),
-							group:ui.create.div('.identity',node).hide(),
+							name:ui.create.div('.name',node), // 名字
+							hp:ui.create.div('.hp',node),	// 体力
+							//sp:ui.create.div() 这些都是.button之下的
+							intro:ui.create.div('.intro',node),	// 标记？
+							group:ui.create.div('.identity',node).hide(),	// 势力
 						}
 						var infoitem=lib.character[item];
 						if(!infoitem){
@@ -28099,6 +28106,7 @@
 				}
 				return buttons;
 			},
+			// 这里才是制作角色UI的地方
 			player:function(position,noclick){
 				var node=ui.create.div('.player',position);
 				node.node={
@@ -28107,6 +28115,7 @@
 					intro:ui.create.div('.intro',node),
 					identity:ui.create.div('.identity',node),
 					hp:ui.create.div('.hp',node),
+					sp:ui.create.div('.actcount.hp',node), 居然成功了真TM没想到
 					name:ui.create.div('.name',node),
 					name2:ui.create.div('.name.name2',node),
                     nameol:ui.create.div('.nameol',node),
