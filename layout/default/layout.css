@@ -2037,7 +2037,7 @@ div:hover>.wunature{
 	top: 9px;
 	width: 20px;
 }
-.player .actcount.hp>div{
+.player .actcount.hp>div{	/* 这个是控制图形的大小的！ */
 	width:12px;
 	height:12px;
 	margin-left:4px;

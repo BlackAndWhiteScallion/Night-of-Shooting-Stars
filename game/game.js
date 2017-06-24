@@ -5010,6 +5010,7 @@
                     }
                 }
             },
+            // 起名字能起正经一点吗
 			gx:function(name,target){
 				target=target||game.me;
 				var nature=null;
@@ -5086,6 +5087,7 @@
 				game.me.addSkill(skill,true);
 				game.check();
 			},
+			// 额……这里是作弊？
 			t:function(num){
 				if(num==undefined){
 					for(var i=0;i<game.players.length;i++) cheat.t(i);
@@ -5104,6 +5106,7 @@
 				cheat.t(i);
 				cheat.g('juedou');
 			},
+			// 这个是主公开局+上限的设定
 			z:function(name){
 				game.zhu.init(name);
 				game.zhu.maxHp++;
@@ -7683,6 +7686,7 @@
 					"step 3"
 					ui.clear();
 				},
+				// 多咯！蒙斯特卡多！
 				draw:function(){
 					// if(lib.config.background_audio){
 					// 	game.playAudio('effect','draw');
@@ -7724,6 +7728,7 @@
 					}
 					event.result=cards;
 				},
+				// 弃置牌
 				discard:function(){
 					"step 0"
 					// if(lib.config.background_audio){
@@ -7785,6 +7790,7 @@
 						}
 					}
 				},
+				// 打出牌
 				respond:function(){
 					var cardaudio=true;
 					if(event.skill){
@@ -7847,6 +7853,7 @@
 					event.trigger('respond');
 					game.delayx(0.5);
 				},
+				// 这个则是获得牌。
 				gain:function(){
 					"step 0"
 					if(cards){
@@ -7945,6 +7952,7 @@
                         broadcast();
 					}
 				},
+				// 这个是失去牌的结构
 				lose:function(){
 					"step 0"
 					var hs=[],es=[],js=[];
@@ -8045,6 +8053,7 @@
 					event.num++;
 					event.goto(1);
 				},
+				// 造成伤害在这里！！！
 				damage:function(){
 					"step 0"
 					if(num<0) num=0;
@@ -8183,6 +8192,7 @@
 						player.draw();
 					}
 				},
+				// 减少体力上限
 				loseMaxHp:function(){
 					"step 0"
 					game.log(player,'失去了'+get.cnNumber(num)+'点体力上限');
@@ -8199,7 +8209,7 @@
 					else{
 						player.maxHp-=num;
 					}
-					player.update();
+					player.update();	// 你看，所有地方都需要update的
 					"step 1"
 					if(player.maxHp<=0){
 						player.die();
@@ -8210,6 +8220,7 @@
 						player.doubleDraw();
 					}
 				},
+				// 增加体力上限
 				gainMaxHp:function(){
 					"step 0"
 					game.log(player,'获得了'+get.cnNumber(num)+'点体力上限');
@@ -8232,10 +8243,11 @@
 						player.doubleDraw();
 					}
 				},
+				// 改变体力值
 				changeHp:function(){
 					player.hp+=num;
 					if(player.hp>player.maxHp) player.hp=player.maxHp;
-					player.update();
+					player.update();	// 看来所有变更的地方都要update啊，这……但愿不要每个update都要改参数。
 					if(event.popup!==false){
 						player.$damagepop(num,'water');
 					}
@@ -8609,6 +8621,12 @@
                     if(!info[4]){
                         info[4]=[];
                     }
+                    if(!info[5]){
+                        info[5]=0;
+                    }
+                    if(!info[6]){
+                        info[6]=5;
+                    }
 					var skills=info[3];
 					this.clearSkills(true);	// 应该是清掉原有的技能
 					this.classList.add('fullskin');
@@ -8637,8 +8655,8 @@
 					this.group=info[1];
 					this.hp=info[2];
 					this.maxHp=info[2];
-					// this.sp = info[6]; 灵力值在这里写上吧
-					this.sp = 3;
+					this.lili=info[5];
+                    this.maxlili = info[6];					
 					this.hujia=0;
 					this.node.intro.innerHTML=lib.config.intro;
 					switch(this.group){
@@ -8719,7 +8737,7 @@
 							lib.element.player.inits[i](this);
 						}
 					}
-					this.update();
+					this.update();	// 你看。
 					return this;
 				},
                 initOL:function(name,character){
@@ -8737,6 +8755,7 @@
                     delete this.nickname;
                     delete this.avatar;
                 },
+                // 这里是开始游戏的，不过不清楚是不是仅限联机服务器的
                 initRoom:function(info,info2){
                     if(!this.node.gaming){
                         this.node.gaming=ui.create.div('.gaming','游戏中',this);
@@ -8792,6 +8811,7 @@
                     }
                     return this;
                 },
+                // 清掉目前角色
 				uninit:function(){
 					this.node.avatar.hide();
 					this.node.count.hide();
@@ -8803,12 +8823,15 @@
 					delete this.group;
 					delete this.hp;
 					delete this.maxHp;
+					delete this.lili;
+					delete this.maxlili;
 					delete this.hujia;
 					this.clearSkills(true);
 					this.node.identity.style.backgroundColor='';
 					this.node.intro.innerHTML='';
 					this.node.name.innerHTML='';
 					this.node.hp.innerHTML='';
+					this.node.lili.innerHTML='';
 					this.node.count.innerHTML='0';
 					if(this.name2){
 						this.node.avatar2.hide();
@@ -8848,8 +8871,10 @@
                     game.playerMap[this.playerid]=this;
                     return this;
                 },
+                // 哟，这里是聊天，准备试一下吧。
+                // 因为是function, 应该是player:chat(), 或者player:call()?
                 chat:function(str){
-                    lib.element.player.say.call(this,str);
+                    lib.element.player.say.call(this,str);	// ……看来是player:call()吧
                     game.broadcast(function(id,str){
                         if(lib.playerOL[id]){
                             lib.playerOL[id].say(str);
@@ -8864,6 +8889,7 @@
                         }
                     },this.playerid,str);
                 },
+                // 这里似乎也是聊天用的
                 say:function(str){
                     var dialog=ui.create.dialog('hidden');
                     dialog.classList.add('static');
@@ -8946,6 +8972,8 @@
                     var state={
                         hp:this.hp,
                         maxHp:this.maxHp,
+                        lili:this.lili,
+                        maxlili:this.maxlili,
                         nickname:this.nickname,
                         sex:this.sex,
                         name:this.name,
@@ -8973,21 +9001,29 @@
                     }
                     return state;
                 },
+                // 这个是设置联机用的昵称的
                 setNickname:function(str){
                     this.node.nameol.innerHTML=str||this.nickname||'';
                     return this;
                 },
+                // 这里是更新角色的地方，非常重要。
+                // 虽然说是非常重要，但是我也不知道是在哪里用的。
 				update:function(){
 					if(_status.video&&arguments.length==0) return;
 					if(this.hp>=this.maxHp) this.hp=this.maxHp;
+					if (this.lili>=this.maxlili) this.lili = this.maxlili;
 					var hp=this.node.hp;
+					var lili=this.node.lili;
 					hp.style.transition='none';
-                    game.broadcast(function(player,hp,maxHp,hujia){
+                    game.broadcast(function(player,hp,maxHp,lili,maxlili,hujia){
                         player.hp=hp;
                         player.maxHp=maxHp;
+                        player.lili=lili;
+                        player.maxlili=maxlili;
                         player.hujia=hujia;
                         player.update();
-                    },this,this.hp,this.maxHp,this.hujia);
+                    },this,this.hp,this.maxHp,this.lili,this.maxlili,this.hujia);
+					ui.create.div(lili);
 					if(!_status.video){
 						if(this.hujia){
 							this.markSkill('ghujia');
@@ -8999,6 +9035,7 @@
 					if(this.maxHp==Infinity){
 						hp.innerHTML='∞';
 					}
+
 					else if(lib.config.layout=='default'&&this.maxHp>14){
 						hp.innerHTML=this.hp+'/'+this.maxHp;
 						hp.classList.add('text');
@@ -9097,6 +9134,7 @@
 					this.updateMarks();
 					return this;
 				},
+				// 这里是更新标记的
 				updateMarks:function(){
 					for(var i in this.marks){
 						if(i=='ghujia'||(!this.marks[i].querySelector('.image')&&lib.skill[i]&&
@@ -10504,6 +10542,7 @@
                     next.setContent('die');
 					return next;
 				},
+				// 复活……讲道理，这就是完全重写了一次init吧……
 				revive:function(hp,log){
 					if(log!==false) game.log(this,'复活');
 					if(this.maxHp<1) this.maxHp=1;
@@ -13636,6 +13675,7 @@
 					}
 				}
 			},
+			// 这里似乎是写给玩家的信息的？！
 			dialog:{
 				add:function(item,noclick,zoom){
 					if(typeof item=='string'){
@@ -17121,7 +17161,9 @@
 				if(player&&info){
 					player.hp=info[1];
 					player.maxHp=info[2];
-					player.hujia=info[3];
+					player.lili=info[3];
+					player.maxlili=info[4];
+					player.hujia=info[5];
 					player.update(info[0]);
 				}
 				else{
@@ -18297,6 +18339,7 @@
 				game.resume();
 			}
 		},
+		// 哟，这个好像是游戏结束的UI和音效
 		over:function(result){
             if(_status.over) return;
 			var i,j,k,num,table,tr,td,dialog;
@@ -28115,7 +28158,7 @@
 					intro:ui.create.div('.intro',node),
 					identity:ui.create.div('.identity',node),
 					hp:ui.create.div('.hp',node),
-					sp:ui.create.div('.actcount.hp',node), 居然成功了真TM没想到
+					lili:ui.create.div('.actcount.hp',node), //居然成功了真TM没想到
 					name:ui.create.div('.name',node),
 					name2:ui.create.div('.name.name2',node),
                     nameol:ui.create.div('.nameol',node),
@@ -28127,7 +28170,6 @@
 					handcards2:ui.create.div('.handcards'),
 				};
 				node.node.action=ui.create.div('.action',node.node.avatar);
-
 				node.skipList=[];
 				node.skills=[];
 				node.initedSkills=[];
