@@ -8622,7 +8622,7 @@
                         info[4]=[];
                     }
                     if(!info[5]){
-                        info[5]=0;
+                        info[5]=3;
                     }
                     if(!info[6]){
                         info[6]=5;
@@ -9010,11 +9010,17 @@
                 // 虽然说是非常重要，但是我也不知道是在哪里用的。
 				update:function(){
 					if(_status.video&&arguments.length==0) return;
+					// 清掉大于上限的数值
 					if(this.hp>=this.maxHp) this.hp=this.maxHp;
 					if (this.lili>=this.maxlili) this.lili = this.maxlili;
+					
+					// 制作一会儿用于覆盖的函数
 					var hp=this.node.hp;
 					var lili=this.node.lili;
-					hp.style.transition='none';
+
+					hp.style.transition='none';	//可能是为了不让一闪一闪的而去除了转换的部分？不太懂。
+					lili.style.transition='none';
+
                     game.broadcast(function(player,hp,maxHp,lili,maxlili,hujia){
                         player.hp=hp;
                         player.maxHp=maxHp;
@@ -9023,7 +9029,7 @@
                         player.hujia=hujia;
                         player.update();
                     },this,this.hp,this.maxHp,this.lili,this.maxlili,this.hujia);
-					ui.create.div(lili);
+					
 					if(!_status.video){
 						if(this.hujia){
 							this.markSkill('ghujia');
@@ -9032,14 +9038,51 @@
 							this.unmarkSkill('ghujia');
 						}
 					}
+
+					// 那么设置一下灵力的UI吧
+					if (this.lili == Infinity){
+						lili.innerHTML = '∞';
+					}
+					else {
+						// 这里才是设置了体力的UI吧。
+						lili.innerHTML='';
+						lili.classList.remove('text');
+						// 然后体力值小于体力上限，么？
+						while(this.maxlili>lili.childNodes.length){
+							ui.create.div(lili);
+						}
+						while(this.maxlili<lili.childNodes.length){
+							lili.removeChild(lili.lastChild);
+						}
+						// soga, 是只要体力上限大于体力就加一格体力，小于了就去掉一格
+						// 然后这里再设置哪些是损失的哪些是有的
+						for(var i=0;i<this.maxlili;i++){
+							if(i<this.lili){
+								lili.childNodes[i].classList.remove('lost');
+							}
+							else{
+								lili.childNodes[i].classList.add('lost');
+							}
+						}
+						/*
+						if(this.maxHp==9){
+							hp.classList.add('long');
+						}
+						else{
+							hp.classList.remove('long');
+						}
+						*/
+					}
+					// 无限体力上限
 					if(this.maxHp==Infinity){
 						hp.innerHTML='∞';
 					}
-
+					// 设置某种UI？体力值.innerHTML = hp/maxhp
 					else if(lib.config.layout=='default'&&this.maxHp>14){
 						hp.innerHTML=this.hp+'/'+this.maxHp;
 						hp.classList.add('text');
 					}
+					// 这里怎么写的根本看不懂
 					else if(lib.isNewLayout()&&
 					(
 						this.maxHp>9||
@@ -9051,14 +9094,20 @@
 						hp.classList.remove('long');
 					}
 					else{
+						// 这里才是设置了体力的UI吧。
 						hp.innerHTML='';
 						hp.classList.remove('text');
+						// 然后体力值小于体力上限，么？
+						// 如果上限大于体力格子的数量就做一个
 						while(this.maxHp>hp.childNodes.length){
 							ui.create.div(hp);
 						}
+						// 然后小于，就去掉一个。
 						while(this.maxHp<hp.childNodes.length){
 							hp.removeChild(hp.lastChild);
 						}
+						// 然后设置哪些是掉血了哪些是没掉的
+						// 所以说，create.div(XXX)是在(XXX)之下加一个在layout里面所对应的UI元素。
 						for(var i=0;i<this.maxHp;i++){
 							if(i<this.hp){
 								hp.childNodes[i].classList.remove('lost');
@@ -9074,6 +9123,7 @@
 							hp.classList.remove('long');
 						}
 					}
+					// 这里全都是设体力值颜色的东西
                     if(hp.classList.contains('room')){
                         hp.dataset.condition='high';
                     }
@@ -9090,8 +9140,12 @@
 						hp.dataset.condition='low';
 					}
 
+					// 这里还有一个加空闲时间的，看来是用来对付不停的update而闪的不停的情况。
+					// 并没有什么卵用啊，是不是因为style是额外设置的东西？
+					// 但是，在哪里用到了啊？
 					setTimeout(function(){
 						hp.style.transition='';
+						//lili.style.transition='';
 					});
 					var numh=this.num('h');
 					if(_status.video){
@@ -9122,6 +9176,7 @@
 							lib.element.player.updates[i](this);
 						}
 					}
+					// 这里要改的说
 					if(!_status.video){
 						game.addVideo('update',this,[this.num('h'),this.hp,this.maxHp,this.hujia]);
 					}
