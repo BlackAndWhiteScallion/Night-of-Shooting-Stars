@@ -1057,6 +1057,7 @@ character.extra={
 					cards.remove(result.buttons[i].link);
 				}
 				player.gain(cards2);
+				player.gainlili(1);
 				if(cards2.length) player.$gain(cards2);
 				for(var i=0;i<cards.length;i++){
 					ui.discardPile.appendChild(cards[i]);

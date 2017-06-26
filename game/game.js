@@ -8166,6 +8166,25 @@
 						game.log(player,'回复了'+get.cnNumber(num)+'点体力')
 					}
 				},
+				gainlili:function(){
+					if(lib.config.background_audio){
+						game.playAudio('effect','recover');
+					}
+                    game.broadcast(function(){
+                        if(lib.config.background_audio){
+    						game.playAudio('effect','recover');
+    					}
+                    });
+					if(num>player.maxlili-player.lili) num=player.maxlili-player.lili;
+					if(num>0){
+						player.changelili(num,false);
+						if(lib.config.animation&&!lib.config.low_performance){
+							player.$recover();
+						}
+						player.$damagepop(num,'wood');
+						game.log(player,'获得了'+get.cnNumber(num)+'点灵力')
+					}
+				},
 				loseHp:function(){
 					"step 0"
 					if(lib.config.background_audio){
@@ -8183,6 +8202,19 @@
 						game.delayx();
 						player.dying(event);
 					}
+				},
+				loselili:function(){
+					"step 0"
+					if(lib.config.background_audio){
+						game.playAudio('effect','loseHp');
+					}
+                    game.broadcast(function(){
+                        if(lib.config.background_audio){
+    						game.playAudio('effect','loseHp');
+    					}
+                    });
+					game.log(player,'消耗了'+get.cnNumber(num)+'点灵力')
+					player.changelili(-num);
 				},
 				doubleDraw:function(){
 					"step 0"
@@ -8243,15 +8275,25 @@
 						player.doubleDraw();
 					}
 				},
-				// 改变体力值
+				// 改变体力值的方程式，这里通过player.changehp之后，正经操作的地方
 				changeHp:function(){
 					player.hp+=num;
 					if(player.hp>player.maxHp) player.hp=player.maxHp;
 					player.update();	// 看来所有变更的地方都要update啊，这……但愿不要每个update都要改参数。
 					if(event.popup!==false){
-						player.$damagepop(num,'water');
+						player.$damagepop(num,'wood');
 					}
 					event.trigger('changeHp');
+				},
+				// 复制一个changelili
+				changelili:function(){
+					player.lili+=num;
+					if(player.lili>player.maxlili) player.lili=player.maxlili;
+					player.update();	// 看来所有变更的地方都要update啊，这……但愿不要每个update都要改参数。
+					if(event.popup!==false){
+						player.$damagepop(num,'water');	// 这里改变的是颜色
+					}
+					event.trigger('changelili');	// 然后是触发事件的地方
 				},
 				dying:function(){
 					"step 0"
@@ -10529,6 +10571,42 @@
                     next.setContent('recover');
 					return next;
 				},
+				gainlili:function(){
+					var next=game.createEvent('gainlili');
+					next.player=this;
+					var nocard,nosource;
+					var event=_status.event;
+					for(var i=0;i<arguments.length;i++){
+						if(get.itemtype(arguments[i])=='cards'){
+							next.cards=arguments[i];
+						}
+						else if(get.itemtype(arguments[i])=='card'){
+							next.card=arguments[i];
+						}
+						else if(get.itemtype(arguments[i])=='player'){
+							next.source=arguments[i];
+						}
+						else if(typeof arguments[i]=='object'&&arguments[i].name){
+							next.card=arguments[i];
+						}
+						else if(typeof arguments[i]=='number'){
+							next.num=arguments[i];
+						}
+						else if(arguments[i]=='nocard'){
+							nocard=true;
+						}
+						else if(arguments[i]=='nosource'){
+							nosource=true;
+						}
+					}
+					if(next.card==undefined&&!nocard) next.card=event.card;
+					if(next.cards==undefined&&!nocard) next.cards=event.cards;
+					if(next.source==undefined&&!nosource) next.source=event.player;
+					if(next.num==undefined) next.num=1;
+					if(next.num<=0) _status.event.next.remove(next);
+                    next.setContent('gainlili');
+					return next;
+				},
 				doubleDraw:function(){
 					var next=game.createEvent('doubleDraw');
 					next.player=this;
@@ -10541,6 +10619,14 @@
 					next.player=this;
 					if(next.num==undefined) next.num=1;
                     next.setContent('loseHp');
+					return next;
+				},
+				loselili:function(num){
+					var next=game.createEvent('loselili');
+					next.num=num;
+					next.player=this;
+					if(next.num==undefined) next.num=1;
+                    next.setContent('loselili');
 					return next;
 				},
 				loseMaxHp:function(){
@@ -10573,12 +10659,22 @@
                     next.setContent('gainMaxHp');
                     return next;
 				},
+				// 这里是player.changehp的位置。
 				changeHp:function(num,popup){
 					var next=game.createEvent('changeHp',false);
 					next.num=num;
 					if(popup!=undefined) next.popup=popup;
 					next.player=this;
                     next.setContent('changeHp');
+					return next;
+				},
+				// 那么复制粘贴一个player.changelili吧
+				changelili:function(num,popup){
+					var next=game.createEvent('changelili',false);
+					next.num=num;
+					if(popup!=undefined) next.popup=popup;
+					next.player=this;
+                    next.setContent('changelili');
 					return next;
 				},
 				dying:function(reason){
@@ -31766,6 +31862,7 @@
 			if(card.viewAs) return lib.card[card.viewAs].judge;
 			return get.info(card).judge;
 		},
+		// 这个才是计算距离的地方
 		distance:function(from,to,method){
 			if(from==to) return 0;
 			if(!game.players.contains(from)&&!game.dead.contains(from)) return Infinity;
@@ -31803,11 +31900,14 @@
 				if(method=='raw'||method=='pure') return n;
 			}
 
-			n=game.checkMod(from,to,n,'globalFrom',from.get('s'));
-			n=game.checkMod(from,to,n,'globalTo',to.get('s'));
-			m=n;
-			m=game.checkMod(from,to,m,'attackFrom',from.get('s'));
-			m=game.checkMod(from,to,m,'attackTo',to.get('s'));
+			// 检查玩家之间的距离
+			n=game.checkMod(from,to,n,'globalFrom',from.get('s'));	// 来源的距离加成
+			n=game.checkMod(from,to,n,'globalTo',to.get('s'));		// 目标的距离加成
+			m=n;	// 然后把距离作为攻击范围的基础
+			m=game.checkMod(from,to,m,'attackFrom',from.get('s'));	// 来源的攻击加成
+			m=game.checkMod(from,to,m,'attackTo',to.get('s'));		// 目标的攻击加成
+			
+			// 检查来源的装备并获得加成
 			var equips1=from.get('e'),equips2=to.get('e');
 			for(i=0;i<equips1.length;i++){
 				var info=get.info(equips1[i]).distance;
@@ -31820,6 +31920,8 @@
 					m+=info.attackFrom;
 				}
 			}
+
+			// 检查目标的装备并获得加成
 			for(i=0;i<equips2.length;i++){
 				var info=get.info(equips2[i]).distance;
 				if(!info) continue;
@@ -31831,26 +31933,41 @@
 					m+=info.attaclTo;
 				}
 			}
+
+			// 灵力值等于攻击范围！烦死了！
+			m-=(from.lili-1);
+
+			// 如果使用方式是攻击就用攻击范围
 			if(method=='attack') return m;
+			// 否则距离
 			return n;
 		},
+		// 攻击范围
+		// 卧槽原来这仅仅是用来做数值用而根本不是用来检测用的吗
 		attackRange:function(player){
 			var range=0;
+			// 这里到底是检测什么啊？
 			range=game.checkMod(player,player,range,'globalFrom',player.get('s'));
 			range=game.checkMod(player,player,range,'attackFrom',player.get('s'));
+			// 这里是获得玩家的装备区的数据
 			var equips=player.get('e');
+			// 查看每一个装备
 			for(var i=0;i<equips.length;i++){
 				var info=get.info(equips[i]).distance;
+				// 获得装备上的范围
 				if(!info) continue;
-				if(info.globalFrom){
-					range+=info.globalFrom;
+				if(info.globalFrom){	// 哦，这个是检查减距离的吧？？
+					range+=info.globalFrom;		// 那这个应该是减距离
 				}
 				if(info.attackFrom){
-					range+=info.attackFrom;
+					range+=info.attackFrom;		//而这个应该是攻击范围
 				}
 			}
+			//而且这个为什么是1-？
+			// TM原来是因为range都是用减号来算的，所以这个只是用于返回数值的，根本不是用来做用牌限制的
 			return (1-range);
 		},
+		// 这里是计算距离的
 		globalFrom:function(player){
 			var range=0;
 			range=game.checkMod(player,player,range,'globalFrom',player.get('s'));
