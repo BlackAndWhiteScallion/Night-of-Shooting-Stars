@@ -1,4 +1,4 @@
-# noname
+# Night of Shooting Stars!
 New game currently under development.
 It is a Touhou fan game, which took its inspiration from the popular chinese table top game, Three Kingdom Kill. 
 At this point, the game plays nothing like its original inspiration source. 
