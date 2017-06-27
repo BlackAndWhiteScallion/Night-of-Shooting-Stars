@@ -5162,7 +5162,7 @@
 			agree:'同意',
 			refuse:'拒绝',
 			fire:"火",
-			thunder:"雷",
+			thunder:"灵击",
 			poison:"毒",
 			wei:'魏',
 			shu:'蜀',
