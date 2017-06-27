@@ -8057,6 +8057,9 @@
 				damage:function(){
 					"step 0"
 					if(num<0) num=0;
+					// 这里是护甲，全部跳过吧，反正也不用。
+					// 用护甲直接减伤害呢。
+					/*
 					if(num>0&&player.hujia&&!player.hasSkillTag('nohujia')){
 						if(num>=player.hujia){
 							num-=player.hujia;
@@ -8071,7 +8074,10 @@
 						event.hujia=true;
 						player.update();
 					}
+					*/
+					// 扣减完之后的伤害来重置了
 					event.num=num;
+					// 播放声音
 					if(lib.config.background_audio){
 						game.playAudio('effect','damage'+(num>1?'2':''));
 					}
@@ -8080,12 +8086,14 @@
     						game.playAudio('effect','damage'+(num>1?'2':''));
     					}
                     },num);
+                    // 发出消息。是使用拼string的做法，点赞。
 					var str='受到了';
 					if(source) str+='来自<span class="bluetext">'+(source==player?'自己':get.translation(source))+'</span>的';
 					str+=get.cnNumber(num)+'点';
-					if(event.nature) str+=get.translation(event.nature)+'属性';
+					if(event.nature) str+=get.translation(event.nature);
 					str+='伤害';
 					game.log(player,str);
+					// 这里是什么啊…………
 					if(player.stat[player.stat.length-1].damaged==undefined){
 						player.stat[player.stat.length-1].damaged=num;
 					}
@@ -8100,7 +8108,16 @@
 							source.stat[source.stat.length-1].damage+=num;
 						}
 					}
-					player.changeHp(-num,false);
+					//player.changelili(-num,false);					
+					//player.changeHp(-num,false);
+
+					if (event.nature=='thunder'){
+						player.changelili(-num,false);
+					}else{
+						player.changeHp(-num,false);
+					}
+					
+					// 这里是设置动画的
 					if(event.animate!==false){
 						player.$damage(source);
                         game.broadcastAll(function(nature,player){
@@ -8181,7 +8198,7 @@
 						if(lib.config.animation&&!lib.config.low_performance){
 							player.$recover();
 						}
-						player.$damagepop(num,'wood');
+						player.$damagepop(num,'water');
 						game.log(player,'获得了'+get.cnNumber(num)+'点灵力')
 					}
 				},
@@ -8281,7 +8298,7 @@
 					if(player.hp>player.maxHp) player.hp=player.maxHp;
 					player.update();	// 看来所有变更的地方都要update啊，这……但愿不要每个update都要改参数。
 					if(event.popup!==false){
-						player.$damagepop(num,'wood');
+						player.$damagepop(num,'fire');
 					}
 					event.trigger('changeHp');
 				},
@@ -9187,7 +9204,7 @@
 					// 但是，在哪里用到了啊？
 					setTimeout(function(){
 						hp.style.transition='';
-						//lili.style.transition='';
+						lili.style.transition='';
 					});
 					var numh=this.num('h');
 					if(_status.video){
@@ -10496,11 +10513,13 @@
                     next.setContent('lose');
 					return next;
 				},
+				// 这里是传递伤害用的
 				damage:function(){
 					var next=game.createEvent('damage');
 					next.player=this;
 					var nocard,nosource;
 					var event=_status.event;
+					// 设置伤害卡，伤害来源，和伤害属性
 					for(var i=0;i<arguments.length;i++){
 						if(get.itemtype(arguments[i])=='cards'){
 							next.cards=arguments[i];
@@ -13058,6 +13077,7 @@
 						},500);
 					}
 				},
+				// 这里是播放动画的地方
 				$damage:function(source){
 					if(get.itemtype(source)=='player'){
 						game.addVideo('damage',this,source.dataset.position);
