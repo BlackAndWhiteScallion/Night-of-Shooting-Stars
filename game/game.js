@@ -8111,9 +8111,12 @@
 					//player.changelili(-num,false);					
 					//player.changeHp(-num,false);
 
+					var trigger = false;
 					if (event.nature=='thunder'){
 						player.changelili(-num,false);
-					}else{
+						trigger = true;
+					}
+					if (trigger == false){
 						player.changeHp(-num,false);
 					}
 					
