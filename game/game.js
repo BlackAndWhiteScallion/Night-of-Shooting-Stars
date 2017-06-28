@@ -56,7 +56,7 @@
 	var lib={
 		configprefix:'noname_0.9_',
         versionOL:14,
-        sourceURL:'https://rawgit.com/libccy/noname/$version$/',
+        sourceURL:'https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
         updateURL:'https://raw.githubusercontent.com/libccy/noname/$version$/',
 		assetURL:'',
         hallURL:'websha.cn',
@@ -5764,7 +5764,7 @@
                 },
 				phase:function(){
 					"step 0"
-					player.phaseJudge();
+					//player.phaseJudge();
 					"step 1"
 					player.phaseDraw();
 					if(!player.noPhaseDelay){
@@ -6283,6 +6283,7 @@
                     game.broadcastAll(ui.clear);
                     event.goto(3);
                 },
+                // 这里是拼点的部分
 				chooseToCompare:function(){
 					"step 0"
 					if(player.num('h')==0||target.num('h')==0){
@@ -6354,8 +6355,10 @@
 							event.addToAI=true;
 						}
 					}
-					player.lose(event.card1);
-					target.lose(event.card2);
+					// 这里是丢牌！
+					// 这里也应该想个办法加个设置。
+					//player.lose(event.card1);
+					//target.lose(event.card2);
 					"step 5"
                     game.broadcast(function(){
                         ui.arena.classList.add('thrownhighlight');
@@ -8057,6 +8060,15 @@
 				damage:function(){
 					"step 0"
 					if(num<0) num=0;
+					// 0灵力造成的伤害为0
+					// 需要想个办法加入设置。
+					if (source) {
+						if (source.lili == 0){
+							game.log(source,'的灵力为0，无法造成伤害')
+							num = 0;
+						}
+					}
+
 					// 这里是护甲，全部跳过吧，反正也不用。
 					// 用护甲直接减伤害呢。
 					/*
@@ -8683,9 +8695,11 @@
                     if(!info[4]){
                         info[4]=[];
                     }
+                    // 默认起始灵力值
                     if(!info[5]){
-                        info[5]=3;
+                        info[5]=0;
                     }
+                    // 默认灵力上限
                     if(!info[6]){
                         info[6]=5;
                     }
@@ -14465,6 +14479,7 @@
 					trigger.finish();
 				},
 			},
+			// 这里是翻面跳回合
 			_turnover:{
 				trigger:{player:'phaseBefore'},
 				forced:true,
@@ -14478,7 +14493,7 @@
 						trigger.untrigger();
 						trigger.finish();
 						player.turnOver();
-						player.phaseSkipped=true;
+						//player.phaseSkipped=true;
 					}
 					else{
 						player.phaseSkipped=false;
@@ -14539,8 +14554,11 @@
 					game.log();
 					game.log(player,'的回合开始');
 					player._noVibrate=true;
+					// 如果不是明忠模式而且不是联机模式……？
+					// 这个是干嘛用的啊……
 					if(get.config('identity_mode')!='zhong'&&!_status.connectMode){
 						var num;
+						// 然后这里是检查
 						switch(get.config('auto_identity')){
 							case 'one':num=1;break;
 							case 'two':num=2;break;
@@ -14556,6 +14574,32 @@
 					}
 					player.ai.tempIgnore=[];
 					player.stat.push({card:{},skill:{}});
+				},
+			},
+			_phaseend:{
+				trigger:{player:'phaseEnd'},
+				forced:true,
+				priority:20,
+				popup:false,
+				content:function(){
+                    while(ui.dialogs.length){
+                        ui.dialogs[0].close();
+                    }
+                    // 这里是0灵力在回合结束增加的地方。
+                    // 要想办法给这个加一个设置。
+					if (player.lili == 0){
+						player.gainlili(1);
+						game.log(player,'因灵力为0，获得了1点灵力')
+					}
+					if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
+						player.popup('回合结束');
+					}
+                    game.syncState();
+					game.addVideo('phaseChange',player);
+					game.log();
+					game.log(player,'的回合结束');
+					player._noVibrate=true;
+
 				},
 			},
             _discard:{
@@ -18990,6 +19034,7 @@
                 game.reload();
             }
 		},
+		// 这……是什么东西……？
 		loop:function(){
 			var event=_status.event;
 			var step=event.step;
@@ -19026,6 +19071,8 @@
 					_status.event=next;
 				}
 			}
+			// 这里似乎是拼凑出“回合开始”与“回合结束”时机的地方。
+			// ……虽然……完全不知道这个if是干嘛用的 
 			else if(event.finished){
 				if(event._triggered==1){
 					if(event.type=='card') event.trigger('useCardToCancelled');
