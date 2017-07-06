@@ -1085,7 +1085,7 @@ character.refresh={
 					var list=[];
 					for(var i=0;i<target.skills.length;i++){
 						if(!get.is.locked(target.skills[i])){
-							list.push(target.skills[i]);
+							list.push(target.skills[i]);		// 加入list
 						}
 					}
 					target.disableSkill('retieji',list);

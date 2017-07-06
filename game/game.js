@@ -145,12 +145,13 @@
 				});
 			}
 		},
+		// 这里是设置菜单！！！很重要！
 		configMenu:{
 			general:{
 				name:'通用',
 				config:{
 					low_performance:{
-						name:'流畅模式',
+						name:'低配模式',
 						init:false,
 						onclick:function(bool){
 							game.saveConfig('low_performance',bool);
@@ -161,6 +162,18 @@
 								ui.arena.classList.remove('low_performance');
 							}
 						}
+					},
+					compare_discard:{
+						name:'不弃拼点牌',
+						init:true,
+					},
+					regain_lili:{
+						name:'结束阶段灵力补至1',
+						init:true,
+					},
+					damage_lili:{
+						name:'没有灵力不能造成伤害',
+						init:true,
 					},
 					confirm_exit:{
 						name:'确认退出',
@@ -502,7 +515,7 @@
 					},
                     textequip:{
                         name:'装备显示',
-                        init:'image',
+                        init:'text',
                         item:{
                             image:'图片',
                             text:'文字',
@@ -5785,6 +5798,10 @@
     					}
                     });
 					player.phaseDiscard()
+					if (player.lili == 0 && lib.config.regain_lili == true){
+						player.gainlili(1);
+						game.log(player,'因灵力为0，获得了1点灵力')
+					}
 					if(!player.noPhaseDelay) game.delayx();
 					delete player.using;
 					delete player._noSkill;
@@ -6357,8 +6374,10 @@
 					}
 					// 这里是丢牌！
 					// 这里也应该想个办法加个设置。
-					//player.lose(event.card1);
-					//target.lose(event.card2);
+					if (!lib.config.compare_discard){
+						player.lose(event.card1);
+						target.lose(event.card2);
+					}
 					"step 5"
                     game.broadcast(function(){
                         ui.arena.classList.add('thrownhighlight');
@@ -7248,6 +7267,7 @@
                     event.choosing=false;
 					if(event.dialog) event.dialog.close();
 				},
+				// 这里是用牌结构！
 				useCard:function(){
 					"step 0"
 					if(!card){
@@ -7277,6 +7297,7 @@
 					if(event.audio===false){
 						cardaudio=false;
 					}
+					// 这里是播放使用牌的语音！
 					if(cardaudio){
                         game.broadcastAll(function(player,card){
                             if(lib.config.background_audio){
@@ -7301,6 +7322,7 @@
                             }
                         },player,card);
 					}
+					// 这里则是动画
 					if(event.animate!=false){
 						if(card.name=='wuxie'&&event.getParent().source){
 							var lining=event.getParent().sourcex||event.getParent().source2||event.getParent().source;
@@ -7324,6 +7346,7 @@
 								(card.classList&&card.classList.contains('thunder'))){
 								config.color='thunder';
 							}
+							// 你看，做线的
 							if(get.info(card).multitarget&&targets.length>1&&!get.info(card).multiline){
 								player.line2(targets,config);
 							}
@@ -7331,6 +7354,7 @@
 								player.line(targets,config);
 							}
 						}
+						// 扔了？
 						player.$throw(cards);
 						if(lib.config.sync_speed&&cards[0]&&cards[0].clone){
 							var waitingForTransition=get.time();
@@ -7417,7 +7441,7 @@
 					var info=get.info(card);
 					if(targets.length==0&&!info.notarget) return;
 					var next=game.createEvent(card.name);
-					next.setContent(info.content);
+					next.setContent(info.content);		// 哟哟哟设定效果！
 					next.targets=targets;
 					next.card=card;
 					next.cards=cards;
@@ -7446,6 +7470,7 @@
 						}
 					}
 					next.target=targets[num];
+					// 这个multitarget是检测卡牌是否有2个+的（不同效果）的目标。借刀别走就是你。
 					if(next.target&&!info.multitarget){
 						if(num==0&&targets.length>1){
 							// var ttt=next.target;
@@ -7474,8 +7499,9 @@
 					"step 3"
 					if(!get.info(event.card).multitarget&&num<targets.length-1){
 						event.num++;
-						event.goto(2);
+						event.goto(2);	// 那看来这个是……
 					}
+					// 这里就是结算后的事情了
 					"step 4"
 					if(get.info(card).contentAfter){
 						var next=game.createEvent(card.name+'contentAfter');
@@ -7506,24 +7532,30 @@
                     }
                     event._oncancel();
 				},
+				// 这里是使用技能的结构！
 				useSkill:function(){
 					"step 0"
+					// 首先获得的是发动的技能
 					var info=get.info(event.skill);
 					event._skill=event.skill;
-					game.trySkillAudio(event.skill,player);
+					game.trySkillAudio(event.skill,player);		// 播放技能语音
 					if(player.checkShow){
-						player.checkShow(event.skill);
+						player.checkShow(event.skill);			// 啊……？
 					}
+					// 如果需要弃牌，并且是要丢掉，而且不是转化牌……？
+					// （什么鬼啊）
 					if(info.discard!=false&&info.lose!=false&&!info.viewAs){
-						player.discard(cards).delay=false;
+						player.discard(cards).delay=false;		// 扔掉……？
 						if(info.prepare){
-							info.prepare(cards,player,targets);
+							info.prepare(cards,player,targets);	// 并且要准备什么东西
 						}
 						if(lib.config.low_performance){
 							event.discardTransition=true;
 						}
 					}
+					// 然后如果没有那些发动要求什么的
 					else{
+						// 如果需要丢牌
 						if(info.lose!=false){
                             if(info.losetrigger==false){
                                 player.lose(cards,ui.special)._triggered=null;
@@ -7532,10 +7564,13 @@
                                 player.lose(cards,ui.special);
                             }
 						}
+						// 如果有什么需要做的
 						if(info.prepare){
 							info.prepare(cards,player,targets);
 						}
+						// 如果是转化牌
 						else if(info.viewAs){
+							// 如果是就把牌丢掉了
 							player.$throw(cards);
 							if(lib.config.sync_speed&&cards[0]&&cards[0].clone){
 							    var waitingForTransition=get.time();
@@ -7549,6 +7584,8 @@
 							}
 						}
 					}
+					// 然后如果有目标并且需要画线
+					// 那就花几条线呗。
 					if(info.line!=false&&targets.length){
 						var config={};
 						if(info.line=='fire'){
@@ -7567,6 +7604,7 @@
 							player.line(targets,config);
 						}
 					}
+					// 这里开始就开始拼历史记录了呢
 					var str='';
 					if(targets&&targets.length&&info.log!='notarget'){
 						str+='对<span class="bluetext">'+(targets[0]==player?'自己':get.translation(targets[0]));
@@ -7576,6 +7614,7 @@
 						str+='</span>'
 					}
 					str+='发动了';
+					// 而且还有技能动画哟
 					if(!info.direct){
 						game.log(player,str,'【'+get.skillTranslation(skill,player)+'】');
                         if(info.logv!==false) game.logv(player,skill,targets);
@@ -7586,6 +7625,7 @@
 							player.popup(get.skillTranslation(skill,player));
 						}
 					}
+					// 然后这个是要加次数的？
 					if(event.addCount!=false){
 						if(player.stat[player.stat.length-1].skill[skill]==undefined){
 							player.stat[player.stat.length-1].skill[skill]=1;
@@ -7609,35 +7649,42 @@
 					else{
 						player.stat[player.stat.length-1].allSkills++;
 					}
+					// 如果没有技能的话……
 					"step 1"
 					if(!event.skill){
 						console.log('error: no skill',get.translation(event.player),event.player.get('s'));
+						// 然后技能是全场固有技能的话
 						if(event._skill){
 							event.skill=event._skill;
 							console.log(event._skill);
 						}
+						// 真的没技能就结束了
 						else{
 							event.finish();
 							return;
 						}
 					}
+					// 怎么还要再来一次啊……
+					// 获得技能
 					var info=get.info(event.skill);
+					// 如果目标死了或者出局了或者没有了而且这个技能并不是多目标的而且目标数只有1的话
 					if(targets[num]&&targets[num].isDead()||
 						targets[num]&&targets[num].isOut()||
 						targets[num]&&targets[num].removed){
 						if(!info.multitarget&&num<targets.length-1){
 							event.num++;
-							event.redo();
+							event.redo();	// loop!
 						}
-						return;
+						return;	// 退出去
 					}
+					// 做下一个事件的结构
 					var next=game.createEvent(event.skill);
-					next.setContent(info.content);
-					next.targets=targets;
-					next.cards=cards;
-					next.player=player;
-					next.num=num;
-					next.multitarget=info.multitarget;
+					next.setContent(info.content);		// 技能内容
+					next.targets=targets;				// 技能目标
+					next.cards=cards;					// 技能卡牌
+					next.player=player;					// 技能角色
+					next.num=num;						// 目标数量？还是座位？ 
+					next.multitarget=info.multitarget;	// 技能是否多目标
 					if(num==0&&next.targets.length>1){
 						if(!info.multitarget){
 							lib.tempSortSeat=player;
@@ -8063,7 +8110,7 @@
 					// 0灵力造成的伤害为0
 					// 需要想个办法加入设置。
 					if (source) {
-						if (source.lili == 0){
+						if (source.lili == 0 && lib.config.damage_lili == true){
 							game.log(source,'的灵力为0，无法造成伤害')
 							num = 0;
 						}
@@ -8462,7 +8509,7 @@
 					}
 
 					player.equiping=true;
-
+					// 这里是替换装备的部分
 					// player.lose(player.get('e',{subtype:get.subtype(card)}),false);
 					if (player.num('e',{type:'equip'})>2){
 						player.chooseToDiscard(1,{type:'equip'},'e',true)
@@ -10331,6 +10378,7 @@
                     next.setContent('useCard');
 					return next;
 				},
+				// 这里是用于传递使用的技能的信息的地方
 				useSkill:function(){
 					var next=game.createEvent('useSkill');
 					next.player=this;
@@ -11461,9 +11509,13 @@
                         delete this.additionalSkills[skill];
                     }
                 },
+                // 这里的skills参数是设置哪些技能要无效的
+                // 这个skill参数是设置哪个技能是无效这些技能的
                 disableSkill:function(skill,skills){
                     this.disabledSkills[skill]=skills;
                     if(typeof skills=='string'){
+                    	// 然后这个是移除他们的发动时机
+                    	// 不得不说这个方法确实非常聪明。
                         this.removeSkillTrigger(skills,true);
                     }
                     else if(Array.isArray(skills)){
@@ -11472,6 +11524,7 @@
                         }
                     }
                 },
+                // 而让技能有效只需要一个参数就好了……
                 enableSkill:function(skill){
                     var skills=this.disabledSkills[skill];
                     this.disabledSkills[skill]=skills;
@@ -13218,6 +13271,7 @@
 					}
 				}
 			},
+			// 这里是……卡牌的……函数么？
 			card:{
 				init:function(card){
 					if(Array.isArray(card)){
@@ -13252,6 +13306,7 @@
     						img=null;
     					}
                     }
+                    // 这里是设置卡图的
 					if(!lib.config.hide_card_image&&lib.card[bg].fullskin){
 						this.classList.add('fullskin');
 						if(img){
@@ -13356,6 +13411,7 @@
 					this.node.name.innerHTML='';
 					this.node.image.className='image';
 					var name=get.translation(card[2]);
+					// 哟，这里是为属性杀追加名字的地方
 					if(card[2]=='sha'){
 						if(card[3]=='fire'){
 							name='火'+name;
@@ -13393,6 +13449,7 @@
 					}
 					if(typeof lib.card[card[2]].init=='function') lib.card[card[2]].init();
 
+					// 然后这里是添加别的标签的
 					switch(get.subtype(this)){
 						case 'equip1':
 							var added=false;
@@ -14056,6 +14113,7 @@
 					return this;
 				}
 			},
+			// 这里是用户端系数
             client:{
                 send:function(){
                     if(this.closed) return this;
@@ -14182,6 +14240,7 @@
 		card:{
 			list:[],
 		},
+		// 这里是所有限制的地方吧……
 		filter:{
 			all:function(){
 				return true;
@@ -14248,6 +14307,7 @@
                     }
                 }
             },
+            // 这里是用牌限制的设定！
 			cardEnabled:function(card,player,event){
 				if(player==undefined) player=_status.event.player;
 				var filter=get.info(card).enable;
@@ -14432,12 +14492,13 @@
                 return a>b?1:-1;
             }
 		},
+		// 技能结构……吗？？？
 		skill:{
 			global:[],
-            globalmap:{},
-			storage:{},
-			unequip:{},
-            undist:{},
+            globalmap:{},		// 全场都能用的技能？
+			storage:{},		// 标记
+			unequip:{},		// ……
+            undist:{},		// ……
 			mad:{
 				mark:true,
 				intro:{
@@ -14448,6 +14509,7 @@
                     }
 				}
 			},
+			// 这些，全都是固有技能吧。
 			ghujia:{
 				intro:{
 					content:function(content,player){
@@ -14585,12 +14647,6 @@
                     while(ui.dialogs.length){
                         ui.dialogs[0].close();
                     }
-                    // 这里是0灵力在回合结束增加的地方。
-                    // 要想办法给这个加一个设置。
-					if (player.lili == 0){
-						player.gainlili(1);
-						game.log(player,'因灵力为0，获得了1点灵力')
-					}
 					if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
 						player.popup('回合结束');
 					}
@@ -14849,10 +14905,12 @@
 					trigger.player.removeLink();
 				}
 			}
+			// 固有技能结束。
 		},
-		character:{},
-		perfectPair:{},
+		character:{},			// ？？
+		perfectPair:{},			// 珠联璧合
 		cardPile:{},
+		// 我靠这又是啥
         message:{
             server:{
                 init:function(version,config,banned_info){
@@ -31160,6 +31218,7 @@
 			ui._recycle[key]=node;
 		},
 	};
+	// 这里是获得数值的地方
 	var get={
         is:{
             empty:function(obj){
@@ -32268,6 +32327,7 @@
 			}
 			return skills;
 		},
+		// 我靠，这个unique原来是用来检查左慈能不能获得？？？
         gainableSkills:function(){
             var list=[];
             for(var i in lib.character){

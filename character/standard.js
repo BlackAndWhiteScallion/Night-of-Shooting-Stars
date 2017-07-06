@@ -468,8 +468,8 @@ character.standard={
 			group:['rende1'],
 			enable:'phaseUse',
 			filterCard:true,
-			selectCard:[1,Infinity],
-			discard:false,
+			selectCard:[1,Infinity],		// 哦，发动时要选择牌 —— 即事先的消耗么
+			discard:false,					// 然后是这些牌弃不弃
 			prepare:function(cards,player,targets){
 				player.$give(cards.length,targets[0]);
 			},
@@ -1187,6 +1187,7 @@ character.standard={
 				event.card=player.get('h').randomGet();
 				target.gain(event.card);
 				player.$give(event.card,target);
+				player.disableskill('fanjian',[player.skills[0]])
 				game.delay();
 				"step 2"
 				if(get.suit(event.card)+'2'!=event.choice) target.damage();

@@ -63,6 +63,7 @@ card.standard={
 			fullskin:true,
 			nature:['thunder','fire'],
 			type:'basic',
+			subtype:'attack',
 			enable:true,
 			usable:1,
 			range:{attack:1},
@@ -188,6 +189,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'basic',
+			subtype:'defense',
 			ai:{
 				basic:{
 					useful:[7,2],
@@ -446,6 +448,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			subtype:'support',
 			enable:true,
 			selectTarget:-1,
 			filterTarget:true,
@@ -927,6 +930,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			bonus:2,
 			enable:true,
 			selectTarget:1,
 			postAi:function(targets){
