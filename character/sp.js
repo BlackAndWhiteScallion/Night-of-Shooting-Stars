@@ -3175,7 +3175,7 @@ character.sp={
 							if(next.isOnline()){
 								player.send(function(card){
 									lib.skill.mozhix.viewAs=card;
-								},card)
+								},card)	
 							}
 							next.logSkill='mozhi';
 							next.set('openskilldialog','将一张手牌当'+get.translation(card)+'使用');

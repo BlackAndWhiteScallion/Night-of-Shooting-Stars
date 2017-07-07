@@ -1187,7 +1187,6 @@ character.standard={
 				event.card=player.get('h').randomGet();
 				target.gain(event.card);
 				player.$give(event.card,target);
-				player.disableskill('fanjian',[player.skills[0]])
 				game.delay();
 				"step 2"
 				if(get.suit(event.card)+'2'!=event.choice) target.damage();

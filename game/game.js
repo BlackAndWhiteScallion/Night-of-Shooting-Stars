@@ -4979,6 +4979,7 @@
 				}
 				game.reload();
 			},
+			// 哈？
 			u:function(){
 				var card={name:'sha'},source=game.me.next;
 				for(var i=0;i<arguments.length;i++){
@@ -7499,7 +7500,7 @@
 					"step 3"
 					if(!get.info(event.card).multitarget&&num<targets.length-1){
 						event.num++;
-						event.goto(2);	// 那看来这个是……
+						event.goto(2);	// 很有可能是作为event.trigger，设置事件所使用的。
 					}
 					// 这里就是结算后的事情了
 					"step 4"
@@ -11569,6 +11570,8 @@
                         }
                     }
                 },
+                // 好吧，似乎并不是多聪明的设置
+                // 为什么会移除技能啊……
                 removeSkillTrigger:function(skill,triggeronly){
                     var info=lib.skill[skill];
                     if(!info) return;
@@ -13274,6 +13277,7 @@
 			// 这里是……卡牌的……函数么？
 			card:{
 				init:function(card){
+					// 这里是设置火杀和雷杀的
 					if(Array.isArray(card)){
 						if(card[2]=='huosha'){
 							card[2]='sha';
@@ -13284,9 +13288,16 @@
 							card[3]='thunder';
 						}
 					}
+					// 没名字就没名字
                     if(!lib.card[card[2]]){
                         lib.card[card[2]]={};
                     }
+                    // 这里是设置卡的灵力加成的。
+                    if (!lib.card[card[4]]){
+                    	lib.card[card[4]]=0;
+                    }
+
+                    // 这里是给炉石用的……
                     if(lib.card[card[2]].epic){
                         this.classList.add('epic');
                     }
@@ -13410,6 +13421,7 @@
 					}
 					this.node.name.innerHTML='';
 					this.node.image.className='image';
+					// 一路到这里都是卡图的……
 					var name=get.translation(card[2]);
 					// 哟，这里是为属性杀追加名字的地方
 					if(card[2]=='sha'){
@@ -13422,17 +13434,21 @@
 							this.node.image.classList.add('thunder');
 						}
 					}
+					// 长名字要换行什么的
 					for(var i=0;i<name.length;i++){
 						this.node.name.innerHTML+=name[i]+'<br/>';
 					}
                     if(name.length>=5){
                         this.node.name.classList.add('long');
                     }
+                    // 这是获得卡牌的信息
 					this.node.name2.innerHTML=get.translation(card[0])+card[1]+' '+name;
 					this.suit=card[0];
 					this.number=card[1];
 					this.name=card[2];
+					this.bonus=card[4];			// 灵力加成！
 					this.classList.add('card');
+					// 你看，属性
 					if(card[3]){
 						if(lib.nature.contains(card[3])) this.nature=card[3];
 						this.classList.add(card[3]);
@@ -13441,6 +13457,7 @@
 						this.classList.remove(this.nature);
 						delete this.nature;
 					}
+					// 原来是为了看是不是装备没有没有属性的啊……
 					if(lib.card[card[2]].subtype) this.classList.add(lib.card[card[2]].subtype);
 					if(this.inits){
 						for(var i=0;i<lib.element.card.inits.length;i++){
@@ -13449,7 +13466,7 @@
 					}
 					if(typeof lib.card[card[2]].init=='function') lib.card[card[2]].init();
 
-					// 然后这里是添加别的标签的
+					// 如果有范围的话就贴个东西在下面
 					switch(get.subtype(this)){
 						case 'equip1':
 							var added=false;
@@ -14584,6 +14601,24 @@
 						if(target.isOut()) return 0;
 					}
 				}
+			},
+			// 灵力加成的效果部分。
+			_liliup:{
+				trigger:{target:'useCardToBefore'},
+				forced:true,
+				popup:false,
+				priority:20,
+				content:function(){
+					var up = get.bonus(trigger.card);
+					if (!up==0){
+						if (up > 0){
+							trigger.player.gainlili(up);
+						} 
+						if (up < 0){
+							trigger.player.loselili(up);
+						}
+					}
+				},
 			},
 			_phasebegin:{
 				trigger:{player:'phaseBegin'},
@@ -20386,7 +20421,7 @@
                 if(card.copy){
                     card.copy(node,false);
                 }
-                else{
+                else{		// 不知道这是什么，做个书签
                     var info=[card.suit||'',card.number||'',card.name||'',card.nature||''];
                     card=ui.create.card(node,'noclick',true);
                     card.init(info);
@@ -31594,8 +31629,9 @@
             }
             return targets;
         },
+        // 弹卡牌信息的地方，加了个灵力加成
 		cardInfo:function(card){
-			return [card.suit,card.number,card.name,card.nature];
+			return [card.suit,card.number,card.name,card.nature,card.bonus];
 		},
 		cardsInfo:function(cards){
 			var info=[];
@@ -31619,7 +31655,7 @@
 			return cards;
 		},
         cardInfoOL:function(card){
-            return '_noname_card:'+JSON.stringify([card.cardid,card.suit,card.number,card.name,card.nature]);
+            return '_noname_card:'+JSON.stringify([card.cardid,card.suit,card.number,card.name,card.nature,card.bonus]);
         },
         infoCardOL:function(info){
             if(!lib.cardOL) return info;
@@ -31949,6 +31985,10 @@
 		},
 		nature:function(card){
 			return card.nature;
+		},
+		// 获得灵力加成的位置。这里应该是get.bonus吧。
+		bonus:function(card){
+			return card.bonus;
 		},
 		cards:function(num){
 			var list=[];

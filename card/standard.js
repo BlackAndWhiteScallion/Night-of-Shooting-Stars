@@ -58,6 +58,8 @@ card.standard={
 				}
 			}
 		},
+		// 这里是杀的代码！
+		// 还外带了所有杀有关时机的发动……真是
 		sha:{
 			audio:true,
 			fullskin:true,
@@ -1948,17 +1950,17 @@ card.standard={
 		["heart",12,"tao"],
 		["diamond",12,"tao"],
 
-		["spade",2,"bagua"],
-		["club",2,"bagua"],
-		["spade",5,"jueying"],
-		["club",5,"dilu"],
-		["heart",13,"zhuahuang"],
-		["heart",5,"chitu"],
-		["spade",13,"dawan"],
-		["diamond",13,"zixin"],
-		["club",1,"zhuge"],
-		["diamond",1,"zhuge"],
-		["spade",2,"cixiong"],
+		["spade",2,"bagua",'',2],
+		["club",2,"bagua",'',2],
+		["spade",5,"jueying",'',2],
+		["club",5,"dilu",'',2],
+		["heart",13,"zhuahuang",'',2],
+		["heart",5,"chitu",'',2],
+		["spade",13,"dawan",'',2],
+		["diamond",13,"zixin",'',2],
+		["club",1,"zhuge",'',2],
+		["diamond",1,"zhuge",'',2],
+		["spade",2,"cixiong",'',2],
 		["spade",6,"qinggang"],
 		["spade",5,"qinglong"],
 		["spade",12,"zhangba"],
