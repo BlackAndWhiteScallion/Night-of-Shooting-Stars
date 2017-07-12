@@ -1619,22 +1619,32 @@ mode.brawl={
                     cardpileaddnumber.style.marginLeft='3px';
                     cardpileaddnumber.style.marginRight='3px';
                     cardpileaddnumber.style.width='85px';
+                    // 默默复制粘贴了添加灵力的地方
+                    var cardpileaddbonus=ui.create.selectlist([
+                        ['random','随机灵力'],-2,-1,0,1,2,3
+                    ],null,line3);
+                    cardpileaddbonus.style.marginLeft='3px';
+                    cardpileaddbonus.style.marginRight='3px';
+                    cardpileaddbonus.style.width='85px';
 
                     var fakecard=function(info,position,capt){
-                        var name=info[0],suit=info[1],number=info[2];
+                        // 在这里也是，bonus全部都是灵力复制的
+                        var name=info[0],suit=info[1],number=info[2],bonus=info[3];
                         var card=ui.create.card(null,'noclick',true);
                         card.style.zoom=0.6;
                         number=parseInt(cardpileaddnumber.value);
+                        bonus=parseInt(cardpileaddbonus.value);     // 这里
                         var name2=name;
                         var suit2=suit;
                         var number2=number;
+                        var bonus2=bonus;   // 这里
                         if(name2=='random') name2='sha';
                         if(suit2=='random') suit2='?';
                         if(!number2){
                             number='random';
                             number2='?';
                         }
-                        card.init([suit2,number2,name2]);
+                        card.init([suit2,number2,name2,'',bonus2]);
                         card.info=info;
                         if(name=='random'){
                             card.node.name.innerHTML=get.verticalStr('随机卡牌');

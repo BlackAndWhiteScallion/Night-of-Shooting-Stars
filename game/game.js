@@ -13467,6 +13467,13 @@
 					}
 					if(typeof lib.card[card[2]].init=='function') lib.card[card[2]].init();
 
+					// 贴个灵力加成在底下
+					if (this.bonus && this.bonus != 0) {
+						if (this.bonus > 0)
+							this.node.range.innerHTML = '灵力：+' + this.bonus;
+						else
+							this.node.range.innerHTML = '灵力：' + this.bonus;
+					}
 					// 如果有范围的话就贴个东西在下面
 					switch(get.subtype(this)){
 						case 'equip1':
@@ -33072,6 +33079,9 @@
 					}
 				}
 				else if(lib.translate[name+'_info']){
+					if (get.bonus(node) != 0){
+						uiintro.add('<div class="text center">灵力：'+ get.bonus(node) +'</div>');
+					}
 					if(get.subtype(node)=='equip1'){
 						var added=false;
 						if(lib.card[node.name]&&lib.card[node.name].distance){
