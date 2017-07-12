@@ -12,7 +12,7 @@ character.standard={
 		liubei:['male','shu',4,['rende','jijiang'],['zhu']],
 		guanyu:['male','shu',4,['wusheng']],
 		zhangfei:['male','shu',4,['paoxiao']],
-		zhugeliang:['male','shu',3,['guanxing','kongcheng']],
+		zhugeliang:['male','shu',3,['guanxing','kongcheng'],[],3],
 		zhaoyun:['male','shu',4,['longdan']],
 		machao:['male','shu',4,['mashu','tieji']],
 		huangyueying:['female','shu',3,['jizhi','qicai']],
@@ -738,6 +738,8 @@ character.standard={
 		},
 		guanxing:{
 			audio:2,
+			spell:true,
+			cost:1,
 			audioname:['jiangwei'],
 			trigger:{player:'phaseBegin'},
 			frequent:true,

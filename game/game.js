@@ -5222,6 +5222,7 @@
     		_chongzhu:'重铸',
     		_lianhuan:'连环',
     		_lianhuan2:'连环',
+    		_spell:'符卡',
 		},
 		element:{
 			content:{
@@ -8738,7 +8739,7 @@
 					}
 					var info=lib.character[character];
                     if(!info){
-                        info=['','',1,[],[]];	// 名字，势力，体力上限，技能，和什么东西？
+                        info=['','',1,[],[]];	// 名字，势力，体力上限，技能，和是否为主公
                     }
                     if(!info[4]){
                         info[4]=[];
@@ -14685,12 +14686,47 @@
 					if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
 						player.popup('回合结束');
 					}
+					if (player.isTurnedOver()){
+						player.turnOver();
+					}
                     game.syncState();
 					game.addVideo('phaseChange',player);
 					game.log();
 					game.log(player,'的回合结束');
 					player._noVibrate=true;
 
+				},
+			},
+			// 该是时候加入符卡发动的部分了。
+			_spell:{
+				trigger:{player:'phaseBegin'},
+				//forced:true,
+				priority:20,
+				popup:true,
+				filter:function(event,player){
+					var info = "";
+					for(var i=0;i<player.skills.length;i++){
+						if(get.is.spell(player.skills[i])){
+							info = lib.skill[player.skills[i]];
+							break;
+						}
+					}
+					if (info == "") return false;
+					return (player.lili > info.cost);
+				},
+				content:function(){
+					var info = "";
+					for(var i=0;i<player.skills.length;i++){
+						if(get.is.spell(player.skills[i])){
+							info = lib.skill[player.skills[i]];
+							break;
+						}
+					}
+					if (info == "") return false;
+					if (info.cost > 0){
+						player.loselili(info.cost);
+					}
+					player.turnOver();
 				},
 			},
             _discard:{
@@ -31271,7 +31307,13 @@
     			if(info.locked) return true;
     			return false;
     		},
+    		spell:function(skill){
+    			var info=lib.skill[skill];
+    			if (info.spell) return true;
+    			return false;
+    		},
         },
+        // 喂喂，这里是技能发动的对话
         prompt:function(skill,target,player){
             player=player||_status.event.player;
             if(target){
@@ -33004,6 +33046,7 @@
 				else{
 					uiintro.add(get.translation(node));
 				}
+				// 木牛
 				if(node.name=='muniu'&&get.position(node)=='e'){
 					var num=0;
 					if(node.cards){
