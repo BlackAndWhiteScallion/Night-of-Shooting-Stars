@@ -5199,7 +5199,7 @@
 			qunColor:"#f6f6f6",
 			basic:'基本',
 			equip:'装备',
-			trick:'锦囊',
+			trick:'法术',
 			delay:'延迟锦囊',
 			character:'角色',
 			revive:'复活',
@@ -33079,7 +33079,7 @@
 					}
 				}
 				else if(lib.translate[name+'_info']){
-					if (get.bonus(node) != 0){
+					if (get.bonus(node) && get.bonus(node) != 0){
 						uiintro.add('<div class="text center">灵力：'+ get.bonus(node) +'</div>');
 					}
 					if(get.subtype(node)=='equip1'){

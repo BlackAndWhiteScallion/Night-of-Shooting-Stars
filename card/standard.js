@@ -187,6 +187,7 @@ card.standard={
 				}
 			}
 		},
+		// 闪
 		shan:{
 			audio:true,
 			fullskin:true,
@@ -199,9 +200,11 @@ card.standard={
 				}
 			}
 		},
+		// 桃
 		tao:{
 			fullskin:true,
 			type:'basic',
+			subtype:'heal',
 			enable:function(card,player){
 				return player.hp<player.maxHp;
 			},
@@ -284,6 +287,322 @@ card.standard={
 				}
 			}
 		},
+		guohe:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			enable:true,
+			selectTarget:1,
+			postAi:function(targets){
+				return targets.length==1&&targets[0].num('j');
+			},
+			filterTarget:function(card,player,target){
+				if(player==target) return false;
+				return (target.num('hej')>0) && get.distance(player,target,'attack')<=1;;
+			},
+			content:function(){
+				if(target.num('hej')){
+					player.discardPlayerCard('hej',target,true);
+				}
+			},
+			ai:{
+				basic:{
+					order:9,
+					useful:1,
+					value:5,
+				},
+				result:{
+					target:function(player,target){
+						var es=target.get('e');
+						var nh=target.num('h');
+						var noe=(es.length==0||target.hasSkillTag('noe'));
+						var noe2=(es.length==1&&es[0].name=='baiyin'&&target.hp<target.maxHp);
+						var noh=(nh==0||target.hasSkillTag('noh'));
+						if(noh&&noe) return 0;
+						if(noh&&noe2) return 0.01;
+						if(ai.get.attitude(player,target)<=0) return (target.num('he'))?-1.5:1.5;
+						var js=target.get('j');
+						if(js.length){
+							var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
+							if(jj.name=='guohe') return 3;
+							if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
+								return -1.5;
+							}
+							return 2;
+						}
+						return -1.5;
+					},
+				},
+				tag:{
+					loseCard:1,
+				}
+			}
+		},
+		shunshou:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			enable:true,
+			range:{global:1},
+			selectTarget:1,
+			postAi:function(targets){
+				return targets.length==1&&targets[0].num('j');
+			},
+			filterTarget:function(card,player,target){
+				if(player==target) return false;
+				return (target.num('hej')>0);
+			},
+			content:function(){
+				if(target.num('hej')){
+					player.gainPlayerCard('hej',target,true);
+				}
+			},
+			ai:{
+				wuxie:function(target,card,player,viewer){
+					if(ai.get.attitude(viewer,player)>0&&ai.get.attitude(viewer,target)>0){
+						return 0;
+					}
+				},
+				basic:{
+					order:7.5,
+					useful:4,
+					value:9
+				},
+				result:{
+					target:function(player,target){
+						if(ai.get.attitude(player,target)<=0) return (target.num('he')>0)?-1.5:1.5;
+						var js=target.get('j');
+						if(js.length){
+							var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
+							if(jj.name=='shunshou') return 3;
+							if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
+								return -1.5;
+							}
+							return 3;
+						}
+						return -1.5;
+					},
+					player:function(player,target){
+						if(ai.get.attitude(player,target)<0&&!target.num('he')){
+							return 0;
+						}
+						if(ai.get.attitude(player,target)>1){
+							var js=target.get('j');
+							if(js.length){
+								var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
+								if(jj.name=='shunshou') return 1;
+								if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
+									return 0;
+								}
+								return 1;
+							}
+							return 0;
+						}
+						return 1;
+					}
+				},
+				tag:{
+					loseCard:1,
+					gain:1,
+				}
+			}
+		},
+		reidaisai:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			enable:true,
+			selectTarget:-1,
+			filterTarget:function(card,player,target){
+				return true;
+			},
+			content:function(){
+				target.draw();
+				target.chooseCardTarget({
+					selectCard:1,
+					filterTarget:function(card,player,target){
+						return player != target;
+					},
+					ai2:function(target){
+						return ai.get.attitude(_status.event.player,target);
+					},
+					prompt:'请选择要送人的卡牌'
+				});
+				if(result.targets&&result.targets[0]){
+					result.targets[0].gain(result.cards);
+					target.$give(result.cards.length,result.targets[0]);
+				}
+			},
+		},
+		wuzhong:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			enable:true,
+			selectTarget:-1,
+			filterTarget:function(card,player,target){
+				return target==player;
+			},
+			modTarget:true,
+			content:function(){
+				target.draw(2);
+			},
+			ai:{
+				basic:{
+					order:7.2,
+					useful:4,
+					value:9.2
+				},
+				result:{
+					target:2,
+				},
+				tag:{
+					draw:2
+				}
+			}
+		},
+		juedou:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			enable:true,
+			filterTarget:function(card,player,target){
+				return target!=player;
+			},
+			content:function(){
+				"step 0"
+				if(event.turn==undefined) event.turn=target;
+				"step 1"
+				event.trigger('juedou');
+				"step 2"
+				if(event.directHit){
+					event._result={bool:false};
+				}
+				else{
+					var next=event.turn.chooseToRespond({name:'sha'});
+					next.set('ai',function(card){
+						var event=_status.event;
+						var player=event.splayer;
+						var target=event.starget;
+						if(player.hasSkillTag('notricksource')) return 0;
+						if(target.hasSkillTag('notrick')) return 0;
+						if(event.player==target){
+							if(player.hasSkill('naman')) return -1;
+							if(ai.get.attitude(target,player)<0){
+								return ai.get.unuseful2(card)
+							}
+							return -1;
+						}
+						else{
+							if(target.hasSkill('naman')) return -1;
+							if(ai.get.attitude(player,target)<0){
+								return ai.get.unuseful2(card)
+							}
+							return -1;
+						}
+					});
+					next.set('splayer',player);
+					next.set('starget',target);
+					next.autochoose=lib.filter.autoRespondSha;
+					if(event.turn==target){
+						next.source=player;
+					}
+					else{
+						next.source=target;
+					}
+				}
+				"step 3"
+				if(event.target.isDead()||event.player.isDead()){
+					event.finish();
+				}
+				else{
+					if(result.bool){
+						if(event.turn==target) event.turn=player;
+						else event.turn=target;
+						event.goto(1);
+					}
+					else{
+						if(event.turn==target){
+							target.damage();
+						}
+						else{
+							player.damage(target);
+						}
+					}
+				}
+			},
+			ai:{
+				basic:{
+					order:5,
+					useful:1,
+					value:4.5
+				},
+				result:{
+					target:-1.5,
+					player:function(player,target){
+						if(ai.get.damageEffect(target,player,target)>0&&ai.get.attitude(player,target)>0&&ai.get.attitude(target,player)>0){
+							return 0;
+						}
+						var hs1=target.get('h','sha');
+						var hs2=player.get('h','sha');
+						if(hs1.length>hs2.length+1){
+							return -2;
+						}
+						var hsx=target.get('h');
+						if(hsx.length>2&&hs2.length==0&&hsx[0].number<6){
+							return -2;
+						}
+						if(hsx.length>3&&hs2.length==0){
+							return -2;
+						}
+						if(hs1.length>hs2.length&&(!hs2.length||hs1[0].number>hs2[0].number)){
+							return -2;
+						}
+						return -0.5;
+					}
+				},
+				tag:{
+					respond:2,
+					respondSha:2,
+					damage:1,
+				}
+			}
+		},
+		danmakucraze:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			enable:true,
+			selectTarget:-1,
+			filterTarget:function(card,player,target){
+				return target==player;
+			},
+			modTarget:true,
+			content:function(){
+				target.draw(1);
+				target.addTempSkill('paoxiao','phaseAfter');
+			},
+			ai:{
+				basic:{
+					order:7.2,
+					useful:4,
+					value:9.2
+				},
+				result:{
+					target:2,
+				},
+				tag:{
+					draw:1
+				}
+			}
+		},
+
+
+
+
+
+
+		// 装备的名字和技能设置
 		bagua:{
 			fullskin:true,
 			type:'equip',
@@ -446,589 +765,7 @@ card.standard={
 			},
 			skills:['qilin_skill']
 		},
-		wugu:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			subtype:'support',
-			enable:true,
-			selectTarget:-1,
-			filterTarget:true,
-			contentBefore:function(){
-				"step 0"
-				game.delay();
-				"step 1"
-				ui.clear();
-				var cards=get.cards(game.players.length);
-				var dialog=ui.create.dialog('五谷丰登',cards,true);
-				_status.dieClose.push(dialog);
-				dialog.videoId=lib.status.videoId++;
-				game.addVideo('cardDialog',null,['五谷丰登',get.cardsInfo(cards),dialog.videoId]);
-				event.getParent().preResult=dialog.videoId;
-				game.broadcast(function(cards,id){
-					var dialog=ui.create.dialog('五谷丰登',cards,true);
-					_status.dieClose.push(dialog);
-					dialog.videoId=id;
-				},cards,dialog.videoId);
-			},
-			content:function(){
-				"step 0"
-				for(var i=0;i<ui.dialogs.length;i++){
-					if(ui.dialogs[i].videoId==event.preResult){
-						event.dialog=ui.dialogs[i];break;
-					}
-				}
-				if(!event.dialog){
-					event.finish();
-					return;
-				}
-				if(event.dialog.buttons.length>1){
-					var next=target.chooseButton(true,function(button){
-						return ai.get.value(button.link,_status.event.player);
-					});
-					next.set('dialog',event.preResult);
-					next.set('closeDialog',false);
-					next.set('dialogdisplay',true);
-				}
-				else{
-					event.directButton=event.dialog.buttons[0];
-				}
-				"step 1"
-				var dialog=event.dialog;
-				var card;
-				if(event.directButton){
-					card=event.directButton.link;
-				}
-				else{
-					card=result.links[0];
-				}
-
-				var button;
-				for(var i=0;i<dialog.buttons.length;i++){
-					if(dialog.buttons[i].link==card){
-						button=dialog.buttons[i];
-						button.querySelector('.info').innerHTML=get.translation(target.name);
-						dialog.buttons.remove(button);
-						break;
-					}
-				}
-				var capt=get.translation(target)+'选择了'+get.translation(button.link);
-				if(card){
-					target.gain(card);
-					target.$gain2(card);
-					game.broadcast(function(card,id,name,capt){
-						var dialog=get.idDialog(id);
-						if(dialog){
-							dialog.content.firstChild.innerHTML=capt;
-							for(var i=0;i<dialog.buttons.length;i++){
-								if(dialog.buttons[i].link==card){
-									dialog.buttons[i].querySelector('.info').innerHTML=name;
-									dialog.buttons.splice(i--,1);
-									break;
-								}
-							}
-						}
-					},card,dialog.videoId,get.translation(target.name),capt);
-				}
-				dialog.content.firstChild.innerHTML=capt;
-				game.addVideo('dialogCapt',null,[dialog.videoId,dialog.content.firstChild.innerHTML]);
-				game.log(target,'选择了',button.link);
-				game.delay();
-			},
-			contentAfter:function(){
-				for(var i=0;i<ui.dialogs.length;i++){
-					if(ui.dialogs[i].videoId==event.preResult){
-						ui.dialogs[i].close();
-						_status.dieClose.remove(ui.dialogs[i]);
-						break;
-					}
-				}
-				game.broadcast(function(id){
-					var dialog=get.idDialog(id);
-					if(dialog){
-						dialog.close();
-						_status.dieClose.remove(dialog);
-					}
-				},event.preResult);
-				game.addVideo('cardDialog',null,event.preResult);
-			},
-			ai:{
-				wuxie:function(){
-					if(Math.random()<0.5) return 0;
-				},
-				basic:{
-					order:3,
-					useful:1,
-				},
-				result:{
-					target:function(player,target){
-						var num=0;
-						for(var i=0;i<game.players.length;i++){
-							if(game.players[i].ai.shown==0) num++;
-						}
-						if(num>1) return 0;
-						return 2-2*get.distance(player,target,'absolute')/game.players.length;
-					}
-				},
-				tag:{
-					draw:1,
-					multitarget:1
-				}
-			}
-		},
-		taoyuan:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			enable:true,
-			selectTarget:-1,
-			filterTarget:function(card,player,target){
-				return target.hp<target.maxHp;
-			},
-			content:function(){
-				target.recover();
-			},
-			ai:{
-				basic:{
-					order:9,
-					useful:[3,1],
-					value:0
-				},
-				result:{
-					target:function(player,target){
-						return (target.hp<target.maxHp)?2:0;
-					}
-				},
-				tag:{
-					recover:0.5,
-					multitarget:1
-				}
-			}
-		},
-		nanman:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			enable:true,
-			selectTarget:-1,
-			filterTarget:function(card,player,target){
-				return target!=player;
-			},
-			content:function(){
-				"step 0"
-				var next=target.chooseToRespond({name:'sha'});
-				next.set('ai',function(card){
-					var evt=_status.event.getParent();
-					if(ai.get.damageEffect(evt.target,evt.player,evt.target)>=0) return 0;
-					if(evt.player.hasSkillTag('notricksource')) return 0;
-					if(evt.target.hasSkillTag('notrick')) return 0;
-					return 1;
-				});
-				next.autochoose=lib.filter.autoRespondSha;
-				"step 1"
-				if(result.bool==false){
-					target.damage();
-				}
-			},
-			ai:{
-				wuxie:function(target,card,player,viewer){
-					if(ai.get.attitude(viewer,target)>0&&target.num('h','sha')){
-						if(!target.num('h')||target.hp==1||Math.random()<0.7) return 0;
-					}
-				},
-				basic:{
-					order:9,
-					useful:[5,1]
-				},
-				result:{
-					target:function(player,target){
-						var num=0;
-						for(var i=0;i<game.players.length;i++){
-							if(game.players[i].ai.shown==0) num++;
-						}
-						if(num>1) return 0;
-						var nh=target.num('h');
-						if(get.mode()=='identity'){
-							if(target.isZhu&&nh<=2&&target.hp<=1) return -100;
-						}
-						if(nh==0) return -2;
-						if(nh==1) return -1.7
-						return -1.5;
-					},
-				},
-				tag:{
-					respond:1,
-					respondSha:1,
-					damage:1,
-					multitarget:1,
-					multineg:1,
-				}
-			}
-		},
-		wanjian:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			enable:true,
-			selectTarget:-1,
-			filterTarget:function(card,player,target){
-				return target!=player;
-			},
-			content:function(){
-				"step 0"
-				var next=target.chooseToRespond({name:'shan'});
-				next.set('ai',function(card){
-					var evt=_status.event.getParent();
-					if(ai.get.damageEffect(evt.target,evt.player,evt.target)>=0) return 0;
-					if(evt.player.hasSkillTag('notricksource')) return 0;
-					if(evt.target.hasSkillTag('notrick')) return 0;
-					return 1;
-				});
-				next.autochoose=lib.filter.autoRespondShan;
-				"step 1"
-				if(result.bool==false){
-					target.damage();
-				}
-			},
-			ai:{
-				wuxie:function(target,card,player,viewer){
-					if(ai.get.attitude(viewer,target)>0&&target.num('h','shan')){
-						if(!target.num('h')||target.hp==1||Math.random()<0.7) return 0;
-					}
-				},
-				basic:{
-					order:9,
-					useful:1
-				},
-				result:{
-					target:function(player,target){
-						var num=0;
-						for(var i=0;i<game.players.length;i++){
-							if(game.players[i].ai.shown==0) num++;
-						}
-						if(num>1) return 0;
-						var nh=target.num('h');
-						if(get.mode()=='identity'){
-							if(target.isZhu&&nh<=2&&target.hp<=1) return -100;
-						}
-						if(nh==0) return -2;
-						if(nh==1) return -1.7
-						return -1.5;
-					},
-				},
-				tag:{
-					respond:1,
-					respondShan:1,
-					damage:1,
-					multitarget:1,
-					multineg:1,
-				}
-			}
-		},
-		wuzhong:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			enable:true,
-			selectTarget:-1,
-			filterTarget:function(card,player,target){
-				return target==player;
-			},
-			modTarget:true,
-			content:function(){
-				target.draw(2);
-			},
-			ai:{
-				basic:{
-					order:7.2,
-					useful:4,
-					value:9.2
-				},
-				result:{
-					target:2,
-				},
-				tag:{
-					draw:2
-				}
-			}
-		},
-		juedou:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			enable:true,
-			filterTarget:function(card,player,target){
-				return target!=player;
-			},
-			content:function(){
-				"step 0"
-				if(event.turn==undefined) event.turn=target;
-				"step 1"
-				event.trigger('juedou');
-				"step 2"
-				if(event.directHit){
-					event._result={bool:false};
-				}
-				else{
-					var next=event.turn.chooseToRespond({name:'sha'});
-					next.set('ai',function(card){
-						var event=_status.event;
-						var player=event.splayer;
-						var target=event.starget;
-						if(player.hasSkillTag('notricksource')) return 0;
-						if(target.hasSkillTag('notrick')) return 0;
-						if(event.player==target){
-							if(player.hasSkill('naman')) return -1;
-							if(ai.get.attitude(target,player)<0){
-								return ai.get.unuseful2(card)
-							}
-							return -1;
-						}
-						else{
-							if(target.hasSkill('naman')) return -1;
-							if(ai.get.attitude(player,target)<0){
-								return ai.get.unuseful2(card)
-							}
-							return -1;
-						}
-					});
-					next.set('splayer',player);
-					next.set('starget',target);
-					next.autochoose=lib.filter.autoRespondSha;
-					if(event.turn==target){
-						next.source=player;
-					}
-					else{
-						next.source=target;
-					}
-				}
-				"step 3"
-				if(event.target.isDead()||event.player.isDead()){
-					event.finish();
-				}
-				else{
-					if(result.bool){
-						if(event.turn==target) event.turn=player;
-						else event.turn=target;
-						event.goto(1);
-					}
-					else{
-						if(event.turn==target){
-							target.damage();
-						}
-						else{
-							player.damage(target);
-						}
-					}
-				}
-			},
-			ai:{
-				basic:{
-					order:5,
-					useful:1,
-					value:4.5
-				},
-				result:{
-					target:-1.5,
-					player:function(player,target){
-						if(ai.get.damageEffect(target,player,target)>0&&ai.get.attitude(player,target)>0&&ai.get.attitude(target,player)>0){
-							return 0;
-						}
-						var hs1=target.get('h','sha');
-						var hs2=player.get('h','sha');
-						if(hs1.length>hs2.length+1){
-							return -2;
-						}
-						var hsx=target.get('h');
-						if(hsx.length>2&&hs2.length==0&&hsx[0].number<6){
-							return -2;
-						}
-						if(hsx.length>3&&hs2.length==0){
-							return -2;
-						}
-						if(hs1.length>hs2.length&&(!hs2.length||hs1[0].number>hs2[0].number)){
-							return -2;
-						}
-						return -0.5;
-					}
-				},
-				tag:{
-					respond:2,
-					respondSha:2,
-					damage:1,
-				}
-			}
-		},
-		shunshou:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			enable:true,
-			range:{global:1},
-			selectTarget:1,
-			postAi:function(targets){
-				return targets.length==1&&targets[0].num('j');
-			},
-			filterTarget:function(card,player,target){
-				if(player==target) return false;
-				return (target.num('hej')>0);
-			},
-			content:function(){
-				if(target.num('hej')){
-					player.gainPlayerCard('hej',target,true);
-				}
-			},
-			ai:{
-				wuxie:function(target,card,player,viewer){
-					if(ai.get.attitude(viewer,player)>0&&ai.get.attitude(viewer,target)>0){
-						return 0;
-					}
-				},
-				basic:{
-					order:7.5,
-					useful:4,
-					value:9
-				},
-				result:{
-					target:function(player,target){
-						if(ai.get.attitude(player,target)<=0) return (target.num('he')>0)?-1.5:1.5;
-						var js=target.get('j');
-						if(js.length){
-							var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-							if(jj.name=='shunshou') return 3;
-							if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
-								return -1.5;
-							}
-							return 3;
-						}
-						return -1.5;
-					},
-					player:function(player,target){
-						if(ai.get.attitude(player,target)<0&&!target.num('he')){
-							return 0;
-						}
-						if(ai.get.attitude(player,target)>1){
-							var js=target.get('j');
-							if(js.length){
-								var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-								if(jj.name=='shunshou') return 1;
-								if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
-									return 0;
-								}
-								return 1;
-							}
-							return 0;
-						}
-						return 1;
-					}
-				},
-				tag:{
-					loseCard:1,
-					gain:1,
-				}
-			}
-		},
-		guohe:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			bonus:2,
-			enable:true,
-			selectTarget:1,
-			postAi:function(targets){
-				return targets.length==1&&targets[0].num('j');
-			},
-			filterTarget:function(card,player,target){
-				if(player==target) return false;
-				return (target.num('hej')>0);
-			},
-			content:function(){
-				if(target.num('hej')){
-					player.discardPlayerCard('hej',target,true);
-				}
-			},
-			ai:{
-				basic:{
-					order:9,
-					useful:1,
-					value:5,
-				},
-				result:{
-					target:function(player,target){
-						var es=target.get('e');
-						var nh=target.num('h');
-						var noe=(es.length==0||target.hasSkillTag('noe'));
-						var noe2=(es.length==1&&es[0].name=='baiyin'&&target.hp<target.maxHp);
-						var noh=(nh==0||target.hasSkillTag('noh'));
-						if(noh&&noe) return 0;
-						if(noh&&noe2) return 0.01;
-						if(ai.get.attitude(player,target)<=0) return (target.num('he'))?-1.5:1.5;
-						var js=target.get('j');
-						if(js.length){
-							var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-							if(jj.name=='guohe') return 3;
-							if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
-								return -1.5;
-							}
-							return 2;
-						}
-						return -1.5;
-					},
-				},
-				tag:{
-					loseCard:1,
-				}
-			}
-		},
-		jiedao:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			enable:true,
-			selectTarget:2,
-			multitarget:true,
-			targetprompt:['被借刀','出杀目标'],
-			filterTarget:function(card,player,target){
-				if(ui.selected.targets.length==0){
-					return (player!=target&&target.get('e',{subtype:'equip1'}).length);
-				}
-				else{
-					return lib.filter.filterTarget({name:'sha'},ui.selected.targets[0],target);
-				}
-			},
-			content:function(){
-				"step 0"
-				targets[0].chooseToUse('对'+get.translation(targets[1])+'使用一张杀，或令'+get.translation(player)+'获得你的武器牌',
-					{name:'sha'},targets[1],-1).set('targetRequired',true);
-				"step 1"
-				if(result.bool==false){
-					player.gain(targets[0].get('e',{subtype:'equip1'}));
-					targets[0].$give(targets[0].get('e',{subtype:'equip1'}),player);
-				}
-			},
-			ai:{
-				basic:{
-					order:8,
-					value:2,
-					useful:1,
-				},
-				result:{
-					target:-1.5,
-					player:function(player){
-						if(player.get('he',{subtype:'equip1'}).length) return 0;
-						return 1.5;
-					},
-				},
-				tag:{
-					gain:1,
-					use:1,
-					useSha:1,
-					multitarget:1,
-					multineg:1,
-					loseCard:1,
-				}
-			}
-		},
+		// 到这里结束。
 		wuxie:{
 			audio:true,
 			fullskin:true,
@@ -1059,172 +796,6 @@ card.standard={
 					}
 				}
 			},
-		},
-		lebu:{
-			audio:true,
-			fullskin:true,
-			type:'delay',
-			filterTarget:function(card,player,target){
-				return (lib.filter.judge(card,player,target)&&player!=target);
-			},
-			judge:function(card){
-				if(get.suit(card)=='heart') return 0;
-				return -3;
-			},
-			effect:function(){
-				if(result.bool==false){
-					player.skip('phaseUse');
-				}
-			},
-			ai:{
-				basic:{
-					order:1,
-					useful:1,
-					value:8,
-				},
-				result:{
-					target:function(player,target){
-						var num=target.hp-target.num('h')-2;
-						if(num>-1) return -0.01;
-						if(target.hp<3) num--;
-						if(target.isTurnedOver()) num/=2;
-						var dist=get.distance(player,target,'absolute');
-						if(dist<1) dist=1;
-						return num/Math.sqrt(dist);
-					}
-				},
-				tag:{
-					skip:'phaseUse'
-				}
-			}
-		},
-		shandian:{
-			audio:true,
-			fullskin:true,
-			type:'delay',
-			enable:function(card,player){
-				return (lib.filter.judge(card,player,player));
-			},
-			filterTarget:function(card,player,target){
-				return (lib.filter.judge(card,player,target)&&player==target);
-			},
-			selectTarget:[-1,-1],
-			judge:function(card){
-				if(get.suit(card)=='spade'&&get.number(card)>1&&get.number(card)<10) return -6;
-				return 0;
-			},
-			effect:function(){
-				if(result.judge){
-					player.damage(3,'thunder','nosource');
-				}
-				else{
-					if(!card.expired){
-						var target=player.next;
-						for(var iwhile=0;iwhile<10;iwhile++){
-							if(target.num('j','shandian')){
-								target=target.next;
-							}
-							else{
-								break;
-							}
-						}
-						if(target.num('j','shandian')||target==player){
-							ui.discardPile.appendChild(card);
-						}
-						else{
-							if(card.name!='shandian'){
-								target.addJudge('shandian',card);
-							}
-							else{
-								target.addJudge(card);
-							}
-						}
-					}
-					else{
-						card.expired=false;
-					}
-				}
-			},
-			cancel:function(){
-				if(!card.expired){
-					var target=player.next;
-					for(var iwhile=0;iwhile<10;iwhile++){
-						if(target.num('j','shandian')){
-							target=target.next;
-						}
-						else{
-							break;
-						}
-					}
-					if(target.num('j','shandian')||target==player){
-						ui.discardPile.appendChild(card);
-					}
-					else{
-						if(card.name!='shandian'){
-							target.addJudge('shandian',card);
-						}
-						else{
-							target.addJudge(card);
-						}
-					}
-				}
-				else{
-					card.expired=false;
-				}
-			},
-			ai:{
-				basic:{
-					order:1,
-					useful:0,
-					value:0,
-				},
-				result:{
-					target:function(player,target){
-						var rejudge,num=0;
-						for(var i=0;i<game.players.length;i++){
-							for(var j=0;j<game.players[i].skills.length;j++){
-								rejudge=get.tag(game.players[i].skills[j],'rejudge',game.players[i]);
-								if(rejudge!=undefined){
-									if(ai.get.attitude(target,game.players[i])>0&&
-										ai.get.attitude(game.players[i],target)>0) num+=rejudge;
-									else num-=rejudge;
-								}
-							}
-						}
-						if(num>0) return num;
-						if(num==0){
-							var mode=get.mode();
-							if(mode=='identity'){
-								if(target.identity=='nei') return 1;
-								var situ=ai.get.situation();
-								if(target.identity=='fan'){
-									if(situ>1) return 1;
-								}
-								else{
-									if(situ<-1) return 1;
-								}
-							}
-							else if(mode=='guozhan'){
-								if(target.identity=='ye') return 1;
-								for(var i=0;i<game.players.length;i++){
-									if(game.players[i].identity=='unknown') return -1;
-								}
-								if(get.population(target.identity)==1){
-									if(target.maxHp>2&&target.hp<2) return 1;
-									if(game.players.length<3) return -1;
-									if(target.hp<=2&&target.num('he')<=3) return 1;
-								}
-							}
-						}
-						return -1;
-					}
-				},
-				tag:{
-					// damage:1,
-					// natureDamage:1,
-					// thunderDamage:1,
-				}
-			}
 		},
 		hanbing:{
 			fullskin:true,
@@ -1513,6 +1084,7 @@ card.standard={
 				if(event.name!='phaseJudge'){
 					if(!event.target) return false;
 					if(event.player.hasSkillTag('playernowuxie')) return false;
+					if (event.target == event.source) return false;
 					if(get.type(event.card)!='trick'&&!get.info(event.card).wuxieable) return false;
 				}
 				return true;
@@ -1783,52 +1355,18 @@ card.standard={
 		},
 	},
 	translate:{
-		sha:'杀',
+		sha:'轰！',
 		huosha:'火杀',
 		leisha:'雷杀',
-		shan:'闪',
-		tao:'桃',
-		bagua:'八卦阵',
-		bagua_bg:'卦',
-		bagua_skill:'八卦阵',
-		jueying:'绝影',
-		dilu:'的卢',
-		zhuahuang:'爪黄飞电',
-		jueying_bg:'+马',
-		dilu_bg:'+马',
-		zhuahuang_bg:'+马',
-		chitu:'赤兔',
-		chitu_bg:'-马',
-		dawan:'大宛',
-		dawan_bg:'-马',
-		zixin:'紫骍',
-		zixin_bg:'-马',
-		zhuge:'诸葛连弩',
-		cixiong:'雌雄双股剑',
-		zhuge_bg:'弩',
-		cixiong_bg:'双',
-		qinggang:'青釭剑',
-		qinglong:'青龙偃月刀',
-		zhangba:'丈八蛇矛',
-		qinglong_bg:'偃',
-		zhangba_bg:'蛇',
-		guanshi:'贯石斧',
-		fangtian:'方天画戟',
-		qilin:'麒麟弓',
-		qilin_bg:'弓',
-		zhuge_skill:'诸葛连弩',
-		cixiong_skill:'雌雄双股剑',
-		qinggang_skill:'青釭剑',
-		qinglong_skill:'青龙偃月刀',
-		zhangba_skill:'丈八蛇矛',
-		guanshi_skill:'贯石斧',
-		fangtian_skill:'方天画戟',
-		qilin_skill:'麒麟弓',
+		shan:'没中',
+		tao:'葱',
+		reidaisai:'例大祭',
+		danmakucraze:'弹幕狂欢',
 		wugu:'五谷丰登',
 		taoyuan:'桃园结义',
 		nanman:'南蛮入侵',
 		wanjian:'万箭齐发',
-		wuzhong:'无中生有',
+		wuzhong:'灵光一闪',
 		juedou:'决斗',
 		wugu_bg:'谷',
 		taoyuan_bg:'园',
@@ -1837,63 +1375,22 @@ card.standard={
 		wuzhong_bg:'生',
 		juedou_bg:'斗',
 		shunshou:'顺手牵羊',
-		guohe:'过河拆桥',
+		guohe:'疾风骤雨',
 		guohe_bg:'拆',
 		jiedao:'借刀杀人',
-		wuxie:'无懈可击',
+		wuxie:'魔法障壁',
 		wuxie_bg:'懈',
-		lebu:'乐不思蜀',
-		shandian:'闪电',
-		shandian_bg:'电',
-		hanbing:'寒冰剑',
-		renwang:'仁王盾',
-		hanbing_bg:'冰',
-		renwang_bg:'盾',
-		hanbing_skill:'寒冰剑',
-		renwang_skill:'仁王盾',
-		hanbing_info:'每当你使用杀命中目标后，你可以防止伤害，改为弃置目标两张牌',
-		hanbing_skill_info:'每当你使用杀命中目标后，你可以防止伤害，改为弃置目标两张牌',
-		renwang_info:'黑色的杀对你无效',
-		renwang_skill_info:'黑色的杀对你无效',
-		sha_info:'出牌阶段，对攻击范围内的一名角色使用，令其打出一张【闪】或受到一点伤害。',
+		tao_info:'出牌阶段，对你使用；或角色处于决死状态时，对其使用；目标回复1点体力。',
+		sha_info:'出牌阶段，对攻击范围内的一名角色使用，令其打出一张【闪】或受到1点伤害。',
 		shan_info:'闪避一张杀',
-		tao_info:'出牌阶段，对自己使用，回复一点体力。',
-		bagua_info:'每当你需要使用或打出一张【闪】时，你可以进行一次判定，若判定结果为红色，视为你使用或打出了一张【闪】。',
-		bagua_skill_info:'每当你需要使用或打出一张【闪】时，你可以进行一次判定，若判定结果为红色，视为你使用或打出了一张【闪】。',
-		jueying_info:'其他角色与你的距离+1',
-		dilu_info:'其他角色与你的距离+1',
-		zhuahuang_info:'其他角色与你的距离+1',
-		chitu_info:'你与其他角色的距离-1',
-		dawan_info:'你与其他角色的距离-1',
-		zixin_info:'你与其他角色的距离-1',
-		zhuge_skill_info:'你于出牌阶段内使用【杀】无次数限制。',
-		zhuge_info:'你于出牌阶段内使用【杀】无次数限制。',
-		cixiong_skill_info:'每当你使用【杀】指定一名异性的目标角色后，你可以令其选择一项：1.弃置一张手牌；2.令你摸一张牌。',
-		cixiong_info:'每当你使用【杀】指定一名异性的目标角色后，你可以令其选择一项：1.弃置一张手牌；2.令你摸一张牌。',
-		qinggang_skill_info:'每当你使用【杀】指定一名目标角色后，你无视其防具。',
-		qinggang_info:'每当你使用【杀】指定一名目标角色后，你无视其防具。',
-		qinglong_skill_info:'每当你使用的【杀】被目标角色使用的【闪】抵消时，你可以对其使用一张【杀】（无距离限制）。',
-		qinglong_info:'每当你使用的【杀】被目标角色使用的【闪】抵消时，你可以对其使用一张【杀】（无距离限制）。',
-		zhangba_skill_info:'你可以将两张手牌当【杀】使用或打出。',
-		zhangba_info:'你可以将两张手牌当【杀】使用或打出。',
-		guanshi_skill_info:'每当你使用的【杀】被目标角色使用的【闪】抵消时，你可以弃置两张牌，令此【杀】依然对其造成伤害。',
-		guanshi_info:'每当你使用的【杀】被目标角色使用的【闪】抵消时，你可以弃置两张牌，令此【杀】依然对其造成伤害。',
-		fangtian_skill_info:'你使用的【杀】若是你最后的手牌，你可以额外选择至多两个目标。',
-		fangtian_info:'你使用的【杀】若是你最后的手牌，你可以额外选择至多两个目标。',
-		qilin_skill_info:'每当你使用【杀】对目标角色造成伤害时，你可以弃置其装备区里的一张坐骑牌。',
-		qilin_info:'每当你使用【杀】对目标角色造成伤害时，你可以弃置其装备区里的一张坐骑牌。',
-		wugu_info:'出牌阶段，对所有角色使用。（选择目标后）你从牌堆顶亮出等同于角色数量的牌，每名目标角色获得这些牌中（剩余的）的任意一张。',
-		taoyuan_info:'出牌阶段，对所有角色使用。每名目标角色回复1点体力。',
-		nanman_info:'出牌阶段，对所有其他角色使用。每名目标角色需打出一张【杀】，否则受到1点伤害。',
-		wanjian_info:'出牌阶段，对所有其他角色使用。每名目标角色需打出一张【闪】，否则受到1点伤害。',
 		wuzhong_info:'出牌阶段，对你使用。你摸两张牌。',
 		juedou_info:'出牌阶段，对一名其他角色使用。由其开始，其与你轮流打出一张【杀】，直到其中一方未打出【杀】为止。未打出【杀】的一方受到另一方对其造成的1点伤害。',
 		shunshou_info:'出牌阶段，对距离为1且区域里有牌的一名其他角色使用。你获得其区域里的一张牌。',
-		guohe_info:'出牌阶段，对区域里有牌的一名其他角色使用。你弃置其区域里的一张牌。',
+		reidaisai_info:'出牌阶段，对所有角色使用。目标各摸一张牌，然后各可以交给一名角色一张牌。',
+		danmakucraze_info:'出牌阶段，对你使用。你摸一张牌，然后本回合使用【轰！】不限次数',
+		guohe_info:'出牌阶段，对攻击范围内的一名其他角色使用。你弃置其区域里的一张牌。',
 		jiedao_info:'出牌阶段，对装备区里有武器牌且有使用【杀】的目标的一名其他角色使用。令其对你指定的一名角色使用一张【杀】，否则将其装备区里的武器牌交给你。',
-		wuxie_info:'一张锦囊牌生效前，对此牌使用。抵消此牌对一名角色产生的效果，或抵消另一张【无懈可击】产生的效果。',
-		lebu_info:'出牌阶段，对一名其他角色使用。若判定结果不为红桃，跳过其出牌阶段。',
-		shandian_info:'出牌阶段，对自己使用。若判定结果为黑桃2~9，则目标角色受到3点雷电伤害。若判定不为黑桃2~9，将之移动到下家的判定区里。',
+		wuxie_info:'一名角色指定其以外的角色为法术牌的目标后，对此牌使用。抵消此牌对一名角色产生的效果',
 	},
 	list:[
 		["spade",7,"sha"],
@@ -1949,7 +1446,7 @@ card.standard={
 		["heart",9,"tao"],
 		["heart",12,"tao"],
 		["diamond",12,"tao"],
-
+		["spade",2,"danmakucraze"],
 		["spade",2,"bagua",'',2],
 		["club",2,"bagua",'',2],
 		["spade",5,"jueying",'',2],
@@ -1992,19 +1489,11 @@ card.standard={
 		["spade",12,'guohe'],
 		["club",3,'guohe'],
 		["club",4,'guohe'],
-		["heart",12,'guohe'],
-		["club",12,'jiedao'],
-		["club",13,'jiedao'],
 		["spade",11,'wuxie'],
 		["club",12,'wuxie'],
 		["club",13,'wuxie'],
-		["spade",6,'lebu'],
-		["club",6,'lebu'],
-		["heart",6,'lebu'],
-		["spade",1,'shandian','thunder'],
 		["spade",2,'hanbing'],
 		["club",2,'renwang'],
-		["heart",12,'shandian','thunder'],
 		["diamond",12,'wuxie'],
 	],
 }

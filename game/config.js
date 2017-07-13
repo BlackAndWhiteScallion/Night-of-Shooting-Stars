@@ -272,7 +272,7 @@ window.config={
 	right_click:'pause',
 	sort:'type_sort',
 
-	cards:['standard','ex','extra','sp'],
+	cards:['standard','ex','sanguosha-standard','extra','sp'],
 	characters:['standard','shenhua','refresh','sp','yijiang'],
 	connect_characters:[],
 	connect_cards:[],
