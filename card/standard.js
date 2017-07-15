@@ -204,7 +204,7 @@ card.standard={
 		tao:{
 			fullskin:true,
 			type:'basic',
-			subtype:'heal',
+			subtype:'support',
 			enable:function(card,player){
 				return player.hp<player.maxHp;
 			},
@@ -291,6 +291,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			subtype:'disrupt',
 			enable:true,
 			selectTarget:1,
 			postAi:function(targets){
@@ -342,6 +343,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			subtype:'disrupt',
 			enable:true,
 			range:{global:1},
 			selectTarget:1,
@@ -411,6 +413,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			subtype:'support',
 			enable:true,
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
@@ -438,6 +441,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			subtype:'support',
 			enable:true,
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
@@ -465,6 +469,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			subtype:'attack',
 			enable:true,
 			filterTarget:function(card,player,target){
 				return target!=player;
@@ -568,10 +573,72 @@ card.standard={
 				}
 			}
 		},
+		// 还没弄完……
+		caifang:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			type:'disrupt',
+			enable:true,
+			chongzhu:true,
+			filterTarget:function(card,player,target){
+				if(player==target) return false;
+				return (target.get('h').length||
+					target.classList.contains('unseen')||
+					target.classList.contains('unseen2'))
+			},
+			content:function(){
+				"step 0"
+				if(!player.storage.zhibi){
+					player.storage.zhibi=[];
+				}
+				player.storage.zhibi.add(target);
+				var controls=[];
+				if(target.get('h').length) controls.push('手牌');
+				if(target.classList.contains('unseen')) controls.push('主将');
+				if(target.classList.contains('unseen2')) controls.push('副将');
+				if(controls.length>1){
+					target.chooseControl(controls);
+				}
+				if(controls.length==0) event.finish();
+				"step 1"
+				var content;
+				var str=get.translation(target)+'的';
+				if(result.control){
+					if(result.control=='手牌') content=[str+'手牌',target.get('h')];
+					else if(result.control=='主将') content=[str+'主将',[[target.name1],'character']];
+					else content=[str+'副将',[[target.name2],'character']];
+				}
+				else if(target.get('h').length){
+					content=[str+'手牌',target.get('h')];
+				}
+				else if(target.classList.contains('unseen')){
+					content=[str+'主将',[[target.name1],'character']];
+				}
+				else{
+					content=[str+'副将',[[target.name2],'character']];
+				}
+				player.chooseControl('ok').set('dialog',content);
+			},
+			ai:{
+				order:9.5,
+				wuxie:function(){
+					return 0;
+				},
+				result:{
+					player:function(player,target){
+						if(player.num('h')<=player.hp) return 0;
+						if(player.storage.zhibi&&player.storage.zhibi.contains(target)) return 0;
+						return target.isUnseen()?1:0;
+					}
+				}
+			}
+		},
 		danmakucraze:{
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			type:'support',
 			enable:true,
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
@@ -596,14 +663,18 @@ card.standard={
 				}
 			}
 		},
-
-
-
-
-
-
-		// 装备的名字和技能设置
-		bagua:{
+		saiqianxiang:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip5',
+			ai:{
+				basic:{
+					equipValue:8
+				}
+			},
+			skills:['saiqian_skill']
+		},
+		yinyangyu:{
 			fullskin:true,
 			type:'equip',
 			subtype:'equip2',
@@ -612,306 +683,135 @@ card.standard={
 					equipValue:8
 				}
 			},
-			skills:['bagua_skill']
+			skills:['yinyangyu_skill']
 		},
-		jueying:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip3',
-			distance:{globalTo:1},
-		},
-		dilu:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip3',
-			distance:{globalTo:1},
-		},
-		zhuahuang:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip3',
-			distance:{globalTo:1},
-		},
-		chitu:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip4',
-			distance:{globalFrom:-1},
-		},
-		dawan:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip4',
-			distance:{globalFrom:-1},
-		},
-		zixin:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip4',
-			distance:{globalFrom:-1},
-		},
-		zhuge:{
+		louguan:{
 			fullskin:true,
 			type:'equip',
 			subtype:'equip1',
-			ai:{
-				basic:{
-					equipValue:function(card,player){
-						var num=1,i,no_target=true;
-						for(i=0;i<game.players.length;i++){
-							if(player.canUse({name:'sha'},game.players[i])) {
-								if(ai.get.attitude(player,game.players[i])<0){
-									no_target=false;break;
-								}
-							}
-						}
-						if(no_target) return 1;
-						num+=player.get('h','sha').length;
-						return num+1;
-					}
-				}
-			},
-			skills:['zhuge_skill']
-		},
-		cixiong:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip1',
-			distance:{attackFrom:-1},
 			ai:{
 				basic:{
 					equipValue:2
 				}
 			},
-			skills:['cixiong_skill']
+			skills:['louguan_skill']
 		},
-		qinggang:{
+		laevatein:{
 			fullskin:true,
 			type:'equip',
 			subtype:'equip1',
-			distance:{attackFrom:-1},
 			ai:{
 				basic:{
 					equipValue:2
 				}
 			},
-			skills:['qinggang_skill']
+			skills:['laevatein_skill']
 		},
-		qinglong:{
+		windfan:{
 			fullskin:true,
 			type:'equip',
 			subtype:'equip1',
-			distance:{attackFrom:-2},
-			ai:{
-				basic:{
-					equipValue:function(card,player){
-						return Math.min(2.5+player.num('h','sha'),4);
-					}
-				}
-			},
-			skills:['qinglong_skill']
-		},
-		zhangba:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip1',
-			distance:{attackFrom:-2},
-			ai:{
-				basic:{
-					equipValue:function(card,player){
-						var num=2.5+player.num('h')/3;
-						return Math.min(num,4);
-					}
-				}
-			},
-			skills:['zhangba_skill']
-		},
-		guanshi:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip1',
-			distance:{attackFrom:-2},
-			ai:{
-				basic:{
-					equipValue:function(card,player){
-						var num=2.5+(player.num('h')+player.num('e'))/2.5;
-						return Math.min(num,5);
-					}
-				}
-			},
-			skills:['guanshi_skill']
-		},
-		fangtian:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip1',
-			distance:{attackFrom:-3},
-			ai:{
-				basic:{
-					equipValue:2.5
-				}
-			},
-			skills:['fangtian_skill']
-		},
-		qilin:{
-			fullskin:true,
-			type:'equip',
-			subtype:'equip1',
-			distance:{attackFrom:-4},
-			ai:{
-				basic:{
-					equipValue:3
-				}
-			},
-			skills:['qilin_skill']
-		},
-		// 到这里结束。
-		wuxie:{
-			audio:true,
-			fullskin:true,
-			type:'trick',
-			ai:{
-				basic:{
-					useful:[6,4],
-					value:[6,4],
-				},
-				result:{player:1},
-				expose:0.2
-			},
-			notarget:true,
-			content:function(){
-				event.result='wuxied';
-				if(player.isOnline()){
-					player.send(function(player){
-						if(ui.tempnowuxie&&!player.hasWuxie()){
-							ui.tempnowuxie.close();
-							delete ui.tempnowuxie;
-						}
-					},player);
-				}
-				else if(player==game.me){
-					if(ui.tempnowuxie&&!player.hasWuxie()){
-						ui.tempnowuxie.close();
-						delete ui.tempnowuxie;
-					}
-				}
-			},
-		},
-		hanbing:{
-			fullskin:true,
-			type:"equip",
-			subtype:"equip1",
-			distance:{attackFrom:-1},
-			skills:['hanbing_skill'],
 			ai:{
 				basic:{
 					equipValue:2
 				}
 			},
+			skills:['windfan_skill']
 		},
-		renwang:{
+		gungnir:{
 			fullskin:true,
-			type:"equip",
-			subtype:"equip2",
-			skills:['renwang_skill'],
+			type:'equip',
+			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:8
-				},
+					equipValue:2
+				}
 			},
+			skills:['gungnir_skill']
 		},
+		ibuki:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip5',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['ibuki_skill']
+		},
+		deathfan:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip1',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['deathfan_skill']
+		},
+		penglaiyao:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip5',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['penglaiyao_skill']
+		},
+		zhiyu:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip1',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['zhiyu_skill']
+		}
 	},
 	skill:{
-		hanbing_skill:{
-			trigger:{player:'shaHit'},
-			direct:true,
-			audio:true,
-			filter:function(event){
-				return event.target.get('he').length>0;
-			},
-			content:function(){
-				"step 0"
-				player.choosePlayerCard(get.prompt('hanbing'),'he',trigger.target,Math.min(2,trigger.target.num('he')),function(button){
-					var trigger=_status.event.getTrigger();
-					var player=_status.event.player;
-					var eff=ai.get.damageEffect(trigger.target,player,player);
-					if(ai.get.attitude(player,trigger.target)>0){
-						if(eff>=0) return false;
-						return 10-ai.get.buttonValue(button);
-					}
-					if(eff<=0) return ai.get.buttonValue(button);
-					if(trigger.target.hp==1) return false;
-					if(player.hasSkill('jiu')||player.hasSkill('tianxianjiu')||
-					player.hasSkill('luoyi2')||player.hasSkill('reluoyi2')) return false;
-					if(_status.event.dialog.buttons.length<2) return -1;
-					var num=0;
-					for(var i=0;i<_status.event.dialog.buttons.length;i++){
-						if(ai.get.buttonValue(_status.event.dialog.buttons[i])>1.5) num++;
-					}
-					if(num>=2) return ai.get.buttonValue(button)-1.5;
-				});
-				"step 1"
-				if(result.bool){
-					trigger.untrigger();
-					var cards=[];
-					for(var i=0;i<result.links.length;i++) cards.push(result.links[i]);
-					player.logSkill('hanbing_skill');
-					trigger.unhurt=true;
-					trigger.target.discard(cards);
-				}
-			}
+		saiqian_skill:{
+			global:'saiqian_skill2',
 		},
-		renwang_skill:{
-			trigger:{target:'shaBefore'},
-			forced:true,
-			priority:6,
+		saiqian_skill2:{
 			audio:true,
-			filter:function(event){
-				if(event.player.num('s','unequip')) return false;
-				return (event.card.name=='sha'&&get.color(event.card)=='black')
+			enable:'phaseUse',
+			discard:false,
+			line:true,
+			prepare:function(cards,player,targets){
+				player.$give(cards,targets[0]);
 			},
+			filter:function(event,player){
+				if(player.num('h') == 0) return 0;
+				return game.hasPlayer(function(target){
+					return target!=player&&target.hasSkill('saiqian_skill',player);
+				});
+			},
+			filterCard:function(card){
+				return true;
+			},
+			filterTarget:function(card,player,target){
+				return target!=player&&target.hasSkill('saiqian_skill',player);
+			},
+			usable:1,
+			forceaudio:true,
 			content:function(){
-				trigger.untrigger();
-				trigger.finish();
+				target.gain(cards);
 			},
 			ai:{
-				effect:{
-					target:function(card,player){
-						var equip1=player.get('e','1');
-						if(equip1&&equip1.name=='qinggang') return 1;
-						if(player.num('s','unequip')) return;
-						if(card.name=='sha'&&get.color(card)=='black') return 'zerotarget';
-					}
+				expose:0.3,
+				order:10,
+				result:{
+					target:5
 				}
 			}
 		},
-		zhuge_skill:{
-			mod:{
-				cardUsable:function(card,player,num){
-					if(card.name=='sha') return Infinity;
-				}
-			},
-		},
-		cixiong_skill:{
-			trigger:{player:'shaBegin'},
-			priority:5,
-			audio:true,
-			filter:function(event,player){
-				if(player.sex=='male'&&event.target.sex=='female') return true;
-				if(player.sex=='female'&&event.target.sex=='male') return true;
-				return false;
-			},
-			content:function(){
-				"step 0"
-				trigger.target.chooseToDiscard().set('ai',function(card){
-					var trigger=_status.event.getTrigger();
-					return -ai.get.attitude(trigger.target,trigger.player)-ai.get.value(card);
-				});
-				"step 1"
-				if(result.bool==false) player.draw();
-			}
-		},
-		qinggang_skill:{
+		louguan_skill:{
 			trigger:{player:'useCard'},
 			forced:true,
 			priority:10,
@@ -922,158 +822,177 @@ card.standard={
 				player.addTempSkill('unequip','useCardAfter');
 			}
 		},
-		qinglong_skill:{
-			trigger:{player:'shaMiss'},
-			direct:true,
-			filter:function(event,player){
-				return player.canUse('sha',event.target);
+		yinyangyu_skill:{
+			audio:2,
+			enable:['chooseToRespond'],
+			filterCard:function(card){
+				return get.color(card)=='red';
 			},
-			content:function(){
-				"step 0"
-				if(player.hasSkill('jiu')){
-					game.broadcastAll(function(player){
-						player.removeSkill('jiu');
-						if(player.node.jiu){
-							player.node.jiu.delete();
-							player.node.jiu2.delete();
-							delete player.node.jiu;
-							delete player.node.jiu2;
-						}
-					},player);
-					event.jiu=true;
-				}
-				player.chooseToUse(get.prompt('qinglong'),{name:'sha'},trigger.target,-1).logSkill='qinglong_skill';
-				"step 1"
-				if(result.bool);
-				else if(event.jiu){
-					player.addSkill('jiu');
-				}
-			}
-		},
-		zhangba_skill:{
-			enable:['chooseToUse','chooseToRespond'],
-			filterCard:true,
-			selectCard:2,
-			position:'h',
-			viewAs:{name:'sha'},
-			filter:function(event,player){
-				return player.num('h')>=2;
+			viewAs:{name:'shan'},
+			viewAsFilter:function(player){
+				if(!player.num('he',{color:'red'})) return false;
 			},
-			audio:true,
-			prompt:'将两张手牌当杀使用或打出',
-			check:function(card){
-				if(card.name=='sha') return 0;
-				return 6-ai.get.useful(card)
-			},
+			prompt:'将一张红色手牌当闪打出',
+			check:function(){return 1},
 			ai:{
-				respondSha:true,
+				respondShan:true,
 				skillTagFilter:function(player){
-					return player.num('h')>=2;
+					if(!player.num('he',{color:'red'})) return false;
 				},
-			}
-		},
-		guanshi_skill:{
-			trigger:{player:'shaMiss'},
-			direct:true,
-			audio:true,
-			filter:function(event,player){
-				return player.num('he')>2;
-			},
-			content:function(){
-				"step 0"
-				var next=player.chooseToDiscard(get.prompt('guanshi'),2,'he',function(card){
-					return _status.event.player.get('e',{subtype:'equip1'}).contains(card)==false;
-				});
-				next.logSkill='guanshi_skill';
-				next.set('ai',function(card){
-					var evt=_status.event.getParent();
-					if(ai.get.attitude(evt.player,evt._trigger.target)<0){
-						if(evt.player.hasSkill('jiu')||
-						evt.player.hasSkill('tianxianjiu')||
-						evt._trigger.target.hp==1){
-							return 8-ai.get.value(card)
-						}
-						return 5-ai.get.value(card)
+				result:{
+					target:function(card,player,target,current){
+						if(get.tag(card,'respondShan')&&current<0) return 0.6
 					}
-					return -1;
-				});
-				"step 1"
-				if(result.bool){
-					trigger.untrigger();
-					trigger.trigger('shaHit');
-					trigger._result.bool=false;
 				}
 			}
 		},
-		fangtian_skill:{
+		laevatein_skill:{
 			mod:{
-				selectTarget:function(card,player,range){
-					if(card.name!='sha') return;
-					if(range[1]==-1) return;
-					var cards=player.get('h');
-					for(var i=0;i<cards.length;i++){
-						if(cards[i].classList.contains('selected')==false)
-							return;
+				cardUsable:function(card,player,num){
+					if(card.name=='sha'){
+						return num+20;
 					}
-					range[1]+=2;
-				}
-			}
-		},
-		qilin_skill:{
-			trigger:{player:'shaHit'},
-			filter:function(event,player){
-				return event.target.get('e',{subtype:['equip3','equip4']}).length>0
+				},
 			},
-			direct:true,
-			audio:true,
-			content:function(){
-				"step 0"
-				var att=(ai.get.attitude(player,trigger.target)<=0);
-				var next=player.chooseButton();
-				next.set('att',att);
-				next.set('createDialog',['选择要弃置的马',trigger.target.get('e',{subtype:['equip3','equip4']})]);
-				next.set('ai',function(button){
-					if(_status.event.att) return ai.get.buttonValue(button);
-					return 0;
-				});
-				"step 1"
-				if(result.bool){
-					player.logSkill('qilin_skill');
-					trigger.target.discard(result.links[0]);
-				}
-			}
-		},
-		bagua_skill:{
-			trigger:{player:'chooseToRespondBegin'},
-			filter:function(event,player){
-				if(event.responded) return false;
-				if(!event.filterCard({name:'shan'})) return false;
-				if(event.getParent().player.num('s','unequip')) return false;
-				return true;
-			},
-			audio:true,
+			trigger:{player:'shaBefore'},
+			forced:true,
+			popup:false,
 			check:function(event,player){
-				if(ai.get.damageEffect(player,event.player,player)>=0) return false;
-				return true;
+				return player.num('h','sha')>0;
+			},
+			filter:function(event,player){
+				return _status.currentPhase==player;
+			},
+			content:function(){
+				var target=trigger.target;
+				if(target.hasSkill('laevatein3')){
+					target.storage.laevatein++;
+				}
+				else{
+					target.storage.laevatein=1;
+					target.addTempSkill('laevatein3','phaseUseEnd');
+				}
+			}
+		},
+		laevatein3:{
+			mod:{
+				targetEnabled:function(card,player,target){
+					if(card.name!='sha') return;
+					if(player==_status.currentPhase&&player.get('s').contains('laevatein')){
+						var num=game.checkMod(card,player,1,'cardUsable',player.get('s'))-20;
+						for(var i=0;i<game.players.length;i++){
+							if(game.players[i].hasSkill('laevatein3')){
+								num+=1-game.players[i].storage.laevatein;
+							}
+						}
+						return num>1;
+					}
+				}
+			}
+		},
+		windfan_skill:{
+			audio:true,
+			enable:['chooseToRespond','chooseToUse'],
+			filterCard:function(card){
+				return get.color(card)=='black';
+			},
+			position:'he',
+			viewAs:{name:'sha'},
+			viewAsFilter:function(player){
+				if(!player.num('he',{color:'black'})) return false;
+			},
+			prompt:'将一张红色牌当杀使用或打出',
+			check:function(card){return 4-ai.get.value(card)},
+			ai:{
+				skillTagFilter:function(player){
+					if(!player.num('he',{color:'black'})) return false;
+				},
+				respondSha:true,
+			}
+		},
+		gungnir_skill:{
+			audio:true,
+			trigger:{player:'shaBegin'},
+			check:function(event,player){
+				return ai.get.attitude(player,event.target)<=0;
 			},
 			content:function(){
 				"step 0"
-				player.judge('bagua',function(card){return (get.color(card)=='red')?1.5:-0.5});
-				"step 1"
-				if(result.judge>0){
-					trigger.untrigger();
-					trigger.responded=true;
-					trigger.result={bool:true,card:{name:'shan'}}
-				}
+				for (var i = 0; i < player.num('e'); i ++){
+					var card=player.get('e',i);
+					if(card&&card.name.indexOf('gungnir')==0){
+						player.discard(card);
+					}
+				}	
+				trigger.directHit=true;
+			}
+		},
+		ibuki_skill:{
+			audio:true,
+			enable:'phaseUse',
+			usable:1,
+			filter:function(event,player){
+				return player.num('h',{subtype:'attack'})>0;
+			},
+			filterCard:{subtype:'attack'},
+			check:function(card){
+				return 8-ai.get.value(card);
+			},
+			position:'h',
+			content:function(){
+				player.gainlili();
 			},
 			ai:{
-				effect:{
-					target:function(card,player,target,effect){
-						if(player.num('s','unequip')) return;
-						if(get.tag(card,'respondShan')) return 0.5;
+				order:8,
+				result:{
+					player:function(player){
+						if(player.hp<=2) return player.num('h')==0?1:0;
+						if(player.num('h',{name:'sha',color:'red'})) return 1;
+						return player.num('h')<=player.hp?1:0;
+					}
+				},
+				effect:function(card,player){
+					if(get.tag(card,'damage')){
+						if(player.hasSkill('jueqing')) return [1,1];
+						return 1.2;
+					}
+					if(get.tag(card,'loseHp')){
+						if(player.hp<=1) return;
+						return [0,0];
 					}
 				}
 			}
+		},
+		deathfan_skill:{
+			audio:true,
+			enable:'phaseUse',
+			usable:1,
+			filterTarget:true,
+			selectTarget:[1,2],
+			filter:function(event,player){
+				return player.num('h',{subtype:'defense'})>0;
+			},
+			filterCard:{subtype:'defense'},
+			check:function(card){
+				return 8-ai.get.value(card);
+			},
+			position:'h',
+			content:function(){
+				for (var i = 0; i < target.length; i++) {
+					target[i].damage('thunder');
+				};
+			},
+		},
+		penglaiyao_skill:{
+			audio:true,
+			trigger:{player:'phaseEnd'},
+			forced:true,
+			content:function(){
+				player.loselili(2);
+			},
+		},
+		zhiyu_skill:{
+			
 		},
 		_wuxie:{
 			trigger:{player:['useCardToBefore','phaseJudge']},
@@ -1356,41 +1275,66 @@ card.standard={
 	},
 	translate:{
 		sha:'轰！',
-		huosha:'火杀',
-		leisha:'雷杀',
+		sha_info:'出牌阶段，对攻击范围内的一名角色使用；对目标造成1点弹幕伤害。',
+		huosha:'',
+		leisha:'',
 		shan:'没中',
+		shan_info:'你成为【轰！】的目标后，对那张牌使用；该牌对你无效。',
 		tao:'葱',
+		tao_info:'出牌阶段，对你使用；或角色处于决死状态时，对其使用；目标回复1点体力。',
 		reidaisai:'例大祭',
+		reidaisai_info:'出牌阶段，对所有角色使用。目标各摸一张牌，然后各可以交给一名角色一张牌。',
 		danmakucraze:'弹幕狂欢',
-		wugu:'五谷丰登',
-		taoyuan:'桃园结义',
-		nanman:'南蛮入侵',
-		wanjian:'万箭齐发',
+		danmakucraze_info:'出牌阶段，对你使用。目标摸一张牌，且使用【轰！】不限次数，直到结束阶段。',
 		wuzhong:'灵光一闪',
-		juedou:'决斗',
-		wugu_bg:'谷',
-		taoyuan_bg:'园',
-		nanman_bg:'蛮',
-		wanjian_bg:'箭',
 		wuzhong_bg:'生',
+		wuzhong_info:'出牌阶段，对你使用。目标摸两张牌。',
+		juedou:'决斗',
+		juedou_info:'出牌阶段，对一名其他角色使用。由其开始，其与你轮流打出一张【轰！】，直到其中一方未打出【轰！】为止。未打出【轰！】的一方受到另一方对其造成的1点弹幕伤害。',
 		juedou_bg:'斗',
 		shunshou:'顺手牵羊',
+		shunshou_info:'出牌阶段，对区域里有牌的一名其他角色使用。你获得其区域里的一张牌。',
 		guohe:'疾风骤雨',
 		guohe_bg:'拆',
-		jiedao:'借刀杀人',
+		guohe_info:'出牌阶段，对攻击范围内的一名其他角色使用。你弃置其区域里的一张牌。',
 		wuxie:'魔法障壁',
 		wuxie_bg:'懈',
-		tao_info:'出牌阶段，对你使用；或角色处于决死状态时，对其使用；目标回复1点体力。',
-		sha_info:'出牌阶段，对攻击范围内的一名角色使用，令其打出一张【闪】或受到1点伤害。',
-		shan_info:'闪避一张杀',
-		wuzhong_info:'出牌阶段，对你使用。你摸两张牌。',
-		juedou_info:'出牌阶段，对一名其他角色使用。由其开始，其与你轮流打出一张【杀】，直到其中一方未打出【杀】为止。未打出【杀】的一方受到另一方对其造成的1点伤害。',
-		shunshou_info:'出牌阶段，对距离为1且区域里有牌的一名其他角色使用。你获得其区域里的一张牌。',
-		reidaisai_info:'出牌阶段，对所有角色使用。目标各摸一张牌，然后各可以交给一名角色一张牌。',
-		danmakucraze_info:'出牌阶段，对你使用。你摸一张牌，然后本回合使用【轰！】不限次数',
-		guohe_info:'出牌阶段，对攻击范围内的一名其他角色使用。你弃置其区域里的一张牌。',
-		jiedao_info:'出牌阶段，对装备区里有武器牌且有使用【杀】的目标的一名其他角色使用。令其对你指定的一名角色使用一张【杀】，否则将其装备区里的武器牌交给你。',
 		wuxie_info:'一名角色指定其以外的角色为法术牌的目标后，对此牌使用。抵消此牌对一名角色产生的效果',
+		penglaiyao:'蓬莱秘药',
+		penglaiyao_info:'锁定技，若你的灵力值大于2，此牌不能离开装备区；结束阶段，你失去2点灵力。',
+		pantsu:'蓝白胖次',
+		pantsu_info:'锁定技，其他角色不能弃置或获得你的此牌以外的牌。',
+		laevatein:'莱瓦丁',
+		laevatein_info:'锁定技，出牌阶段，你对每名角色使用的第一张【轰！】不算次数。',
+		gungnir:'冈格尼尔',
+		gungnir_info:'你使用【轰！】指定目标后，可以弃置此牌，令目标不能对该【轰！】使用牌。',
+		louguan:'楼观剑',
+		louguan_info:'锁定技，你使用【轰！】指定目标后，该角色的装备技能无效，直到该牌结算完毕。',
+		ibuki:'伊吹瓢',
+		ibuki_info:'一回合一次，出牌阶段，你可以弃置一张攻击牌，然后获得1点灵力。',
+		deathfan:'凤蝶纹扇',
+		deathfan_info:'一回合一次，出牌阶段，你可以弃置一张防御牌，然后对至多2名角色各造成1点灵击伤害。',
+		windfan:'风神团扇',
+		windfan_info:'你可以将一张黑色牌当做【轰！】使用/打出',
+		saiqianxiang:'赛钱箱',
+		saiqianxiang_info:'一回合一次，其他角色的出牌阶段，其可以交给你一张牌。',
+		yinyangyu:'阴阳玉',
+		yinyangyu_info:'你可以将一张红色牌当做【没中】使用/打出。',
+		zhiyu:'制御棒',
+		zhiyu_info:'一回合一次，出牌阶段，你可以令一名角色展示一张手牌；然后你可以弃置一张与展示的牌相同花色的手牌，对其造成1点灵击伤害。',
+		mirror:'八咫镜',
+		mirror_info:'你成为攻击牌的目标后，可以判定：若颜色相同，令之对你无效。',
+		ryuuuu:'龙宫羽衣',
+		ryuuuu_info:'锁定技，你受到灵击伤害时，防止该伤害；你受到伤害后，对伤害来源造成1点灵击伤害。',
+		feixiang:'绯想之剑',
+		feixiang_info:'锁定技，你使用攻击牌时，获得1点灵力。',
+		bailou:'白楼剑',
+		bailou_info:'锁定技，你使用攻击牌造成弹幕伤害后，对受伤角色造成1点灵击伤害。',
+		book:'魔导书',
+		book_info:'锁定技，准备阶段，你获得1点灵力。',
+		yuzhi:'蓬莱玉枝',
+		yuzhi:'准备阶段，你可以观看牌堆顶的一张牌，然后可以弃置之。',
+
 	},
 	list:[
 		["spade",7,"sha"],
@@ -1447,31 +1391,7 @@ card.standard={
 		["heart",12,"tao"],
 		["diamond",12,"tao"],
 		["spade",2,"danmakucraze"],
-		["spade",2,"bagua",'',2],
-		["club",2,"bagua",'',2],
-		["spade",5,"jueying",'',2],
-		["club",5,"dilu",'',2],
-		["heart",13,"zhuahuang",'',2],
-		["heart",5,"chitu",'',2],
-		["spade",13,"dawan",'',2],
-		["diamond",13,"zixin",'',2],
-		["club",1,"zhuge",'',2],
-		["diamond",1,"zhuge",'',2],
-		["spade",2,"cixiong",'',2],
-		["spade",6,"qinggang"],
-		["spade",5,"qinglong"],
-		["spade",12,"zhangba"],
-		["diamond",5,"guanshi"],
-		["diamond",12,"fangtian"],
-		["heart",5,"qilin"],
 
-		["heart",3,"wugu"],
-		["heart",4,"wugu"],
-		["heart",1,"taoyuan"],
-		["spade",7,"nanman"],
-		["spade",13,"nanman"],
-		["club",7,"nanman"],
-		["heart",1,"wanjian"],
 		["spade",1,"juedou"],
 		["club",1,"juedou"],
 		["diamond",1,"juedou"],
@@ -1492,8 +1412,6 @@ card.standard={
 		["spade",11,'wuxie'],
 		["club",12,'wuxie'],
 		["club",13,'wuxie'],
-		["spade",2,'hanbing'],
-		["club",2,'renwang'],
 		["diamond",12,'wuxie'],
 	],
 }

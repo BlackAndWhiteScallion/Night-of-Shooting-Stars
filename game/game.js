@@ -5203,6 +5203,10 @@
 			delay:'延迟锦囊',
 			character:'角色',
 			revive:'复活',
+			attack:'攻击',
+			defense:'防御',
+			support:'辅助',
+			disrupt:'控场',
 			equip1:'武器',
 			equip2:'防具',
 			equip3:'防御马',
@@ -13485,12 +13489,15 @@
 									this.node.range.innerHTML='范围: '+(-dist.attackFrom+1);
 								}
 							}
+						/*
 							if(!added){
 								this.node.range.innerHTML='范围: 1';
 							}
+
 							break;
 						case 'equip3':this.node.range.innerHTML='防御: '+lib.card[card[2]].distance.globalTo;this.node.name2.innerHTML+='+';break;
 						case 'equip4':this.node.range.innerHTML='进攻: '+(-lib.card[card[2]].distance.globalFrom);this.node.name2.innerHTML+='-';break;
+						*/
 					}
                     if(_status.connectMode&&!game.online&&lib.cardOL&&!this.cardid){
                         this.cardid=get.id();
@@ -33092,7 +33099,7 @@
 							}
 						}
 						if(!added){
-							uiintro.add('<div class="text center">攻击范围：1</div>');
+							//uiintro.add('<div class="text center">攻击范围：1</div>');
 						}
 					}
                     else if(get.type(node)=='equip'){
