@@ -8750,7 +8750,7 @@
                     }
                     // 默认起始灵力值
                     if(!info[5]){
-                        info[5]=0;
+                        info[5]=2;
                     }
                     // 默认灵力上限
                     if(!info[6]){
@@ -14584,8 +14584,8 @@
 				// },
 				content:function(){
 					if(player.isTurnedOver()){
-						trigger.untrigger();
-						trigger.finish();
+						//trigger.untrigger();
+						//trigger.finish();
 						player.turnOver();
 						//player.phaseSkipped=true;
 					}
@@ -14646,6 +14646,7 @@
                     }
 					if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
 						player.popup('回合开始');
+						//player.say('讲道理，我真的不知道你还打什么牌');
 					}
 					if(lib.config.glow_phase){
 						if(_status.currentPhase){
@@ -14700,8 +14701,26 @@
 					if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
 						player.popup('回合结束');
 					}
+					// 结束阶段，如果角色牌是背面朝上的，就翻过去。
 					if (player.isTurnedOver()){
-						player.turnOver();
+						var info = ""
+						for(var i=0;i<player.skills.length;i++){
+							if(get.is.spell(player.skills[i])){
+								info = lib.skill[player.skills[i]];
+								break;
+							}
+						}
+						trigger = true;
+						if (info != ""){
+							if (!get.info(info).round){
+								trigger = false;
+							} else if (!get.info(info).infinite){
+								trigger = false;
+							} 
+						}
+						if (trigger == true){
+							player.turnOver();
+						}
 					}
                     game.syncState();
 					game.addVideo('phaseChange',player);
@@ -14716,19 +14735,23 @@
 				trigger:{player:'phaseBegin'},
 				//forced:true,
 				priority:20,
-				popup:true,
+				popup:false,
 				filter:function(event,player){
-					var info = "";
-					for(var i=0;i<player.skills.length;i++){
-						if(get.is.spell(player.skills[i])){
-							info = lib.skill[player.skills[i]];
-							break;
+					var cantrigger = false;
+					if (!player.isTurnedOver()){
+						for(var i=0;i<player.skills.length;i++){
+							if(get.is.spell(player.skills[i])){
+								var info = lib.skill[player.skills[i]];
+								if (player.lili >= info.cost){
+									cantrigger = true;
+								}
+							}
 						}
 					}
-					if (info == "") return false;
-					return (player.lili > info.cost);
+					return cantrigger == true;
 				},
 				content:function(){
+					//get.skillTranslation(skill,player)
 					var info = "";
 					for(var i=0;i<player.skills.length;i++){
 						if(get.is.spell(player.skills[i])){
@@ -14737,10 +14760,34 @@
 						}
 					}
 					if (info == "") return false;
+					player.turnOver();
+					game.log(player , '发动了符卡。');
 					if (info.cost > 0){
 						player.loselili(info.cost);
 					}
+				},
+			},
+			// 灵力值变为0时，符卡结束
+			_spellend:{
+				//trigger:{player:['changeHp','changelili']},
+				trigger:{player:'changelili'},
+				forced:true,
+				priority:20,
+				popup:false,
+				filter:function(event,player){
+					return player.isTurnedOver() && player.lili <= -1 * event.num;
+				},
+				content:function(){
 					player.turnOver();
+					var info = "";
+					for(var i=0;i<player.skills.length;i++){
+						if(get.is.spell(player.skills[i])){
+							info = lib.skill[player.skills[i]];
+							break;
+						}
+					}
+					//game.log(player , '的灵力值变为0时，' , get.skillTranslation(info,player) , '结束。');
+					game.log(player , '的灵力值变为0时，符卡结束');
 				},
 			},
             _discard:{

@@ -12,7 +12,7 @@ character.standard={
 		liubei:['male','shu',4,['rende','jijiang'],['zhu']],
 		guanyu:['male','shu',4,['wusheng']],
 		zhangfei:['male','shu',4,['paoxiao']],
-		zhugeliang:['male','shu',3,['guanxing','kongcheng'],[],3],
+		zhugeliang:['male','shu',3,['guanxing','kongcheng'],[],1],
 		zhaoyun:['male','shu',4,['longdan']],
 		machao:['male','shu',4,['mashu','tieji']],
 		huangyueying:['female','shu',3,['jizhi','qicai']],

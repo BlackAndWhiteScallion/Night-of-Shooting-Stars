@@ -992,7 +992,52 @@ card.standard={
 			},
 		},
 		zhiyu_skill:{
-			
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			enable:true,
+			filterTarget:function(card,player,target){
+				if(player!=game.me&&player.num('h')<2) return false;
+				return target.num('h')>0;
+			},
+			content:function(){
+				"step 0"
+				if(target.get('h').length==0){
+					event.finish();
+					return;
+				}
+				var rand=Math.random()<0.5;
+				target.chooseCard(true).ai=function(card){
+					if(rand) return Math.random();
+					return ai.get.value(card);
+				};
+				"step 1"
+				event.dialog=ui.create.dialog(get.translation(target)+'展示的手牌',result.cards);
+				event.videoId=lib.status.videoId++;
+
+				game.broadcast('createDialog',event.videoId,get.translation(target)+'展示的手牌',result.cards);
+				game.addVideo('cardDialog',null,[get.translation(target)+'展示的手牌',get.cardsInfo(result.cards),event.videoId]);
+				event.card2=result.cards[0];
+				game.log(target,'展示了',event.card2);
+				player.chooseToDiscard({suit:get.suit(event.card2)},function(card){
+					var evt=_status.event.getParent();
+					if(ai.get.damageEffect(evt.target,evt.player,evt.player,'fire')>0){
+						return 7-ai.get.value(card,evt.player);
+					}
+					return -1;
+				}).prompt=false;
+				game.delay(2);
+				"step 2"
+				if(result.bool){
+					target.damage('fire');
+				}
+				else{
+					target.addTempSkill('huogong2','phaseBegin');
+				}
+				event.dialog.close();
+				game.addVideo('cardDialog',null,event.videoId);
+				game.broadcast('closeDialog',event.videoId);
+			}
 		},
 		_wuxie:{
 			trigger:{player:['useCardToBefore','phaseJudge']},
@@ -1334,7 +1379,10 @@ card.standard={
 		book_info:'锁定技，准备阶段，你获得1点灵力。',
 		yuzhi:'蓬莱玉枝',
 		yuzhi:'准备阶段，你可以观看牌堆顶的一张牌，然后可以弃置之。',
-
+		hourai:'替身人形',
+		hourai_info:'你成为攻击牌的目标后，可以收回装备区中的此牌，令该牌对你无效。',
+		frog:'冰镇青蛙',
+		frog_info:'你使用这张牌时，可以令一名其他角色失去2点灵力。',
 	},
 	list:[
 		["spade",7,"sha"],
