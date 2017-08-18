@@ -9364,7 +9364,18 @@
 						}
 						else{
 							return game.expandSkills(this.get('s').concat(lib.skill.global)).contains(arg2);
-						}
+						} 
+					}
+				},
+				unequip:function(){
+					for (var i = 0; i < player.num('e'); i ++){
+						var info = get.info(player.get('e',i));
+						if(info.skills){
+                            for(var j=0;j<info.skills.length;j++){
+                                player.removeSkillTrigger(info.skills[j]);
+                            }
+                        }
+                        target.addTempSkill('unequip','useCardAfter');
 					}
 				},
 				line:function(target,config){
@@ -12806,6 +12817,7 @@
 						player.node.equips.appendChild(card);
 					}
                     var info=get.info(card);
+                    // 这里是装备技能！
                     if(info.skills){
                         for(var i=0;i<info.skills.length;i++){
                             player.addSkillTrigger(info.skills[i]);
@@ -14619,7 +14631,7 @@
 			},
 			// 灵力加成的效果部分。
 			_liliup:{
-				trigger:{target:'useCardToBefore'},
+				trigger:{target:'useCardToAfter'},
 				forced:true,
 				popup:false,
 				priority:20,
@@ -14630,7 +14642,7 @@
 							trigger.player.gainlili(up);
 						} 
 						if (up < 0){
-							trigger.player.loselili(up);
+							trigger.player.loselili(Math.abs(up));
 						}
 					}
 				},
@@ -14761,7 +14773,7 @@
 					}
 					if (info == "") return false;
 					player.turnOver();
-					game.log(player , '发动了符卡。');
+					game.log(player,'发动了' + get.skillTranslation(info,player));
 					if (info.cost > 0){
 						player.loselili(info.cost);
 					}
@@ -23253,8 +23265,7 @@
 							lib.config.bannedpile[name].add(number);
 						}
 						game.saveConfig('bannedpile',lib.config.bannedpile);
-					}
-
+					};
 					var createModeConfig=function(mode,position){
                         var info=lib.cardPack[mode];
                         var page=ui.create.div('');
@@ -28158,7 +28169,7 @@
 				}
 				ui.auto=ui.create.system('托管',ui.click.auto);
                 ui.auto.id='autobutton';
-                ui.autonode=ui.create.div('#autonode','<div>托管中...</div>',ui.arena);
+                ui.autonode=ui.create.div('#autonode','<div>少女托管中...</div>',ui.arena);
                 ui.autonode.listen(ui.click.auto);
                 if(lib.config.mode=='connect'){
                     ui.auto.hide();

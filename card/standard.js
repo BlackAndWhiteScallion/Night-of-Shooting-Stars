@@ -299,7 +299,8 @@ card.standard={
 			},
 			filterTarget:function(card,player,target){
 				if(player==target) return false;
-				return (target.num('hej')>0) && get.distance(player,target,'attack')<=1;;
+				return (target.num('hej')>0) ;
+				//&& get.distance(player,target,'attack')<=1;
 			},
 			content:function(){
 				if(target.num('hej')){
@@ -638,7 +639,7 @@ card.standard={
 			audio:true,
 			fullskin:true,
 			type:'trick',
-			type:'support',
+			subtype:'support',
 			enable:true,
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
@@ -695,6 +696,17 @@ card.standard={
 				}
 			},
 			skills:['louguan_skill']
+		},
+		bailou:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip1',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['bailou_skill']
 		},
 		laevatein:{
 			fullskin:true,
@@ -762,7 +774,7 @@ card.standard={
 			},
 			skills:['penglaiyao_skill']
 		},
-		zhiyu:{
+		zhiyuu:{
 			fullskin:true,
 			type:'equip',
 			subtype:'equip1',
@@ -771,8 +783,97 @@ card.standard={
 					equipValue:2
 				}
 			},
-			skills:['zhiyu_skill']
-		}
+			skills:['zhiyuu_skill']
+		},
+		book:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip4',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['book_skill']
+		},
+		frog:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip3',
+			filterTarget:function(card,player,target){
+				return true;
+			},
+			content:function(){
+				target.damage(2,'thunder');
+				target.equip(event.card);
+			},
+		},
+		magatama:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip4',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['magatama_skill']
+		},
+		kusanagi:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip1',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['kusanagi_skill']
+		},
+		lunadial:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip4',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['lunadial_skill']
+		},
+		hakkero:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip1',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['hakkero_skill']
+		},
+		lantern:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip2',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['lantern_skill']
+		},
+		hourai:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip2',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['hourai_skill']
+		},
 	},
 	skill:{
 		saiqian_skill:{
@@ -800,6 +901,7 @@ card.standard={
 			},
 			usable:1,
 			forceaudio:true,
+			prompt:'请选择要供奉的牌',
 			content:function(){
 				target.gain(cards);
 			},
@@ -819,7 +921,17 @@ card.standard={
 				return event.card.name=='sha';
 			},
 			content:function(){
-				player.addTempSkill('unequip','useCardAfter');
+				trigger.target.unequip();
+			}
+		},
+		bailou_skill:{
+			trigger:{source:'damageEnd'},
+			forced:true,
+			filter:function(event){
+				return event.card.name=='sha' && event.nature != 'thunder';
+			},
+			content:function(){
+				trigger.player.damage('thunder');
 			}
 		},
 		yinyangyu_skill:{
@@ -918,10 +1030,11 @@ card.standard={
 			},
 			content:function(){
 				"step 0"
-				for (var i = 0; i < player.num('e'); i ++){
+				for (var i = 0; i <= player.num('e'); i ++){
 					var card=player.get('e',i);
 					if(card&&card.name.indexOf('gungnir')==0){
 						player.discard(card);
+						break;
 					}
 				}	
 				trigger.directHit=true;
@@ -978,9 +1091,7 @@ card.standard={
 			},
 			position:'h',
 			content:function(){
-				for (var i = 0; i < target.length; i++) {
-					target[i].damage('thunder');
-				};
+				target.damage('thunder');
 			},
 		},
 		penglaiyao_skill:{
@@ -991,13 +1102,14 @@ card.standard={
 				player.loselili(2);
 			},
 		},
-		zhiyu_skill:{
+		zhiyuu_skill:{
 			audio:true,
 			fullskin:true,
 			type:'trick',
-			enable:true,
+			enable:'phaseUse',
+			usable:1,
 			filterTarget:function(card,player,target){
-				if(player!=game.me&&player.num('h')<2) return false;
+				if(player!=game.me&&player.num('h') == 0) return false;
 				return target.num('h')>0;
 			},
 			content:function(){
@@ -1029,7 +1141,7 @@ card.standard={
 				game.delay(2);
 				"step 2"
 				if(result.bool){
-					target.damage('fire');
+					target.damage('thunder');
 				}
 				else{
 					target.addTempSkill('huogong2','phaseBegin');
@@ -1038,6 +1150,143 @@ card.standard={
 				game.addVideo('cardDialog',null,event.videoId);
 				game.broadcast('closeDialog',event.videoId);
 			}
+		},
+		book_skill:{
+			audio:2,
+			trigger:{player:'phaseBegin'},
+			frequent:true,
+			content:function(){
+				player.gainlili();
+			},
+		},
+		magatama_skill:{
+			audio:2,
+			enable:'phaseUse',
+			usable:1,
+			filterTarget:function(card,player,target){
+				return target!=player&&target.num('h');
+			},
+			content:function(){
+				"step 0"
+				player.chooseCardButton(target,target.get('h')).set('filterButton',function(button){
+					return get.color(button.link) != 'black' && get.color(button.link) !='red';
+				});
+			},
+		},
+		lunadial_skill:{
+			audio:2,
+			enable:'phaseUse',
+			usable:1,
+			filterTarget:function(card,player,target){
+				return target!=player && player.lili > 0;
+			},
+			content:function(){
+				"step 0"
+				player.loselili();
+				target.addSkill('lunadial2');
+			},
+		},
+		lunadial2:{
+			trigger:{global:'phaseAfter'},
+			forced:true,
+			mark:true,
+			audio:false,
+			popup:false,
+			content:function(){
+				player.removeSkill('lunadial2');
+			},
+			mod:{
+				cardEnabled:function(){
+					return false;
+				},
+				cardUsable:function(){
+					return false;
+				},
+				cardRespondable:function(){
+					return false;
+				},
+				cardSavable:function(){
+					return false;
+				},
+			},
+		},
+		kusanagi_skill:{
+			audio:2,
+			trigger:{player:'shaBegin'},
+			check:function(event,player){
+				return ai.get.attitude(player,event.target)<=0;
+			},
+			filter:function(event){
+				return event.target.lili < event.player.lili && event.target.num('he') > 0;
+			},
+			content:function(){
+				var target = trigger.target;
+				if (player.lili > target.lili){
+					if(target.num('he') > 0){
+						player.discardPlayerCard('he',target,true);
+					}
+				}
+			},
+		},
+		hakkero_skill:{
+			audio:3,
+			enable:'phaseUse',
+			filter:function(event,player){
+				// 这段是检测次数限制的
+				if(!lib.filter.filterCard({name:'sha'},player,event)){
+					return false;
+				}
+				return player.lili > 0;
+			},
+			filterTarget:function(card,player,target){
+				return player.canUse('sha',target) && player.lili > 0;
+			},
+			content:function(){
+				player.loselili();
+				player.useCard({name:'sha'},target);
+			},
+		},
+		lantern_skill:{
+			audio:2,
+			trigger:{target:'useCardToBefore'},
+			forced:true,
+			filter:function(event,player){
+				return event.card.name=='sha'&& get.distance(player, event.player, 'attack') <= 1 ;
+			},
+			content:function(){
+				"step 0"
+				var eff=ai.get.effect(player,trigger.card,trigger.player,trigger.player);
+				trigger.player.chooseToDiscard(1).set('ai',function(card){
+					if(_status.event.eff>0){
+						return 10-ai.get.value(card);
+					}
+					return 0;
+				}).set('eff',eff);
+				"step 1"
+				if(result.bool==false){
+					trigger.finish();
+					trigger.untrigger();
+				}
+			},
+		},
+		hourai_skill:{
+			audio:2,
+			trigger:{target:'shaBefore'},
+			filter:function(event,player){
+				//return event.card.subtype == 'support';
+				return event.card.name == 'sha';
+			},
+			content:function(){
+				for (var i = 0; i <= player.num('e'); i ++){
+					var card = player.get('e',i);
+					if ((card) && (card.name == 'hourai')){
+						player.gain(card);
+						break;
+					}
+				}
+				trigger.untrigger();
+				trigger.finish();
+			},
 		},
 		_wuxie:{
 			trigger:{player:['useCardToBefore','phaseJudge']},
@@ -1352,22 +1601,30 @@ card.standard={
 		laevatein:'莱瓦丁',
 		laevatein_info:'锁定技，出牌阶段，你对每名角色使用的第一张【轰！】不算次数。',
 		gungnir:'冈格尼尔',
+		gungnir_skill:'冈格尼尔',
 		gungnir_info:'你使用【轰！】指定目标后，可以弃置此牌，令目标不能对该【轰！】使用牌。',
 		louguan:'楼观剑',
 		louguan_info:'锁定技，你使用【轰！】指定目标后，该角色的装备技能无效，直到该牌结算完毕。',
 		ibuki:'伊吹瓢',
+		ibuki_skill:'伊吹瓢',
 		ibuki_info:'一回合一次，出牌阶段，你可以弃置一张攻击牌，然后获得1点灵力。',
 		deathfan:'凤蝶纹扇',
+		deathfan_skill:'凤蝶纹扇',
 		deathfan_info:'一回合一次，出牌阶段，你可以弃置一张防御牌，然后对至多2名角色各造成1点灵击伤害。',
 		windfan:'风神团扇',
+		windfan_skill:'风神团扇',
 		windfan_info:'你可以将一张黑色牌当做【轰！】使用/打出',
 		saiqianxiang:'赛钱箱',
+		saiqian_skill2:'赛钱箱',
 		saiqianxiang_info:'一回合一次，其他角色的出牌阶段，其可以交给你一张牌。',
 		yinyangyu:'阴阳玉',
+		yinyangyu_skill:'阴阳玉',
 		yinyangyu_info:'你可以将一张红色牌当做【没中】使用/打出。',
-		zhiyu:'制御棒',
-		zhiyu_info:'一回合一次，出牌阶段，你可以令一名角色展示一张手牌；然后你可以弃置一张与展示的牌相同花色的手牌，对其造成1点灵击伤害。',
+		zhiyuu:'净颇梨之镜',
+		zhiyuu_skill:'净颇梨之镜',
+		zhiyuu_info:'一回合一次，出牌阶段，你可以令一名角色展示一张手牌；然后你可以弃置一张与展示的牌相同花色的手牌，对其造成1点灵击伤害。',
 		mirror:'八咫镜',
+		mirror_skill:'八咫镜',
 		mirror_info:'你成为攻击牌的目标后，可以判定：若颜色相同，令之对你无效。',
 		ryuuuu:'龙宫羽衣',
 		ryuuuu_info:'锁定技，你受到灵击伤害时，防止该伤害；你受到伤害后，对伤害来源造成1点灵击伤害。',
@@ -1380,18 +1637,35 @@ card.standard={
 		yuzhi:'蓬莱玉枝',
 		yuzhi:'准备阶段，你可以观看牌堆顶的一张牌，然后可以弃置之。',
 		hourai:'替身人形',
+		hourai_skill:'替身人形',
 		hourai_info:'你成为攻击牌的目标后，可以收回装备区中的此牌，令该牌对你无效。',
 		frog:'冰镇青蛙',
+		frog_skill:'冰镇青蛙',
 		frog_info:'你使用这张牌时，可以令一名其他角色失去2点灵力。',
+		magatama:'八咫琼勾玉',
+		magatama_skill:'八咫琼勾玉',
+		magatama_info:'一回合一次，出牌阶段，你可以观看一名角色的手牌。',
+		lunadial:'月时针',
+		lunadial_skill:'The World',
+		lunadial_info:'一回合一次，出牌阶段，你可以消耗1点灵力，然后令一名其他角色不能使用或打出手牌，直到结束阶段。',
+		kusanagi:'草薙剑',
+		kusanagi_skill:'草薙剑',
+		kusanagi_info:'你使用【轰！】指定目标后，若你的灵力大于目标，可以弃置其一张牌。',
+		hakkero:'八卦炉',
+		hakkero_skill:'八卦炉',
+		hakkero_info:'出牌阶段，你可以消耗1点灵力，视为使用一张【轰！】',
+		lantern:'人魂灯',
+		lantern_info:'锁定技，你成为【轰！】的目标后，若来源在你攻击范围内，其选择一项：弃置一张牌，或令该【轰！】对你无效。',
 	},
 	list:[
+		["spade",2,"sha"],
+		["spade",5,"sha"],
+		["spade",6,"sha"],
 		["spade",7,"sha"],
 		["spade",8,"sha"],
-		["spade",8,"sha"],
-		["spade",9,"sha"],
 		["spade",9,"sha"],
 		["spade",10,"sha"],
-		["spade",10,"sha"],
+		["spade",12,"sha"],
 		["club",2,"sha"],
 		["club",3,"sha"],
 		["club",4,"sha"],
@@ -1399,13 +1673,12 @@ card.standard={
 		["club",6,"sha"],
 		["club",7,"sha"],
 		["club",8,"sha"],
-		["club",8,"sha"],
-		["club",9,"sha"],
 		["club",9,"sha"],
 		["club",10,"sha"],
-		["club",10,"sha"],
 		["club",11,"sha"],
-		["club",11,"sha"],
+		["club",12,"sha"],
+		["heart",4,"sha",'',1],
+		["heart",5,"sha",'',1],
 		["heart",10,"sha",'',1],
 		["heart",10,"sha",'',1],
 		["heart",11,"sha",'',1],
@@ -1438,28 +1711,53 @@ card.standard={
 		["heart",9,"tao"],
 		["heart",12,"tao"],
 		["diamond",12,"tao"],
-		["spade",2,"danmakucraze"],
-
 		["spade",1,"juedou"],
 		["club",1,"juedou"],
 		["diamond",1,"juedou"],
+		["heart",11,"juedou"],
 		["heart",7,"wuzhong"],
 		["heart",8,"wuzhong"],
 		["heart",9,"wuzhong"],
-		["heart",11,"wuzhong"],
 		["spade",3,'shunshou'],
 		["spade",4,'shunshou'],
-		["spade",11,'shunshou'],
 		["diamond",3,'shunshou'],
 		["diamond",4,'shunshou'],
 		["spade",3,'guohe'],
 		["spade",4,'guohe'],
+		["spade",10,'guohe'],
 		["spade",12,'guohe'],
 		["club",3,'guohe'],
 		["club",4,'guohe'],
+		["spade",9,'wuxie'],
 		["spade",11,'wuxie'],
+		["spade",12,'wuxie'],
+		["club",7,'wuxie'],
 		["club",12,'wuxie'],
-		["club",13,'wuxie'],
-		["diamond",12,'wuxie'],
+		["heart",1,'reidaisai'],
+		["heart",6,'reidaisai'],
+		["club",13,'danmakucraze'],
+		["spade",13,'danmakucraze'],
+		["diamond",1,'deathfan'],
+		["spade",1,'windfan',"",1],
+		["club",1,'penglaiyao',"",3],
+		["heart",1,'lunadial',"",1],
+		["spade",2,'ibuki',"",1],
+		["club",2,'hourai',"",-1],
+		//["heart",3,'pantsu',"", 1],
+		["diamond",5,'saiqianxiang',"",1],
+		["heart",5,'yinyangyu',"",1],
+		["spade",5,'hakkero',"",1],
+		["club",5,'lantern',"",-1],
+		["club",6,'bailou',"",-1],
+		["spade",6,'louguan',"",1],
+		["spade",8,'magatama',"",-1],
+		["club",8,'mirror'],
+		["club",9,'frog'],
+		["spade",11,'book'],
+		//["heart",12,'yuzhi',"",1],
+		["spade",13,'kusanagi',"",1],
+		["heart",13,'laevatein',"",2],
+		["diamond",13,'gungnir',"",2],
+		["club",13,'zhiyuu',"",1],
 	],
 }
