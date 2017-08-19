@@ -876,6 +876,7 @@ card.standard={
 		},
 	},
 	skill:{
+		huogong2:{},
 		saiqian_skill:{
 			global:'saiqian_skill2',
 		},
@@ -1032,7 +1033,7 @@ card.standard={
 				"step 0"
 				for (var i = 0; i <= player.num('e'); i ++){
 					var card=player.get('e',i);
-					if(card&&card.name.indexOf('gungnir')==0){
+					if(card&&card.name == ('gungnir')){
 						player.discard(card);
 						break;
 					}

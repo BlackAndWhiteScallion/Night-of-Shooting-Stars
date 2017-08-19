@@ -1139,7 +1139,7 @@
 						unfrequent:true,
 						onclick:function(bool){
 							game.saveConfig('title',bool);
-							if(!lib.config.title) document.title='无名杀';
+							if(!lib.config.title) document.title='流星夜！';
 						}
 					},
                     show_extensionmaker:{
@@ -1575,7 +1575,7 @@
 							for(var i in localStorage){
 								data[i]=localStorage[i];
 							}
-							game.export(lib.init.encode(JSON.stringify(data)),'无名杀 - 数据 - '+(new Date()).toLocaleString());
+							game.export(lib.init.encode(JSON.stringify(data)),'流星夜 - 数据 - '+(new Date()).toLocaleString());
 						},
 						clear:true
 					},
@@ -2010,8 +2010,8 @@
 		            },
                     connect_ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            connect_ban_strong:{
 		                name:'屏蔽强将',
@@ -2133,8 +2133,8 @@
 					},
 		            ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            ban_strong:{
 		                name:'屏蔽强将',
@@ -2419,8 +2419,8 @@
 		            },
 		            ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            ban_strong:{
 		                name:'屏蔽强将',
@@ -2625,8 +2625,8 @@
                     },
                     connect_ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            connect_ban_strong:{
 		                name:'屏蔽强将',
@@ -2761,8 +2761,8 @@
                     },
 					ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            ban_strong:{
 		                name:'屏蔽强将',
@@ -2861,8 +2861,8 @@
 					},
 					ban_weak:{
 						name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 					},
 		            ban_strong:{
 		                name:'屏蔽强将',
@@ -3025,8 +3025,8 @@
 					},
 					ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            ban_strong:{
 		                name:'屏蔽强将',
@@ -3089,8 +3089,8 @@
 					},
 					ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            ban_strong:{
 		                name:'屏蔽强将',
@@ -3525,7 +3525,7 @@
 		saveVideo:function(){
 			if(_status.videoToSave){
 				game.export(lib.init.encode(JSON.stringify(_status.videoToSave)),
-				'无名杀 - 录像 - '+_status.videoToSave.name[0]+' - '+_status.videoToSave.name[1]);
+				'流星夜 - 录像 - '+_status.videoToSave.name[0]+' - '+_status.videoToSave.name[1]);
 			}
 		},
 		init:{
@@ -14329,6 +14329,7 @@
                     if(double_character&&lib.config.forbiddouble.contains(i)){
                         return true;
                     }
+                    /* 尼玛这个屏蔽弱将的玩意老是崩，烦死了
                     if(get.config('ban_weak')){
                         if(lib.config.forbidall.contains(i)) return true;
                         if(!double_character&&(lib.rank.c.contains(i)||lib.rank.d.contains(i))){
@@ -14338,6 +14339,7 @@
                     if(get.config('ban_strong')&&(lib.rank.s.contains(i)||lib.rank.ap.contains(i))){
                         return true;
                     }
+                    */
                 }
             },
             // 这里是用牌限制的设定！
@@ -26852,7 +26854,7 @@
 										var current=this.parentNode.querySelector('.videonode.active');
 										if(current){
 											game.export(lib.init.encode(JSON.stringify(current.link)),
-											'无名杀 - 录像 - '+current.link.name[0]+' - '+current.link.name[1]);
+											'流星夜 - 录像 - '+current.link.name[0]+' - '+current.link.name[1]);
 										}
 									});
 
