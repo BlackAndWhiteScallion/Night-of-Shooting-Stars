@@ -476,7 +476,7 @@
 				config:{
 					theme:{
 						name:'主题',
-						init:'woodden',
+						init:'simple',
 						item:{},
 						onclick:function(theme){
 							game.saveConfig('theme',theme);

@@ -902,7 +902,7 @@ div:not(.handcards)>.card>.info>span,
 /*-- 这里是控制描述框大小的-*/
 #window>.dialog.popped{
 	z-index:5;
-	width:400px;
+	width:350px;
 	background: rgba(0,0,0,0.2);
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
 	border-radius:6px;
@@ -973,7 +973,7 @@ margin-bottom: 5px;
 .caption>.text.textlink{margin-left: 10px;}
 .caption>.text.textlink:not(*:first-child){margin-top: 6px;}
 .caption>.text.textlink:hover{text-decoration: underline;}
-.caption>div>div{font-size: 16px;position: relative;width: calc(100% - 70px);vertical-align: top;margin: 0;padding: 0;}	/*-- 也是描述字体长度和位置？ --*//
+.caption>div>div{font-size: 16px;position: relative;width: calc(100% - 10px);vertical-align: top;margin: 0px;padding: 0;}	/*-- 也是描述字体长度和位置？ --*//
 .skill{left: 0 !important;width: 70px !important;}
 .skill>.card{transform: scale(0.56);transform-origin: top left;margin-left: 2px;margin-top: 6px;margin-bottom: -52px}
 .caption>.ctext{text-align:center;font-size:16px;}
