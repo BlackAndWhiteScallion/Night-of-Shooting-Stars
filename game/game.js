@@ -57,9 +57,9 @@
 		configprefix:'noname_0.9_',
         versionOL:14,
         sourceURL:'https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
-        updateURL:'https://raw.githubusercontent.com/libccy/noname/$version$/',
+        updateURL:'https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/releases',
 		assetURL:'',
-        hallURL:'websha.cn',
+        hallURL:'noname.pub',
         reserveSkillName:['others','zhu','zhuSkill'],
 		changeLog:[],
 		updates:[],
@@ -2845,8 +2845,8 @@
 					},
 					single_control:{
 						name:'单人控制',
-						init:true,
-						frequent:true,
+						init:false,
+						frequent:false,
 						onclick:function(bool){
 							game.saveConfig('single_control',bool,this._link.config.mode);
 							if(ui.single_swap&&game.me!=game.boss){
@@ -5209,8 +5209,8 @@
 			disrupt:'控场',
 			equip1:'武器',
 			equip2:'防具',
-			equip3:'防御马',
-			equip4:'攻击马',
+			equip3:'道具',
+			equip4:'道具',
 			equip5:'宝物',
 			zero:'零',
 			one:'一',
@@ -32339,6 +32339,7 @@
 			if(card.parentNode.id=='special') return 's';
 		},
         skillTranslation:function(str,player){
+        	/* 	这些是给技能名添加“新”和“界”的。
             var str2;
             if(str.indexOf('re')==0){
                 str2=str.slice(2);
@@ -32360,6 +32361,7 @@
                     }
                 }
             }
+            */
             return get.translation(str);
         },
 		translation:function(str,arg){

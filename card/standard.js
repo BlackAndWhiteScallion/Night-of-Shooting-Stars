@@ -799,7 +799,7 @@ card.standard={
 		frog:{
 			fullskin:true,
 			type:'equip',
-			subtype:'equip3',
+			subtype:'equip4',
 			filterTarget:function(card,player,target){
 				return true;
 			},
@@ -811,7 +811,7 @@ card.standard={
 		magatama:{
 			fullskin:true,
 			type:'equip',
-			subtype:'equip4',
+			subtype:'equip5',
 			ai:{
 				basic:{
 					equipValue:2

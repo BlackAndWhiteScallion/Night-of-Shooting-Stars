@@ -11,6 +11,7 @@ window.noname_source_list=[
     'game/phantom.js',
     'game/server.js',
     'game/source.js',
+    'game/translate.js',
     'game/update.js',
     'layout/default/codemirror.css',
     'layout/default/layout.css',
