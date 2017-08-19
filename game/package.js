@@ -19,7 +19,7 @@ mode.pack={
     connect:'联机',
     boss:'挑战',
     chess:'战棋',
-    brawl:'乱斗',
+    brawl:'场景',
 };
 background.pack={
     zhulian_bg:'璧合',

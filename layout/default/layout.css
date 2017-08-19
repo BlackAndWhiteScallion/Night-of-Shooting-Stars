@@ -964,8 +964,8 @@ margin-bottom: 5px;
 /*--描述框--*/
 .caption{padding-top: 8px;font-size: 20px;display: block;}	/*-- 姓名位置和大小 --*/
 .caption:only-child{padding-bottom:8px;}
-.caption:not(.normal)>div{text-align: left;display: block;width: 135%;}  /*-- 描述字体长度和位置 -这里的width 调过了-*/
-.caption>div{position: relative;}
+.caption:not(.normal)>div{text-align: left;display: block;width: 100%;}  /*-- 描述字体长度和位置 -这里的width 调过了-*/
+.caption>div{position: relative;width: 120px;}
 .caption>.text{font-size:14px;text-align:left}
 .caption>.text.center{text-align:center}
 .caption>.text.chat{word-break: break-all;margin-bottom: 3px;margin-left: 10px;width: calc(100% - 20px)}

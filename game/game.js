@@ -3110,7 +3110,7 @@
 				}
 			},
             brawl:{
-                name:'乱斗',
+                name:'场景',
                 config:{
                     duzhansanguo:{
                         name:'毒战三国',
