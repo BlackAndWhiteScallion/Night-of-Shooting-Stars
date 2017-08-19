@@ -3333,8 +3333,8 @@
 					},
 					ban_weak:{
 		                name:'屏蔽弱将',
-						init:true,
-						restart:true,
+						init:false,
+						restart:false,
 		            },
 		            ban_strong:{
 		                name:'屏蔽强将',

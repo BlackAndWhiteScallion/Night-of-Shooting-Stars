@@ -899,9 +899,10 @@ div:not(.handcards)>.card>.info>span,
 .dialog{top:calc(100% / 3 - 100px / 3);left: calc(5% + 210px);}
 .dialog.nobutton{width: 400px;left:calc(50% - 200px);bottom:auto !important;min-height: 0px !important;}
 .dialog.nobutton .content>div:last-child{padding-bottom: 8px;}
+/*-- 这里是控制描述框大小的-*/
 #window>.dialog.popped{
 	z-index:5;
-	width:220px;
+	width:400px;
 	background: rgba(0,0,0,0.2);
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
 	border-radius:6px;
@@ -965,7 +966,7 @@ margin-bottom: 5px;
 .caption{padding-top: 8px;font-size: 20px;display: block;}	/*-- 姓名位置和大小 --*/
 .caption:only-child{padding-bottom:8px;}
 .caption:not(.normal)>div{text-align: left;display: block;width: 100%;}  /*-- 描述字体长度和位置 -这里的width 调过了-*/
-.caption>div{position: relative;width: 120px;}
+.caption>div{position: relative;}
 .caption>.text{font-size:14px;text-align:left}
 .caption>.text.center{text-align:center}
 .caption>.text.chat{word-break: break-all;margin-bottom: 3px;margin-left: 10px;width: calc(100% - 20px)}
@@ -973,8 +974,8 @@ margin-bottom: 5px;
 .caption>.text.textlink:not(*:first-child){margin-top: 6px;}
 .caption>.text.textlink:hover{text-decoration: underline;}
 .caption>div>div{font-size: 16px;position: relative;width: calc(100% - 70px);vertical-align: top;margin: 0;padding: 0;}	/*-- 也是描述字体长度和位置？ --*//
-.skill{left: 0 !important;width: 120px !important;}
-.skill>.card{transform: scale(0.56);transform-origin: top left;margin-left: 5px;margin-top: 6px;margin-bottom: -52px}
+.skill{left: 0 !important;width: 70px !important;}
+.skill>.card{transform: scale(0.56);transform-origin: top left;margin-left: 2px;margin-top: 6px;margin-bottom: -52px}
 .caption>.ctext{text-align:center;font-size:16px;}
 .button.character,.button.card{width: 90px;height: 90px;position: relative;margin: 6px;}
 .button.card{font-size: 14px;}
