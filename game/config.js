@@ -27,7 +27,7 @@ window.config={
 	forbiddouble:['zhugedan','swd_kangnalishi','dongzhuo','wutugu','jg_simayi','hs_siwangzhiyi','hs_ronghejuren','hs_shanlingjuren'],
 	layoutfixed:['chess','brawl'],
 	all:{
-		stockmode:['identity','guozhan','versus','boss','chess','stone','connect','brawl','tafang'],
+		stockmode:['identity','versus','boss','chess','connect','brawl'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple'],
 		card_font:['xiaozhuan','huangcao','caoshu','xingshu'],
@@ -272,8 +272,8 @@ window.config={
 	right_click:'pause',
 	sort:'type_sort',
 
-	cards:['standard','ex','sanguosha-standard','extra','sp'],
-	characters:['standard','shenhua','refresh','sp','yijiang'],
+	cards:['standard'],
+	characters:['standard'],
 	connect_characters:[],
 	connect_cards:[],
 	plays:[],

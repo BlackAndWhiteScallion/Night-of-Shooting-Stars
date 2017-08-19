@@ -9367,17 +9367,6 @@
 						} 
 					}
 				},
-				unequip:function(){
-					for (var i = 0; i < player.num('e'); i ++){
-						var info = get.info(player.get('e',i));
-						if(info.skills){
-                            for(var j=0;j<info.skills.length;j++){
-                                player.removeSkillTrigger(info.skills[j]);
-                            }
-                        }
-                        target.addTempSkill('unequip','useCardAfter');
-					}
-				},
 				line:function(target,config){
 					if(get.itemtype(target)=='players'){
 						for(var i=0;i<target.length;i++){
@@ -14541,7 +14530,19 @@
 			global:[],
             globalmap:{},		// 全场都能用的技能？
 			storage:{},		// 标记
-			unequip:{},		// ……
+			unequip:{
+				forced:true,
+				//enable:['chooseToUse','chooseToRespond'],
+				enable:['useCardToBefore','chooseToUse','chooseToRespond'],
+				filter:function(event,player){
+					return player.num('e') > 0;
+				},
+				filterCard:function(card){
+					return get.type(card) == 'equip';
+				},
+				viewAs:{name:'frog'},
+				check:function() {return 1},
+			},		// 这里是装备无效所获得的技能（标记用的吧）
             undist:{},		// ……
 			mad:{
 				mark:true,

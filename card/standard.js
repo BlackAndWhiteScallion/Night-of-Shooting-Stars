@@ -914,15 +914,15 @@ card.standard={
 			}
 		},
 		louguan_skill:{
-			trigger:{player:'useCard'},
+			trigger:{player:'useCardtoBegin'},
 			forced:true,
 			priority:10,
 			filter:function(event){
 				return event.card.name=='sha';
 			},
 			content:function(){
-				trigger.target.unequip();
-			}
+				trigger.target.addTempSkill('unequip', 'useCardAfter');
+			},
 		},
 		bailou_skill:{
 			trigger:{source:'damageEnd'},
@@ -1273,7 +1273,7 @@ card.standard={
 			audio:2,
 			trigger:{target:'shaBefore'},
 			filter:function(event,player){
-				//return event.card.subtype == 'support';
+				//return event.card.subtype == 'attack';
 				return event.card.name == 'sha';
 			},
 			content:function(){
@@ -1640,10 +1640,9 @@ card.standard={
 		hourai_skill:'替身人形',
 		hourai_info:'你成为攻击牌的目标后，可以收回装备区中的此牌，令该牌对你无效。',
 		frog:'冰镇青蛙',
-		frog_skill:'冰镇青蛙',
 		frog_info:'你使用这张牌时，可以令一名其他角色失去2点灵力。',
 		magatama:'八咫琼勾玉',
-		magatama_skill:'八咫琼勾玉',
+		magatama_skill:'解密',
 		magatama_info:'一回合一次，出牌阶段，你可以观看一名角色的手牌。',
 		lunadial:'月时针',
 		lunadial_skill:'The World',

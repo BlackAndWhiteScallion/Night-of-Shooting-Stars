@@ -1,29 +1,8 @@
 character.pack={
     standard:'标准',
-    shenhua:'神话再临',
-    refresh:'界限突破',
-    yijiang:'一将成名',
-    sp:'SP',
-    extra:'神将',
-    guozhan:'国战',
-    diy:'DIY',
-    yxs:'英雄杀',
-    hearth:'炉石传说',
-    ow:'守望先锋',
-    swd:'轩辕剑',
-    gujian:'古剑奇谭',
-    xianjian:'仙剑',
-    xiake:'侠客',
 };
 card.pack={
     standard:'标准',
-    extra:'军争',
-    sp:'SP',
-    guozhan:'国战',
-    zhenfa:'阵法',
-    yunchou:'运筹帷幄',
-    swd:'轩辕剑',
-    hearth:'炉石传说',
 };
 play.pack={
     boss:'挑战武将',
@@ -36,13 +15,10 @@ play.pack={
 };
 mode.pack={
     identity:'身份',
-    guozhan:'国战',
     versus:'对决',
     connect:'联机',
     boss:'挑战',
     chess:'战棋',
-    tafang:'塔防',
-    stone:'炉石',
     brawl:'乱斗',
 };
 background.pack={
