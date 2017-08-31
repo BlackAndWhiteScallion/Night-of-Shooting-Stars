@@ -1132,6 +1132,8 @@ character.standard={
 			audio:4,
 			enable:'phaseUse',
 			prompt:'失去一点体力并摸两张牌',
+			skillAnimation:'legend',
+			//animationColor:'thunder',
 			content:function(){
 				"step 0"
 				player.loseHp(1);

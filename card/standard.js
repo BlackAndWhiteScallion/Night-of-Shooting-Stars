@@ -874,6 +874,17 @@ card.standard={
 			},
 			skills:['hourai_skill']
 		},
+		stone:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip5',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['stone_skill']
+		},
 	},
 	skill:{
 		huogong2:{},
@@ -1289,6 +1300,72 @@ card.standard={
 				trigger.finish();
 			},
 		},
+		stone_skill:{
+    		enable:'phaseUse',
+    		filter:function(event,player){
+    			return (player.num('e',{name:'stone'}) > 0);
+    		},
+    		filterCard:true,
+			chooseButton:{
+  				dialog:function(){
+    					var list=['danmakucraze','reidaisai','juedou','wuzhong','guohe','shunshou'];
+    					for(var i=0;i<list.length;i++){
+    						list[i]=['法术','',list[i]];
+    					}
+    					return ui.create.dialog([list,'vcard']);
+    				},
+    				filter:function(button,player){
+    					return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent());
+    				},
+    				check:function(button){
+    					var player=_status.event.player;
+    					var recover=0,lose=1,players=game.filterPlayer();
+    					for(var i=0;i<players.length;i++){
+    						if(!players[i].isOut()){
+    							if(players[i].hp<players[i].maxHp){
+    								if(get.attitude(player,players[i])>0){
+    									if(players[i].hp<2){
+    										lose--;
+    										recover+=0.5;
+    									}
+    									lose--;
+    									recover++;
+    								}
+    								else if(get.attitude(player,players[i])<0){
+    									if(players[i].hp<2){
+    										lose++;
+    										recover-=0.5;
+    									}
+    									lose++;
+    									recover--;
+    								}
+    							}
+    							else{
+    								if(get.attitude(player,players[i])>0){
+    									lose--;
+    								}
+    								else if(get.attitude(player,players[i])<0){
+    									lose++;
+    								}
+    							}
+    						}
+    					}
+    					return (button.link[2]=='wuzhong')?1:-1;
+    				},
+    				backup:function(links,player){
+    					return {
+    						filterCard:true,
+    						selectCard:1,
+    						audio:2,
+    						popname:true,
+    						viewAs:{name:links[0][2]},
+    					}
+    				},
+    				prompt:function(links,player){
+    					return '将一张手牌当作'+get.translation(links[0][2])+'使用';
+    				}
+    			},
+		},
 		_wuxie:{
 			trigger:{player:['useCardToBefore','phaseJudge']},
 			priority:5,
@@ -1656,6 +1733,9 @@ card.standard={
 		hakkero_info:'出牌阶段，你可以消耗1点灵力，视为使用一张【轰！】',
 		lantern:'人魂灯',
 		lantern_info:'锁定技，你成为【轰！】的目标后，若来源在你攻击范围内，其选择一项：弃置一张牌，或令该【轰！】对你无效。',
+		stone:'贤者之石',
+		stone_info:'什么玩意啊',
+		stone_skill:'抽卡',
 	},
 	list:[
 		["spade",2,"sha"],
@@ -1754,6 +1834,7 @@ card.standard={
 		["club",8,'mirror'],
 		["club",9,'frog'],
 		["spade",11,'book'],
+		["spade",7,'stone'],
 		//["heart",12,'yuzhi',"",1],
 		["spade",13,'kusanagi',"",1],
 		["heart",13,'laevatein',"",2],

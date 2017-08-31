@@ -7625,7 +7625,8 @@
 						game.log(player,str,'【'+get.skillTranslation(skill,player)+'】');
                         if(info.logv!==false) game.logv(player,skill,targets);
 						if(lib.config.skill_animation&&lib.skill[skill]&&lib.skill[skill].skillAnimation){
-							player.$skill(lib.skill[skill].animationStr||lib.translate[skill],lib.skill[skill].skillAnimation,lib.skill[skill].animationColor);
+							//player.$skill(lib.skill[skill].animationStr||lib.translate[skill],lib.skill[skill].skillAnimation,lib.skill[skill].animationColor);
+							player.$skill(lib.skill[skill].animationStr||skill,lib.skill[skill].skillAnimation,lib.skill[skill].animationColor);
 						}
 						else{
 							player.popup(get.skillTranslation(skill,player));
@@ -12921,23 +12922,34 @@
 					}
 					if(list.length) this.$draw(list,'nobroadcast');
 				},
+				// 技能动画我来了！
 				$skill:function(name,type,color){
 					if(typeof type!='string') type='legend';
 					game.delay(2);
-					this.playerfocus(1500);
 					var that=this;
 					setTimeout(function(){
                         game.broadcastAll(function(that,type,name,color){
                             if(lib.config.animation&&!lib.config.low_performance){
-    							if(game.chess){
+    							/*if(game.chess){
     								that['$'+type+'2'](1200);
     							}
     							else{
     								that['$'+type](1200);
-    							}
-    						}
-    						if(name){
-    							that.$fullscreenpop(name,color);
+    							}*/
+    							game.addVideo('skill',this,[name,color]);
+    							var node = ui.create.div(this,'.avatar');
+    							if (type == 'epic'){
+									this.playerfocus(1500);
+									var node = ui.create.div('.player.avatar', ui.window);
+								}
+                        		//node.setBackgroundImage('image/skill/' + name + '.png');
+                        		node.setBackground(name,'skill');
+                        		//ui.background.setBackgroundImage('image/skill/' + name + '.png');
+                        		//node.classList.add('damageadded');
+                        		ui.refresh(node);
+                        		setTimeout(function(){
+									node.delete();
+								},1000);
     						}
                         },that,type,name,color);
 					},300);
