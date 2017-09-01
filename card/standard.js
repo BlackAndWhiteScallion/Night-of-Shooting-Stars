@@ -1360,8 +1360,15 @@ card.standard={
     				},
     				backup:function(links,player){
     					return {
-    						filterCard:true,
-    						selectCard:1,
+    						filterCard:function(card,player){
+    							if(ui.selected.cards.length){
+    								return true;
+    							} else{
+    								return (card.name == 'stone');
+    							}
+    						},
+    						position:'he',
+    						selectCard:2,
     						audio:2,
     						popname:true,
     						viewAs:{name:links[0][2]},
@@ -1678,8 +1685,8 @@ card.standard={
 		wuxie:'魔法障壁',
 		wuxie_bg:'懈',
 		wuxie_info:'一名角色指定其以外的角色为法术牌的目标后，对此牌使用。抵消此牌对一名角色产生的效果',
-		penglaiyao:'蓬莱秘药',
-		penglaiyao_info:'锁定技，若你的灵力值大于2，此牌不能离开装备区；结束阶段，你失去2点灵力。',
+		penglaiyao:'魔力药水',
+		penglaiyao_info:'结束阶段，你失去2点灵力。',
 		pantsu:'蓝白胖次',
 		pantsu_info:'锁定技，其他角色不能弃置或获得你的此牌以外的牌。',
 		laevatein:'莱瓦丁',
@@ -1699,7 +1706,7 @@ card.standard={
 		windfan_skill:'风神团扇',
 		windfan_info:'你可以将一张黑色牌当做【轰！】使用/打出',
 		saiqianxiang:'赛钱箱',
-		saiqian_skill2:'赛钱箱',
+		saiqian_skill2:'赛钱！',
 		saiqianxiang_info:'一回合一次，其他角色的出牌阶段，其可以交给你一张牌。',
 		yinyangyu:'阴阳玉',
 		yinyangyu_skill:'阴阳玉',
@@ -1740,8 +1747,8 @@ card.standard={
 		lantern:'人魂灯',
 		lantern_info:'锁定技，你成为【轰！】的目标后，若来源在你攻击范围内，其选择一项：弃置一张牌，或令该【轰！】对你无效。',
 		stone:'贤者之石',
-		stone_info:'什么玩意啊',
-		stone_skill:'抽卡',
+		stone_info:'出牌阶段，你可以将包括此牌的两张牌当作一种法术牌使用。',
+		stone_skill:'贤者之石',
 	},
 	list:[
 		["spade",2,"sha"],

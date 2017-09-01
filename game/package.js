@@ -1,5 +1,6 @@
 character.pack={
     standard:'标准',
+    scarlet:'红月',
 };
 card.pack={
     standard:'标准',
