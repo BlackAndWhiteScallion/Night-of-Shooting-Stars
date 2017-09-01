@@ -1305,10 +1305,16 @@ card.standard={
     		filter:function(event,player){
     			return (player.num('e',{name:'stone'}) > 0);
     		},
-    		filterCard:true,
 			chooseButton:{
   				dialog:function(){
-    					var list=['danmakucraze','reidaisai','juedou','wuzhong','guohe','shunshou'];
+    					var list = [];
+    					for (var i in lib.card){
+    						if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+							if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+							if(lib.card[i].type == 'trick'){
+								list.add(i);
+							}
+    					}
     					for(var i=0;i<list.length;i++){
     						list[i]=['法术','',list[i]];
     					}

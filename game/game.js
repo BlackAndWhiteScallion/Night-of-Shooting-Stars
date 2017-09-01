@@ -9023,7 +9023,7 @@
                 say:function(str){
                     var dialog=ui.create.dialog('hidden');
                     dialog.classList.add('static');
-                    dialog.add('<div class="text" style="word-break:break-all;display:inline">'+str+'</div>');
+                    dialog.add('<div class="text" style="word-break:break-all;display:inline;font-size:16px">'+str+'</div>');
                     dialog.classList.add('popped');
                     ui.window.appendChild(dialog);
                     var width=dialog.content.firstChild.firstChild.offsetWidth;
@@ -12936,16 +12936,15 @@
     							else{
     								that['$'+type](1200);
     							}*/
-    							game.addVideo('skill',this,[name,color]);
-    							var node = ui.create.div(this,'.avatar');
+    							game.addVideo('skill',that,[name,color]);
+    							var node = ui.create.div(that,'.avatar');
     							if (type == 'epic'){
 									this.playerfocus(1500);
 									var node = ui.create.div('.player.avatar', ui.window);
 								}
-                        		//node.setBackgroundImage('image/skill/' + name + '.png');
-                        		node.setBackground(name,'skill');
+                        		node.setBackgroundImage('image/skill/' + name + '.png');
+                        		//node.setBackground(name,'skill');
                         		//ui.background.setBackgroundImage('image/skill/' + name + '.png');
-                        		//node.classList.add('damageadded');
                         		ui.refresh(node);
                         		setTimeout(function(){
 									node.delete();
@@ -16237,14 +16236,20 @@
 			};
 			ui.window.appendChild(audio);
 		},
+		// 播放技能语音！
 		trySkillAudio:function(skill,player,directaudio){
             game.broadcast(game.trySkillAudio,skill,player,directaudio);
-			var info=get.info(skill);
+			var info=get.info(skill);		// 获得技能信息
 			if(!info) return;
+			/* 如果技能里没有direct（不知道是什么）或者有directaudio
+				然后设置里的说话是打开的
+				然后全局技能里没有这个技能，或者技能是必须语音的（forceaudio）
+			*/
 			if((!info.direct||directaudio)&&lib.config.background_speak&&
 				(!lib.skill.global.contains(skill)||lib.skill[skill].forceaudio)){
 				var audioname=skill;
 				var audioinfo=info.audio;
+				// 如果audio里是文字的话就……？
 				if(typeof audioinfo=='string'){
                     if(audioinfo.indexOf('ext:')==0){
                         audioinfo=audioinfo.split(':');
@@ -16268,10 +16273,12 @@
     					}
                     }
 				}
+				// 如果是个列表的话，技能名变成列表第一个，音效变成第二个
 				else if(Array.isArray(audioinfo)){
 					audioname=audioinfo[0];
 					audioinfo=audioinfo[1];
 				}
+				// 如果有audioname而且包括这个角色（一般是觉醒获得别人技能的），就变成 技能名_自己的名字
 				if(Array.isArray(info.audioname)&&player){
 					if(info.audioname.contains(player.name)){
 						audioname+='_'+player.name;
@@ -16283,8 +16290,14 @@
 						audioname+='_'+player.name2;
 					}
 				}
+				// 如果audio里面是数字的话，就随机出
 				if(typeof audioinfo=='number'){
-					game.playAudio('skill',audioname+Math.ceil(audioinfo*Math.random()));
+					var num = Math.ceil(audioinfo*Math.random())
+					game.playAudio('skill',audioname + num);
+					var translation = get.translation(audioname+ '_audio' + num)
+					if (translation != audioname+'_audio'+num){
+						player.say(translation);
+					}
 				}
 				else if(audioinfo){
 					game.playAudio('skill',audioname);
