@@ -20,7 +20,8 @@
 	var lib={
 		configprefix:'noname_0.9_',
         versionOL:25,
-		updateURL:'https://raw.githubusercontent.com/libccy/noname',
+		//updateURL:'https://raw.githubusercontent.com/libccy/noname',
+		updateURL:'',
         mirrorURL:'https://coding.net/u/libccy/p/noname/git/raw',
         hallURL:'noname.pub',
 		assetURL:'',
@@ -104,18 +105,6 @@
 								ui.window.classList.remove('compatiblemode');
 							}
 						}
-					},
-					compare_discard:{
-						name:'不弃拼点牌',
-						init:true,
-					},
-					regain_lili:{
-						name:'结束阶段灵力补至1',
-						init:true,
-					},
-					damage_lili:{
-						name:'没有灵力不能造成伤害',
-						init:true,
 					},
 					confirm_exit:{
 						name:'确认退出',
@@ -307,7 +296,7 @@
 					show_splash:{
 						name:'显示开始界面',
 						intro:'游戏开始前进入模式选择画面',
-						init:'init',
+						init:'always',
 						item:{
 							off:'关闭',
 							init:'首次启动',
@@ -584,12 +573,32 @@
 					}
 				}
 			},
+			game:{
+				name:'体系',
+				config:{
+					compare_discard:{
+						name:'不弃拼点牌',
+						init:true,
+						intro:'打开后，拼点后，拼点牌返回手牌',
+					},
+					regain_lili:{
+						name:'结束阶段灵力补至1',
+						init:true,
+						intro:'结束阶段，如果你的灵力为0，回复到1',
+					},
+					damage_lili:{
+						name:'没有灵力不能造成伤害',
+						init:true,
+						intro:'防止0灵力的角色造成的所有伤害',
+					},
+				},
+			},
 			appearence:{
 				name:'外观',
 				config:{
 					theme:{
 						name:'主题',
-						init:'woodden',
+						init:'simple',
 						item:{},
 						visualMenu:function(node,link){
 							if(!node.menu){
@@ -861,7 +870,7 @@
 					},
 					image_background:{
 						name:'游戏背景',
-						init:'default',
+						init:'shengshi',
 						item:{},
 						visualBar:function(node,item,create){
 							if(node.created){
@@ -2306,113 +2315,6 @@
 							}
 						}
 					},
-					damage_shake:{
-						name:'伤害抖动',
-						intro:'角色受到伤害时的抖动效果',
-						init:true,
-						unfrequent:true,
-					},
-					button_press:{
-						name:'按钮效果',
-						intro:'选项条被按下时将有按下效果',
-						init:true,
-						unfrequent:true,
-					},
-					jiu_effect:{
-						name:'喝酒效果',
-						init:true,
-						unfrequent:true,
-					},
-					animation:{
-						name:'游戏特效',
-						intro:'开启后出现属性伤害、回复体力等情况时会显示动画',
-						init:true,
-						unfrequent:true,
-					},
-					skill_animation:{
-						name:'技能特效',
-						intro:'开启后觉醒技、限定技将显示全屏文字',
-						init:true,
-						unfrequent:true,
-					},
-					die_move:{
-						name:'阵亡效果',
-						intro:'阵亡后武将的显示效果',
-						init:'flip',
-						unfrequent:true,
-						item:{
-							off:'关闭',
-							move:'移动',
-							flip:'翻面',
-						}
-					},
-					target_shake:{
-						name:'目标效果',
-						intro:'一名玩家成为卡牌或技能的目标时的显示效果',
-						init:'off',
-						item:{
-							off:'关闭',
-							zoom:'缩放',
-							shake:'抖动',
-						},
-						unfrequent:true,
-						onclick:function(bool){
-							game.saveConfig('target_shake',bool);
-							ui.arena.dataset.target_shake=bool;
-						}
-					},
-					turned_style:{
-						name:'翻面文字',
-						intro:'角色被翻面时显示“翻面”',
-						init:true,
-						unfrequent:true,
-						onclick:function(bool){
-							game.saveConfig('turned_style',bool);
-							if(bool){
-								ui.arena.classList.remove('hide_turned');
-							}
-							else{
-								ui.arena.classList.add('hide_turned');
-							}
-						}
-					},
-                    link_style2:{
-                        name:'横置样式',
-						intro:'设置角色被横置时的样式',
-                        init:'chain',
-                        unfrequent:true,
-                        item:{
-							chain:'铁索',
-                            rotate:'横置',
-                            mark:'标记'
-                        },
-                        onclick:function(style){
-                            var list=[];
-                            for(var i=0;i<game.players.length;i++){
-                                if(game.players[i].isLinked()){
-                                    list.push(game.players[i]);
-                                }
-                            }
-                            game.saveConfig('link_style2',style);
-                            for(var i=0;i<list.length;i++){
-                                if(get.is.linked2(list[i])){
-                                    list[i].classList.add('linked2');
-                                    list[i].classList.remove('linked');
-                                }
-                                else{
-                                    list[i].classList.add('linked');
-                                    list[i].classList.remove('linked2');
-                                }
-                            }
-							if(style=='chain'){
-								ui.arena.classList.remove('nolink');
-							}
-							else{
-								ui.arena.classList.add('nolink');
-							}
-							ui.updatem();
-                        }
-                    },
                     cardshape:{
                         name:'手牌显示',
 						intro:'将手牌设置为正方形或长方形',
@@ -2450,7 +2352,7 @@
                     },
                     textequip:{
                         name:'装备显示',
-                        init:'image',
+                        init:'text',
                         unfrequent:true,
                         item:{
                             image:'图片',
@@ -2646,6 +2548,118 @@
 						}
 					},
 				}
+			},
+			effect:{
+				name:'特效',
+				config:{
+					damage_shake:{
+						name:'伤害抖动',
+						intro:'角色受到伤害时的抖动效果',
+						init:true,
+						unfrequent:true,
+					},
+					button_press:{
+						name:'按钮效果',
+						intro:'选项条被按下时将有按下效果',
+						init:true,
+						unfrequent:true,
+					},
+					jiu_effect:{
+						name:'喝酒效果',
+						init:true,
+						unfrequent:true,
+					},
+					animation:{
+						name:'游戏特效',
+						intro:'开启后出现属性伤害、回复体力等情况时会显示动画',
+						init:true,
+						unfrequent:true,
+					},
+					skill_animation:{
+						name:'技能特效',
+						intro:'开启后觉醒技、限定技将显示全屏文字',
+						init:true,
+						unfrequent:true,
+					},
+					die_move:{
+						name:'阵亡效果',
+						intro:'阵亡后武将的显示效果',
+						init:'flip',
+						unfrequent:true,
+						item:{
+							off:'关闭',
+							move:'移动',
+							flip:'翻面',
+						}
+					},
+					target_shake:{
+						name:'目标效果',
+						intro:'一名玩家成为卡牌或技能的目标时的显示效果',
+						init:'off',
+						item:{
+							off:'关闭',
+							zoom:'缩放',
+							shake:'抖动',
+						},
+						unfrequent:true,
+						onclick:function(bool){
+							game.saveConfig('target_shake',bool);
+							ui.arena.dataset.target_shake=bool;
+						}
+					},
+					turned_style:{
+						name:'翻面文字',
+						intro:'角色被翻面时显示“翻面”',
+						init:true,
+						unfrequent:true,
+						onclick:function(bool){
+							game.saveConfig('turned_style',bool);
+							if(bool){
+								ui.arena.classList.remove('hide_turned');
+							}
+							else{
+								ui.arena.classList.add('hide_turned');
+							}
+						}
+					},
+                    link_style2:{
+                        name:'横置样式',
+						intro:'设置角色被横置时的样式',
+                        init:'chain',
+                        unfrequent:true,
+                        item:{
+							chain:'铁索',
+                            rotate:'横置',
+                            mark:'标记'
+                        },
+                        onclick:function(style){
+                            var list=[];
+                            for(var i=0;i<game.players.length;i++){
+                                if(game.players[i].isLinked()){
+                                    list.push(game.players[i]);
+                                }
+                            }
+                            game.saveConfig('link_style2',style);
+                            for(var i=0;i<list.length;i++){
+                                if(get.is.linked2(list[i])){
+                                    list[i].classList.add('linked2');
+                                    list[i].classList.remove('linked');
+                                }
+                                else{
+                                    list[i].classList.add('linked');
+                                    list[i].classList.remove('linked2');
+                                }
+                            }
+							if(style=='chain'){
+								ui.arena.classList.remove('nolink');
+							}
+							else{
+								ui.arena.classList.add('nolink');
+							}
+							ui.updatem();
+                        }
+                    },
+				},
 			},
 			view:{
 				name:'显示',
