@@ -10,9 +10,16 @@
 #arena.slim_player .player .equips{
 	left: 7px;
 }
+#arena.uslim_player .player .equips{
+	left: 3px;
+}
 .player.minskin .equips{
 	transform:scale(0.73);
 	transform-origin:bottom left;
+}
+.player .equips>.card::after,
+.player .equips>.card::before{
+	visibility: hidden;
 }
 .player .equips>.card{
 	position:relative;
@@ -109,13 +116,18 @@
 #arena.slim_player .player.linked .equips{
 	transform:rotate(90deg) translate(-155px,-6px);
 }
+#arena.uslim_player .player.linked .equips{
+	transform:rotate(90deg) translate(-159px,-6px);
+}
 .player.minskin.linked .equips{
 	transform:rotate(90deg) translate(-92px,-6px) scale(0.73);
 }
 #arena.slim_player .player.minskin.linked .equips{
 	transform:rotate(90deg) translate(-95px,-6px) scale(0.73);
 }
-.player.linked div:not(.equips) .card,
+#arena.uslim_player .player.minskin.linked .equips{
+	transform:rotate(90deg) translate(-99px,-6px) scale(0.73);
+}
 .player.linked .identity{
 	transform:rotate(90deg);
 }

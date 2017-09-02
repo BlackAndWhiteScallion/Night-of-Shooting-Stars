@@ -23,10 +23,18 @@
     top: 0;
     left: 0;
     background-size: cover;
+    -webkit-clip-path: polygon(-10px 0, 130px 0, 130px 130px, -10px 130px);
+}
+#window:not(.nopointer) .dialog.fullheight .buttons .button.character:not(.squarebutton):not(.selectable){
+    cursor: default;
+}
+#window:not(.nopointer) .obstacle.glow,
+#window:not(.nopointer) .player.playerblank.glow{
+    cursor: pointer;
 }
 #chess-container{
     width:100%;
-    height :calc(100% - 120px);
+    height :calc(100% - 121px);
     left:0;
     top:0;
     overflow:scroll;
@@ -60,7 +68,9 @@
 #mebg,#me,#autonode{
     height:120px;
 }
-
+#window:not(.nopointer) .dialog.pointerbutton .buttons .button:not(.unselectable){
+    cursor: pointer !important;
+}
 #system{
     z-index:5;
 }
@@ -73,23 +83,35 @@
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
 	border-radius:8px;
 }
-#window.reduce_radius>.dialog{
-    border-radius:4px;
+#arena.chess>.dialog{
+    height: calc(50% - 20px);
+    max-height: 240px;
+}
+#window[data-radius_size='reduce']>.dialog{
+	border-radius:4px;
+}
+#window[data-radius_size='off']>.dialog{
+	border-radius:0px;
+}
+#window[data-radius_size='increase']>.dialog{
+	border-radius:16px;
 }
 #arena>.dialog.slim:not(.center){
     top:40px;
+    pointer-events: none;
 }
 #control{
     top:calc(100% - 155px);
 }
-/*#arena.mobile #control{
-    top:calc(100% - 170px);
-}*/
 .fakeme{
     width:120px;
     height:120px;
     border-radius:0px;
     top:0;
+}
+#window[data-radius_size='increase'] .fakeme,
+#window[data-radius_size='reduce'] .fakeme{
+    border-radius:0px;
 }
 .fakeme.avatar{
     left:0;
@@ -97,9 +119,9 @@
 }
 .fakeme.player{
     left:calc(100% - 120px);
-    overflow:scroll;
     text-align:center;
     transition: all 0s;
+    -webkit-clip-path: polygon(-10px 0, 130px 0, 130px 130px, -10px 130px);
 }
 .fakeme.player.zoomed{
     width: 240px;
@@ -108,7 +130,16 @@
     top:calc(100% - 240px);
     background-size:200%;
 }
-.fakeme.player.zoomed>div{
+.fakeme.player>div{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: scroll;
+    left: 0;
+    top: 0;
+}
+.fakeme.player.zoomed>div>div{
     width: 90px;
     height: 90px;
     left: 0;
@@ -117,7 +148,7 @@
     margin-right: 8px;
     margin-bottom: 16px;
 }
-.fakeme.player>div{
+.fakeme.player>div>div{
     width:45px;
     height:45px;
     background-size:cover;
@@ -130,14 +161,17 @@
     margin-bottom: 8px;
     transition:box-shadow 0.5s;
 }
+#window:not(.nopointer) .fakeme.player>div>div{
+    cursor: pointer;
+}
 
-.fakeme.player>.selectable{
+.fakeme.player>div>.selectable{
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(0, 133, 255, 1) 0 0 5px, rgba(0, 133, 255, 1) 0 0 10px;
 }
-.fakeme.player>.selected{
+.fakeme.player>div>.selected{
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(255, 0, 0, 1) 0 0 5px, rgba(255, 0, 0, 1) 0 0 10px !important;
 }
-.fakeme.player>.dead{
+.fakeme.player>div>.dead{
     filter:grayscale(1);
     -webkit-filter:grayscale(1);
     opacity:0.5;
@@ -154,14 +188,22 @@
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
 	border-radius:8px;
 }
-#window.reduce_radius .player.playergrid,
-#window.reduce_radius .player.obstacle{
+#window[data-radius_size='reduce'] .player.playergrid,
+#window[data-radius_size='reduce'] .player.obstacle{
     border-radius:4px;
+}
+#window[data-radius_size='off'] .player.playergrid,
+#window[data-radius_size='off'] .player.obstacle{
+    border-radius:0px;
+}
+#window[data-radius_size='increase'] .player.playergrid,
+#window[data-radius_size='increase'] .player.obstacle{
+    border-radius:16px;
 }
 .player.playerblank{
     background: none;
 }
-.player.obstacle{
+#window .player.obstacle{
     background: repeating-linear-gradient(
       135deg,
       rgba(0,0,0,0.2),
@@ -192,12 +234,13 @@
 #arena.leaderhide>*:not(canvas){
     opacity:0 !important;
     transition: all 0.5s !important;
+    pointer-events: none;
 }
 #arena.leadercontrol>#control{
     transition: all 0.5s !important;
 }
 .player.treasure{
-    box-shadow: none;
+    /*box-shadow: none;*/
 }
 .player.treasure .count,
 .player.treasure .identity{
@@ -227,6 +270,9 @@
     right: 5px;
     left:auto;
 }
+.button.newstyle .intro.showintro.tafang{
+    top: 6px;
+}
 .dialog .buttons>.button.character.squarebutton{
     height:90px;
 }
@@ -243,4 +289,12 @@
 }
 br.finish_game{
     display: none;
+}
+
+
+#arena.chess.slim_player.lslim_player .player.minskin:not(.fakeme)>.avatar:not(.fakeme){
+    left: 5px;
+    top: 5px;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
 }

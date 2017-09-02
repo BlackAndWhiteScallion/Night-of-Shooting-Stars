@@ -1,9 +1,12 @@
 'use strict';
-mode.realtime={
-    start:function(){
+game.import('mode',function(lib,game,ui,get,ai,_status){
+	return {
+		name:'realtime',
+	    start:function(){
 
-    },
-    game:{
+	    },
+	    game:{
 
-    }
-};
+	    }
+	};
+});

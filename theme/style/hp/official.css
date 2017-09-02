@@ -1,41 +1,49 @@
-.hp:not(.text):not(.actcount)[data-condition="high"]>div:not(.lost){
-    background: url('image/hp1.png');
+.hp:not(.text):not(.actcount):not(.treasure)[data-condition="high"]>div:not(.lost){
+    background: url('image/official1.png');
     box-shadow: none;
     border: none;
-    background-size: cover;
-    transform: scale(1.4) rotate(180deg);
+    background-size: 100% 100%;
+    transform: scale(1.4);
+    border-radius: 0px;
 }
-.hp:not(.text):not(.actcount)[data-condition="mid"]>div:not(.lost){
-    background: url('image/hp2.png');
+.hp:not(.text):not(.actcount):not(.treasure)[data-condition="mid"]>div:not(.lost){
+    background: url('image/official2.png');
     box-shadow: none;
     border: none;
-    background-size: cover;
-    transform: scale(1.4) rotate(180deg);
+    background-size: 100% 100%;
+    transform: scale(1.4);
+    border-radius: 0px;
 }
-.hp:not(.text):not(.actcount)[data-condition="low"]>div:not(.lost){
-    background: url('image/hp3.png');
+.hp:not(.text):not(.actcount):not(.treasure)[data-condition="low"]>div:not(.lost){
+    background: url('image/official3.png');
     box-shadow: none;
     border: none;
-    background-size: cover;
-    transform: scale(1.4) rotate(180deg);
+    background-size: 100% 100%;
+    transform: scale(1.4);
+    border-radius: 0px;
 }
-.hp:not(.text):not(.actcount)>.lost{
-    background: url('image/hp4.png');
+.hp:not(.text):not(.actcount):not(.treasure)>.lost{
+    background: url('image/official4.png');
     box-shadow: none;
     border: none;
-    background-size: cover;
-    transform: scale(1.4) rotate(180deg);
+    background-size: 100% 100%;
+    transform: scale(1.4);
+    border-radius: 0px;
 }
 
-#arena.hpimage .player .hp:not(.text):not(.actcount)[data-condition="high"]>div:not(.lost){
+#arena.oldlayout .player .hp:not(.text):not(.actcount):not(.treasure)[data-condition="high"]>div:not(.lost){
     transform: scale(1.6);
 }
-#arena.hpimage .player .hp:not(.text):not(.actcount)[data-condition="mid"]>div:not(.lost){
+#arena.oldlayout .player .hp:not(.text):not(.actcount):not(.treasure)[data-condition="mid"]>div:not(.lost){
     transform: scale(1.6);
 }
-#arena.hpimage .player .hp:not(.text):not(.actcount)[data-condition="low"]>div:not(.lost){
+#arena.oldlayout .player .hp:not(.text):not(.actcount):not(.treasure)[data-condition="low"]>div:not(.lost){
     transform: scale(1.6);
 }
-#arena.hpimage .player .hp:not(.text):not(.actcount)>.lost{
+#arena.oldlayout .player .hp:not(.text):not(.actcount):not(.treasure)>.lost{
     transform: scale(1.6);
+}
+
+.button.newstyle>.hp>.text{
+    margin-left: 5px;
 }

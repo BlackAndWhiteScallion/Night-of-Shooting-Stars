@@ -1,5 +1,7 @@
 'use strict';
-card.standard={
+game.import('card',function(lib,game,ui,get,ai,_status){
+	return {
+	name:'standard',
 	connect:true,
 	card:{
 		damage:{
@@ -346,14 +348,13 @@ card.standard={
 			type:'trick',
 			subtype:'disrupt',
 			enable:true,
-			range:{global:1},
 			selectTarget:1,
 			postAi:function(targets){
 				return targets.length==1&&targets[0].num('j');
 			},
 			filterTarget:function(card,player,target){
-				if(player==target) return false;
-				return (target.num('hej')>0);
+				if(target.num('hej') == 0) return false;
+				return target.hasSkill('targeted');
 			},
 			content:function(){
 				if(target.num('hej')){
@@ -663,6 +664,37 @@ card.standard={
 					draw:1
 				}
 			}
+		},
+		wuxie:{
+			audio:true,
+			fullskin:true,
+			type:'trick',
+			ai:{
+				basic:{
+					useful:[6,4],
+					value:[6,4],
+				},
+				result:{player:1},
+				expose:0.2
+			},
+			notarget:true,
+			content:function(){
+				event.result='wuxied';
+				if(player.isOnline()){
+					player.send(function(player){
+						if(ui.tempnowuxie&&!player.hasWuxie()){
+							ui.tempnowuxie.close();
+							delete ui.tempnowuxie;
+						}
+					},player);
+				}
+				else if(player==game.me){
+					if(ui.tempnowuxie&&!player.hasWuxie()){
+						ui.tempnowuxie.close();
+						delete ui.tempnowuxie;
+					}
+				}
+			},
 		},
 		saiqianxiang:{
 			fullskin:true,
@@ -1268,7 +1300,7 @@ card.standard={
 			content:function(){
 				"step 0"
 				var eff=ai.get.effect(player,trigger.card,trigger.player,trigger.player);
-				trigger.player.chooseToDiscard(1).set('ai',function(card){
+				trigger.player.chooseToDiscard(1,'人魂灯：弃置一张牌，或【轰！】无效。').set('ai',function(card){
 					if(_status.event.eff>0){
 						return 10-ai.get.value(card);
 					}
@@ -1301,7 +1333,10 @@ card.standard={
 			},
 		},
 		stone_skill:{
-    		enable:'phaseUse',
+    		enable:'chooseToUse',
+    		hiddenCard:function(player,name){
+    			return true;
+    		},
     		filter:function(event,player){
     			return (player.num('e',{name:'stone'}) > 0);
     		},
@@ -1854,4 +1889,5 @@ card.standard={
 		["diamond",13,'gungnir',"",2],
 		["club",13,'zhiyuu',"",1],
 	],
-}
+	};
+});

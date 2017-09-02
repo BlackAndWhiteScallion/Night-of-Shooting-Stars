@@ -2,8 +2,9 @@ html{
 	color: white;
 	text-shadow: black 0 0 2px;
 	min-height: 100%;
-	background-image: url('../../image/background/shengshi_bg.jpg');
+	background-image: url('../../image/background/ol_bg.jpg');
 	background-size: cover;
+	background-position: 50% 50%;
 }
 body{
 	width: 100%;
@@ -15,8 +16,9 @@ body{
 	display: block;
 }
 #system>div>div,#mebg,.control,.player,.card,.avatar,.avatar2,.button,#window>.dialog.popped,
-.player.unseen .equips:not(*:empty),.menu,.menubutton,#splash>div,
-#arena.mobile:not(.chess) .player[data-position='0'] .equips,.playerbg,.menubg,.mebg{
+#arena:not(.long) .player.unseen .equips:not(*:empty),
+#arena.long .player.unseen2 .equips:not(*:empty),.menu,.menubutton,#splash>div,
+#arena.mobile:not(.chess) .player[data-position='0'] .equips,.playerbg,#window .player.playerbg,.menubg,.mebg{
 	box-shadow: rgba(0, 0, 0, 0.4) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
 	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));
 	border-radius: 8px;
@@ -31,21 +33,9 @@ body{
 #arena.observe .handcards>.card{
 	background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)) !important;
 }
-
-#window.reduce_radius #system>div>div,
-#window.reduce_radius #mebg,
-#window.reduce_radius .control,
-#window.reduce_radius .player,
-#window.reduce_radius .card,
-#window.reduce_radius .avatar,
-#window.reduce_radius .avatar2,
-#window.reduce_radius .button,
-#window.reduce_radius #window>.dialog.popped,
-#window.reduce_radius .player.unseen .equips:not(*:empty),
-#window.reduce_radius .menu,.menubutton,
-#window.reduce_radius #splash>div,
-#window.reduce_radius.mobile:not(.chess) .player[data-position='0'] .equips{
-	border-radius: 4px;
+.videonode.menubutton.extension.current{
+	background-image: linear-gradient(rgba(89, 111, 117, 0.4),rgba(89, 111, 117, 0.4));
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
 }
 
 /*.player.current_action{
@@ -62,15 +52,42 @@ body{
 	border-radius: 6px;
 }
 .control,#system>div>div,.judges>div,.marks>div,
-.player.unseen .equips:not(*:empty){
+#arena:not(.long) .player.unseen .equips:not(*:empty),
+#arena.long .player.unseen2 .equips:not(*:empty){
 	border-radius:4px;
+	overflow: hidden;
 }
-#arena.mobile:not(.oldlayout) .player.unseen:not([data-position="0"]) .equips:not(*:empty)>.card,
-#arena:not(.mobile):not(.oldlayout) .player.unseen .equips:not(*:empty)>.card{
+#arena:not(.long).mobile:not(.oldlayout) .player.unseen:not([data-position="0"]) .equips:not(*:empty)>.card,
+#arena:not(.long):not(.mobile):not(.oldlayout) .player.unseen .equips:not(*:empty)>.card:not(.selected),
+#arena.long.mobile:not(.oldlayout) .player.unseen2:not([data-position="0"]) .equips:not(*:empty)>.card,
+#arena.long:not(.mobile):not(.oldlayout) .player.unseen2 .equips:not(*:empty)>.card:not(.selected){
 	background: none !important;
 }
-#arena:not(.chess) .player[data-position='0']>.equips>.equip5 {
+#arena.mobile:not(.chess) .player[data-position='0']>.equips>.equip5 {
     border-radius: 4px;
+}
+#arena.mobile:not(.chess) .player[data-position='0']>.equips>.equip5>.image{
+	width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+#arena.mobile:not(.chess) .player[data-position='0']>.equips>.equip5>.name{
+    display: block;
+    transform: scale(0.43) !important;
+    transform-origin: left top;
+    left: 2px;
+    top: 3px;
+}
+#arena.mobile:not(.chess) .player[data-position='0']>.equips>.equip5>.name.long{
+    top: 2px;
+}
+#arena.mobile:not(.chess) .player[data-position='0']>.equips>.equip5>.info{
+    display: block;
+    transform: scale(0.43) !important;
+    transform-origin: right top;
+    right: 3px;
+    top: 3px;
 }
 .cardbg{
 	background-size: 100% 100% !important;
@@ -82,7 +99,7 @@ body{
 	color:rgb(77, 60, 51);
 	text-shadow:none;
 	background: url('card.png');
-	background-size:cover;
+	background-size:100% 100%;
 }
 .card .markcount{
 	box-shadow: rgba(0, 0, 0, 0.8) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
@@ -112,13 +129,17 @@ body{
 	background-size: cover;
 }
 
-#system>div>.glow{
+#system>div>.glow {
     background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1));
 	box-shadow: rgba(0, 0, 0, 0.4) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px !important;
 }
 
 .menupaused{
 	opacity: 0.3 !important;
+}
+
+.player .marks>div:first-child>div{
+	-webkit-filter: invert(0.8) sepia(1);
 }
 
 .fire{
@@ -132,4 +153,53 @@ body{
 }
 .brown{
 	color: rgb(195,161,223);
+}
+#roundmenu.clock>div:nth-of-type(15){
+	background: rgba(0,0,0,0.3);
+	box-shadow: rgba(0,0,0,0.6) 0 0 5px inset;
+}
+
+.player>.glassbg{
+	left: 0;
+	top: 0;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	border-radius: 8px;
+	box-shadow: none;
+	z-index: 1;
+	pointer-events: none;
+}
+.player>.glassbg>div:last-child{
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.4);
+}
+.player>.glassbg>div:first-child{
+	left: 0;
+	top: 0;
+	margin: 0;
+	padding: 0;
+	transition-property: transform;
+	transition-duration: 0s;
+	background-size: cover;
+	-webkit-filter: blur(3px);
+}
+
+.popup-container>.menu.visual>.button.dashedmenubutton{
+	box-shadow: rgba(0, 0, 0, 0.4) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px !important;
+	border: none;
+	background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)) !important;
+}
+.popup-container>.menu.visual>.button.dashedmenubutton:not(.hpbutton){
+	width: 90px;
+	height: 90px;
+}
+.popup-container>.menu.visual>.button.dashedmenubutton.controlbutton{
+    height: 26px;
+}
+.popup-container>.menu.visual>.button.dashedmenubutton.controlbutton>div{
+	line-height: 26px;
 }

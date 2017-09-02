@@ -9,11 +9,32 @@
 #historybar{
 	height: calc(90% - 25px);
 }
-#window>.player:not(.minskin)>.avatar,#arena.slim_player .player:not(.minskin):not(.fakeme) .avatar{
+#window>.player:not(.minskin)>.avatar,
+#arena.slim_player .player:not(.minskin):not(.fakeme) .avatar{
 	width: 136px;
 	height: 166px;
 	left:7px;
 	top:7px;
+}
+#window[data-player_border='slim']>.player:not(.minskin):not(.fakeme).connect>.avatar{
+	width: 142px;
+	height: 172px;
+	left:4px;
+	top:4px;
+}
+#arena.uslim_player .player:not(.minskin):not(.fakeme) .avatar{
+	width: 144px;
+	height: 174px;
+	left:3px;
+	top:3px;
+}
+#arena.lslim_player .player:not(.minskin):not(.fakeme) .avatar{
+	left:5px;
+	top:5px;
+}
+#arena:not(.mobile).uslim_player .player:not(.minskin):not(.fakeme) .avatar,
+#arena.mobile.uslim_player .player:not(.minskin):not(.fakeme):not(*[data-position='0']) .avatar{
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px;
 }
 #window>.player.minskin>.avatar{
 	width: 106px;
@@ -36,6 +57,17 @@
 	left:7px;
 	top:7px;
 }
+#arena.uslim_player .player.minskin:not(.fakeme) .avatar:not(.fakeme){
+	width: 114px;
+	height: 114px;
+	left:3px;
+	top:3px;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px;
+}
+/*#arena.uslim_player .player.minskin:not(.fakeme) .avatar:not(.fakeme){
+	left:5px;
+	top:5px;
+}*/
 .player.minskin .hp,
 .player.minskin .hp.text{
 	left:88px;
@@ -54,14 +86,8 @@
 .player .avatar2{
 	transition-property:opacity;
 }
-.player .wunature{
-	top:137px;
-}
-.player.minskin .wunature{
-	top:80px;
-}
 .player .actcount.hp{
-	top: auto;
+	top: 18px;
 	left: 15px;
 	width: 120px;
 	bottom: auto;
@@ -72,7 +98,7 @@
 /* 这里是调整actcount位置的地方……天哪 */
 #arena.slim_player .player .actcount.hp{
 	left: 12px;
-	bottom: 5px;
+	top: 155px;
 }
 .player.fullskin2 .avatar,
 .player.fullskin2 .avatar2{
@@ -83,11 +109,30 @@
 #arena.slim_player .player.fullskin2:not(.minskin) .avatar2{
 	width: 68px;
 }
+#arena.uslim_player .player.fullskin2:not(.minskin) .avatar,
+#arena.uslim_player .player.fullskin2:not(.minskin) .avatar2{
+	width: 72px;
+}
 .player.fullskin2 .avatar{
 	border-radius:8px 0 0 8px;
 }
-#window.reduce_radius .player.fullskin2 .avatar{
+#window[data-radius_size='reduce'] .player.fullskin2 .avatar{
 	border-radius:4px 0 0 4px;
+}
+#window[data-radius_size='off'] .player.fullskin2 .avatar{
+	border-radius:0 0 0 0;
+}
+#window[data-radius_size='increase'] .player.fullskin2 .avatar{
+	border-radius:16px 0 0 16px;
+}
+#window[data-radius_size='reduce'] .player.fullskin2 .avatar2{
+	border-radius:0 4px 4px 0;
+}
+#window[data-radius_size='off'] .player.fullskin2 .avatar2{
+	border-radius:0 0 0 0;
+}
+#window[data-radius_size='increase'] .player.fullskin2 .avatar2{
+	border-radius:0 16px 16px 0;
 }
 .player.fullskin2 .avatar2{
 	top:10px;
@@ -102,6 +147,16 @@
 	right:7px;
 	height: 166px;
 }
+#arena.uslim_player .player.fullskin2:not(.minskin) .avatar2{
+	top:3px;
+	right:3px;
+	height: 174px;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px;
+}
+#arena.lslim_player .player.fullskin2:not(.minskin) .avatar2{
+	top:5px;
+	right:5px;
+}
 .player .marks,
 .player .judges{
 	width:36px;
@@ -109,50 +164,21 @@
 	padding-bottom:10px;
 }
 .player .marks{
-	left:-24px;
+	left:-21px;
 	top:14px;
 	height:auto;
-	max-height:160px;
 }
 .player .judges{
-	right:-24px;
+	right:-33px;
 	top:26px;
-	height:auto;
-	max-height:148px;
 	left:auto;
 }
-.player.noidentity .judges{
-	top:14px;
-}
-.player .marks>div,
-.player .judges>div{
-	margin-right:0;
-	margin-bottom:4px;
-	margin-left:6px;
-	line-height:20px;
-	position:relative;
-	display:block;
-	animation:card_start2xx 0.5s;
-	-webkit-animation:card_start2xx 0.5s;
-}
-.player .marks>.removing,
-.player .judges>.removing{
-	margin-top: -12px;
-	margin-bottom:-12px
-}
-.player:not(.linked2) .marks>div:first-child{
-	margin-top: -12px;
-	margin-bottom:-12px;
+.player:not(.linked2) .marks>div:first-child,
+#arena:not(.nolink) .player .marks>div:first-child{
+	transform: scale(0.2);
 	opacity:0;
 	pointer-events: none;
 }
-
-
-.player .judges>.card.removing,
-.player .marks>.card.removing{
-	/*margin-top: -12px;margin-bottom:-12px;*/
-}
-
 
 .player .hp>div{
 	width:10px;
@@ -167,7 +193,7 @@
 	top: auto;
 	left: 118px;
 	z-index:3;
-	transform:rotate(180deg);
+	/*transform:rotate(180deg);*/
 }
 #arena.slim_player .player .hp,
 #window>.player:not(.minskin) .hp{
@@ -178,15 +204,18 @@
 	left: 91px;
 }
 .player .hp.text{
-	font-family:'huangcao','xinwei';
-	font-size:22px;
+	font-family:'xinwei';
+	/*font-size:22px;*/
 	transform:none;
 	transition:all 0s;
 	left:114px;
 }
-#arena.slim_player .player .hp.text{
-	left:117px;
+.player .hp.text>div:last-child{
+	top: 4px;
 }
+/*#arena.slim_player .player .hp.text{
+	left:117px;
+}*/
 .player .hp.long{
 	bottom:12px;
 	max-height:160px;
@@ -214,6 +243,24 @@
 	z-index:1;
 	border-radius:3px 0 0 3px;
 	box-shadow: rgba(0,0,0,0.2) 1px -1px 2px inset,rgba(255,255,255,0.15) -1px 1px 5px inset;
+}
+.player.topcount .count{
+	border-radius: 2px;
+	text-align: center;
+	z-index: 3;
+}
+
+#arena.mobile.uslim_player .player:not([data-position='0'])>.count,
+#arena.mobile.lslim_player .player:not([data-position='0'])>.count,
+#arena:not(.mobile).uslim_player .player>.count,
+#arena:not(.mobile).lslim_player .player>.count{
+    z-index: 3 !important;
+    border-radius: 2px !important;
+    text-align: center !important;
+}
+.player.unseen .count{
+	border-radius: 3px;
+	text-align: center;
 }
 #arena.slim_player .player .count{
 	left: -6px;
@@ -253,6 +300,10 @@
 }
 .player.linked{
 	transform:rotate(-90deg);
+}
+.player.linked>.judges,
+.player.linked>.marks{
+	transform:rotate(90deg) translateX(10px);
 }
 #arena[data-target_shake='shake'] .linked.target{transform: rotate(-93deg);}
 #arena[data-target_shake='shake'] .linked.target2{transform: rotate(-87deg);}
@@ -424,7 +475,7 @@
 	bottom:auto !important;
 	top:200px !important;
 }
-#arena.stone .dialog{
+#arena.stone:not(.choose-character) .dialog{
 	width: calc(90% - 440px);
 	left: calc(5% + 220px);
 }
@@ -444,7 +495,7 @@
 .dialog.withbg{
 	background: rgba(0,0,0,0.2);
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
-	min-height:240px;
+	min-height:200px;
 }
 .dialog>.bar{
 	display:none !important;
@@ -459,8 +510,8 @@
 	box-shadow:black 0 0 2px;
 }
 
-#arena.low_performance .player:not([data-position='0']) .equips>.card,
-#arena.chess.low_performance .player .equips>.card{
+#window.low_performance #arena .player:not([data-position='0']) .equips>.card,
+#window.low_performance #arena.chess .player .equips>.card{
 	animation: game_start 0.5s !important;
 	-webkit-animation: game_start 0.5s !important;
 }
@@ -474,7 +525,7 @@
 		width: 735px;
 		left: calc(50% - 367.5px);
 	}
-	#arena.stone .dialog{
+	#arena.stone:not(.choose-character) .dialog{
 		width: calc(90% - 440px);
 		left: calc(5% + 220px);
 	}
