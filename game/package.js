@@ -1,6 +1,7 @@
 window.noname_package={
     character:{
         standard:'标准',
+        scarlet:'红月',
     },
     card:{
         standard:'标准',
@@ -17,17 +18,11 @@ window.noname_package={
         connect:'联机',
         boss:'挑战',
         chess:'战棋',
-        brawl:'乱斗',
+        brawl:'场景',
+        library:'图鉴',
     },
     background:{
-        ol_bg:'龙纹',
-        zhulin_bg:'竹林',
         shengshi_bg:'盛世',
-        taoyuan_bg:'桃园',
-        zhanhuo_bg:'战火',
-        huangtian_bg:'黄天',
-        september_bg:'九月',
-        yinxiang_bg:'印象',
     },
     music:{
         music_diaochan:'貂蝉',

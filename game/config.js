@@ -28,8 +28,8 @@ window.config={
 	all:{
 		sgscharacters:['standard'],
 		sgscards:['standard'],
-		sgsmodes:['identity','guozhan','versus','brawl','connect'],
-		stockmode:['identity','guozhan','versus','boss','chess','stone','connect','brawl','tafang'],
+		sgsmodes:['identity','guozhan','versus','brawl','connect','library'],
+		stockmode:['identity','guozhan','versus','boss','chess','connect','brawl','library'],
 		stockextension:['boss','cardpile','coin','wuxing','hs_mod'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple'],

@@ -5513,6 +5513,9 @@
 				}
 			},
 		},
+		library:{
+			name:'图鉴',
+		},
 		status:{
 			running:false,
 			canvas:false,

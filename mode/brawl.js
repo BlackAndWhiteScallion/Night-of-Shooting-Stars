@@ -368,53 +368,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        lib.init.onfree();
 	    },
 	    brawl:{
-	        duzhansanguo:{
-	            name:'毒战三国',
-	            mode:'identity',
-	            intro:'牌堆中额外添加10%的毒',
-	            showcase:function(init){
-	                var node=this;
-	                var func=function(){
-	                    var card=game.createCard('du','noclick');
-	                    node.nodes.push(card);
-	                    card.style.position='absolute';
-	                    var rand1=Math.round(Math.random()*100);
-	                    var rand2=Math.round(Math.random()*100);
-	                    var rand3=Math.round(Math.random()*40)-20;
-	                    card.style.left='calc('+rand1+'% - '+rand1+'px)';
-	                    card.style.top='calc('+rand2+'% - '+rand2+'px)';
-	                    card.style.transform='scale(0.8) rotate('+rand3+'deg)';
-	                    card.style.opacity=0;
-	                    node.appendChild(card);
-	                    ui.refresh(card);
-	                    card.style.opacity=1;
-	                    card.style.transform='scale(1) rotate('+rand3+'deg)';
-	                    if(node.nodes.length>7){
-	                        setTimeout(function(){
-	                            while(node.nodes.length>5){
-	                                node.nodes.shift().delete();
-	                            }
-	                        },500);
-	                    }
-	                };
-	                if(init){
-	                    node.nodes=[];
-	                    for(var i=0;i<5;i++){
-	                        func();
-	                    }
-	                }
-	                node.showcaseinterval=setInterval(func,1000);
-	            },
-	            content:{
-	                cardPile:function(list){
-	                    var num=Math.ceil(list.length/10);
-	                    while(num--){
-	                        list.push([['heart','diamond','club','spade'].randomGet(),Math.ceil(Math.random()*13),'du']);
-	                    }
-	                    return list;
-	                }
-	            },
-	        },
 	        daozhiyueying:{
 	            name:'导师月英',
 	            mode:'identity',
