@@ -137,7 +137,7 @@ window.config={
 	sort:'type_sort',
 
 	cards:['standard'],
-	characters:['standard'],
+	characters:['standard','scarlet'],
 	connect_characters:[],
 	connect_cards:[],
 	plays:[],

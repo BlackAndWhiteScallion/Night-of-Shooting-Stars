@@ -354,7 +354,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			filterTarget:function(card,player,target){
 				if(target.num('hej') == 0) return false;
-				return target.hasSkill('targeted');
+				return target.storage._mubiao > 0;
 			},
 			content:function(){
 				if(target.num('hej')){

@@ -7646,7 +7646,7 @@
                     var upNode=function(){
                         this.classList.remove('glow');
                     }
-                    // 这里是开始界面……
+                    // 这里是开始界面
 					var splash=ui.create.div('#splash',document.body);
                     if(lib.config.touchscreen){
                         splash.classList.add('touch');
@@ -8731,7 +8731,7 @@
 			agree:'同意',
 			refuse:'拒绝',
 			fire:"火",
-			thunder:"雷",
+			thunder:"灵击",
 			poison:"毒",
 			wei:'魏',
 			shu:'蜀',
@@ -8756,13 +8756,13 @@
 			shenColor:"#ffe14c",
 			basic:'基本',
 			equip:'装备',
-			trick:'锦囊',
+			trick:'法术',
 			delay:'延时锦囊',
 			character:'角色',
 			revive:'复活',
 			equip1:'武器',
 			equip2:'防具',
-			equip3:'防御马',
+			equip3:'道具',
 			equip4:'攻击马',
 			equip5:'宝物',
 			zero:'零',
@@ -13002,8 +13002,10 @@
                         info[4]=[];
                     }
                     // 默认起始灵力值 （默认为2）
-                    if(!info[5]){
-                        info[5]=2;
+                    if(!info[1] || !parseInt(info[1])){
+                        info[1]=2;
+                    } else{
+                    	info[1] = parseInt(info[1]);
                     }
                     // 默认灵力上限
                     if(!info[6]){
@@ -13037,8 +13039,8 @@
 					this.group=info[1];
 					this.hp=info[2];
 					this.maxHp=info[2];
-					this.lili=info[5];
-                    this.maxlili = info[6];
+					this.lili=info[1];
+                    this.maxlili=info[6];
 					this.hujia=0;
 					this.node.intro.innerHTML=lib.config.intro;
 					this.node.name.dataset.nature=get.groupnature(this.group);
@@ -13560,7 +13562,7 @@
 							this.unmarkSkill('ghujia');
 						}
 					}
-										// 那么设置一下灵力的UI吧
+					// 那么设置一下灵力的UI吧
 					if (this.lili == Infinity){
 						lili.innerHTML = '∞';
 					}
@@ -20655,18 +20657,17 @@
 				},
 			},
 			// 本阶段已经成为过牌的目标啦
-			_target:{
-				trigger:{target:'useCardAfter'},
-				forced:true,
-				popup:false,
-				/*
-				filter:function(event){
-					return event.target.num('s','targeted') == 0;
-				},
-				*/
-				content:function(){
-					event.player.addTempSkill('targeted');
-				},
+			_mubiao:{
+    			trigger:{target:'useCardToBefore'},
+    			forced:true,
+    			content:function(){
+    				if (!player.storage._mubiao){
+    					player.storage._mubiao = 1;
+    				} else {
+    					player.storage._mubiao += 1;
+    				}
+    				game.log('sss');
+    			}				
 			},
 			_usecard:{
                 trigger:{global:'useCardAfter'},
@@ -37075,8 +37076,8 @@
 							node.node.lili.style.left = '-20px';
 							node.node.lili.style.bottom = '5px';
 							ui.create.div(node.node.lili);
-							if (infoitem[5]){
-								var textlili=ui.create.div('.text',get.numStr(infoitem[5]),node.node.lili);
+							if (infoitem[1] && parseInt(infoitem[1])){
+								var textlili=ui.create.div('.text',get.numStr(parseInt(infoitem[1])),node.node.lili);
 							} else {
 								var textlili=ui.create.div('.text','2',node.node.lili);
 							}
@@ -42992,7 +42993,7 @@
 		intro:function(name){
 			var info=lib.character[name];
 			var str='性别：'+get.translation(info[0])+'<br/>';
-			str+='势力：'+get.translation(info[1])+'<br/>';
+			str+='灵力：'+get.translation(info[1])+'<br/>';
 			str+='体力：'+get.translation(info[2])+'<br/>';
 			str+='技能：';
 			if(info[3].length){
@@ -43095,6 +43096,7 @@
 				}
 			}
 		},
+		// 描述框的显示
 		nodeintro:function(node,simple,evt){
 			var uiintro=ui.create.dialog('hidden','notouchscroll');
 			if(node.classList.contains('player')&&!node.name){
@@ -43118,9 +43120,12 @@
 			}
 			else if(node.classList.contains('player')){
 				var capt=get.translation(node.name);
+				// 这里是往描述框添加势力的。再见~
+				/*
 				if(lib.character[node.name]&&lib.character[node.name][1]){
 					capt+='&nbsp;&nbsp;'+lib.translate[lib.character[node.name][1]];
 				}
+				*/
 				uiintro.add(capt);
 
                 if(node.isUnderControl()){
