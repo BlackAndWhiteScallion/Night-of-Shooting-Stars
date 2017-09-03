@@ -87,18 +87,18 @@
 	transition-property:opacity;
 }
 .player .actcount.hp{
-	top: 18px;
+	/*top: auto;*/
 	left: 15px;
 	width: 120px;
-	bottom: auto;
+	bottom: 10px;
 	right: auto;
-	text-align: left;
+	/*text-align: left;*/
 	transform: none;
 }
 /* 这里是调整actcount位置的地方……天哪 */
 #arena.slim_player .player .actcount.hp{
 	left: 12px;
-	top: 155px;
+	bottom: 10px;
 }
 .player.fullskin2 .avatar,
 .player.fullskin2 .avatar2{

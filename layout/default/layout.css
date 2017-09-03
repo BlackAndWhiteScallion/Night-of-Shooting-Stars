@@ -3835,12 +3835,13 @@ div:hover>.wunature {
 
 .player .actcount.hp {
 	left: 216px;
-	top: 9px;
+	/*top: 9px;*/
+	bottom: 9px;
 	width: 20px;
 }
 .player .actcount.hp>div {
-	width: 12px;
-	height: 12px;
+	width: 10px;
+	height: 10px;
 	margin-left: 4px;
 	margin-bottom: 3px;
 	animation: game_start 0.5s;

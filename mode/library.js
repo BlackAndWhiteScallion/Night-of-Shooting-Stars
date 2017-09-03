@@ -117,8 +117,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	            else{
 	                node.nodes=[
-	                    ui.create.div('.caption',caption),
-	                    ui.create.div('.text center',intro),
+	                    //ui.create.div('.caption',caption),
+	                    //ui.create.div('.text center',intro),
 	                    showcase
 	                ];
 	            }
@@ -131,6 +131,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        }
 	        // 点那个巨大的“斗”之后
 	        var clickStart=function(){
+	        	dialog.delete();
+	        	ui.auto.show();
+	        	game.switchMode('identity');
+	        	/*
 	            var active=packnode.querySelector('.active');
 	            if(active){
 	                for(var i=0;i<active.nodes.length;i++){
@@ -211,7 +215,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	                lib.translate.restart='返回';
 	                dialog.delete();
-	                ui.brawlinfo=ui.create.system('乱斗',null,true);
+	                ui.brawlinfo=ui.create.system('图鉴',null,true);
 	                lib.setPopped(ui.brawlinfo,function(){
 	                    var uiintro=ui.create.dialog('hidden');
 	                    uiintro.add(info.name);
@@ -241,12 +245,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    info.init();
 	                }
 	            }
+	            */
 	        };
 	        // 制作那个“斗”的键的。去掉会出bug，不知道为什么
 	        var start=ui.create.div('.menubutton.round.highlight','←',dialog.content,clickStart);
 	        start.style.position='absolute';
-	        start.style.left='auto';
-	        start.style.right='10px';
+	        start.style.left='-100px';
+	        start.style.right='auto';
 	        start.style.top='auto';
 	        start.style.bottom='10px';
 	        start.style.width='80px';
@@ -287,7 +292,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        characterview:{
 	            name:'角色一览',
 	            mode:'',
-	            intro:'牌堆中所有普通锦囊牌数量翻倍；移除拥有集智技能的角色',
+	            intro:'',
 	            showcase:function(init){
 	                var node=this;
 	                var player1,player2;
