@@ -4,7 +4,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'scarlet',
 		connect:true,
 		character:{
-			rumia:['female','4',4,['heiguan']],
+			rumia:['female','4',4,['heiguan','yuezhi']],
 		},
 		characterIntro:{
 			diaochan:'中国古代四大美女之一，有闭月羞花之貌。司徒王允之义女，由王允授意施行连环计，离间董卓、吕布，借布手除卓。后貂蝉成为吕布的妾。',
@@ -74,14 +74,52 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     				expose:0.1
     			}
     		},
-    		
+    		yuezhi:{
+    			audio:2,
+    			cost:2,
+    			spell:['yuezhi2'],
+    			roundi:true,
+    			trigger:{player:'phaseBegin'},
+    			filter:function(event,player){
+    				return player.lili > lib.skill.yuezhi.cost;
+    			},
+    			content:function(){
+    				player.loselili(lib.skill.yuezhi.cost);
+    				for(var i=0;i<lib.skill.yuezhi.spell.length;i++){
+    					player.addSkill(lib.skill.yuezhi.spell[i]);
+    				}
+    				player.turnOver();
+    			},
+    		},
+    		yuezhi2:{
+    			global:'yuezhi3',
+    			unique:true,
+    			uninit:function(player){
+    				game.log('ddd');
+    			}
+    		},
+    		yuezhi3:{
+				mod:{
+					attackFrom:function(from,to,distance){
+						// 数场上符合条件的角色，不错
+						if (from.hasSkill('yueshi2')) return false;
+						return distance + 10*game.countPlayer(function(current){
+							if(current==from) return false;
+							if(get.distance(current,from,'attack')<=1) return false;
+							if(current.hasSkill('yuezhi2')) return true;
+						});
+					}
+				},
+    		},
 		},
 		translate:{
 			rumia:'露米娅',
 			heiguan:'黑棺',
 			heiguan_info:'出牌阶段开始时，你可以指定灵力值小于你的任意名连续角色；你与这些角色各依次拼点；若你赢，视为你对其使用一张【轰！】；否则，你选择一项：取消其他目标并结束该阶段，或消耗1点灵力。',
 			lose_lili:'消耗灵力',
-			end_phase:'结束这个阶段',
+			end_phase:'结束出牌阶段',
+			yuezhi:'月之阴暗面',
+			yuezhi_info:'符卡技（2）【永续】你攻击范围内的所有其他角色的攻击范围视为0。',
 		},
 	};
 });
