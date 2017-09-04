@@ -102,11 +102,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				mod:{
 					attackFrom:function(from,to,distance){
 						// 数场上符合条件的角色，不错
-						if (from.hasSkill('yueshi2')) return false;
 						return distance + 10*game.countPlayer(function(current){
 							if(current==from) return false;
-							if(get.distance(current,from,'attack')<=1) return false;
-							if(current.hasSkill('yuezhi2')) return true;
+							if(!current.hasSkill('yuezhi2')) return false;
+							if(current.lili > get.distance(current,from,'global')) return true;
 						});
 					}
 				},

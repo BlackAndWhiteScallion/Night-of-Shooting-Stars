@@ -12406,7 +12406,7 @@
 	                        }
 	                    },player);
 						player.$damagepop(num,'wood');
-						game.log(player,'回复了'+get.cnNumber(num)+'点体力')
+						game.log(player,'回复了'+get.cnNumber(num)+'点体力');
 					}
 				},
 				gainlili:function(){
@@ -12419,14 +12419,17 @@
     					}
                     });
 					if(num>player.maxlili-player.lili) num=player.maxlili-player.lili;
-					if (player.isTurnedOver) num = 0;
+					if(player.isTurnedOver()){
+						num = 0;
+						game.log(player,'在符卡状态中，不能获得灵力。');
+					}
 					if(num>0){
 						player.changelili(num,false);
 						if(lib.config.animation&&!lib.config.low_performance){
 							player.$recover();
 						}
 						player.$damagepop(num,'water');
-						game.log(player,'获得了'+get.cnNumber(num)+'点灵力')
+						game.log(player,'获得了'+get.cnNumber(num)+'点灵力');
 					}
 				},
 				loseHp:function(){
@@ -19250,7 +19253,7 @@
 								}
 							}
 							if(!added){
-								this.node.range.innerHTML='范围: 1';
+								//this.node.range.innerHTML='范围: 1';
 							}
 							break;
 						case 'equip3':
@@ -20696,7 +20699,8 @@
 				priority:20,
 				popup:false,
 				filter:function(event,player){
-					return player.isTurnedOver() && player.lili + event.num <= 0;
+					//return player.isTurnedOver() && player.lili + event.num <= 0;
+					return player.isTurnedOver() && playerlili == 0;
 				},
 				content:function(){
 					var info = "";
@@ -20716,13 +20720,12 @@
 					return !player.isTurnedOver();
     			},
 				content:function(){
-					for(var i in player.skills){
-						if (player.skills[i].spell){
-							for(var j=0;j<player.skills[i].spell.length;j++){
-								if (player.hasSkill(player.skills[i].spell[j])){
-    								player.removeSkill(player.skills[i].spell[j]);
-    							}
-    						}
+					for(var i=0;i<player.skills.length;i++){
+						var info = lib.skill[player.skills[i]];
+						if (info.spell){
+							for (var j = 0; j < info.spell.length; j ++){
+								player.removeSkill(info.spell[j]);
+							}
 						}
 					}
 				},
@@ -20738,6 +20741,15 @@
     					player.storage._mubiao += 1;
     				}
     			}				
+			},
+			_mubiaoend:{
+				trigger:{global:'phaseEnd'},
+				forced:true,
+				content:function(){
+					if (player.storage._mubiao){
+						player.storage._mubiao = 0;
+					}
+				}
 			},
 			_usecard:{
                 trigger:{global:'useCardAfter'},
