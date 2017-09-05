@@ -8791,7 +8791,7 @@
 
 			pause:'暂停',
 			config:'选项',
-			auto:'托管',
+			auto:'少女托管中',
 
 			unknown:'无名氏',
 			unknown0:'一号位',
@@ -20700,7 +20700,7 @@
 				popup:false,
 				filter:function(event,player){
 					//return player.isTurnedOver() && player.lili + event.num <= 0;
-					return player.isTurnedOver() && playerlili == 0;
+					return player.isTurnedOver() && player.lili == 0;
 				},
 				content:function(){
 					var info = "";

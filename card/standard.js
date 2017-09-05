@@ -972,7 +972,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{source:'damageEnd'},
 			forced:true,
 			filter:function(event){
-				return event.card.name=='sha' && event.nature != 'thunder';
+				return (event.card && event.card.name=='sha' && event.nature != 'thunder');
 			},
 			content:function(){
 				trigger.player.damage('thunder');
@@ -1426,6 +1426,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if (event.target == event.source) return false;
 					if(get.type(event.card)!='trick'&&!get.info(event.card).wuxieable) return false;
 				}
+				if (event.target == event.source) return false;
+				if (!event.target) return false;
 				return true;
 			},
 			content:function(){
@@ -1713,10 +1715,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		juedou_info:'出牌阶段，对一名其他角色使用。由其开始，其与你轮流打出一张【轰！】，直到其中一方未打出【轰！】为止。未打出【轰！】的一方受到另一方对其造成的1点弹幕伤害。',
 		juedou_bg:'斗',
 		shunshou:'顺手牵羊',
-		shunshou_info:'出牌阶段，对区域里有牌的一名其他角色使用。你获得其区域里的一张牌。',
+		shunshou_info:'出牌阶段，对本回合成为过牌的目标的一名角色使用；获得其区域内的一张牌。',
 		guohe:'疾风骤雨',
 		guohe_bg:'拆',
-		guohe_info:'出牌阶段，对攻击范围内的一名其他角色使用。你弃置其区域里的一张牌。',
+		guohe_info:'出牌阶段，对一名其他角色使用；弃置其区域内的一张牌。',
 		wuxie:'魔法障壁',
 		wuxie_bg:'懈',
 		wuxie_info:'一名角色指定其以外的角色为法术牌的目标后，对此牌使用。抵消此牌对一名角色产生的效果',
