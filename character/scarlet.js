@@ -6,6 +6,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		character:{
 			rumia:['female','4',4,['heiguan','yuezhi']],
             meiling:['female','2',4,['xingmai','dizhuan','jicai']],
+            koakuma:['female','4',3,['qishu','anye']],
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
 		},
 		characterIntro:{
@@ -325,20 +326,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseUseEnd'},
                 group:'qiyao2',
                 frequent:true,
+                popup:false,
                 filter:function(event,player){
-                    return player.storage.qiyao.length == 1;
+                    return true;
                 },
                 content:function(){
-                    player.storage.qiyao=[];
-                    player.addTempSkill('qiyao3');
                     'step 0'
-                    player.chooseToUse(function(card){
-                        if(!lib.filter.cardEnabled(card,_status.event.player,_status.event)){
-                            return false;
-                        }
-                        var type=get.type(card,'trick');
-                        return type=='trick';
-                    },'是否使用一张法术牌？').set('logSkill','qiyao');
+                    if (player.storage.qiyao.length == 1 && player.countCards('he') > 0){
+                        player.addTempSkill('qiyao3');
+                        player.chooseToUse(function(card){
+                            if(!lib.filter.cardEnabled(card,_status.event.player,_status.event)){
+                                return false;
+                            }
+                            var type=get.type(card,'trick');
+                            return type=='trick';
+                        },'是否使用一张法术牌？').set('logSkill','qiyao');
+                    }
+                    player.storage.qiyao=[];
                 },
                 audio:2,
                 init:function(player){player.storage.qiyao=[]},
@@ -353,9 +357,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return true;
                 },
                 content:function(){
-                    if (!player.storage.qiyao) player.storage.qiyao = [];
-                    if (!player.storage.qiyao.contains(trigger.card.type)){
-                        player.storage.qiyao.push(trigger.card.type);
+                    if (!player.storage.qiyao){player.storage.qiyao = []};
+                    if (!player.storage.qiyao.contains(get.type(trigger.card))){
+                        player.storage.qiyao.add(get.type(trigger.card));
                     }
                 }
             },
@@ -435,24 +439,169 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             riyin:{
+                trigger:{global:'useCardToBefore'},
+                forced:true,
+                popup:false,
+                priority:15,
+                filter:function(event,player){
+                    if (!event.target) return false;
+                    return event.target.storage._mubiao > 0;
+                },
+                content:function(){
+                    player.addTempSkill('riyin2','useCardAfter');
+                },
+            },
+            riyin2:{
                 audio:2,
                 enable:'chooseToUse',
                 filter:function(event,player){
-                    if(!player.countCards('h')) return false;
-                    if(player.storage.zhanjue>=2) return false;
                     return true;
                 },
                 filterCard:function(card){
-                    return get.color(card)=='black';
+                    return true;
                 },
                 viewAsFilter:function(player){
                     return player.countCards('he')>0;
                 },
                 viewAs:{name:'wuxie'},
-                prompt:'将一张牌当无懈可击使用',
+                prompt:'将一张牌当魔法障壁使用',
+                selectCard:1,
                 check:function(card){return 8-get.value(card)},
                 threaten:1.2
             },
+            xianzhe:{
+                audio:2,
+                cost:0,
+                spell:['xianzhe2'],
+                roundi:true,
+                trigger:{player:'phaseBegin'},
+                filter:function(event,player){
+                    return player.lili > lib.skill.xianzhe.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.xianzhe.cost);
+                    for(var i=0;i<lib.skill.xianzhe.spell.length;i++){
+                        player.addSkill(lib.skill.xianzhe.spell[i]);
+                    }
+                    player.turnOver();
+                },
+            },
+            xianzhe2:{
+                enable:'chooseToUse',
+                hiddenCard:function(player,name){
+                    return true;
+                },
+                filter:function(event,player){
+                    return (player.num('he') > 0) && player.lili > 0;
+                },
+                chooseButton:{
+                        dialog:function(){
+                            var list = [];
+                            for (var i in lib.card){
+                                if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                                if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                                if(lib.card[i].type == 'trick'){
+                                    list.add(i);
+                                }
+                            }
+                            for(var i=0;i<list.length;i++){
+                                list[i]=['法术','',list[i]];
+                            }
+                            return ui.create.dialog([list,'vcard']);
+                        },
+                        filter:function(button,player){
+                            if (player.storage.xianzhe && player.storage.xianzhe.contains(button.link[2])) return false;
+                            return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent());
+                        },
+                        check:function(button){
+                            var player=_status.event.player;
+                            var recover=0,lose=1,players=game.filterPlayer();
+                            for(var i=0;i<players.length;i++){
+                                if(!players[i].isOut()){
+                                    if(players[i].hp<players[i].maxHp){
+                                        if(get.attitude(player,players[i])>0){
+                                            if(players[i].hp<2){
+                                                lose--;
+                                                recover+=0.5;
+                                            }
+                                            lose--;
+                                            recover++;
+                                        }
+                                        else if(get.attitude(player,players[i])<0){
+                                            if(players[i].hp<2){
+                                                lose++;
+                                                recover-=0.5;
+                                            }
+                                            lose++;
+                                            recover--;
+                                        }
+                                    }
+                                    else{
+                                        if(get.attitude(player,players[i])>0){
+                                            lose--;
+                                        }
+                                        else if(get.attitude(player,players[i])<0){
+                                            lose++;
+                                        }
+                                    }
+                                }
+                            }
+                            return (button.link[2]=='wuzhong')?1:-1;
+                        },
+                        backup:function(links,player){
+                            return {
+                                filterCard:function(card,player){
+                                    return true;
+                                },
+                                position:'he',
+                                selectCard:1,
+                                audio:2,
+                                popname:true,
+                                viewAs:{name:links[0][2]},
+                                onuse:function(result,player){
+                                    player.loselili();
+                                    if (!player.storage.xianzhe) player.storage.xianzhe = [];
+                                    player.storage.xianzhe.add(links[0][2]);
+                                }
+                            }
+                        },
+                        prompt:function(links,player){
+                            return '将一张手牌当作'+get.translation(links[0][2])+'使用';
+                        }
+                    },
+            },
+            qishu:{
+                trigger:{player:['phaseJudgeBefore','phaseDrawBefore','phaseUseBefore','phaseDiscardBefore']},
+                filter:function(event,player){
+                    return player.lili > 0;
+                },
+                content:function(){
+                    "step 0"
+                    player.chooseTarget(1,get.prompt('qishu'),function(card,player,target){
+                        return true;
+                    }).set('ai',function(target){
+                    });
+                    "step 1"
+                    if(result.bool){
+                        player.loselili();
+                        result.target.addTempSkill('qishu2');
+                        trigger.untrigger();
+                        trigger.finish();
+                    } else {
+                        event.finish();
+                    }
+                },
+            },
+            qishu2:{
+                trigger:{global:'phaseAfter'},
+                filter:function(event,player){
+                    return true;
+                },
+                content:function(){
+                    player.gainlili();
+
+                },
+            }
         },
 		translate:{
 			rumia:'露米娅',
@@ -476,9 +625,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             qiyao3:'七曜',
             qiyao_info:'出牌阶段结束时，若你本阶段内只使用过一种类型的牌，你可以将一张牌当作一种法术牌使用。',
             riyin:'日阴',
+            riyin2:'日阴',
             riyin_info:'一名角色成为牌的目标后，若该角色本回合在此牌前成为过牌的目标，你可以将一张牌当作【魔法障壁】使用。',
             xianzhe:'贤者之石',
+            xianzhe2:'贤者之石',
             xianzhe_info:'符卡技（0）你可以消耗1点灵力，将一张牌当作你本回合没有使用过的一种法术牌使用。',
+            koakuma:'小恶魔',
+            qishu:'奇术',
+            qishu_info:'一回合一次，你可以消耗1点灵力，并跳过一个阶段，然后指定一名其他角色；若如此做，结束阶段，该角色获得1点灵力，并进行一个额外的以此法跳过的阶段。',
+            anye:'暗夜',
+            anye_info:'锁定技，一回合一次，回合外，你成为法术牌的目标后，若你本回合在此牌前成为过牌的目标，该牌对你无效。',
         },
 	};
 });

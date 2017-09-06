@@ -3161,8 +3161,9 @@ div:not(.handcards)>.card>.info>span,
 	color: white;
 	text-shadow: black 0 0 2px;
 }
+/* 修改了这里，去除了翻面的黑影。opacity的0为最低（完全不透明）,1为最高（完全透明） */
 .turnedover>div {
-	opacity: 0.3;
+	opacity: 1;
 }
 .turnedover>.identity,
 .turnedover>.framebg,

@@ -12938,6 +12938,8 @@
 				},
 				turnOver:function(){
 					game.log(player,'翻面');
+					// 不仅是翻面的UI还是代表翻面了的东西？？？
+					// 看来只能去layout把翻面的动画改成正常的并且去掉翻面的翻译了……
 					player.classList.toggle('turnedover');
                     game.broadcast(function(player){
                         player.classList.toggle('turnedover');
