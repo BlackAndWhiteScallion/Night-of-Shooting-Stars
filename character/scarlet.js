@@ -571,25 +571,33 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
             },
             qishu:{
+                audio:2,
                 trigger:{player:['phaseJudgeBefore','phaseDrawBefore','phaseUseBefore','phaseDiscardBefore']},
+                usable:1,
+                popup:false,
                 filter:function(event,player){
                     return player.lili > 0;
                 },
                 content:function(){
                     "step 0"
-                    player.chooseTarget(1,get.prompt('qishu'),function(card,player,target){
-                        return true;
+                    player.chooseTarget(1,get.prompt('qishu')+get.translation(trigger.name),function(card,player,target){
+                        return target != player;
                     }).set('ai',function(target){
                     });
                     "step 1"
                     if(result.bool){
                         player.loselili();
-                        result.target.addTempSkill('qishu2');
+                        result.targets[0].addTempSkill('qishu2');
+                        result.targets[0].storage.qishu = trigger.name;
                         trigger.untrigger();
                         trigger.finish();
                     } else {
                         event.finish();
                     }
+                },
+                prompt:function(){
+                    var str = "你可以消耗1点灵力，并跳过";
+                    return str;
                 },
             },
             qishu2:{
@@ -599,9 +607,43 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.gainlili();
-
+                    if (player.storage.qishu == "phaseDraw"){
+                        player.phaseDraw();
+                    } else if (player.storage.qishu == "phaseUse") {
+                        player.phaseUse();
+                    } else if (player.storage.qishu == "phaseDiscard"){
+                        player.phaseDiscard();
+                    }
+                    player.storage.qishu = null;
                 },
-            }
+            },
+            anye:{
+                audio:2,
+                trigger:{target:'useCardToBegin'},
+                forced:true,
+                priority:15,
+                check:function(event,player){
+                    return get.effect(event.target,event.card,event.player,player)<0;
+                },
+                filter:function(event,player){
+                    if(!event.target) return false;
+                    if(event.player==player&&event.target==player) return false;
+                    if(!player.storage._mubiao > 1) return false;
+                    if(player==_status.currentPhase) return false;
+                    return (get.type(event.card)=='trick');
+                },
+                content:function(){
+                    trigger.untrigger();
+                    trigger.finish();
+                },
+                ai:{
+                    effect:{
+                        target:function(card,player,target,current){
+                            if(get.type(card)=='trick'&&player!=target) return 'zeroplayertarget';
+                        },
+                    }
+                }
+            },
         },
 		translate:{
 			rumia:'露米娅',

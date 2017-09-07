@@ -119,7 +119,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                node.nodes=[
 	                    //ui.create.div('.caption',caption),
 	                    //ui.create.div('.text center',intro),
-	                    showcase
+	                    showcase,
 	                ];
 	            }
 	            node.link=name;
@@ -262,6 +262,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        start.style.fontSize='72px';
 	        start.style.zIndex=3;
 	        start.style.transition='all 0s';
+	        start.hide();
 	        var sceneNode;
 	        for(var i in lib.brawl){
 	            if(get.config(i)===false) continue;
@@ -418,15 +419,42 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                node.showcaseinterval=setInterval(func,2200);
 	                func();
 	            },
-	            init:function(){
-	                for(var i in lib.character){
-	                    var skills=lib.character[i][3]
-	                    if(skills.contains('jizhi')||skills.contains('rejizhi')||skills.contains('lingzhou')){
-	                        delete lib.character[i];
-	                    }
-	                }
-	            },
 	        },
+	        cardview:{
+	        	name:'卡牌一览',
+	        	mode:'',
+	        	intro:'',
+	        	showcase:function(init){
+
+	        	},
+	        },
+	        modeview:{
+	        	name:'模式一览',
+	        	mode:'',
+	        	intro:'',
+	        	showcase:function(init){
+	        		var intro = '';
+	        		for (var i in lib.config.all.mode){
+	        			intro.concat(i);
+	        		}
+	        		ui.create.div('.text center',intro),
+	        		ui.refresh(this);
+	        	},
+	        },
+	        download:{
+	        	name:'更多资源',
+	        	showcase:function(init){
+
+	        	},
+	        },
+	        thanks:{
+	        	name:'鸣谢',
+	        	mode:'',
+	        	intro:'',
+	        	showcase:function(init){
+
+	        	}
+	        }
 	    },
 	};
 });
