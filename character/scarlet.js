@@ -97,7 +97,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     		yuezhi2:{
     			global:'yuezhi3',
     			unique:true,
-    			uninit:function(player){
+    			onremove:function(player){
     				game.log('ddd');
     			}
     		},
@@ -132,7 +132,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             }
                         }
                         for(var i=0;i<list.length;i++){
-                            list[i]=['基本','',list[i]];
+                            list[i]=[get.type(list[i]),'',list[i]];
                         }
                         return ui.create.dialog([list,'vcard']);
                     },
@@ -473,16 +473,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:0,
                 spell:['xianzhe2'],
-                roundi:true,
+                roundi:false,
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.xianzhe.cost;
                 },
                 content:function(){
                     player.loselili(lib.skill.xianzhe.cost);
-                    for(var i=0;i<lib.skill.xianzhe.spell.length;i++){
-                        player.addSkill(lib.skill.xianzhe.spell[i]);
-                    }
                     player.turnOver();
                 },
             },
@@ -644,6 +641,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 }
             },
+            
         },
 		translate:{
 			rumia:'露米娅',

@@ -435,7 +435,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	showcase:function(init){
 	        		var intro = '';
 	        		for (var i in lib.config.all.mode){
-	        			intro.concat(i);
+	        			intro.concat(get.translation(i));
 	        		}
 	        		ui.create.div('.text center',intro),
 	        		ui.refresh(this);

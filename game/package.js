@@ -2,6 +2,7 @@ window.noname_package={
     character:{
         standard:'标准',
         scarlet:'红月',
+        sakura:'散樱',
     },
     card:{
         standard:'标准',

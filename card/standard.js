@@ -1335,7 +1335,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		stone_skill:{
     		enable:'chooseToUse',
     		hiddenCard:function(player,name){
-    			return true;
+    			return name == 'wuxie';
     		},
     		filter:function(event,player){
     			return (player.num('e',{name:'stone'}) > 0);

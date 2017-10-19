@@ -20408,7 +20408,34 @@
             others:{},
             zhu:{},
             zhuSkill:{},
-			unequip:{ai:{unequip:true}},
+			unequip:{
+				filter:function(event,player){
+    				return player.num('e') > 0;
+    			},
+    			init:function(player){
+    				var es=player.getCards('e');
+    				for(var j=0;j<es.length;j++){
+    					var info=get.info(es[j]);
+	                    if(info.skills){
+	                        for(var i=0;i<info.skills.length;i++){
+	                            player.removeSkillTrigger(info.skills[i]);
+	                        }
+	                    }
+    				}
+    			},
+    			onremove:function(player){
+  			    	var es=player.getCards('e');
+    				for(var j=0;j<es.length;j++){
+    					var info=get.info(es[j]);
+	                    if(info.skills){
+	                        for(var i=0;i<info.skills.length;i++){
+	                            player.addSkillTrigger(info.skills[i]);
+	                        }
+	                    }
+    				}
+    			},
+				ai:{unequip:true}
+			},
 			autoswap:{
 				trigger:{player:['chooseToUseBegin','chooseToRespondBegin','chooseToDiscardBegin','chooseToCompareBegin',
 				'chooseButtonBegin','chooseCardBegin','chooseTargetBegin','chooseCardTargetBegin','chooseControlBegin',
@@ -20546,32 +20573,6 @@
 				priority:20,
 				popup:false,
 				content:function(){
-					// for(var i=0;i<game.players.length;i++){
-					// 	game.players[i].in();
-					// }
-					if(player.isTurnedOver()){
-						// 不许跳回合！
-						//trigger.untrigger();
-						//trigger.finish();
-
-						if (player.isTurnedOver()){
-						var info = ""
-						for(var i=0;i<player.skills.length;i++){
-							if (player.skills[i].spell)
-								info = lib.skill[player.skills[i]];
-								break;
-							}
-						}
-						trigger = true;
-						if (info != ""){
-							if (!get.info(info).infinite){
-								trigger = false;
-							} 
-						}
-						if (trigger == true){
-							player.turnOver();
-						}
-					}
 					// 这里是算轮次的？可惜我不用轮次……
 					if((player==_status.roundStart||_status.roundSkipped)&&!trigger.skill){
 						delete _status.roundSkipped;
@@ -20589,9 +20590,23 @@
 					}
 				},
 			},
+			//重写一遍符卡发动
+			_spell:{
+				trigger:{global:'useSkillAfter'},
+				forced:true,
+				popup:false,
+				/*
+				filter:function(event,player){
+					return event.skill.spell;
+				},
+				*/
+				content:function(){
+					game.log('ddd');
+				},
+			},
 			// 获得牌的灵力的地方
 			_liliup:{
-				trigger:{target:'useCardToAfter'},
+				trigger:{player:'useCardAfter'},
 				forced:true,
 				popup:false,
 				priority:20,
@@ -20719,14 +20734,18 @@
 				trigger:{player:'turnOverEnd'},
 				forced:true,
 				filter:function(event,player){
-					return !player.isTurnedOver();
+					return true;
     			},
 				content:function(){
 					for(var i=0;i<player.skills.length;i++){
 						var info = lib.skill[player.skills[i]];
 						if (info.spell){
 							for (var j = 0; j < info.spell.length; j ++){
-								player.removeSkill(info.spell[j]);
+								if (!player.isTurnedOver()){
+									player.removeSkill(info.spell[j]);
+								} else {
+									player.addSkill(info.spell[j]);
+								}
 							}
 						}
 					}
@@ -20736,6 +20755,7 @@
 			_mubiao:{
     			trigger:{target:'useCardToBefore'},
     			forced:true,
+    			priority:-100,
     			content:function(){
     				if (!player.storage._mubiao){
     					player.storage._mubiao = 1;
@@ -20747,6 +20767,7 @@
 			_mubiaoend:{
 				trigger:{global:'phaseEnd'},
 				forced:true,
+				priority:-100,
 				content:function(){
 					if (player.storage._mubiao){
 						player.storage._mubiao = 0;
@@ -42684,7 +42705,7 @@
 			}
             if(arg=='skill'){
                 if(lib.translate[str+'_ab']) return lib.translate[str+'_ab'];
-                if(lib.translate[str]) return lib.translate[str].slice(0,2);
+                if(lib.translate[str]) return lib.translate[str].slice(0,10);
                 return str;
             }
             else if(arg=='info'){
@@ -43076,7 +43097,7 @@
 					else{
 						opacity='';
 					}
-					var skilltrans=get.translation(skills[i]).slice(0,2);
+					var skilltrans=get.translation(skills[i]).slice(0,10);
 					str+='<div class="skill" style="'+opacity+
 					'">【'+skilltrans+'】</div><div style="'+opacity+'">'+
 					get.skillInfoTranslation(skills[i])+'</div><div style="display:block;height:10px"></div>';
@@ -43249,7 +43270,7 @@
 				for(i=0;i<skills.length;i++){
 					if(lib.skill[skills[i]]&&lib.skill[skills[i]].nopop) continue;
 					if(lib.translate[skills[i]+'_info']){
-						translation=get.translation(skills[i]).slice(0,2);
+						translation=get.translation(skills[i]).slice(0,10);
                         if(node.forbiddenSkills[skills[i]]){
                             var forbidstr='<div style="opacity:0.5"><div class="skill">【'+translation+'】</div><div>';
                             if(node.forbiddenSkills[skills[i]].length){
@@ -43297,7 +43318,7 @@
                             if(typeof name=='function'){
                                 name=name(storage[i],node);
                             }
-                            translation='<div><div class="skill">『'+name.slice(0,2)+'』</div><div>';
+                            translation='<div><div class="skill">『'+name.slice(0,10)+'』</div><div>';
                             var stint=get.storageintro(intro.content,storage[i],node,null,i);
                             if(stint){
                                 translation+=stint+'</div></div>';
@@ -43800,7 +43821,7 @@
     				var skills=infoitem[3];
     				for(i=0;i<skills.length;i++){
     					if(lib.translate[skills[i]+'_info']){
-    						translation=get.translation(skills[i]).slice(0,2);
+    						translation=get.translation(skills[i]).slice(0,10);
 							if(lib.skill[skills[i]]&&lib.skill[skills[i]].nobracket){
 								uiintro.add('<div><div class="skill">'+get.translation(skills[i])+'</div><div>'+get.skillInfoTranslation(skills[i])+'</div></div>');
 							}
