@@ -20590,20 +20590,6 @@
 					}
 				},
 			},
-			//重写一遍符卡发动
-			_spell:{
-				trigger:{global:'useSkillAfter'},
-				forced:true,
-				popup:false,
-				/*
-				filter:function(event,player){
-					return event.skill.spell;
-				},
-				*/
-				content:function(){
-					game.log('ddd');
-				},
-			},
 			// 获得牌的灵力的地方
 			_liliup:{
 				trigger:{player:'useCardAfter'},

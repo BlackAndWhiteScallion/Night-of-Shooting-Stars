@@ -1423,7 +1423,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(event.name!='phaseJudge'){
 					if(!event.target) return false;
 					if(event.player.hasSkillTag('playernowuxie')) return false;
-					if (event.target == event.source) return false;
 					if(get.type(event.card)!='trick'&&!get.info(event.card).wuxieable) return false;
 				}
 				if (event.target == event.source) return false;

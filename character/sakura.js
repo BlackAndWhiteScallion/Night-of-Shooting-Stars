@@ -272,7 +272,41 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.lili > player.hp;
                 },
                 content:function(){
-                    
+                    "step 0"
+                    event.current=player;
+                    event.players=game.filterPlayer();
+                    event.num=0;
+                    "step 1"
+                    if(event.num<event.players.length){
+                        var target=event.players[event.num];
+                        target.draw();
+                        event.num++;
+                        event.redo();
+                    }
+                    "step 2"
+                    event.current.chooseTarget([1,1],true,get.prompt('chunxiao'),function(card,player,target){
+                        if(player==target) return false;
+                        if(get.distance(player,target)<=1) return true;
+                        if(game.hasPlayer(function(current){
+                            return current!=player&&get.distance(player,current)<get.distance(player,target);
+                        })){
+                        return false;
+                    }
+                        return target.countCards('hej');
+                    }).set('ai',function(target){
+                        return -get.attitude(_status.event.player,target);
+                    }); 
+                    "step 3"
+                    if(result.bool){
+                        //player.logSkill('chunxiao',result.targets);
+                        event.targets=result.targets;
+                        event.current.discardPlayerCard(event.targets[0],'hej',[1,1],true);
+                    }
+                    if(event.current.next!=player){
+                        event.current=event.current.next;
+                        game.delay(0.5);
+                        event.goto(1);
+                    }
                 },
             },
             mengya:{
@@ -303,6 +337,89 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
             },
+            yishan:{
+                audio:2,
+                direct:true,
+                trigger:{player:'useCardAfter'},
+                usable:1,
+                filter:function(event,player){
+                    return (event.card.name=='sha');
+                },
+                content:function(){
+                    "step 0"
+                    player.chooseTarget(get.prompt('yishan'),function(card,player,target){
+                        if(player==target) return false;
+                        return player.canUse({name:'sha'},target,false);
+                    }).set('ai',function(target){
+                        if(!_status.event.check) return 0;
+                        return get.effect(target,{name:'sha'},_status.event.player);
+                    });
+                    "step 1"
+                    if(result.bool){
+                        player.logSkill('yishan',result.targets);
+                        result.targets[0].draw();
+                        player.useCard({name:'sha'},result.targets[0],false);
+                    }
+                },
+            },
+            yinhuashan:{
+                audio:2,
+                cost:0,
+                spell:['yinhuashan2'],
+                trigger:{player:'phaseBegin'},
+                filter:function(event,player){
+                    return player.lili > lib.skill.yinhuashan.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.yinhuashan.cost);
+                    player.turnOver();
+                },
+            },
+            yinhuashan2:{
+                audio:2,
+                direct:true,
+                trigger:{player:'useCard'},
+                filter:function(event,player){
+                    return (event.card.name=='sha' && player.lili > 0);
+                },
+                content:function(){
+                    "step 0"
+                    var choice = ["重置一闪"];
+                    if (game.hasPlayer(function(target){
+                        return target!=player&&player.canUse(trigger.card,target)&&trigger.targets.contains(target)==false;
+                    })){
+                        choice.push('extra_target');
+                    }
+                    player.chooseControl(choice).set('ai',function(){
+                        return '重置一闪';
+                    });
+
+                    "step 1"
+                    player.loselili();
+                    if (result.control == "重置一闪"){
+                        if (player.storage.counttrigger) player.storage.counttrigger['yishan'] = 0;
+                    } else {
+                        player.chooseTarget(get.prompt('yinhuashan'),function(card,player,target){
+                            if(player==target) return false;
+                            var trigger=_status.event.getTrigger();
+                            return player.canUse(trigger.card,target)&&trigger.targets.contains(target)==false;
+                        }).set('ai',function(target){
+                            var trigger=_status.event.getTrigger();
+                            var player=_status.event.player;
+                            return get.effect(target,trigger.card,player,player)+1;
+                        });
+                    }
+
+                    "step 2"
+                    if(result.bool){
+                        game.log(event.target,'成为了',trigger.card,'的额外目标');
+                        trigger.targets.push(event.target);
+                    }
+                    else{
+                        event.finish();
+                    }
+                },
+            },
         },
 		translate:{
             letty:'蕾蒂',
@@ -322,7 +439,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shuanggui4:'鬼',
             shuanggui_info:'符卡技（2）【永续】准备阶段，你指定一名其他角色，与其各摸一张牌；该角色需要消耗灵力时，须改为消耗你的灵力。',
             lilywhite:'莉莉白',
-            
+            chunxiao:'春晓',
+            chunxiao_info:'准备阶段，若你的灵力值不小于体力值，你可以令所有角色各摸一张牌，然后各弃置与其最近的一名角色一张牌。',
+            mengya:'萌芽',
+            mengya_info:'一回合两次，出牌阶段，你可以选择一项：获得1点灵力，然后弃置一张牌；或消耗1点灵力，然后摸一张牌。',
+            youmu:'妖梦',
+            yishan:'一闪',
+            yishan_info:'一回合一次，你使用【轰！】结算完毕后，你可以令一名角色摸一张牌，视为对其使用一张无视装备的【轰！】。',
+            yinhuashan:'樱花闪闪',
+            yinhuashan_info:'符卡技（0）你使用【轰！】指定目标时，可以消耗1点灵力，并选择一项：额外指定一名目标角色，或重置【一闪】。',
+            'refresh':'重置',
+            'extra_target':'额外目标',
         },
 	};
 });

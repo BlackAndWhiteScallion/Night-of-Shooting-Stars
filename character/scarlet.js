@@ -648,6 +648,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			heiguan:'黑棺',
 			heiguan_info:'出牌阶段开始时，你可以指定灵力值小于你的任意名连续角色；你与这些角色各依次拼点；若你赢，视为你对其使用一张“轰！”；否则，你选择一项：取消其他目标并结束该阶段，或消耗1点灵力。',
 			lose_lili:'消耗灵力',
+            gain_lili:'获得灵力',
 			end_phase:'结束出牌阶段',
 			yuezhi:'月之阴暗面',
 			yuezhi_info:'符卡技（2）<永续>你攻击范围内的所有其他角色的攻击范围视为0。',
