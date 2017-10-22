@@ -58,9 +58,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     if (trigger.player){
-                        if (trigger.player._mubiao > 0){
+                        //if (trigger.player._mubiao > 0){
                             trigger.player.storage.shuang = 1;
-                        }
+                        //}
                     }
                 },
             },

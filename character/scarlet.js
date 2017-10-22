@@ -314,7 +314,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.logSkill('jicai',result.targets);
                         event.targets=result.targets;
                         player.discardPlayerCard(event.targets[0],'e',1,function(card,player,target){
-                            return get.suit(card) == get.suit(event.card);
+                            return get.suit(card) == get.suit(trigger.card);
                         });
                     }
                 },
@@ -625,7 +625,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filter:function(event,player){
                     if(!event.target) return false;
                     if(event.player==player&&event.target==player) return false;
-                    if(!player.storage._mubiao > 1) return false;
+                    if(player.storage._mubiao == 0) return false;
                     if(player==_status.currentPhase) return false;
                     return (get.type(event.card)=='trick');
                 },

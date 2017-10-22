@@ -18,11 +18,12 @@
 		dying:[]
 	};
 	var lib={
-		configprefix:'noname_0.9_',
+		configprefix:'star_0.9_',
         versionOL:25,
-		//updateURL:'https://raw.githubusercontent.com/libccy/noname',
-		updateURL:'',
-        mirrorURL:'https://coding.net/u/libccy/p/noname/git/raw',
+		updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/master',
+		//updateURL:'',
+		mirrorURL:'',
+        //mirrorURL:'https://coding.net/u/libccy/p/noname/git/raw',
         hallURL:'noname.pub',
 		assetURL:'',
 		changeLog:[],
@@ -870,7 +871,7 @@
 					},
 					image_background:{
 						name:'游戏背景',
-						init:'shengshi',
+						init:'shengshi_bg',
 						item:{},
 						visualBar:function(node,item,create){
 							if(node.created){
@@ -1102,7 +1103,7 @@
                     },
 					change_skin:{
 						name:'开启换肤',
-						init:true,
+						init:false,
 						intro:'在武将的右键菜单中换肤，皮肤可在选项-文件-图片文件-皮肤图片中添加'
 					},
 					change_skin_auto:{
@@ -2615,7 +2616,7 @@
 					turned_style:{
 						name:'翻面文字',
 						intro:'角色被翻面时显示“翻面”',
-						init:true,
+						init:false,
 						unfrequent:true,
 						onclick:function(bool){
 							game.saveConfig('turned_style',bool);
@@ -5071,8 +5072,8 @@
 					},
 					single_control:{
 						name:'单人控制',
-						init:true,
-						frequent:true,
+						init:false,
+						frequent:false,
 						onclick:function(bool){
 							game.saveConfig('single_control',bool,this._link.config.mode);
 							if(ui.single_swap&&game.me!=game.boss){
@@ -36800,7 +36801,7 @@
 					});
 				}
                 ui.auto.id='autobutton';
-                ui.autonode=ui.create.div('#autonode','<div>托管中...</div>',ui.arena);
+                ui.autonode=ui.create.div('#autonode','<div>少女托管中...</div>',ui.arena);
                 ui.autonode.listen(ui.click.auto);
                 if(lib.config.mode=='connect'){
                     ui.auto.hide();

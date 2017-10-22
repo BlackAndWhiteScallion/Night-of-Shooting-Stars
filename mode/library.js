@@ -118,7 +118,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            else{
 	                node.nodes=[
 	                    //ui.create.div('.caption',caption),
-	                    //ui.create.div('.text center',intro),
+	                    ui.create.div('.text center',intro),
 	                    showcase,
 	                ];
 	            }
@@ -134,118 +134,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	dialog.delete();
 	        	ui.auto.show();
 	        	game.switchMode('identity');
-	        	/*
-	            var active=packnode.querySelector('.active');
-	            if(active){
-	                for(var i=0;i<active.nodes.length;i++){
-	                    if(active.nodes[i].showcaseinterval){
-	                        clearInterval(active.nodes[i].showcaseinterval);
-	                        delete active.nodes[i].showcaseinterval;
-	                    }
-	                }
-	                var info;
-	                if(active.link.indexOf('stage_')==0){
-	                    var level;
-	                    if(Array.isArray(arguments[0])){
-	                        level={index:arguments[0][1]};
-	                    }
-	                    else{
-	                        level=dialog.content.querySelector('.menubutton.large.active');
-	                    }
-	                    if(level){
-	                        var stagesave=lib.storage.stage;
-	                        var stage=stagesave[active.link.slice(6)];
-	                        game.save('lastStage',level.index);
-	                        lib.onover.push(function(bool){
-	                            _status.createControl=ui.controls[0];
-	                            if(bool&&level.index+1<stage.scenes.length){
-	                                ui.create.control('下一关',function(){
-	                                    game.save('directStage',[stage.name,level.index+1],'brawl');
-	                                    localStorage.setItem(lib.configprefix+'directstart',true);
-	                                    game.reload();
-	                                });
-	                                if(level.index+1>stage.level){
-	                                    stage.level=level.index+1;
-	                                    game.save('stage',stagesave,'brawl');
-	                                }
-	                                if(stage.mode!='sequal'){
-	                                    game.save('lastStage',level.index+1,'brawl');
-	                                }
-	                            }
-	                            else{
-	                                ui.create.control('重新开始',function(){
-	                                    if(stage.mode=='sequal'&&bool&&level.index==stage.scenes.length-1){
-	                                        game.save('directStage',[stage.name,0],'brawl');
-	                                    }
-	                                    else{
-	                                        game.save('directStage',[stage.name,level.index],'brawl');
-	                                    }
-	                                    localStorage.setItem(lib.configprefix+'directstart',true);
-	                                    game.reload();
-	                                });
-	                                if(stage.mode=='sequal'&&level.index==stage.scenes.length-1){
-	                                    stage.level=0;
-	                                    game.save('stage',stagesave,'brawl');
-	                                }
-	                                if(stage.mode!='sequal'){
-	                                    game.save('lastStage',level.index,'brawl');
-	                                }
-	                            }
-	                            delete _status.createControl;
-	                        });
-	                        var scene=stage.scenes[level.index];
-	                        info={
-	                            name:scene.name,
-	                            intro:scene.intro,
-	                        };
-	                        for(var i in lib.brawl.scene.template){
-	                            info[i]=get.copy(lib.brawl.scene.template[i]);
-	                        }
-	                        if(!scene.gameDraw){
-	                            info.content.noGameDraw=true;
-	                        }
-	                        info.content.scene=scene;
-	                    }
-	                    else{
-	                        return;
-	                    }
-	                }
-	                else{
-	                    info=lib.brawl[active.link];
-	                }
-	                lib.translate.restart='返回';
-	                dialog.delete();
-	                ui.brawlinfo=ui.create.system('图鉴',null,true);
-	                lib.setPopped(ui.brawlinfo,function(){
-	                    var uiintro=ui.create.dialog('hidden');
-	                    uiintro.add(info.name);
-	                    var intro;
-	                    if(Array.isArray(info.intro)){
-	                        intro='<ul style="text-align:left;margin-top:0;width:450px">';
-	                        for(var i=0;i<info.intro.length;i++){
-	                            intro+='<li>'+info.intro[i];
-	                        }
-	                        intro+='</ul>'
-	                    }
-	                    else{
-	                        intro=info.intro;
-	                    }
-	                    uiintro.add('<div class="text center">'+intro+'</div>');
-	                    var ul=uiintro.querySelector('ul');
-	                    if(ul){
-	                        ul.style.width='180px';
-	                    }
-	                    uiintro.add(ui.create.div('.placeholder'));
-	                    return uiintro;
-	                },250);
-	                ui.auto.show();
-	                _status.brawl=info.content;
-	                game.switchMode(info.mode);
-	                if(info.init){
-	                    info.init();
-	                }
-	            }
-	            */
 	        };
 	        // 制作那个“斗”的键的。去掉会出bug，不知道为什么
 	        var start=ui.create.div('.menubutton.round.highlight','←',dialog.content,clickStart);
@@ -295,154 +183,63 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            mode:'',
 	            intro:'',
 	            showcase:function(init){
-	                var node=this;
-	                var player1,player2;
-	                if(init){
-	                    player1=ui.create.player(null,true).init('huangyueying');
-	                    player2=ui.create.player(null,true);
-						if(lib.character.jsp_huangyueying){
-							player2.init('jsp_huangyueying');
-						}
-						else if(lib.character.re_huangyueying){
-	                        player2.init('re_huangyueying');
-	                    }
-	                    else{
-	                        player2.init('huangyueying');
-	                    }
-	                    player1.style.left='20px';
-	                    player1.style.top='20px';
-	                    player1.style.transform='scale(0.9)';
-	                    player1.node.count.innerHTML='2';
-	                    player1.node.count.dataset.condition='mid';
-	                    player2.style.left='auto';
-	                    player2.style.right='20px';
-	                    player2.style.top='20px';
-	                    player2.style.transform='scale(0.9)';
-	                    player2.node.count.innerHTML='2';
-	                    player2.node.count.dataset.condition='mid';
-	                    this.appendChild(player1);
-	                    this.appendChild(player2);
-	                    this.player1=player1;
-	                    this.player2=player2;
-	                }
-	                else{
-	                    player1=this.player1;
-	                    player2=this.player2;
-	                }
-	                var rect1=player1.getBoundingClientRect();
-	                var rect2=player2.getBoundingClientRect();
-	                var left1=rect1.left+rect1.width/2-ui.arena.offsetLeft;
-	                var left2=rect2.left+rect2.width/2-ui.arena.offsetLeft;
-	                var top1=rect1.top+rect1.height/2-ui.arena.offsetTop;
-	                var top2=rect2.top+rect2.height/2-ui.arena.offsetTop;
-
-	                var createCard=function(wuxie){
-	                    var card;
-	                    if(wuxie){
-	                        card=game.createCard('wuxie','noclick');
-	                        card.style.transform='scale(0.9)';
-	                    }
-	                    else{
-	                        card=ui.create.card(null,'noclick',true);
-	                    }
-	                    card.style.opacity=0;
-	                    card.style.position='absolute';
-	                    card.style.zIndex=2;
-	                    card.style.margin=0;
-	                    return card;
-	                }
-
-	                var func=function(){
-	                    game.linexy([left1,top1,left2,top2]);
-	                    var card=createCard(true);
-	                    card.style.left='43px';
-	                    card.style.top='58px';
-	                    node.appendChild(card);
-	                    ui.refresh(card);
-	                    card.style.opacity=1;
-	                    card.style.transform='scale(0.9) translate(137px,152px)';
-	                    setTimeout(function(){
-	                        card.delete();
-	                    },1000);
-	                    player1.node.count.innerHTML='1';
-
-	                    setTimeout(function(){
-	                        if(!node.showcaseinterval) return;
-	                        player1.node.count.innerHTML='2';
-	                        var card=createCard();
-	                        card.style.left='43px';
-	                        card.style.top='58px';
-	                        card.style.transform='scale(0.9) translate(137px,152px)';
-	                        node.appendChild(card);
-	                        ui.refresh(card);
-	                        card.style.opacity=1;
-	                        card.style.transform='scale(0.9)';
-	                        setTimeout(function(){
-	                            card.delete();
-	                        },1000);
-	                    },300);
-
-	                    setTimeout(function(){
-	                        if(!node.showcaseinterval) return;
-	                        player2.node.count.innerHTML='1';
-	                        game.linexy([left2,top2,left1,top1]);
-	                        var card=createCard(true);
-	                        card.style.left='auto';
-	                        card.style.right='43px';
-	                        card.style.top='58px';
-	                        node.appendChild(card);
-	                        ui.refresh(card);
-	                        card.style.opacity=1;
-	                        card.style.transform='scale(0.9) translate(-137px,152px)';
-	                        setTimeout(function(){
-	                            card.delete();
-	                        },700);
-
-	                        setTimeout(function(){
-	                            if(!node.showcaseinterval) return;
-	                            player2.node.count.innerHTML='2';
-	                            var card=createCard();
-	                            card.style.left='auto';
-	                            card.style.right='43px';
-	                            card.style.top='58px';
-	                            card.style.transform='scale(0.9) translate(-137px,152px)';
-	                            node.appendChild(card);
-	                            ui.refresh(card);
-	                            card.style.opacity=1;
-	                            card.style.transform='scale(0.9)';
-	                            setTimeout(function(){
-	                                card.delete();
-	                            },700);
-	                        },300);
-	                    },1000);
-	                };
-	                node.showcaseinterval=setInterval(func,2200);
-	                func();
+	            	var i;
+	            	var list=[];
+	            	for(i in lib.character){
+						list.push(i);
+						
+					}
+					event.list=list;
+	            	var dialog=ui.create.dialog('hidden');
+					dialog.classList.add('fixed');
+					dialog.style.left = "0px";
+					dialog.style.top = "0px";
+					dialog.style.width = "100%";
+					dialog.style.height = "100%";
+					//ui.click.charactercard(i,null,null,true,dialog);
+					dialog.add([list,'character']);
+					this.appendChild(dialog);
+					dialog.noopen=true;
 	            },
 	        },
 	        cardview:{
 	        	name:'卡牌一览',
 	        	mode:'',
-	        	intro:'',
+	        	intro:'卡牌花色点数以牌局内为准。',
 	        	showcase:function(init){
-
+	        		var i;
+	            	var list=[];
+					event.list=list;
+	            	var dialog=ui.create.dialog('hidden');
+					//var dialog=this;
+					dialog.classList.add('fixed');
+					//dialog.classList.add('bosscharacter');
+					//dialog.classList.add('withbg');
+					dialog.style.left = "0px";
+					dialog.style.top = "0px";
+					dialog.style.width = "100%";
+					dialog.style.height = "100%";
+					for (i in lib.card){
+						if(lib.translate[i]){
+							var card=game.createCard(i, null, null, null);
+                            dialog.add(card);
+                        }
+					}
+					this.appendChild(dialog);
+					dialog.noopen=true;
 	        	},
 	        },
 	        modeview:{
 	        	name:'模式一览',
 	        	mode:'',
-	        	intro:'',
+	        	intro:'模式目前还在制作中',
 	        	showcase:function(init){
-	        		var intro = '';
-	        		for (var i in lib.config.all.mode){
-	        			intro.concat(get.translation(i));
-	        		}
-	        		ui.create.div('.text center',intro),
-	        		ui.refresh(this);
+
 	        	},
 	        },
 	        download:{
 	        	name:'更多资源',
+	        	intro:'欢迎来到雾雨魔法店！',
 	        	showcase:function(init){
 
 	        	},

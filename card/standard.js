@@ -431,7 +431,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					ai2:function(target){
 						return ai.get.attitude(_status.event.player,target);
 					},
-					prompt:'请选择要送人的卡牌'
+					prompt:'你可以送给别人一张牌'
 				});
 				if(result.targets&&result.targets[0]){
 					result.targets[0].gain(result.cards);
@@ -1057,7 +1057,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			viewAsFilter:function(player){
 				if(!player.num('he',{color:'black'})) return false;
 			},
-			prompt:'将一张红色牌当杀使用或打出',
+			prompt:'将一张黑色牌当杀使用或打出',
 			check:function(card){return 4-ai.get.value(card)},
 			ai:{
 				skillTagFilter:function(player){

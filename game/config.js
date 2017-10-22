@@ -82,14 +82,14 @@ window.config={
 	alteredSkills:[],
 	brokenFile:[],
 
-	theme:'woodden',
+	theme:'simple',
 	layout:'mobile',
 	card_style:'default',
 	cardback_style:'default',
 	hp_style:'default',
 
 	image_character:'default',
-	image_background:'default',
+	image_background:'shengshi_bg',
 
 	asset_image:true,
 	asset_font:true,
@@ -137,7 +137,7 @@ window.config={
 	sort:'type_sort',
 
 	cards:['standard'],
-	characters:['standard','scarlet','sakura'],
+	characters:['scarlet','sakura'],
 	connect_characters:[],
 	connect_cards:[],
 	plays:[],
