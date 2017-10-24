@@ -445,7 +445,7 @@
 					auto_check_update:{
 						name:'自动检查游戏更新',
 						intro:'进入游戏时检查更新',
-						init:false,
+						init:true,
 						unfrequent:true
 					},
 					dev:{

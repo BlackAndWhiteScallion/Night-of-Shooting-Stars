@@ -420,6 +420,70 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
             },
+            youdie:{
+                audio:2,
+                trigger:{player:'phaseEnd'},
+                filter:function(event,player){
+                    return player.countCards('hej');
+                },
+                content:function(){
+                    "step 0"
+                    player.chooseToDiscard('hej');
+                    "step 1"
+                    if(result.bool){
+                        var nh=_status.currentPhase.hp;
+                        var nmax=nh;
+                        var targets=[];
+                        var players=game.filterPlayer();
+                        for(var i=0;i<players.length;i++){
+                            var nh2=players[i].hp;
+                            if(nh2<nmax){
+                                nmax=nh2;
+                                targets.length=0;
+                                targets.push(players[i]);
+                            }
+                            else if(nh2==nmax){
+                                targets.push(players[i]);
+                            }
+                        }
+                        for (var j=0;j<targets.length;j++){
+                            targets[j].loseHp();
+                        }
+                    }
+                },
+            },
+            moyin:{
+                trigger:{global:'dying'},
+                priority:6,
+                audio:2,
+                filter:function(event,player){
+                    return event.player.hp<=0;
+                },
+                content:function(){
+                    "step 0"
+                    var max = Math.max(1, player.maxHp-player.hp);
+                    player.chooseTarget(get.prompt('moyin'),[1,max],function(card,player,target){
+                        return true;
+                    },function(target){
+                        return -get.attitude(_status.event.player,target);
+                    });
+                    "step 1"
+                    if(result.bool){
+                        player.logSkill('moyin',trigger.player);
+                    }
+                    else{
+                        event.finish();
+                    }
+                    "step 2"
+                    if(get.type(event.card)!='basic'){
+                        trigger.player.recover();
+                        trigger.player.discard(event.card);
+                    }
+                },
+                ai:{
+                    threaten:1.4
+                }
+            },
         },
 		translate:{
             letty:'蕾蒂',
@@ -450,6 +514,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             yinhuashan_info:'符卡技（0）你使用【轰！】指定目标时，可以消耗1点灵力，并选择一项：额外指定一名目标角色，或重置【一闪】。',
             'refresh':'重置',
             'extra_target':'额外目标',
+            yuyuko:'幽幽子',
+            youdie:'幽蝶',
+            youdie_info:'结束阶段，你可以弃置一张牌，令场上所有体力值最低的其他角色各失去1点体力。',
+            moyin:'墨樱',
+            moyin_info:'一名角色进入决死状态时，你可以令至多X名角色各摸一张牌；若如此做，这些角色于此次决死结算中不能令其回复体力（X为你已受伤值+1）。',
+            fanhundie:'反魂蝶',
+            fanhundie_info:'符卡技（X）<终语> 一回合一次，出牌阶段，你可以弃置一名角色的一张牌；你可以重复此流程至多X次（X为你已受伤值+1）；其以此法失去最后的手牌时，其失去 1 点体力',
         },
 	};
 });
