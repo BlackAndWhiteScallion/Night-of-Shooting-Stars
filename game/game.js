@@ -20660,6 +20660,19 @@
 							game.showIdentity(false);
 						}
 					}
+					// 回合开始时如果有不是极意的符卡就翻回去。
+					if (player.isTurnedOver()){
+						var info = ""
+						for(var i=0;i<player.skills.length;i++){
+							if (player.skills[i].spell){
+								info = lib.skill[player.skills[i]];
+								break;
+							}
+						}
+						if (info != "" && !info.infinite){
+							player.turnOver();
+						}
+					}
 					player.ai.tempIgnore=[];
 					player.stat.push({card:{},skill:{}});
 				},
