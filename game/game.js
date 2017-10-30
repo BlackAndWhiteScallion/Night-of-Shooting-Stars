@@ -2617,7 +2617,7 @@
 					turned_style:{
 						name:'翻面文字',
 						intro:'角色被翻面时显示“翻面”',
-						init:false,
+						init:true,
 						unfrequent:true,
 						onclick:function(bool){
 							game.saveConfig('turned_style',bool);
@@ -9421,7 +9421,7 @@
 					player.phaseDiscard()
 					// 这个应该换到固有技能那儿去，注意一下
 					if (player.lili == 0 && lib.config.regain_lili == true){
-						player.gainlili(1);
+						player.gainlili();
 						game.log(player,'因灵力为0，获得了1点灵力')
 					}
 					if(!player.noPhaseDelay) game.delayx();
@@ -20680,7 +20680,7 @@
 			_phaseend:{
 				trigger:{player:'phaseEnd'},
 				forced:true,
-				priority:20,
+				priority:-20,
 				popup:false,
 				content:function(){
                     while(ui.dialogs.length){
@@ -20691,15 +20691,16 @@
 					}
 					// 结束阶段，如果角色牌是背面朝上的，就翻过去。
 					if (player.isTurnedOver()){
-						var info = ""
 						for(var i=0;i<player.skills.length;i++){
-							if (player.skills[i].spell){
-								info = lib.skill[player.skills[i]];
-								break;
+							if (lib.skill[player.skills[i]].spell){
+								var info = lib.skill[player.skills[i]];
+								if (player.hasSkill(info.spell[0])){
+									if (!info.roundi && !info.infinite){
+										player.turnOver();
+									}
+						//			break;
+								}
 							}
-						}
-						if (info != "" && !info.roundi && !info.infinite){
-							player.turnOver();
 						}
 					}
                     game.syncState();
@@ -20711,13 +20712,11 @@
 			},
 			// 灵力值变为0时，符卡结束
 			_0lili:{
-				//trigger:{player:['changeHp','changelili']},
-				trigger:{player:'changelili'},
+				trigger:{player:'changeliliAfter'},
 				forced:true,
 				priority:20,
 				popup:false,
 				filter:function(event,player){
-					//return player.isTurnedOver() && player.lili + event.num <= 0;
 					return player.isTurnedOver() && player.lili == 0;
 				},
 				content:function(){

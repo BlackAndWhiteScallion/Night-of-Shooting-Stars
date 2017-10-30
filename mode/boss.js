@@ -803,7 +803,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		boss:{
 			boss_reimu2:{
 				loopType:1,
-			}
+			},
 			global:{
 				loopType:2,
 				chongzheng:6,

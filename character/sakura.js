@@ -136,10 +136,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             mingdong:{
                 trigger:{target:'useCardToBegin'},
-                group:['mingdong2'],
+                //group:['mingdong2'],
                 usable:1,
                 mark:true,
                 audio:2,
+                intro:{
+                    content:function(storage,player){
+                        return lib.translate[player.storage.mindong];
+                    }
+                },
                 init:function(player){
                     player.storage.mingdong=[];
                 },
@@ -163,7 +168,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.bool){
                         var name=result.links[0][2];
                         player.storage.mingdong = name;
+                        player.addTempSkill('mingdong2');
                         lib.skill.mingdong2.viewAs = {name:name};
+                        game.log(player,'选择了',lib.translate[name]);
                     }
                 },
             },
@@ -174,7 +181,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return name == "shan";
                 },
                 filter:function(event,player){
-                    if (player.storage.mingdong.length == 0) return false;
                     return player.countCards('h',{type:'trick'})>0;
                 },
                 filterCard:function(card,player){
@@ -469,21 +475,87 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     "step 1"
                     if(result.bool){
-                        player.logSkill('moyin',trigger.player);
+                        player.logSkill('moyin',result.targets);
+                        event.targets=result.targets;
                     }
                     else{
                         event.finish();
                     }
                     "step 2"
-                    if(get.type(event.card)!='basic'){
-                        trigger.player.recover();
-                        trigger.player.discard(event.card);
+                    if(event.targets.length){
+                        var target=event.targets.shift();
+                        event.current=target;
+                        target.draw();
+                        target.addTempSkill(moyin2,'dyingAfter');
+                    }
+                    else{
+                        event.finish();
                     }
                 },
                 ai:{
                     threaten:1.4
                 }
             },
+            moyin2:{
+                trigger:{global:'recover'},
+                intro:{
+                    content:'不能令决死角色回复体力',
+                },
+                filter:function(event,player){
+                    return event.player.hp <= 0 && event.source.hasSkill('moyin2');
+                },
+                content:function(){
+                    trigger.untrigger();
+                    trigger.finish();
+                },
+            },
+            fanhundie:{
+                audio:2,
+                cost:0,
+                spell:['fanhundie2'],
+                trigger:{player:['phaseBegin','dying']},
+                filter:function(event,player){
+                    return player.lili-1 > player.maxHp-player.hp;
+                },
+                content:function(){
+                    player.loselili(player.maxHp-player.hp+1);
+                    player.turnOver();
+                },
+            },
+            fanhundie2:{
+                audio:2,
+                enable:'chooseToUse',
+                usable:1,
+                filter:function(event,player){
+                    return (event.type == 'dying' && player == event.dying) || (_status.currentPhase==player);
+                },
+                content:function(){
+                    "step 0"
+                    event.num=1+player.maxHp-player.hp;
+                    "step 1"
+                    player.chooseTarget(get.prompt('fanhundie'),[1,1],function(card,player,target){
+                        return target.countCards('hej')>0;
+                        //return true;
+                    },function(target){
+                        return -get.attitude(_status.event.player,target);
+                    });
+                    "step 2"
+                    if(result.bool){
+                        event.target = result.targets[0];                        
+                        player.choosePlayerCard(event.target,'hej',true);
+                    }
+                    "step 3"
+                    if(result.links){
+                        var num = event.target.countCards('h');
+                        event.target.discard(result.links);
+                        event.target.loseHp();
+                    }
+                    if(event.num>1){
+                        event.num--;
+                        event.goto(1);
+                    }
+                },
+            }
         },
 		translate:{
             letty:'蕾蒂',
@@ -501,7 +573,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shihuo_info:'一回合一次，你获得1点灵力值后，可以令一名角色获得1点灵力值。',
             shuanggui:'青鬼赤鬼',
             shuanggui4:'鬼',
-            shuanggui_info:'符卡技（2）【永续】准备阶段，你指定一名其他角色，与其各摸一张牌；该角色需要消耗灵力时，须改为消耗你的灵力。',
+            shuanggui_info:'符卡技（2）<永续>准备阶段，你指定一名其他角色，与其各摸一张牌；该角色需要消耗灵力时，须改为消耗你的灵力。',
             lilywhite:'莉莉白',
             chunxiao:'春晓',
             chunxiao_info:'准备阶段，若你的灵力值不小于体力值，你可以令所有角色各摸一张牌，然后各弃置与其最近的一名角色一张牌。',
@@ -520,6 +592,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             moyin:'墨樱',
             moyin_info:'一名角色进入决死状态时，你可以令至多X名角色各摸一张牌；若如此做，这些角色于此次决死结算中不能令其回复体力（X为你已受伤值+1）。',
             fanhundie:'反魂蝶',
+            fanhundie2:'反魂蝶',
             fanhundie_info:'符卡技（X）<终语> 一回合一次，出牌阶段，你可以弃置一名角色的一张牌；你可以重复此流程至多X次（X为你已受伤值+1）；其以此法失去最后的手牌时，其失去 1 点体力',
         },
 	};

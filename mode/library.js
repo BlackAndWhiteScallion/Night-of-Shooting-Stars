@@ -187,7 +187,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            	var list=[];
 	            	for(i in lib.character){
 						list.push(i);
-						
 					}
 					event.list=list;
 	            	var dialog=ui.create.dialog('hidden');
@@ -196,8 +195,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.style.top = "0px";
 					dialog.style.width = "100%";
 					dialog.style.height = "100%";
-					//ui.click.charactercard(i,null,null,true,dialog);
 					dialog.add([list,'character']);
+					//dialog.addEventListener('click',ui.click.charactercard();
 					this.appendChild(dialog);
 					dialog.noopen=true;
 	            },
