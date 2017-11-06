@@ -441,6 +441,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         var nmax=nh;
                         var targets=[];
                         var players=game.filterPlayer();
+                        players.remove(player);
                         for(var i=0;i<players.length;i++){
                             var nh2=players[i].hp;
                             if(nh2<nmax){
@@ -486,7 +487,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         var target=event.targets.shift();
                         event.current=target;
                         target.draw();
-                        target.addTempSkill(moyin2,'dyingAfter');
+                        target.addTempSkill('moyin2','dyingAfter');
                     }
                     else{
                         event.finish();
@@ -548,14 +549,241 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(result.links){
                         var num = event.target.countCards('h');
                         event.target.discard(result.links);
-                        event.target.loseHp();
+                        if (event.target.getCards('h').contains(result.links[0]) && num == 1) event.target.loseHp();
                     }
                     if(event.num>1){
                         event.num--;
                         event.goto(1);
                     }
                 },
-            }
+            },
+            huanjing:{
+                trigger:{global:'phaseBegin'},
+                priority:5,
+                audio:2,
+                filter:function(event,player){
+                    return player.countCards('hej');
+                },
+                content:function(){
+                    'step 0'
+                    player.chooseToDiscard('he',get.prompt('huanjing')).ai=function(){
+                        return -1;
+                    }
+                    'step 1'
+                    if(result.bool){
+                        var current = _status.currentPhase;
+                        event.cards = [];
+                        event.cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-1]);
+                        player.showCards(event.cards[0]);
+                        if (get.type(event.cards[0]) == 'basic' || get.type(event.cards[0]) == 'trick'){
+                            //if (!player.canUse(event.cards[0],current,false)) return false;
+                            if (!lib.filter.targetEnabled2(event.cards[0],player,current)){
+                                player.discard(event.cards[0]);
+                            } else {
+                                player.useCard(event.cards[0],current,false); 
+                            }
+                        } else if (get.type(event.cards[0]) == 'equip'){
+                            current.equip(event.cards[0]);
+                        }
+                    }
+                }
+            },
+            mengjie:{
+                trigger:{player:'phaseUseBegin', target:'useCardToBegin'},
+                audio:2,
+                filter:function(event,player){
+                    if (event.triggername=='useCardToBegin') return lib.event.card.subtype=='attack';
+                    else return true;
+                },
+                content:function(event,player){
+                    "step 0"
+                    if(player.isUnderControl()){
+                        game.modeSwapPlayer(player);
+                    }
+                    var cards=[];
+                    for (int i = 3; i >= 0; i--){
+                        cards.push(get.cards()[ui.cardPile.childNodes.length-1-i]);
+                    }
+                    event.cards=cards;
+                    var switchToAuto=function(){
+                        _status.imchoosing=false;
+                        if(event.dialog) event.dialog.close();
+                        if(event.control) event.control.close();
+                        var top=[];
+                        var judges=player.node.judges.childNodes;
+                        var stopped=false;
+                        if(!player.countCards('h','wuxie')){
+                            for(var i=0;i<judges.length;i++){
+                                var judge=get.judge(judges[i]);
+                                cards.sort(function(a,b){
+                                    return judge(b)-judge(a);
+                                });
+                                if(judge(cards[0])<0){
+                                    stopped=true;break;
+                                }
+                                else{
+                                    top.unshift(cards.shift());
+                                }
+                            }
+                        }
+                        var bottom;
+                        if(!stopped){
+                            cards.sort(function(a,b){
+                                return get.value(b,player)-get.value(a,player);
+                            });
+                            while(cards.length){
+                                if(get.value(cards[0],player)<=5) break;
+                                top.unshift(cards.shift());
+                            }
+                        }
+                        bottom=cards;
+                        for(var i=0;i<top.length;i++){
+                            ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
+                        }
+                        for(i=0;i<bottom.length;i++){
+                            ui.cardPile.appendChild(bottom[i]);
+                        }
+                        player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(bottom.length)+'下');
+                        game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
+                        game.delay(2);
+                    };
+                    var chooseButton=function(online,player,cards){
+                        var event=_status.event;
+                        player=player||event.player;
+                        cards=cards||event.cards;
+                        event.top=[];
+                        event.bottom=[];
+                        event.status=true;
+                        event.dialog=ui.create.dialog('按顺序选择置于牌堆顶的牌（先选择的在上）',cards);
+                        for(var i=0;i<event.dialog.buttons.length;i++){
+                            event.dialog.buttons[i].classList.add('pointerdiv');
+                        }
+                        event.switchToAuto=function(){
+                            event._result='ai';
+                            event.dialog.close();
+                            event.control.close();
+                            _status.imchoosing=false;
+                        },
+                        event.control=ui.create.control('ok','pileTop','pileBottom',function(link){
+                            var event=_status.event;
+                            if(link=='ok'){
+                                if(online){
+                                    event._result={
+                                        top:[],
+                                        bottom:[]
+                                    }
+                                    for(var i=0;i<event.top.length;i++){
+                                        event._result.top.push(event.top[i].link);
+                                    }
+                                    for(var i=0;i<event.bottom.length;i++){
+                                        event._result.bottom.push(event.bottom[i].link);
+                                    }
+                                }
+                                else{
+                                    var i;
+                                    for(i=0;i<event.top.length;i++){
+                                        ui.cardPile.insertBefore(event.top[i].link,ui.cardPile.firstChild);
+                                    }
+                                    for(i=0;i<event.bottom.length;i++){
+                                        ui.cardPile.appendChild(event.bottom[i].link);
+                                    }
+                                    for(i=0;i<event.dialog.buttons.length;i++){
+                                        if(event.dialog.buttons[i].classList.contains('glow')==false&&
+                                            event.dialog.buttons[i].classList.contains('target')==false)
+                                        ui.cardPile.appendChild(event.dialog.buttons[i].link);
+                                    }
+                                    player.popup(get.cnNumber(event.top.length)+'上'+get.cnNumber(event.cards.length-event.top.length)+'下');
+                                    game.log(player,'将'+get.cnNumber(event.top.length)+'张牌置于牌堆顶');
+                                }
+                                event.dialog.close();
+                                event.control.close();
+                                game.resume();
+                                _status.imchoosing=false;
+                            }
+                            else if(link=='pileTop'){
+                                event.status=true;
+                                event.dialog.content.childNodes[0].innerHTML='按顺序选择置于牌堆顶的牌';
+                            }
+                            else{
+                                event.status=false;
+                                event.dialog.content.childNodes[0].innerHTML='按顺序选择置于牌堆底的牌';
+                            }
+                        })
+                        for(var i=0;i<event.dialog.buttons.length;i++){
+                            event.dialog.buttons[i].classList.add('selectable');
+                        }
+                        event.custom.replace.button=function(link){
+                            var event=_status.event;
+                            if(link.classList.contains('target')){
+                                link.classList.remove('target');
+                                event.top.remove(link);
+                            }
+                            else if(link.classList.contains('glow')){
+                                link.classList.remove('glow');
+                                event.bottom.remove(link);
+                            }
+                            else if(event.status){
+                                link.classList.add('target');
+                                event.top.unshift(link);
+                            }
+                            else{
+                                link.classList.add('glow');
+                                event.bottom.push(link);
+                            }
+                        }
+                        event.custom.replace.window=function(){
+                            for(var i=0;i<_status.event.dialog.buttons.length;i++){
+                                _status.event.dialog.buttons[i].classList.remove('target');
+                                _status.event.dialog.buttons[i].classList.remove('glow');
+                                _status.event.top.length=0;
+                                _status.event.bottom.length=0;
+                            }
+                        }
+                        game.pause();
+                        game.countChoose();
+                    };
+                    event.switchToAuto=switchToAuto;
+
+                    if(event.isMine()){
+                        chooseButton();
+                        event.finish();
+                    }
+                    else if(event.isOnline()){
+                        event.player.send(chooseButton,true,event.player,event.cards);
+                        event.player.wait();
+                        game.pause();
+                    }
+                    else{
+                        event.switchToAuto();
+                        event.finish();
+                    }
+                    "step 1"
+                    if(event.result=='ai'||!event.result){
+                        event.switchToAuto();
+                    }
+                    else{
+                        var top=event.result.top||[];
+                        var bottom=event.result.bottom||[];
+                        for(var i=0;i<top.length;i++){
+                            ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
+                        }
+                        for(i=0;i<bottom.length;i++){
+                            ui.cardPile.appendChild(bottom[i]);
+                        }
+                        for(i=0;i<event.cards.length;i++){
+                            if(!top.contains(event.cards[i])&&!bottom.contains(event.cards[i])){
+                                ui.cardPile.appendChild(event.cards[i]);
+                            }
+                        }
+                        player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(event.cards.length-top.length)+'下');
+                        game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
+                        game.delay(2);
+                    }
+                    if (player==_status.currentPhase){
+
+                    },
+                },
+            },
         },
 		translate:{
             letty:'蕾蒂',
@@ -593,7 +821,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             moyin_info:'一名角色进入决死状态时，你可以令至多X名角色各摸一张牌；若如此做，这些角色于此次决死结算中不能令其回复体力（X为你已受伤值+1）。',
             fanhundie:'反魂蝶',
             fanhundie2:'反魂蝶',
-            fanhundie_info:'符卡技（X）<终语> 一回合一次，出牌阶段，你可以弃置一名角色的一张牌；你可以重复此流程至多X次（X为你已受伤值+1）；其以此法失去最后的手牌时，其失去 1 点体力',
+            fanhundie_info:'符卡技（X）<终语> 一回合一次，出牌阶段，你可以弃置一名角色的一张牌；你可以重复此流程至多X次（X为你已受伤值+1）；其以此法失去最后的手牌时，其失去1点体力',
+            yukari:'紫',
+            huanjing:'幻境',
+            huanjing_info:'一名角色的准备阶段，你可以弃置一张牌，然后展示牌堆底的牌；若为攻击牌或法术牌，将之对其使用；若为装备牌，将之置于其装备区内；否则，弃置之。',
+            mengjie:'梦界',
+            mengjie_info:'出牌阶段开始时，或你成为攻击牌的目标后，你可以观看牌堆底的三张牌，并可以将其中任意张置于牌堆顶；若此时为回合外，你可以摸一张牌。',
+            mengjing:'梦境与现实的诅咒',
+            mengjing_info:'符卡技（4）<永续>准备阶段，你指定一名其他角色；你与其以外的所有角色视为不在游戏内；所有角色的胜利条件无效。',
         },
 	};
 });

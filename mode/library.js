@@ -228,6 +228,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.noopen=true;
 	        	},
 	        },
+	       	ruleview:{
+	        	name:'规则帮助',
+	        	mode:'',
+	        	intro:'规则目前还在撰写中',
+	        	showcase:function(init){
+
+	        	},
+	        },
 	        modeview:{
 	        	name:'模式一览',
 	        	mode:'',
