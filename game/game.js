@@ -10698,7 +10698,9 @@
 					var controls=['draw_card'];
 					if(player.isDamaged()){
 						event.num2=Math.min(event.num2,player.maxHp-player.hp);
-						controls.push('recover_hp');
+						if (!event.num2 == 0){
+							controls.push('recover_hp');
+						}
 					}
 					if(!event.forced){
 						controls.push('cancel2');

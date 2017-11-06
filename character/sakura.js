@@ -780,7 +780,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         game.delay(2);
                     }
                     if (player==_status.currentPhase){
-
+                        player.chooseDrawRecover(1,0,false);
                     },
                 },
             },
