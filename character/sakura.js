@@ -592,7 +592,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseUseBegin', target:'useCardToBegin'},
                 audio:2,
                 filter:function(event,player){
-                    if (event.triggername=='useCardToBegin') return lib.event.card.subtype=='attack';
+                    if (event.triggername=='useCardToBegin') return event.card.name=='sha' || event.card.name == 'juedou';
                     else return true;
                 },
                 content:function(event,player){
@@ -601,8 +601,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         game.modeSwapPlayer(player);
                     }
                     var cards=[];
-                    for (int i = 3; i >= 0; i--){
-                        cards.push(get.cards()[ui.cardPile.childNodes.length-1-i]);
+                    for (var i = 3; i > 0; i--){
+                        cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
                     }
                     event.cards=cards;
                     var switchToAuto=function(){
@@ -643,6 +643,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         for(i=0;i<bottom.length;i++){
                             ui.cardPile.appendChild(bottom[i]);
                         }
+                        //player.draw();
                         player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(bottom.length)+'下');
                         game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
                         game.delay(2);
@@ -694,6 +695,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     }
                                     player.popup(get.cnNumber(event.top.length)+'上'+get.cnNumber(event.cards.length-event.top.length)+'下');
                                     game.log(player,'将'+get.cnNumber(event.top.length)+'张牌置于牌堆顶');
+                                    if (!player==_status.currentPhase){
+                                        player.chooseDrawRecover(1,0,false);
+                                    }
                                 }
                                 event.dialog.close();
                                 event.control.close();
@@ -775,15 +779,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 ui.cardPile.appendChild(event.cards[i]);
                             }
                         }
+                        if (!player==_status.currentPhase){
+                            player.chooseDrawRecover(1,0,false);
+                        }
                         player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(event.cards.length-top.length)+'下');
                         game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
                         game.delay(2);
                     }
-                    if (player==_status.currentPhase){
+                    /*
+                    if (!player==_status.currentPhase){
                         player.chooseDrawRecover(1,0,false);
-                    },
-                },
-            },
+                    }
+                    */
+                }
+            },  
         },
 		translate:{
             letty:'蕾蒂',

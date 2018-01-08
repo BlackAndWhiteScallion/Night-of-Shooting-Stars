@@ -445,8 +445,8 @@
 					auto_check_update:{
 						name:'自动检查游戏更新',
 						intro:'进入游戏时检查更新',
-						init:true,
-						unfrequent:true
+						init:false,
+						unfrequent:false
 					},
 					dev:{
 						name:'开发者模式',
@@ -2945,7 +2945,7 @@
 					auto_popped_config:{
 						name:'自动弹出选项',
 						intro:'鼠标移至选项按钮时弹出模式选择菜单',
-						init:true,
+						init:false,
 						unfrequent:true,
 					},
 					auto_popped_history:{
@@ -20531,6 +20531,31 @@
     			intro:{
     				content:'防止一切伤害'
     			}
+    		},
+    		chuwai:{
+    			init:function(player){
+    				player.isOut() == true;
+    			},
+    			onremove:function(player){
+    				player.isOut() == false;
+    			},
+    			mod:{
+					cardEnabled:function(){
+						return false;
+					},
+					cardSavable:function(){
+						return false;
+					},
+					targetEnabled:function(){
+						return false;
+					}
+				},
+				mark:true,
+				intro:{
+					content:'视为不在游戏内'
+					// 那么应该使用game.player.isOut()之类的么？
+				},
+				group:['undist','mianyi']
     		},
 			mad:{
 				mark:true,

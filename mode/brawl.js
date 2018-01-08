@@ -383,7 +383,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                if(init){
 	                    player=ui.create.player(null,true);
 	                    player.node.avatar.style.backgroundSize='cover';
-	                    player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_lvbu2.jpg');
+	                    player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_reimu2.jpg');
 	                    player.node.avatar.show();
 	                    player.style.left='calc(50% - 75px)';
 	                    player.style.top='20px';

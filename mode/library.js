@@ -6,7 +6,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        syncMenu:true,
 	    },
 	    start:function(){
-	        ui.auto.hide();
+			ui.auto.hide();
+	        document.documentElement.style.backgroundImage=lib.assetURL+'image/background/library.jpg';
+	        document.documentElement.style.backgroundSize='cover';
+			document.documentElement.style.backgroundPosition='50% 50%';
 	        if(!lib.storage.scene){
 	            lib.storage.scene={};
 	        }
@@ -73,7 +76,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        }
 	        // 应该是这里是制作列表的地方
 	        var createNode=function(name){
-	            var info=lib.brawl[name];
+	        	/*
+	            ui.background=ui.create.div('.background');
+				ui.background.style.backgroundSize="cover";
+				ui.background.style.backgroundPosition='50% 50%';
+				ui.background.setBackgroundImage('image/background/library.jpg');
+				*/
+
+
+				var info=lib.brawl[name];
 	            var node=ui.create.div('.dialogbutton.menubutton.large',info.name,packnode,clickCapt);
 	            node.style.transition='all 0s';
 	            var caption=info.name;
@@ -94,7 +105,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    intro+='<li>'+modeinfo;
 	                }
 	                for(var i=0;i<info.intro.length;i++){
-	                    intro+='<li>'+info.intro[i];
+	                    intro+='<br>'+info.intro[i];
 	                }
 	            }
 	            else{
@@ -191,6 +202,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list=list;
 	            	var dialog=ui.create.dialog('hidden');
 					dialog.classList.add('fixed');
+					//dialog.classList.add('bosscharacter');
 					dialog.style.left = "0px";
 					dialog.style.top = "0px";
 					dialog.style.width = "100%";
@@ -231,7 +243,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	       	ruleview:{
 	        	name:'规则帮助',
 	        	mode:'',
-	        	intro:'规则目前还在撰写中',
+	        	intro:[
+	        		'规则全部可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>找到',
+	        		'游戏内的资料正在制作中',
+	        		],
 	        	showcase:function(init){
 
 	        	},
@@ -239,22 +254,106 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        modeview:{
 	        	name:'模式一览',
 	        	mode:'',
-	        	intro:'模式目前还在制作中',
+	        	intro:[
+	        		'规则介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>找到',
+	        		'游戏内的资料正在制作中',
+	        		],
 	        	showcase:function(init){
 
 	        	},
 	        },
 	        download:{
 	        	name:'更多资源',
-	        	intro:'欢迎来到雾雨魔法店！',
+	        	intro:[
+	                '欢迎大家光临雾雨魔法店！',
+	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA">雾雨家的魔法店吧</a>',
+	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com">雾雨魔法店的仓库</a>',
+	                '官方QQ群：隙间中',
+	                '无论是聊天，想反映问题，还是想提出建议，都可以到以上任意一个地方去发表意见，我们会看到并尊重你的每一个意见。',
+	            ],
 	        	showcase:function(init){
-
+					var node=this;
+	                var player;
+	                if(init){
+	                    player=ui.create.player(null,true);
+	                    player.node.avatar.style.backgroundSize='cover';
+	                    player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_reimu2.jpg');
+	                    player.node.avatar.show();
+	                    player.style.left='calc(50% - 75px)';
+	                    player.style.top='20px';
+	                    player.node.count.remove();
+	                    player.node.hp.remove();
+	                    player.style.transition='all 0.5s';
+	                    node.appendChild(player);
+	                    node.playernode=player;
+	                }
+	                else{
+	                    player=node.playernode;
+	                }
+	                var num=0;
+	                var num2=0;
+	                this.showcaseinterval=setInterval(function(){
+	                    var dx,dy
+	                    if(num2%5==0){
+	                        // player.animate('target');
+	                        // player.animate('zoomin');
+	                        /*
+	                        player.classList.add('zoomin3');
+	                        player.hide();
+	                        setTimeout(function(){
+	                            player.style.transitionProperty='none';
+	                            player.classList.remove('zoomin3');
+	                            player.classList.add('zoomout2');
+	                            setTimeout(function(){
+	                                player.style.transitionProperty='';
+	                                player.classList.remove('zoomout2');
+	                                player.show();
+	                            },500);
+	                        },700);
+							*/
+							for(var i=0;i<5;i++){
+								switch(i){
+			                        case 0:dx=-180;dy=0;break;
+			                        case 1:dx=-140;dy=100;break;
+			                        case 2:dx=0;dy=155;break;
+			                        case 3:dx=140;dy=100;break;
+			                        case 4:dx=180;dy=0;break;
+			                    }
+								var card=game.createCard('tao','noclick');
+			                    card.style.left='calc(50% - 52px)';
+			                    card.style.top='68px';
+			                    card.style.position='absolute';
+			                    card.style.margin=0;
+			                    card.style.zIndex=2;
+			                    card.style.opacity=0;
+			                    node.appendChild(card);
+			                    ui.refresh(card);
+			                    card.style.opacity=1;
+			                    card.style.transform='translate('+dx+'px,'+dy+'px)';
+			                    setTimeout((function(card){
+			                        return function(){
+										card.delete();
+									};
+			                    })(card),1000);
+							}
+	                    }
+	                    num2++;
+	                    if(num>=5){
+	                        num=0;
+	                    }
+	                },700);
 	        	},
 	        },
 	        thanks:{
 	        	name:'鸣谢',
 	        	mode:'',
-	        	intro:'',
+	        	intro:[
+	        	'第一，感谢ZUN和上海爱丽丝幻乐团。只希望，玩这个游戏的大家也能感受到幻想乡的魅力。',
+	        	'然后，感谢无名杀的各位开发者和维护者，提供了如此漂亮的一个平台。',
+	        	'接着，感谢魔法店里陪着我们走到现在的大家。',
+	        	'最后，感谢你，玩这个游戏的玩家，的支持。',
+	        	'我们衷心希望，你能在这里玩的开心。',
+	        	],
 	        	showcase:function(init){
 
 	        	}

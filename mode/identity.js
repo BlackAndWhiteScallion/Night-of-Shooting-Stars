@@ -11,6 +11,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			if(_status.brawl&&_status.brawl.submode){
 				_status.mode=_status.brawl.submode;
 			}
+			// 替换牌堆的东西，但是没看到在哪里用的（也不在乎）
 			event.replacePile=function(){
 				var list=['shengdong','qijia','caomu','jinchan','zengbin','fulei','qibaodao','zhungangshuo','lanyinjia'];
 				var map={
@@ -36,6 +37,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			}
+			// 首先，如果是录像就试图播放这个录像？
 			"step 1"
 			var playback=localStorage.getItem(lib.configprefix+'playback');
 			if(playback){
@@ -56,10 +58,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				event.finish();
 			}
+			// 如果不是联机模式，并且是zhong（明忠）模式？
 			else if(!_status.connectMode){
 				if(_status.mode=='zhong'){
 					if(get.config('zhong_card')){
-						event.replacePile();
+						event.replacePile();	// 然后就替换牌堆，emmm
 					}
 					game.prepareArena(8);
 				}
@@ -70,6 +73,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.delay();
 				}
 			}
+			// 这里是新手向导w
 			"step 2"
 			if(!lib.config.new_tutorial){
 				_status.new_tutorial=true;
@@ -175,6 +179,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.showChangeLog();
 				}
 			}
+			// 然后新手向导结束……
 			"step 3"
 			if(typeof _status.new_tutorial=='function'){
 				_status.new_tutorial();
@@ -182,26 +187,30 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			delete _status.new_tutorial;
 			if(_status.connectMode){
 				game.waitForPlayer(function(){
+					// 这个还是明忠模式的设定？
 					if(lib.configOL.identity_mode=='zhong'){
 						lib.configOL.number=8;
 					}
 				});
 			}
+			// 如果是连接模式
+			// 这个是设置布局的好像
 			"step 4"
 			if(_status.connectMode){
 				_status.mode=lib.configOL.identity_mode;
 				if(_status.mode=='zhong'){
-					lib.configOL.number=8;
+					lib.configOL.number=8;	// 8人
 					if(lib.configOL.zhong_card){
-						event.replacePile();
+						event.replacePile();		// 怎么又要换牌堆
 					}
 				}
 				if(lib.configOL.number<2){
-					lib.configOL.number=2;
+					lib.configOL.number=2;	// 2人
 				}
-				game.randomMapOL();
+				game.randomMapOL();	// 随机位置吧
 			}
 			else{
+				// 然后每个人选择角色
 				for(var i=0;i<game.players.length;i++){
 					game.players[i].getId();
 				}
@@ -210,10 +219,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				game.chooseCharacter();
 			}
+			// 金币？？？？
 			"step 5"
 			if(ui.coin){
 				_status.coinCoeff=get.coinCoeff([game.me.name]);
 			}
+			// 如果是单挑就亮身份了（毕竟身份没意义了）
 			if(game.players.length==2){
 				game.showIdentity(true);
 				var map={};
@@ -228,15 +239,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},map);
 			}
+			// 否则重置AI对身份的信息
 			else{
 				for(var i=0;i<game.players.length;i++){
 					game.players[i].ai.shown=0;
 				}
 			}
+			// 这里是主公的设置么
 			if(game.zhu==game.me&&game.zhu.identity!='zhu'&&_status.brawl&&_status.brawl.identityShown){
-				delete game.zhu;
+				delete game.zhu;	// 如果主公是自己或者主公不是主公就删除主公是什么意思……
 			}
 			else{
+				// ？？？game.zhu2才是明忠么？？
 				game.zhu.ai.shown=1;
 				if(game.zhu2){
 					game.zhong=game.zhu;
