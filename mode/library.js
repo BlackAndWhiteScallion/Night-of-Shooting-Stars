@@ -7,9 +7,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    },
 	    start:function(){
 			ui.auto.hide();
-	        document.documentElement.style.backgroundImage=lib.assetURL+'image/background/library.jpg';
-	        document.documentElement.style.backgroundSize='cover';
-			document.documentElement.style.backgroundPosition='50% 50%';
 	        if(!lib.storage.scene){
 	            lib.storage.scene={};
 	        }
@@ -40,6 +37,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        if(!lib.storage.directStage) dialog.open();
 	        var packnode=ui.create.div('.packnode',dialog);
 	        lib.setScroll(packnode);
+	        ui.background.setBackgroundImage('image/background/library.jpg');
 	        var clickCapt=function(){
 	            var active=this.parentNode.querySelector('.active');
 	            if(this.link=='stage'){
