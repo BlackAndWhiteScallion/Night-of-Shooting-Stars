@@ -674,10 +674,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                for(var i=0;i<8;i++){
 	                    var node=ui.create.player(null,true);
 	                    this.nodes.push(node);
-	                    node.init('zuoci');
+	                    node.init('cirno');
 	                    node.classList.add('minskin');
 	                    node.node.marks.remove();
 	                    node.node.hp.remove();
+	                    node.node.lili.remove();
 	                    node.node.count.remove();
 	                    node.style.left='calc(50% - 60px)';
 	                    node.style.top='calc(50% - 60px)';

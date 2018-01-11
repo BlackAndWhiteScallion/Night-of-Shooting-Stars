@@ -5,6 +5,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		character:{
 			letty:['female','3',4,['shuangjiang','baofengxue']],
+            cirno:['female','3',4,['shuangjiang','baofengxue']],
             chen:['female','3',3,['mingdong','shihuo','shuanggui']],
             lilywhite:['female','5',3,['chunxiao','mengya']],
             youmu:['female','3',4,['yishan','yinhuashan']],
