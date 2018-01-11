@@ -13,7 +13,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             yukari:['female','1',3,['huanjing','mengjie','mengjing']],
 		},
 		characterIntro:{
-			diaochan:'中国古代四大美女之一，有闭月羞花之貌。司徒王允之义女，由王允授意施行连环计，离间董卓、吕布，借布手除卓。后貂蝉成为吕布的妾。',
+			letty:'',
+            chen:'',
+            lilywhite:'',
+            youmu:'',
+            yuyuko:'',
+            ran:'',
+            yukari:'',
 		},       
 		perfectPair:{
 		},

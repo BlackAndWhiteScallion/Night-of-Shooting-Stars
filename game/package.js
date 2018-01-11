@@ -6,6 +6,7 @@ window.noname_package={
     },
     card:{
         standard:'标准',
+        incident:'异变',
     },
     play:{
         boss:'诸神降临',
@@ -14,7 +15,7 @@ window.noname_package={
         coin:'富甲天下',
     },
     mode:{
-        identity:'身份',
+        identity:'异变',
         versus:'对决',
         connect:'联机',
         boss:'挑战',

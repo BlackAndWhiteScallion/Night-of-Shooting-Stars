@@ -3,11 +3,7 @@ window.config={
 	forbidall:['xiahouyuan','huangzhong','weiyan','dianwei','zhangjiao',
 	'caocao','simayi','guanyu','zhangfei','zhaoyun','ganning','lvmeng','lvbu'],
 	forbidversus:['swd_kangnalishi'],
-	forbidstone:['zhugedan','pal_xuanxiao','hs_malfurion','lusu','chenlin','hs_siwangzhiyi',
-		'gjqt_bailitusu','yuanshao','swd_anka','swd_nicole','daqiao','re_daqiao','hs_xuanzhuanjijia',
-		'zhuran','huatuo','swd_tuwei','hs_guldan','wangyi','caoang','swd_guyue','swd_rongshuang',
-		'swd_jiangziya','guojia','re_guojia','shen_caocao','swd_qiner','caopi','hs_yngvar','guansuo',
-		'gjqt_aruan','swd_hanluo','hs_anduin','swd_huanglei','yxs_yujix','yxs_luzhishen','swd_muyun','ow_tianshi'
+	forbidstone:[
 	],
 	replacecharacter:{
 		zhangjiao:'sp_zhangjiao',
@@ -26,8 +22,8 @@ window.config={
 	forbidboss:['caiwenji','gjqt_aruan','pal_xuanxiao','swd_hupo'],
 	forbiddouble:['zhugedan','swd_kangnalishi','dongzhuo','wutugu','hs_siwangzhiyi','hs_ronghejuren','hs_shanlingjuren'],
 	all:{
-		sgscharacters:['standard', 'scarlet', 'sakura'],
-		sgscards:['standard'],
+		sgscharacters:['scarlet', 'sakura'],
+		sgscards:['standard','incident'],
 		sgsmodes:['identity','guozhan','versus','brawl','connect','library'],
 		stockmode:['identity','guozhan','versus','boss','chess','connect','brawl','library'],
 		stockextension:['boss','cardpile','coin','wuxing','hs_mod'],
@@ -136,7 +132,7 @@ window.config={
 	right_click:'pause',
 	sort:'type_sort',
 
-	cards:['standard'],
+	cards:['standard','incident'],
 	characters:['scarlet','sakura'],
 	connect_characters:[],
 	connect_cards:[],

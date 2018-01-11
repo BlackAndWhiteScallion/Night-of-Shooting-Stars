@@ -187,6 +187,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        lib.init.onfree();
 	    },
 	    brawl:{
+	    	updatelog:{
+	    		name:'更新注释',
+	    		mode:'',
+	    		intro:'暂无更新',
+	    		showcase:function(init){
+
+	    		},
+	    	},
 	        characterview:{
 	            name:'角色一览',
 	            mode:'',
@@ -197,16 +205,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            	for(i in lib.character){
 						list.push(i);
 					}
-					event.list=list;
 	            	var dialog=ui.create.dialog('hidden');
-					dialog.classList.add('fixed');
-					//dialog.classList.add('bosscharacter');
 					dialog.style.left = "0px";
 					dialog.style.top = "0px";
 					dialog.style.width = "100%";
 					dialog.style.height = "100%";
-					dialog.add([list,'character']);
-					//dialog.addEventListener('click',ui.click.charactercard();
+					dialog.add([list,'character'],false);
+					var buttons=ui.create.buttons(list,'character');
+					/*
+                    for(var i=0;i<buttons.length;i++){
+                    	/*
+                        buttons[i].classList.add('noclick');
+                        buttons[i].listen(banCharacter);
+                        buttons[i].node.hp.style.transition='all 0s';
+                        buttons[i].node.hp._innerHTML=buttons[i].node.hp.innerHTML;
+						if(mode!='mode_banned'){
+							buttons[i].updateBanned=updateBanned;
+						}
+						
+						ui.click.charactercard(buttons[i].node.name,buttons[i]);
+                    }
+                    dialog.add(buttons);
+					*/
 					this.appendChild(dialog);
 					dialog.noopen=true;
 	            },
@@ -229,7 +249,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.style.width = "100%";
 					dialog.style.height = "100%";
 					for (i in lib.card){
-						if(lib.translate[i]){
+						if(lib.translate[i] && lib.card[i].type != 'zhenfa'){
 							var card=game.createCard(i, null, null, null);
                             dialog.add(card);
                         }

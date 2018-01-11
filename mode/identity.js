@@ -251,6 +251,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			else{
 				// ？？？game.zhu2才是明忠么？？
+				// game.zhong才是明忠
 				game.zhu.ai.shown=1;
 				if(game.zhu2){
 					game.zhong=game.zhu;
@@ -263,6 +264,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.zhong.addSkill('sheshen');
 					}
 				}
+				// 这个是加强主公包的玩意……
 				var enhance_zhu=false;
 				if(_status.connectMode){
 					enhance_zhu=(_status.mode!='zhong'&&lib.configOL.enhance_zhu&&get.population('fan')>=3);
@@ -294,6 +296,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			game.syncState();
 			event.trigger('gameStart');
 
+			// 设置每名角色的位置跟信息
 			var players=get.players(lib.sort.position);
 			var info=[];
 			for(var i=0;i<players.length;i++){
@@ -305,7 +308,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			_status.videoInited=true,
 			game.addVideo('init',null,info);
-
+			// 这个是抽卡顺序了
 			game.gameDraw(game.zhong||game.zhu||_status.firstAct||game.me);
 			game.phaseLoop(game.zhong||game.zhu||_status.firstAct||game.me);
 		},
@@ -328,6 +331,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				return state;
 			},
+			// game.zhu并不是这局游戏的主公，而是这局游戏的游戏开始的角色？
 			updateState:function(state){
 				for(var i in state){
 					var player=lib.playerOL[i];
@@ -465,6 +469,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					delete _status.clickingidentity;
 				}
 			},
+			//检测胜利条件
 			checkResult:function(){
 				if(_status.brawl&&_status.brawl.checkResult){
 					_status.brawl.checkResult();
@@ -1482,6 +1487,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		element:{
 			player:{
+				createincident:function(visible){
+
+				},
 				$dieAfter:function(){
 					if(_status.video) return;
 					if(!this.node.dieidentity){
@@ -1513,6 +1521,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						this.node.dieidentity.style.transform='';
 					}
 				},
+				// 哦哦，这里是死亡奖惩！
 				dieAfter:function(source){
 					if(!this.identityShown){
 						game.broadcastAll(function(player,identity,identity2){
@@ -2000,6 +2009,36 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
+			_tanpai:{
+				name:'摊牌',
+				enable:'phaseUse',
+				filter:function(event,player){
+    				return player.identityShown() != true;
+    			},
+    			content:function(){
+    				'step 0'
+    				player.identityShown() = true;
+    				player.setIdentity(player.identity);
+    				player.node.identity.classList.remove('guessing');
+    				if (player.identity=="zhu"){
+
+    				} else if (player.identity=="zhong"){
+    					var f = 0;
+    					for(var i=0;i<game.players.length;i++){
+							if(game.players[i].identity=='zhong'){
+								fan=game.players[i];
+							}
+						}
+    					if (get.population("zhong") != f){
+    						player.draw();
+    					} 
+    				} else if (player.identity=="fan"){
+    					
+    				} else if (player.identity=="nei"){
+
+    				}
+    			}
+			},
 			identity_junshi:{
 				name:'军师',
 				mark:true,

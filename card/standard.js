@@ -669,6 +669,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:true,
 			fullskin:true,
 			type:'trick',
+			subtype:'defense',
 			ai:{
 				basic:{
 					useful:[6,4],
@@ -820,7 +821,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		book:{
 			fullskin:true,
 			type:'equip',
-			subtype:'equip4',
+			subtype:'equip3',
 			ai:{
 				basic:{
 					equipValue:2
@@ -831,7 +832,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		frog:{
 			fullskin:true,
 			type:'equip',
-			subtype:'equip4',
+			subtype:'equip3',
 			filterTarget:function(card,player,target){
 				return true;
 			},
@@ -865,7 +866,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		lunadial:{
 			fullskin:true,
 			type:'equip',
-			subtype:'equip4',
+			subtype:'equip3',
 			ai:{
 				basic:{
 					equipValue:2
