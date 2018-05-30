@@ -3889,12 +3889,13 @@
                         name:'游戏模式',
                         init:'normal',
                         item:{
-                            normal:'标准',
+                            yibian:'异变',
+                            normal:'经典',
                             zhong:'明忠'
                         },
                         restart:true,
                         frequent:true,
-                        intro:'明忠模式详见帮助'
+                        intro:'异变和明忠模式详见帮助'
                     },
                     connect_player_number:{
                         name:'游戏人数',
@@ -4017,12 +4018,13 @@
                         name:'游戏模式',
                         init:'normal',
                         item:{
-                            normal:'标准',
+                            yibian:'异变',
+                            normal:'经典',
                             zhong:'明忠'
                         },
                         restart:true,
                         frequent:true,
-                        intro:'明忠模式详见帮助'
+                        intro:'异变和明忠模式详见帮助'
                     },
                     player_number:{
                         name:'游戏人数',
@@ -10128,9 +10130,11 @@
                     }
                     // 这里是丢牌！
                     // 这里也应该想个办法加个设置。
+                    player.lose(event.card1);
+                    target.lose(event.card2);
                     if (!lib.config.compare_discard){
-                        player.lose(event.card1);
-                        target.lose(event.card2);
+                        player.draw();
+                        target.draw();    
                     }
                     "step 5"
                     game.broadcast(function(){
@@ -12023,7 +12027,9 @@
                     'step 2'
                     if(!event.delayed) game.delay();
                 },
+                // 获得牌
                 gain:function(){
+                    // 首先，持有这个牌的东西先失去牌
                     "step 0"
                     if(cards){
                         var owner=event.source||get.owner(cards[0]);
@@ -12034,12 +12040,14 @@
                     else{
                         event.finish();
                     }
+                    // 如果，没有获得的牌的话，事件结束
                     "step 1"
                     if(cards.length==0){
                         event.finish();
                         return;
                     }
                     if(event.source&&event.delay!==false) game.delayx();
+                    // soga,原来是给目前时机增加可检查数量的意思……
                     "step 2"
                     if(player.getStat().gain==undefined){
                         player.getStat().gain=cards.length;
@@ -12047,7 +12055,20 @@
                     else{
                         player.getStat().gain+=cards.length;
                     }
+                    // 果然比起想要强行改不知道的代码，还不如直接加一个好了
                     "step 3"
+                    for (var i=0;i<cards.length;i++){
+                        if (get.info(cards[i]).type == 'delay'){
+                            player.addJudge(cards[i]);
+                            cards.remove(cards[i]);
+                        }
+                    }
+                    if (cards.length == 0){
+                        event.finish();
+                        return;
+                    }
+                    // 检查手牌，然后整理手牌么？
+                    "step 4"
                     var sort;
                     var frag1=document.createDocumentFragment();
                     var frag2=document.createDocumentFragment();
@@ -12057,6 +12078,8 @@
                             cards.splice(i--,1);
                         }
                     }
+                    // 每一张牌都……
+                    // 到底是在哪里进入手牌啊？？？
                     for(var num=0;num<cards.length;num++){
                         sort=lib.config.sort_card(cards[num]);
                         if(lib.config.reverse_sort) sort=-sort;
@@ -12071,6 +12094,8 @@
                         if(player==game.me){
                             cards[num].classList.add('drawinghidden');
                         }
+                        // 如果只有一张手牌的话，塞入frag1，否则塞入frag2？
+                        // 这是什么意义啊……
                         if(get.is.singleHandcard()||sort>1) frag1.appendChild(cards[num]);
                         else frag2.appendChild(cards[num]);
                     }
@@ -12085,6 +12110,7 @@
                             _status.cardPileNum=num;
                         },player,cards,ui.cardPile.childNodes.length);
                     };
+                    // 抽卡
                     if(event.animate=='draw'){
                         player.$draw(cards.length);
                         game.pause();
@@ -12098,6 +12124,7 @@
                             game.resume();
                         },get.delayx(500,500));
                     }
+                    // 获得卡
                     else if(event.animate=='gain'){
                         player.$gain(cards);
                         game.pause();
@@ -12111,18 +12138,20 @@
                             game.resume();
                         },get.delayx(700,700));
                     }
+                    // 以别的方式获得卡
                     else if(event.animate=='gain2'||event.animate=='draw2'){
                         var gain2t=300;
                         if(player.$gain2(cards)&&player==game.me){
                             gain2t=500;
                         }
                         game.pause();
+                        // 游戏暂停，然后在暂停过程中，往手牌里塞入获得的牌，然后更新
                         setTimeout(function(){
                             addv();
                             player.node.handcards1.insertBefore(frag1,player.node.handcards1.firstChild);
                             player.node.handcards2.insertBefore(frag2,player.node.handcards2.firstChild);
                             player.update();
-                            if(player==game.me) ui.updatehl();
+                            if(player==game.me) ui.updatehl();      // 如果是玩家的话，更新手牌。
                             broadcast();
                             game.resume();
                         },get.delayx(gain2t,gain2t));
@@ -12155,6 +12184,7 @@
                     "step 4"
                     game.delayx();
                 },
+                // 失去牌
                 lose:function(){
                     "step 0"
                     var hs=[],es=[],js=[];
@@ -12165,7 +12195,11 @@
                         cards[i].classList.remove('glow');
                         cards[i].recheck();
                         if(event.position){
-                            cards[i].goto(event.position);
+                            if (get.info(cards[i]).type == 'delay'){
+                                cards[i].goto(ui.skillPile);
+                            } else {
+                                cards[i].goto(event.position);
+                            }
                         }
                         else{
                             cards[i].delete();
@@ -12210,9 +12244,18 @@
                     event.num=0;
                     "step 1"
                     if(num<cards.length){
-                        if(cards[num].original=='e'){
-                            event.loseEquip=true;
-                            player.removeEquipTrigger(cards[num]);
+                        if(cards[num].original=='e' || cards[num].original=='j'){
+                            if (cards[num].original=='e'){ 
+                                event.loseEquip=true;
+                                player.removeEquipTrigger(cards[num]);
+                            } else {
+                                var info=get.info(cards[num]);
+                                if(info.skills){
+                                    for(var i=0;i<info.skills.length;i++){
+                                        player.removeSkill(info.skills[i]);
+                                    }
+                                }
+                            }
                             var info=get.info(cards[num]);
                             if(info.onLose&&(!info.filterLose||info.filterLose(cards[num],player))){
                                 event.goto(2);
@@ -12767,8 +12810,8 @@
                     player.equiping=true;
                     // 这里是替换装备的部分
                     // player.lose(player.get('e',{subtype:get.subtype(card)}),false);
-                    if (player.num('e',{type:'equip'})>2){
-                        player.chooseToDiscard(1,{type:'equip'},'e',true)
+                    if (player.num('e',{type:'equip'})>=player.maxequip){
+                        player.chooseToDiscard(1,{type:'equip'},'e',true);
                     }
                     "step 3"
                     if(player.isMin()){
@@ -12809,28 +12852,47 @@
                     }
                     delete player.equiping;
                 },
+                // 我靠这一地都是什么鬼玩意
                 addJudge:function(){
                     "step 0"
+                    // 首先，持有这些卡的人失去这些卡。
                     if(cards){
                         var owner=get.owner(cards[0]);
                         if(owner){
                             owner.lose(cards);
                         }
                     }
+                    // 然后，重置这张牌，这张牌明置，之类的……
                     "step 1"
                     cards[0].fix();
                     cards[0].style.transform='';
                     cards[0].classList.remove('drawinghidden');
                     delete cards[0]._transform;
+                    // 如果这卡是视为使用/转化的？然后就扔掉
                     var viewAs=typeof card=='string'?card:card.name;
                     if(!lib.card[viewAs]||!lib.card[viewAs].effect){
                         cards[0].discard();
                     }
                     else{
+                        // 然后插入判定区node里去
                         cards[0].style.transform='';
                         cards[0].classList.add('drawinghidden');
                         player.node.judges.insertBefore(cards[0],player.node.judges.firstChild);
+                        
+                        // 在这里追加效果就OK了吧
+                        var info=get.info(cards[0]);
+                        if(info.skills){
+                            for(var i=0;i<info.skills.length;i++){
+                                player.addSkill(info.skills[i]);
+                            }
+                        }
+                        // 多了就扔掉
+                        if (player.num('j',{type:'delay'})>player.maxjudge){
+                            player.chooseToDiscard(1,{type:'delay'},'j',true);
+                        }
+                        player.update();
                         ui.updatej(player);
+                        // 这里是log部分
                         game.broadcast(function(player,card,viewAs){
                             card.fix();
                             card.style.transform='';
@@ -12850,6 +12912,7 @@
                                 game.addVideo('gain2',player,get.cardsInfo([card]));
                             }
                         },player,cards[0],viewAs);
+                        //如果这张卡是复制的？鉴于后面跳过了，似乎是无意义？
                         if(cards[0].clone&&(cards[0].clone.parentNode==player.parentNode||cards[0].clone.parentNode==ui.arena)){
                             cards[0].clone.moveDelete(player);
                             game.addVideo('gain2',player,get.cardsInfo(cards));
@@ -12862,17 +12925,20 @@
                         else{
                             delete cards[0].viewAs;
                         }
+                        // 这是转化后的log部分
                         if(cards[0].viewAs&&cards[0].viewAs!=cards[0].name){
                             if(cards[0].classList.contains('fullskin')||cards[0].classList.contains('fullborder')){
                                 cards[0].classList.add('fakejudge');
                                 cards[0].node.background.innerHTML=lib.translate[cards[0].viewAs+'_bg']||get.translation(cards[0].viewAs)[0];
                             }
-                            game.log(player,'被贴上了<span class="yellowtext">'+get.translation(cards[0].viewAs)+'</span>（',cards,'）');
+                            game.log(player,'贴上了<span class="yellowtext">'+get.translation(cards[0].viewAs)+'</span>（',cards,'）');
                         }
                         else{
+                            cards[0].node.background.innerHTML=lib.translate[cards[0][2]+'_bg'];
                             cards[0].classList.remove('fakejudge');
-                            game.log(player,'被贴上了',cards);
+                            game.log(player,'贴上了',cards);
                         }
+                        // 然后这里是动画
                         game.addVideo('addJudge',player,[get.cardInfo(cards[0]),cards[0].viewAs]);
                     }
                 },
@@ -13061,6 +13127,8 @@
                     this.maxHp=info[2];
                     this.lili=info[1];
                     this.maxlili=info[6];
+                    this.maxequip=3;
+                    this.maxskill=3;
                     this.hujia=0;
                     this.node.intro.innerHTML=lib.config.intro;
                     this.node.name.dataset.nature=get.groupnature(this.group);
@@ -22033,6 +22101,7 @@
                 next.setContent('replaceHandcards');
             }
         },
+        // 这是……删除卡牌？
         removeCard:function(name){
             for(var i=0;i<lib.card.list.length;i++){
                 if(lib.card.list[i][2]==name){
@@ -36886,9 +36955,11 @@
                 if(!lib.config.show_replay){
                     ui.replay.style.display='none';
                 }
+                // 这里是定义牌堆之类的玩意的吗？
                 ui.control=ui.create.div('#control',ui.arena).animate('nozoom');
                 ui.cardPile=ui.create.div('#cardPile');
                 ui.discardPile=ui.create.div('#discardPile');
+                ui.skillPile=ui.create.div('#cardPile');
                 ui.special=ui.create.div('#special');
                 ui.dialogs=[];
                 ui.controls=[];
@@ -37578,6 +37649,7 @@
                     ui.create.cards.apply(ui.create,arguments);
                 }
             },
+            // 这里是加载牌的吧
             cards:function(ordered){
                 if(_status.brawl){
                     if(_status.brawl.cardPile){
@@ -37591,8 +37663,11 @@
                     lib.card.list.randomSort();
                 }
                 for(var i=0;i<lib.card.list.length;i++){
+                    // 如果系统里有这张卡
                     if(lib.card[lib.card.list[i][2]]){
+                        // 如果这个卡不是被换掉了
                         if(!lib.card.list[i]._replaced){
+                            // 根据是否是网上模式，检查禁止卡里是否有这张卡
                             if(!_status.connectMode){
                                 if(lib.config.bannedcards.contains(lib.card.list[i][2])) continue;
                             }
@@ -37601,8 +37676,12 @@
                             }
                             if(game.bannedcards&&game.bannedcards.contains(lib.card.list[i][2])) continue;
                         }
-                        lib.inpile.add(lib.card.list[i][2]);
-                        ui.create.card(ui.cardPile).init(lib.card.list[i]);
+                        if (lib.card[lib.card.list[i][2]].type != 'delay'){
+                            lib.inpile.add(lib.card.list[i][2]);
+                            ui.create.card(ui.cardPile).init(lib.card.list[i]);
+                        } else {
+                            ui.create.card(ui.skillPile).init(lib.card.list[i]);
+                        }
                     }
                 }
                 if(ui.cardPileNumber) ui.cardPileNumber.innerHTML='0轮 剩余牌: '+ui.cardPile.childNodes.length;

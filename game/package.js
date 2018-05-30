@@ -7,6 +7,7 @@ window.noname_package={
     card:{
         standard:'标准',
         incident:'异变',
+        skill:'技能',
     },
     play:{
         boss:'诸神降临',

@@ -302,9 +302,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filterTarget:function(card,player,target){
 				if(player==target) return false;
 				return (target.num('hej')>0) ;
-				//&& get.distance(player,target,'attack')<=1;
+				&& get.distance(player,target,'attack')<=1;
 			},
 			content:function(){
+				'step 0'
+				if(target.num('ej') && player.lili > 1){
+					player.chooseControl('paylili_guohe','cancel',function(event,player){
+    					return 'zhiji_recover';
+    				});
+				}
+				'step 1'
+				if(result.bool){
+                    player.loselili();                      
+                    player.discardPlayerCard('ej',target,true);
+                }
 				if(target.num('hej')){
 					player.discardPlayerCard('hej',target,true);
 				}
@@ -1198,10 +1209,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		book_skill:{
 			audio:2,
-			trigger:{player:'phaseBegin'},
-			frequent:true,
+			trigger:{player:'phaseEnd'},
+			frequent:false,
+			filter:function(event,player){
+				return player.lili > 0 && ui.skillPile.childNodes.length > 0;
+			},
 			content:function(){
-				player.gainlili();
+				player.loselili();
+				player.gain(ui.skillPile.childNodes[0],'draw2');
 			},
 		},
 		magatama_skill:{
@@ -1718,12 +1733,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		shunshou_info:'出牌阶段，对本回合成为过牌的目标的一名角色使用；获得其区域内的一张牌。',
 		guohe:'疾风骤雨',
 		guohe_bg:'拆',
+		paylili_guohe:'强化疾风骤雨：再弃置一张装备或技能牌',
 		guohe_info:'出牌阶段，对一名其他角色使用；弃置其区域内的一张牌。',
 		wuxie:'魔法障壁',
 		wuxie_bg:'懈',
 		wuxie_info:'一名角色指定其以外的角色为法术牌的目标后，对此牌使用。抵消此牌对一名角色产生的效果',
+		/*
 		penglaiyao:'魔力药水',
 		penglaiyao_info:'结束阶段，你失去2点灵力。',
+		*/
 		pantsu:'蓝白胖次',
 		pantsu_info:'锁定技，其他角色不能弃置或获得你的此牌以外的牌。',
 		laevatein:'莱瓦丁',
@@ -1761,6 +1779,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		bailou:'白楼剑',
 		bailou_info:'锁定技，你使用攻击牌造成弹幕伤害后，对受伤角色造成1点灵击伤害。',
 		book:'魔导书',
+		book_skill:'魔导书',
 		book_info:'锁定技，准备阶段，你获得1点灵力。',
 		yuzhi:'蓬莱玉枝',
 		yuzhi:'准备阶段，你可以观看牌堆顶的一张牌，然后可以弃置之。',
@@ -1769,22 +1788,26 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		hourai_info:'你成为攻击牌的目标后，可以收回装备区中的此牌，令该牌对你无效。',
 		frog:'冰镇青蛙',
 		frog_info:'你使用这张牌时，可以令一名其他角色失去2点灵力。',
+		/*
 		magatama:'八咫琼勾玉',
 		magatama_skill:'解密',
 		magatama_info:'一回合一次，出牌阶段，你可以观看一名角色的手牌。',
+		*/
 		lunadial:'月时针',
 		lunadial_skill:'The World',
 		lunadial_info:'一回合一次，出牌阶段，你可以消耗1点灵力，然后令一名其他角色不能使用或打出手牌，直到结束阶段。',
+		/*
 		kusanagi:'草薙剑',
 		kusanagi_skill:'草薙剑',
 		kusanagi_info:'你使用【轰！】指定目标后，若你的灵力大于目标，可以弃置其一张牌。',
+		*/
 		hakkero:'八卦炉',
 		hakkero_skill:'八卦炉',
 		hakkero_info:'出牌阶段，你可以消耗1点灵力，视为使用一张【轰！】',
 		lantern:'人魂灯',
 		lantern_info:'锁定技，你成为【轰！】的目标后，若来源在你攻击范围内，其选择一项：弃置一张牌，或令该【轰！】对你无效。',
 		stone:'贤者之石',
-		stone_info:'出牌阶段，你可以将包括此牌的两张牌当作一种法术牌使用。',
+		stone_info:'出牌阶段，你可以将两张牌(可以包括此牌)当作一种法术牌使用。',
 		stone_skill:'贤者之石',
 	},
 	list:[
@@ -1858,7 +1881,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["spade",12,'guohe'],
 		["club",3,'guohe'],
 		["club",4,'guohe'],
-		["spade",9,'wuxie'],
+		["spade",9,'frog'],
 		["spade",11,'wuxie'],
 		["spade",12,'wuxie'],
 		["club",7,'wuxie'],
@@ -1867,9 +1890,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["heart",6,'reidaisai'],
 		["club",13,'danmakucraze'],
 		["spade",13,'danmakucraze'],
+		["club",10,''],
+		["club",11,''],
 		["diamond",1,'deathfan'],
 		["spade",1,'windfan',"",1],
-		["club",1,'penglaiyao',"",3],
+		["club",1,'wuxie'],
 		["heart",1,'lunadial',"",1],
 		["spade",2,'ibuki',"",1],
 		["club",2,'hourai',"",-1],
@@ -1880,13 +1905,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["club",5,'lantern',"",-1],
 		["club",6,'bailou',"",-1],
 		["spade",6,'louguan',"",1],
-		["spade",8,'magatama',"",-1],
+		["spade",8,'guohe'],
 		["club",8,'mirror'],
 		["club",9,'frog'],
-		["spade",11,'book'],
+		["spade",11,'book',"",1],
 		["spade",7,'stone'],
-		//["heart",12,'yuzhi',"",1],
-		["spade",13,'kusanagi',"",1],
+		["heart",12,'yuzhi',"",1],
+		["spade",13,'book',"",1],
 		["heart",13,'laevatein',"",2],
 		["diamond",13,'gungnir',"",2],
 		["club",13,'zhiyuu',"",1],

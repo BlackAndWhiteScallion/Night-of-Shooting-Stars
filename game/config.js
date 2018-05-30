@@ -132,7 +132,7 @@ window.config={
 	right_click:'pause',
 	sort:'type_sort',
 
-	cards:['standard','incident'],
+	cards:['standard','incident','skill'],
 	characters:['scarlet','sakura'],
 	connect_characters:[],
 	connect_cards:[],

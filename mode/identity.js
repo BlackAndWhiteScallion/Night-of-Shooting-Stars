@@ -7,7 +7,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			if(!lib.config.new_tutorial){
 				ui.arena.classList.add('only_dialog');
 			}
+			//这里获得这局是什么东西（明忠或者普通）
 			_status.mode=get.config('identity_mode');
+			// 如果是乱斗模式的话，换成乱斗模式
 			if(_status.brawl&&_status.brawl.submode){
 				_status.mode=_status.brawl.submode;
 			}
@@ -355,6 +357,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			// 有关房间的信息……居然全部都是使用?的设置，得全部重写……
 			getRoomInfo:function(uiintro){
 				uiintro.add('<div class="text chat">游戏模式：'+(lib.configOL.identity_mode=='zhong'?'明忠':'标准'));
 				uiintro.add('<div class="text chat">双将模式：'+(lib.configOL.double_character?'开启':'关闭'));
@@ -376,6 +379,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				last.style.paddingBottom='8px';
 			},
+			//可标记身份种类
 			getIdentityList:function(player){
 				if(player.identityShown) return;
 				if(player==game.me) return;
@@ -447,6 +451,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.saveConfig('gameRecord',lib.config.gameRecord);
 				}
 			},
+			// 这个是展示身份的函数，吼吼
+			// 但是是全部角色都展示……囧
 			showIdentity:function(me){
 				for(var i=0;i<game.players.length;i++){
 					// if(me===false&&game.players[i]==game.me) continue;
@@ -534,9 +540,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return player.identity=='fan';
 				}
 			},
+			//这里是选将，也就是游戏开始部分。
 			chooseCharacter:function(){
 				var next=game.createEvent('chooseCharacter',false);
 				next.showConfig=true;
+				// 这个是分发身份的东西
 				next.addPlayer=function(player){
 					var list=lib.config.mode_config.identity.identity[game.players.length-3].slice(0);
 					var list2=lib.config.mode_config.identity.identity[game.players.length-2].slice(0);
@@ -547,6 +555,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				next.removePlayer=function(){
 					return game.players.randomGet(game.me,game.zhu);
 				};
+				// 这段全是AI吗？好他喵混乱啊囧
 				next.ai=function(player,list,list2,back){
 					if(_status.brawl&&_status.brawl.chooseCharacterAi){
 						if(_status.brawl.chooseCharacterAi(player,list,list2,back)!==false){
@@ -560,6 +569,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						else{
 							player.init(list[0]);
 						}
+						// 是明忠的话，加血加上限
 						if(player.identity=='mingzhong'){
 							player.hp++;
 							player.maxHp++;
@@ -633,6 +643,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var chosen=lib.config.continue_name||[];
 					game.saveConfig('continue_name');
 					event.chosen=chosen;
+					// 这一段设置身份
 					if(_status.mode=='zhong'){
 						event.zhongmode=true;
 						identityList=['zhu','zhong','mingzhong','nei','fan','fan','fan','fan'];
@@ -830,6 +841,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						identityList.remove(event.identity);
 						identityList.unshift(event.identity);
 						if(event.fixedseat){
+							// 在这里设置了game.zhu的身份……
 							var zhuIdentity=(_status.mode=='zhong')?'mingzhong':'zhu';
 							if(zhuIdentity!=event.identity){
 								identityList.remove(zhuIdentity);
@@ -839,6 +851,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						delete event.identity;
 					}
+					// 然后是正常模式的设置：
 					else if(_status.mode!='zhong'&&(!_status.brawl||!_status.brawl.identityShown)){
 						var ban_identity=[];
 						ban_identity.push(get.config('ban_identity')||'off');
@@ -927,6 +940,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.setIdentity();
 						game.me.node.identity.classList.remove('guessing');
 					}
+
+					// 这里才是正经发武将的部分
 					for(i in lib.character){
 						if(chosen.contains(i)) continue;
 						if(lib.filter.characterDisabled(i)) continue;
@@ -1488,7 +1503,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		element:{
 			player:{
 				createincident:function(visible){
-
+					var libincident = {};
+					var list = {};
+					for (i in lib.card){
+						if (lib.card[i].type == 'zhenfa'){
+							libincident.push(i);
+						}
+					}
+					for (i in libincident){
+						if (game.me.pack == i.name){
+							list.push(i);
+							libincident.remove(i);
+						}
+					}
+					list.push(libincident.randomGets(2));
+					ui.create.dialog([list,'vcard']);
 				},
 				$dieAfter:function(){
 					if(_status.video) return;
@@ -2009,20 +2038,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
-			_tanpai:{
+			tanpai:{
 				name:'摊牌',
 				enable:'phaseUse',
 				filter:function(event,player){
-    				return player.identityShown() != true;
+    				return player.identityShown != true;
+    				//return true;
     			},
     			content:function(){
     				'step 0'
-    				player.identityShown() = true;
+    				player.identityShown = true;
     				player.setIdentity(player.identity);
     				player.node.identity.classList.remove('guessing');
     				if (player.identity=="zhu"){
 
     				} else if (player.identity=="zhong"){
+    					/*
     					var f = 0;
     					for(var i=0;i<game.players.length;i++){
 							if(game.players[i].identity=='zhong'){
@@ -2031,11 +2062,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
     					if (get.population("zhong") != f){
     						player.draw();
-    					} 
+    					}
+    					*/ 
+    					game.log('dddd');
     				} else if (player.identity=="fan"){
-    					
+    					player.draw();
     				} else if (player.identity=="nei"){
-
+    					player.loseHp();
     				}
     			}
 			},

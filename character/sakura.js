@@ -800,6 +800,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     */
                 }
             },  
+            mengjing:{
+                audio:2,
+                cost:4,
+                spell:['mengjing2'],
+                trigger:{player:['phaseBegin']},
+                filter:function(event,player){
+                    return player.lili > lib.skill.mengjing.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.mengjing.cost);
+                    player.turnOver();
+                },
+            },
+            mengjing2:{
+
+            },
         },
 		translate:{
             letty:'蕾蒂',
