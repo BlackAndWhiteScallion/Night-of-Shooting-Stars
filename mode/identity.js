@@ -898,6 +898,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
+					// 没有明忠的特殊身份模式
 					if(get.config('special_identity')&&!event.zhongmode&&game.players.length==8){
 						for(var i=0;i<game.players.length;i++){
 							delete game.players[i].special_identity;
@@ -945,19 +946,25 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(i in lib.character){
 						if(chosen.contains(i)) continue;
 						if(lib.filter.characterDisabled(i)) continue;
+						// 可以用的全部加入列表
 						event.list.push(i);
+						// 主公角色加入另外一个主公专属区
 						if(lib.character[i][4]&&lib.character[i][4].contains('zhu')){
 							list2.push(i);
 						}
 						else{
+							// 这里是不为主公的区域
 							list3.push(i);
 						}
 					}
+					// 都随机整理
 					event.list.randomSort();
 					list3.randomSort();
+					// 这个应该是乱斗处理掉非将池里的角色
 					if(_status.brawl&&_status.brawl.chooseCharacterFilter){
 						_status.brawl.chooseCharacterFilter(event.list,list2,list3);
 					}
+					// 然后获得各个身份的数量
 					var num=get.config('choice_'+game.me.identity);
 					if(event.zhongmode){
 						num=6;
@@ -965,10 +972,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							num=8;
 						}
 					}
+					// 如果自己不是主公
 					if(game.zhu!=game.me){
 						event.ai(game.zhu,event.list,list2)
+						// 把已经选择的（主公的卡牌扔出去）
 						event.list.remove(game.zhu.name);
 						event.list.remove(game.zhu.name2);
+						// 如果是乱斗模式的话，让选
 						if(_status.brawl&&_status.brawl.chooseCharacter){
 							list=_status.brawl.chooseCharacter(event.list,num);
 							if(list===false||list==='nozhu'){
@@ -980,6 +990,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					else{
+						// 然后，如果是乱斗模式
 						if(_status.brawl&&_status.brawl.chooseCharacter){
 							list=_status.brawl.chooseCharacter(list2,list3,num);
 							if(list===false){
@@ -2043,7 +2054,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				enable:'phaseUse',
 				filter:function(event,player){
     				return player.identityShown != true;
-    				//return true;
     			},
     			content:function(){
     				'step 0'
@@ -2051,7 +2061,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				player.setIdentity(player.identity);
     				player.node.identity.classList.remove('guessing');
     				if (player.identity=="zhu"){
-
+    					
     				} else if (player.identity=="zhong"){
     					/*
     					var f = 0;

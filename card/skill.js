@@ -218,7 +218,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				expose:0.3
     			}
 			},
-			shenyou_skill:{
+			shenyou_skill_1:{
 				audio:2,
     			trigger:{player:'judge'},
     			filter:function(event,player){
@@ -227,31 +227,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			direct:true,
     			content:function(){
     				"step 0"
-    				player.chooseCard(get.translation(trigger.player)+'的'+(trigger.judgestr||'')+'判定为'+
-    				get.translation(trigger.player.judging[0])+'，'+get.prompt('guidao'),'he',function(card){
-    					return get.color(card)=='black';
-    				}).set('ai',function(card){
-    					var trigger=_status.event.getTrigger();
-    					var player=_status.event.player;
-    					var judging=_status.event.judging;
-    					var result=trigger.judge(card)-trigger.judge(judging);
-    					var attitude=get.attitude(player,trigger.player);
-    					if(attitude==0||result==0) return 0;
-    					if(attitude>0){
-    						return result;
-    					}
-    					else{
-    						return -result;
-    					}
-    				}).set('judging',trigger.player.judging[0]);
     				"step 1"
-    				if(result.bool){
-    					player.respond(result.cards,'highlight');
-    				}
-    				else{
-    					event.finish();
-    				}
-    				"step 2"
     				if(result.bool){
     					player.logSkill('guidao');
     					player.$gain2(trigger.player.judging[0]);
@@ -266,14 +242,52 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				game.delay(2);
     			},
 			},
+			shenyou_skill_2:{
+				audio:2,
+    			trigger:{player:'judge'},
+    			filter:function(event,player){
+    				return player.countCards('he',{color:'black'})>0;
+    			},
+    			direct:true,
+    			content:function(){
+    				"step 0"
+    				player.logSkill('shenyou_skill_1');
+    				//trigger.player.judging[0]=;
+    				if(!get.owner(result.cards[0],'judge')){
+    					trigger.position.appendChild(result.cards[0]);
+    				}
+    				game.log(trigger.player,'的判定牌改为',result.cards[0]);
+    			},
+			},
 			jinu_skill:{
-
+    			audio:2,
+    			trigger:{player:'damageEnd'},
+    			direct:true,
+    			content:function(){
+    				"step 0"
+    				player.chooseTarget(get.prompt('jinu'),function(card,player,target){
+    					return player!=target && target.countCards('ej')>0;
+    				}).ai=function(target){
+    				}
+    				"step 1"
+    				if(result.bool){
+    					player.discardPlayerCard('ej',result.target,true);
+    					for (var i = 0; i <= player.num('j'); i ++){
+							var card=player.get('j',i);
+							if(card&&card.name == ('jinu')){
+								player.discard(card);
+								break;
+							}
+						}	
+    				}
+    			},
 			},
 			lianji_skill:{
-				mod:{
-					cardUsable:function(card,player,num){
-						if(card.name=='sha') return 2;
-					}
+				trigger:{player:'shaBegin'},
+				usable:1,
+				forced:true,
+				content:function(){
+					player.getStat().card.sha--;
 				},
 			},
 		},
@@ -285,6 +299,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			ziheng:'制衡',
 			ziheng_bg:'制',
 			ziheng_info:'摸牌阶段结束时，你可以重铸该阶段摸的一张牌。',
+			shengdun:'圣盾',
+			shengdun_skill:'',
+			shengdun_info:'',
+			qusan:'驱散',
+			qusan_skill:'',
+			qusan_info:'',
+			shenyou:'神佑',
+			shenyou_info:'',
+			jinu:'激怒',
+			jinu_info:'',
+			lianji:'连击',
+			lianji_info:'',
 		},
 		list:[
 			//["diamond",1,'sakura'],

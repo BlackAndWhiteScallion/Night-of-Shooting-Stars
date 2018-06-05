@@ -20,11 +20,10 @@
     var lib={
         configprefix:'star_0.9_',
         versionOL:25,
-        updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/master',
+        updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
         //updateURL:'',
         //mirrorURL:'',
-        //mirrorURL:'https://coding.net/u/BWS/p/Night-of-Shooting-Stars/git/raw/',
-        mirrorURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/master',
+        mirrorURL:'https://coding.net/u/BWS/p/Night-of-Shooting-Stars/git/raw',
         hallURL:'noname.pub',
         assetURL:'',
         changeLog:[],

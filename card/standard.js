@@ -301,18 +301,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			filterTarget:function(card,player,target){
 				if(player==target) return false;
-				return (target.num('hej')>0) ;
+				return (target.num('hej')>0)
 				&& get.distance(player,target,'attack')<=1;
 			},
 			content:function(){
 				'step 0'
 				if(target.num('ej') && player.lili > 1){
 					player.chooseControl('paylili_guohe','cancel',function(event,player){
-    					return 'zhiji_recover';
+    					return 'cancel';
     				});
 				}
 				'step 1'
-				if(result.bool){
+				if(result.control == "paylili_guohe"){
                     player.loselili();                      
                     player.discardPlayerCard('ej',target,true);
                 }
@@ -442,7 +442,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					ai2:function(target){
 						return ai.get.attitude(_status.event.player,target);
 					},
-					prompt:'你可以送给别人一张牌'
+					prompt:'你可以送给别人一张牌!'
 				});
 				if(result.targets&&result.targets[0]){
 					result.targets[0].gain(result.cards);
@@ -462,6 +462,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			modTarget:true,
 			content:function(){
+				'step 0'
+				if(player.lili > 1 && ui.skillPile.childNodes.length > 0){
+					player.chooseControl('paylili_wuzhong','cancel',function(event,player){
+    					return 'paylili_wuzhong';
+    				});
+				}
+				'step 1'
+				if(result.control == "paylili_wuzhong"){
+                    player.loselili();                      
+					player.gain(ui.skillPile.childNodes[0],'draw2');
+                }
 				target.draw(2);
 			},
 			ai:{
@@ -660,7 +671,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			modTarget:true,
 			content:function(){
 				target.draw(1);
-				target.addTempSkill('paoxiao','phaseAfter');
+				target.addTempSkill('danmaku_skill','phaseAfter');
 			},
 			ai:{
 				basic:{
@@ -1086,11 +1097,29 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				"step 0"
-				for (var i = 0; i <= player.num('e'); i ++){
-					var card=player.get('e',i);
-					if(card&&card.name == ('gungnir')){
-						player.discard(card);
-						break;
+				var controls=['throw_gungir'];
+    				if(player.lili >= 2){
+    					controls.push('lose_lili');
+    				}
+    				player.chooseControl(controls).ai=function(){
+    					if(player.lili > 2){
+    						return 'lose_lili';
+    					}
+    					else{
+    						return 'throw_gungir';
+    					}
+    				}
+    			"step 1"
+    			event.control=result.control;
+    			if (event.control == 'lose_lili'){
+    				player.loselili(2);
+    			} else {
+					for (var i = 0; i <= player.num('e'); i ++){
+						var card=player.get('e',i);
+						if(card&&card.name == ('gungnir')){
+							player.discard(card);
+							break;
+						}
 					}
 				}	
 				trigger.directHit=true;
@@ -1412,21 +1441,25 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				backup:function(links,player){
     					return {
     						filterCard:function(card,player){
+    							/*
     							if(ui.selected.cards.length){
     								return true;
     							} else{
     								return (card.name == 'stone');
     							}
+    							*/
+    							return true;
     						},
     						position:'he',
     						selectCard:2,
     						audio:2,
+    						usable:1,
     						popname:true,
     						viewAs:{name:links[0][2]},
     					}
     				},
     				prompt:function(links,player){
-    					return '将一张手牌当作'+get.translation(links[0][2])+'使用';
+    					return '将两张牌（可以包括贤者之石）当作'+get.translation(links[0][2])+'使用';
     				}
     			},
 		},
@@ -1709,6 +1742,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				delete event.wuxieresult2;
 			}
 		},
+		danmaku_skill:{
+			trigger:{player:'shaBegin'},
+			usable:3,
+			forced:true,
+			content:function(){
+				player.getStat().card.sha--;
+			},
+		},
 	},
 	translate:{
 		sha:'轰！',
@@ -1748,7 +1789,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		laevatein_info:'锁定技，出牌阶段，你对每名角色使用的第一张【轰！】不算次数。',
 		gungnir:'冈格尼尔',
 		gungnir_skill:'冈格尼尔',
-		gungnir_info:'你使用【轰！】指定目标后，可以弃置此牌，令目标不能对该【轰！】使用牌。',
+		gungnir_info:'你使用【轰！】指定目标后，可以弃置此牌，或消耗2点灵力，令目标不能对该【轰！】使用牌。',
 		louguan:'楼观剑',
 		louguan_info:'锁定技，你使用【轰！】指定目标后，该角色的装备技能无效，直到该牌结算完毕。',
 		ibuki:'伊吹瓢',
