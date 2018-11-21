@@ -798,7 +798,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return target!=player;
 			},	
 			content:function(){
-				player.discardPlayerCard('hej',target,true);
+				var num = target.maxHp-target.hp;
+				for (var i = 0; i < num; i++){
+					if (target.num('hej')) player.discardPlayerCard('hej',target,true);
+				}
 			},
 		},
 		// 令避之间
@@ -1977,6 +1980,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                 for(var i=0;i<cards.length;i++){
                     ui.cardPile.appendChild(cards[i]);
                 }
+                game.log("死境之门：交换弃牌堆和牌堆");
 				//ui.discardPile.appendChild(ui.drawPile);
 			},
 		},
@@ -2002,6 +2006,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                 for(var i=0;i<cards.length;i++){
                     ui.cardPile.appendChild(cards[i]);
                 }
+                game.log("天国之门：弃牌堆加入牌堆");
             },
 		},
 		_tianguo2:{
@@ -2033,7 +2038,22 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 
 		},
 		_zuiye:{
+    		trigger:{source:'damageBefore'},
+    		frequent:false,
+    		direct:true,
+    		filter:function(event,player){
+    			return player.countCards('h',{name:'zuiye'})>0&&event.nature != 'thunder';
+    		},
+    		content:function(){
+    			var hand = player.getCards('h');
+    			for (var i = 0; i < hand.length; i++){
+    				if (get.name(hand[i]) == 'zuiye'){
+    					trigger.target.gain(hand[i]);
+    					trigger.num++;
+    				}
+    			}
 
+    		},
 		},
 		huazhi:{
 
@@ -2046,6 +2066,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		lingbi2:{
 
+		},
+		_lingbi:{
+    		enable:'chooseToUse',
+    		filterCard:function(card){
+    			return get.name(card)=='lingbi';
+    		},
+    		viewAsFilter:function(player){
+    			return player.countCards('h',{name:'lingbi'})>0;
+    		},
+    		viewAs:{name:'wuxie'},
+    		prompt:'将【令避之间】当【请你住口！】使用',
+    		check:function(card){return 8-get.value(card)},
 		},
 		danmaku_skill:{
 			trigger:{player:'shaBegin'},
@@ -2163,12 +2195,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		huanxiang:'幻想之门',
 		huanxiang_info:'出牌阶段，对所有角色使用：目标各摸一张牌，一张技能牌，获得1点灵力。</br> <u>追加效果：游戏开始时，你可以展示此牌，所有角色摸一张牌。</u>',
 		tianguo:'天国之阶',
-		_tianguo2:'天国之阶的追加效果',
+		_tianguo2:'天国之阶',
 		_tianguo2_info:'展示天国之阶，令所有角色回复1点体力',
 		tianguo_info:'出牌阶段，对所有角色使用：将弃牌堆洗入牌堆，然后目标各摸一张牌。</br> <u>追加效果：你摸到此牌时，可以展示之，所有角色回复1点体力。</u>',
 		lingbi:'令避之间',
 		lingbi_info:'出牌阶段，对所有角色使用：你声明一张牌，目标角色不能使用该牌，直到你的回合开始。</br> <u>追加效果：此牌可以当作【请你住口！】使用。</u>',
 		zuiye:'罪业边狱',
+		_zuiye:'罪业边狱',
+		_zuiye_info:'将罪业边狱交给对方，令伤害+1',
 		zuiye_info:'出牌阶段，对一名角色使用：弃置其X张牌（X为其已受伤值）。</br> <u>追加效果：你造成弹幕伤害时，可以将此牌交给受伤角色，令伤害+1。</u>',
 		huazhi:'花之祝福',
 		huazhi_info:'出牌阶段，对你使用：结束阶段，目标摸X张牌（X为其本回合造成的伤害点数）。</br> <u>追加效果：若你的灵力为0，使用此牌后，获得2点灵力。</u>',

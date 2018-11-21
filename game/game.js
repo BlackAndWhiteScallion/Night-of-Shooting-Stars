@@ -227,7 +227,7 @@
                     swipe_up:{
                         name:'上划操作',
                         intro:'向上滑动时执行的操作',
-                        init:'auto',
+                        init:'chat',
                         unfrequent:true,
                         item:{
                             system:'显示按钮',
@@ -13500,6 +13500,7 @@
                     dialog.add('<div class="text" style="word-break:break-all;display:inline">'+str+'</div>');
                     dialog.classList.add('popped');
                     ui.window.appendChild(dialog);
+                    // 根据窗口大小来控制框的大小
                     var width=dialog.content.firstChild.firstChild.offsetWidth;
                     if(width<190){
                         dialog._mod_height=-16;
@@ -13507,7 +13508,8 @@
                     else{
                         dialog.content.firstChild.style.textAlign='left';
                     }
-                    dialog.style.width=(width+16)+'px';
+                    // 下限宽度，原数值：+16
+                    dialog.style.width=(width+40)+'px';
                     var refnode;
                     if(this.node&&this.node.avatar&&this.parentNode==ui.arena){
                         refnode=this.node.avatar;
@@ -13527,9 +13529,10 @@
                     if(dialog._mod_height){
                         dialog.content.firstChild.style.padding=0;
                     }
+                    // 浮空时间。原数值：2000毫秒
                     setTimeout(function(){
                         dialog.delete();
-                    },2000);
+                    },4000);
                     var info=[get.translation(this.name)||this.nickname,str];
                     lib.chatHistory.push(info);
                     if(_status.addChatEntry){
