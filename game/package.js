@@ -21,6 +21,7 @@ window.noname_package={
         connect:'联机',
         boss:'挑战',
         chess:'战棋',
+        tafang:'塔防',
         brawl:'场景',
         library:'图鉴',
     },

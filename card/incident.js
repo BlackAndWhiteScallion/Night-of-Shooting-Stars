@@ -8,6 +8,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				fullskin:true,
 				enable:true,
+				vanish:true,
 				selectTarget:-1,
 				filterTarget:function(card,player,target){
 					return target==player;
@@ -22,6 +23,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				type:'zhenfa',
 				fullskin:true,
 				enable:true,
+				vanish:true,
 				selectTarget:-1,
 				filterTarget:function(card,player,target){
 					return target == player;

@@ -25,7 +25,7 @@ window.config={
 		sgscharacters:['scarlet', 'sakura'],
 		sgscards:['standard','incident'],
 		sgsmodes:['identity','guozhan','versus','brawl','connect','library'],
-		stockmode:['identity','guozhan','versus','boss','chess','connect','brawl','library'],
+		stockmode:['identity','guozhan','versus','boss','chess','tafang','connect','brawl','library'],
 		stockextension:['boss','cardpile','coin','wuxing','hs_mod'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple'],

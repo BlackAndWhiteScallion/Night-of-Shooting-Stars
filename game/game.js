@@ -444,7 +444,7 @@
                     auto_check_update:{
                         name:'自动检查游戏更新',
                         intro:'进入游戏时检查更新',
-                        init:true,
+                        init:false,
                         unfrequent:false
                     },
                     dev:{
@@ -578,9 +578,9 @@
                 name:'体系',
                 config:{
                     compare_discard:{
-                        name:'不弃拼点牌',
+                        name:'拼点完摸一',
                         init:true,
-                        intro:'打开后，拼点后，拼点牌返回手牌',
+                        intro:'打开后，拼点后，双方各摸一张牌',
                     },
                     regain_lili:{
                         name:'结束阶段灵力补至1',
@@ -8766,11 +8766,13 @@
             basic:'基本',
             equip:'装备',
             trick:'法术',
+            jinji:'禁忌',
             attack:'攻击',
             defense:'防御',
             support:'支援',
-            disrupt:'骚扰',
-            delay:'延时锦囊',
+            disrupt:'控场',
+            enhance:'强化',
+            delay:'技能',
             character:'角色',
             revive:'复活',
             equip1:'武器',
@@ -8790,6 +8792,7 @@
             nine:'九',
             ten:'十',
             _chongzhu:'重铸',
+            _enhance:'强化',
             _lianhuan:'连环',
             _lianhuan2:'连环',
             qianxing:'潜行',
@@ -10131,7 +10134,7 @@
                     // 这里也应该想个办法加个设置。
                     player.lose(event.card1);
                     target.lose(event.card2);
-                    if (!lib.config.compare_discard){
+                    if (lib.config.compare_discard){
                         player.draw();
                         target.draw();    
                     }
@@ -12867,7 +12870,7 @@
                     cards[0].style.transform='';
                     cards[0].classList.remove('drawinghidden');
                     delete cards[0]._transform;
-                    // 如果这卡是视为使用/转化的？然后就扔掉
+                    // 如果这卡是视为使用/转化的并且无效了就扔掉
                     var viewAs=typeof card=='string'?card:card.name;
                     if(!lib.card[viewAs]||!lib.card[viewAs].effect){
                         cards[0].discard();
@@ -12877,7 +12880,6 @@
                         cards[0].style.transform='';
                         cards[0].classList.add('drawinghidden');
                         player.node.judges.insertBefore(cards[0],player.node.judges.firstChild);
-                        
                         // 在这里追加效果就OK了吧
                         var info=get.info(cards[0]);
                         if(info.skills){
@@ -12899,11 +12901,12 @@
                             card.viewAs=viewAs;
                             if(viewAs&&viewAs!=card.name&&(card.classList.contains('fullskin')||card.classList.contains('fullborder'))){
                                 card.classList.add('fakejudge');
-                                card.node.background.innerHTML=lib.translate[viewAs+'_bg']||get.translation(viewAs)[0]
+                                //card.node.background.innerHTML=lib.translate[viewAs+'_bg']||get.translation(viewAs)[0]
                             }
                             else{
                                 card.classList.remove('fakejudge');
                             }
+                            card.node.background.innerHTML=lib.translate[card.name]||get.translation(card.name)[0]
                             player.node.judges.insertBefore(card,player.node.judges.firstChild);
                             ui.updatej(player);
                             if(card.clone&&(card.clone.parentNode==player.parentNode||card.clone.parentNode==ui.arena)){
@@ -12937,6 +12940,7 @@
                             cards[0].classList.remove('fakejudge');
                             game.log(player,'贴上了',cards);
                         }
+                        cards[0].node.background.innerHTML=lib.translate[cards[0][2]+'_bg'];
                         // 然后这里是动画
                         game.addVideo('addJudge',player,[get.cardInfo(cards[0]),cards[0].viewAs]);
                     }
@@ -19293,7 +19297,7 @@
                     this.suit=card[0];
                     this.number=card[1];
                     this.name=card[2];
-                    this.bonus=card[4]; 
+                    this.bonus=card[4];
                     this.classList.add('card');
                     if(card[3]){
                         if(lib.nature.contains(card[3])) this.nature=card[3];
@@ -20705,6 +20709,30 @@
                         if (up < 0){
                             trigger.player.loselili(Math.abs(up));
                         }
+                    }
+                },
+            },
+            _enhance:{
+                trigger:{player:'useCard'},
+                frequent:false,
+                filter:function(event){
+                    return (lib.card[event.card.name].enhance && !(event.player.lili < lib.card[event.card.name].enhance));
+                },
+                content:function(){
+                    player.loselili(lib.card[trigger.card.name].enhance);
+                    if (!player.storage._enhance){
+                        player.storage._enhance = 1;
+                    } else {
+                        player.storage._enhance += 1;
+                    }
+                },
+            },
+            _enhanceend:{
+                trigger:{player:'useCardAfter'},
+                forced:true,
+                content:function(){
+                    if (player.storage._enhance){
+                        player.storage._enhance = 0;
                     }
                 },
             },
@@ -34436,24 +34464,24 @@
                             updatepx.style.whiteSpace='nowrap';
                             updatepx.style.marginTop='8px';
                             var buttonx=ui.create.node('button','访问项目主页',function(){
-                                window.open('https://github.com/libccy/noname');
+                                window.open('https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars');
                             });
                             updatepx.appendChild(buttonx);
                             ui.updateUpdate=function(){
-                                if(!game.download){
+                                /*if(!game.download){
                                     updatep1.style.display='none';
                                     updatep2.style.display='none';
                                     updatep3.style.display='none';
                                     updatepx.style.display='';
                                     updatep4.innerHTML='关于';
                                 }
-                                else{
+                                else{*/
                                     updatep1.style.display='';
                                     updatep2.style.display='';
                                     updatep3.style.display='';
                                     updatepx.style.display='none';
                                     updatep4.innerHTML='更新';
-                                }
+                                //}
                             }
                             ui.updateUpdate();
                         }());
@@ -43841,7 +43869,8 @@
             else if(node.classList.contains('character')){
                 var character=node.link;
                 if(lib.character[node.link]&&lib.character[node.link][1]){
-                    uiintro.add(get.translation(character)+'&nbsp;&nbsp;'+lib.translate[lib.character[node.link][1]]);
+                    //uiintro.add(get.translation(character)+'&nbsp;&nbsp;'+lib.translate[lib.character[node.link][1]]);
+                    uiintro.add(get.translation(character));
                 }
                 else{
                     uiintro.add(get.translation(character));

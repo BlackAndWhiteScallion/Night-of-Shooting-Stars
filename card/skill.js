@@ -101,6 +101,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				skills:['lianji_skill']
 			},	
+			qianxing:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				skills:['qianxing_skill']
+			},	
 		},
 		skill:{
 			qicheng_skill:{
@@ -121,7 +135,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			ziheng_skill:{
     			audio:2,
-    			trigger:{player:'phaseDrawBegin'},
+    			trigger:{player:'phaseDrawEnd'},
     			direct:true,
     			content:function(){
     				"step 0"
@@ -135,7 +149,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			shengdun_skill:{
 				audio:2,
     			filter:function(event,player){
-    				return event.player!=player&&event.card&&(lib.card[event.card].subtype=='attack');
+    				return event.player==player&&event.card&&lib.card[event.card].subtype&&(lib.card[event.card].subtype=='attack');
     			},
     			logTarget:'player',
     			check:function(event,player){
@@ -178,7 +192,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			qusan_skill:{
 				audio:2,
     			filter:function(event,player){
-    				return event.player!=player&&event.card&&(get.type(event.card)=='trick');
+    				return event.player==player&&event.card&&(get.type(event.card)=='trick');
     			},
     			logTarget:'player',
     			check:function(event,player){
@@ -220,43 +234,35 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			shenyou_skill_1:{
 				audio:2,
-    			trigger:{player:'judge'},
+    			trigger:{player:'damageBefore'},
+    			forced:true,
     			filter:function(event,player){
-    				return player.countCards('he',{color:'black'})>0;
+    				return event.num>0 && event.num>=player.hp;
     			},
-    			direct:true,
     			content:function(){
     				"step 0"
-    				"step 1"
-    				if(result.bool){
-    					player.logSkill('guidao');
-    					player.$gain2(trigger.player.judging[0]);
-    					player.gain(trigger.player.judging[0]);
-    					trigger.player.judging[0]=result.cards[0];
-    					if(!get.owner(result.cards[0],'judge')){
-    						trigger.position.appendChild(result.cards[0]);
-    					}
-    					game.log(trigger.player,'的判定牌改为',result.cards[0]);
-    				}
-    				"step 3"
-    				game.delay(2);
+    				for (var i = 0; i <= player.num('j'); i ++){
+						var card=player.get('j',i);
+						if(card&&card.name == ('shenyou')){
+							player.discard(card);
+							break;
+						}
+					}
+					trigger.untrigger();
     			},
 			},
 			shenyou_skill_2:{
 				audio:2,
+				forced:true,
     			trigger:{player:'judge'},
     			filter:function(event,player){
-    				return player.countCards('he',{color:'black'})>0;
+    				return true;
     			},
-    			direct:true,
     			content:function(){
     				"step 0"
-    				player.logSkill('shenyou_skill_1');
-    				//trigger.player.judging[0]=;
-    				if(!get.owner(result.cards[0],'judge')){
-    					trigger.position.appendChild(result.cards[0]);
-    				}
-    				game.log(trigger.player,'的判定牌改为',result.cards[0]);
+    				player.logSkill('shenyou_skill_2');
+    				trigger.player.judging[0].suit = "heart";
+    				game.log(trigger.player,'的判定牌的花色改为'+get.translate("heart"));
     			},
 			},
 			jinu_skill:{
@@ -272,13 +278,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				"step 1"
     				if(result.bool){
     					player.discardPlayerCard('ej',result.target,true);
+    					/*
     					for (var i = 0; i <= player.num('j'); i ++){
 							var card=player.get('j',i);
 							if(card&&card.name == ('jinu')){
 								player.discard(card);
 								break;
 							}
-						}	
+						}
+						*/	
     				}
     			},
 			},
@@ -293,29 +301,41 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		translate:{
 			skill:'技能',
-			qicheng:'骑乘',
+			qicheng:'？？',
 			qicheng_bg:'骑',
-			qicheng_info:'d',
+			qicheng_info:'你是怎么摸到这张牌的？',
 			ziheng:'制衡',
 			ziheng_bg:'制',
-			ziheng_info:'摸牌阶段结束时，你可以重铸该阶段摸的一张牌。',
+			ziheng_info:'摸牌阶段结束时，你可以重铸一张牌。',
 			shengdun:'圣盾',
+			shengdun_bg:'盾',
 			shengdun_skill:'',
-			shengdun_info:'',
+			shengdun_info:'你成为攻击牌的目标后，可以与来源拼点；若你赢，弃置此牌，该牌对你无效。',
 			qusan:'驱散',
+			qusan_bg:'散',
 			qusan_skill:'',
-			qusan_info:'',
+			qusan_info:'你成为法术牌的目标后，可以并与来源拼点；若你赢，弃置此牌，该牌对你无效。',
 			shenyou:'神佑',
-			shenyou_info:'',
+			shenyou_bg:'神',
+			shenyou_info:'锁定技，你的判定牌生效前，你弃置此牌，令之视为红桃；你受到伤害时，若伤害大于你的体力值，你弃置此牌，防止该伤害。',
 			jinu:'激怒',
-			jinu_info:'',
+			jinu_bg:'怒',
+			jinu_info:'你受到伤害后，可以弃置伤害来源场上一张牌',
 			lianji:'连击',
-			lianji_info:'',
+			lianji_bg:'连击',
+			lianji_info:'锁定技，出牌阶段，你可以额外使用一张【轰！】',
 		},
 		list:[
 			//["diamond",1,'sakura'],
-			["diamond",0,'qicheng'],
+			//["diamond",0,'qicheng'],
 			["diamond",0,'ziheng'],
+			["diamond",0,'ziheng'],
+			["diamond",0,'shenyou'],
+			["diamond",0,'shenyou'],
+			["diamond",0,'shengdun'],
+			["diamond",0,'shengdun'],
+			["diamond",0,'qusan'],
+			["diamond",0,'qusan'],
 		],
 	};
 });

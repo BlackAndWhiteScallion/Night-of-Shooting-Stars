@@ -7,6 +7,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    },
 	    start:function(){
 			ui.auto.hide();
+			if(lib.config.background_music!='music_off'){
+                ui.backgroundMusic.src=lib.assetURL+'audio/background/library.mp3';
+            }
+            var today = new Date();
+            if(today.getMonth() == 3) ui.backgroundMusic.src=lib.assetURL+'audio/background/signature.mp3';
+			
 	        if(!lib.storage.scene){
 	            lib.storage.scene={};
 	        }
@@ -113,6 +119,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	                intro+=info.intro;
 	            }
+	            var today = new Date();
+            	if(today.getMonth() == 3 && name == 'thanks') intro += '<br> 特殊BGM：資料室のお茶会 - key';
 	            var showcase=ui.create.div();
 	            showcase.style.margin='0px';
 	            showcase.style.padding='0px';
@@ -198,7 +206,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        characterview:{
 	            name:'角色一览',
 	            mode:'',
-	            intro:'',
+	            intro:'关闭，打开，和查看角色简介在左上角的选项/角色进行。',
 	            showcase:function(init){
 	            	var i;
 	            	var list=[];
@@ -262,7 +270,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	name:'规则帮助',
 	        	mode:'',
 	        	intro:[
-	        		'规则全部可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>找到',
+	        		'规则简略可以在<a href="game/guide.pdf">这里</a>读到',
+	        		'详细的资源可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
 	        		'游戏内的资料正在制作中',
 	        		],
 	        	showcase:function(init){
@@ -273,7 +282,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	name:'模式一览',
 	        	mode:'',
 	        	intro:[
-	        		'规则介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>找到',
+	        		'模式介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
 	        		'游戏内的资料正在制作中',
 	        		],
 	        	showcase:function(init){
@@ -286,7 +295,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                '欢迎大家光临雾雨魔法店！',
 	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA">雾雨家的魔法店吧</a>',
 	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com">雾雨魔法店的仓库</a>',
-	                '官方QQ群：隙间中',
+	                '官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜总会</a>',
 	                '无论是聊天，想反映问题，还是想提出建议，都可以到以上任意一个地方去发表意见，我们会看到并尊重你的每一个意见。',
 	            ],
 	        	showcase:function(init){
@@ -371,6 +380,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'接着，感谢魔法店里陪着我们走到现在的大家。',
 	        	'最后，感谢你，玩这个游戏的玩家，的支持。',
 	        	'我们衷心希望，你能在这里玩的开心。',
+	        	'',
+	        	'',
+	        	'',
+	        	'游戏BGM：<a href="https://www.bilibili.com/video/av30877"> 东方连奏Pianoforte - Shiraha </a>',
+	        	'图鉴BGM：「忘らるる物語」 【凋叶棕】',
 	        	],
 	        	showcase:function(init){
 
