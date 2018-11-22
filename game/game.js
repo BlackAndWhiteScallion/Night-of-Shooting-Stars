@@ -2271,7 +2271,7 @@
                     glow_phase:{
                         name:'当前回合角色高亮',
                         unfrequent:true,
-                        init:'yellow',
+                        init:'purple',
                         intro:'设置当前回合角色的边框颜色',
                         item:{
                             none:'无',
@@ -2319,7 +2319,7 @@
                     cardshape:{
                         name:'手牌显示',
                         intro:'将手牌设置为正方形或长方形',
-                        init:'default',
+                        init:'oblong',
                         unfrequent:true,
                         item:{
                             default:'默认',
@@ -3082,7 +3082,7 @@
                     },
                     show_name:{
                         name:'显示角色名称',
-                        init:false,
+                        init:true,
                         unfrequent:true,
                         onclick:function(bool){
                             game.saveConfig('show_name',bool);
@@ -3180,7 +3180,7 @@
                     },
                     show_cardpile_number:{
                         name:'显示剩余牌数',
-                        init:false,
+                        init:true,
                         unfrequent:true,
                         onclick:function(bool){
                             game.saveConfig('show_cardpile_number',bool);
@@ -3718,7 +3718,7 @@
                     restart:true,
                 },
                 intro:{
-                    name:'将剑阁和挑战模式的武将添加到其它模式',
+                    name:'将挑战模式的武将添加到其它模式',
                     clear:true,
                     nopointer:true,
                 },

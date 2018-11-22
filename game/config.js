@@ -80,8 +80,8 @@ window.config={
 
 	theme:'simple',
 	layout:'mobile',
-	card_style:'default',
-	cardback_style:'default',
+	card_style:'ol',
+	cardback_style:'ol',
 	hp_style:'default',
 
 	image_character:'default',
@@ -90,7 +90,7 @@ window.config={
 	asset_image:true,
 	asset_font:true,
 
-	card_font:'xiaozhuan',
+	card_font:'xinwei',
 	show_statusbar_ios:'off',
 	show_statusbar_android:false,
 	show_name:true,
