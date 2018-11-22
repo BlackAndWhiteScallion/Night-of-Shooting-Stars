@@ -7,6 +7,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				fullskin:true,
 				type:'delay',
+				vanish:true,
 				skills:['qicheng_skill'],
 				filterTarget:function(card,player,target){
 					return true;
@@ -298,6 +299,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.getStat().card.sha--;
 				},
 			},
+			qianxing_skill:{
+
+			},
 		},
 		translate:{
 			skill:'技能',
@@ -322,8 +326,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			jinu_bg:'怒',
 			jinu_info:'你受到伤害后，可以弃置伤害来源场上一张牌',
 			lianji:'连击',
-			lianji_bg:'连击',
+			lianji_bg:'连',
 			lianji_info:'锁定技，出牌阶段，你可以额外使用一张【轰！】',
+			qianxing:'潜行',
+			qianxing_bg:'潜',
+			qianxing_skill:'',
 		},
 		list:[
 			//["diamond",1,'sakura'],

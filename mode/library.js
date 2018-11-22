@@ -257,7 +257,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.style.width = "100%";
 					dialog.style.height = "100%";
 					for (i in lib.card){
-						if(lib.translate[i] && lib.card[i].type != 'zhenfa'){
+						if(lib.translate[i] && lib.card[i].type != 'zhenfa' && !lib.card[i].vanish){
 							var card=game.createCard(i, undefined, undefined, undefined);
                             dialog.add(card);
                         }

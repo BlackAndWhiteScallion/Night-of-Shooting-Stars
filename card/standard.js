@@ -840,7 +840,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			enable:true,
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
-				return true;
+				return target != player;
 			},
 			content:function(){
 				"step 0"
@@ -937,6 +937,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			skills:['ibuki_skill']
+		},
+		pantsu:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip5',
+			ai:{
+				basic:{
+					equipValue:2
+				}
+			},
+			skills:['pantsu_skill']
 		},
 		deathfan:{
 			fullskin:true,
@@ -1612,6 +1623,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				}
     			},
 		},
+		pantsu_skill:{
+			alter:true,
+			mod:{
+				canBeDiscarded:function(card){
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu') return false;
+				},
+				cardDiscardable:function(card){
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu') return false;
+				}
+			},
+		},
 		bingyu1:{
 			trigger:{source:'damageBefore'},
     		forced:true,
@@ -2046,6 +2068,27 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			}
 			},
 		},
+		// 派对当潜行
+		_jingxia:{
+			enable:'phaseUse',
+			filter:function(event,player){
+				return player.get('h','jingxia');
+			},
+			content:function(){
+				'step 0'
+				var cards = [];
+				var hand = player.get('h');
+				for (var i = 0; i < hand.length; i++){
+					if (hand[i].name == 'jingxia') cards.push(hand[i]);
+				}
+				player.chooseCardButton('当作【潜行】放入技能牌区？',cards);
+				'step 1'
+				if(result.links&&result.links.length){
+					player.addJudge('qianxing',result.links[0]);
+					player.logSkill('_jingxia');
+				}
+			},
+		},
 		// 如果明置就有急冻
 		_bingyu:{
 
@@ -2074,10 +2117,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.draw(num);
 				player.removeSkill('huazhi_skill');
 			},
-		},
-		// 派对当潜行
-		jingxia:{
-
 		},
 		// 不能使用打出
 		lingbi1:{
@@ -2319,6 +2358,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		bingyu:'冰域之宴',
 		bingyu_info:'出牌阶段，对所有角色使用：目标不能造成伤害，手牌上限视为无限，直到你的回合开始。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
 		jingxia:'惊吓派对',
+		_jingxia:'惊吓派对',
+		jingxia_bg:'潜',
 		jingxia_info:'出牌阶段，对所有其他角色使用：与目标各拼点：若你赢，对其造成1点灵击伤害。</br> <u>追加效果：出牌阶段，可以将此牌当作【潜行】置入技能牌区。</u>',
 	},
 	list:[
@@ -2409,7 +2450,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["heart",1,'lunadial',"",1],
 		["spade",2,'ibuki',"",1],
 		["club",2,'hourai',"",-1],
-		//["heart",3,'pantsu',"", 1],
+		["heart",3,'pantsu',"", 1],
 		["diamond",5,'saiqianxiang',"",1],
 		["heart",5,'yinyangyu',"",-1],
 		["spade",5,'hakkero',"",1],
