@@ -116,6 +116,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				skills:['qianxing_skill']
 			},	
+			lingyong:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				skills:['lingyong_skill']
+			},
 		},
 		skill:{
 			qicheng_skill:{
@@ -300,11 +314,44 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			qianxing_skill:{
-
+				trigger:{player:'phaseEnd'},
+				content:function(){
+					player.addSkill('qianxing_skill2');
+				},
+			},
+			qianxing_skill2:{
+				mod:{
+					targetEnabled:function(card,player,target,now){
+						if(target.countCards('j',{name:'qianxing'})>0){
+							if(lib.card[card.name].subtype=='attack') return false;
+						}
+					}
+				},
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					player.removeSkill('qianxing_skill2');
+				},
+				ai:{
+					noh:true,
+					skillTagFilter:function(player,tag){
+						if(tag=='noh'){
+							if(player.countCards('h')!=1) return false;
+						}
+					}
+				}
+			},
+			lingyong_skill:{
+				mod:{
+					attackFrom:function(from,to,distance){
+						// 数场上符合条件的角色，不错
+						if (from.lili < 2) return distance - 2;
+						return distance;
+					}
+				},
 			},
 		},
 		translate:{
-			skill:'技能',
+			skill:'技能牌',
 			qicheng:'？？',
 			qicheng_bg:'骑',
 			qicheng_info:'你是怎么摸到这张牌的？',
@@ -330,11 +377,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			lianji_info:'锁定技，出牌阶段，你可以额外使用一张【轰！】',
 			qianxing:'潜行',
 			qianxing_bg:'潜',
-			qianxing_skill:'',
+			qianxing_info:'结束阶段，你可以令你获得以下效果直到你的准备阶段：若你有【潜行】，你不能成为攻击牌的目标；准备阶段，弃置此牌。',
+			qianxing2_skill:'若你有【潜行】，你不能成为攻击牌的目标。',
+			lingyong:'灵涌',
+			lingyong_info:'锁定技，你造成的伤害不会因没有灵力而防止；你的攻击范围至少为2。',
 		},
 		list:[
-			//["diamond",1,'sakura'],
-			//["diamond",0,'qicheng'],
 			["diamond",0,'ziheng'],
 			["diamond",0,'ziheng'],
 			["diamond",0,'shenyou'],
@@ -343,6 +391,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			["diamond",0,'shengdun'],
 			["diamond",0,'qusan'],
 			["diamond",0,'qusan'],
+			["diamond",0,'jinu'],
+			["diamond",0,'jinu'],
+			["diamond",0,'lianji'],
+			["diamond",0,'lianji'],
+			["diamond",0,'qianxing'],
+			["diamond",0,'qianxing'],
+			["diamond",0,'lingyong'],
+			["diamond",0,'lingyong'],
 		],
 	};
 });

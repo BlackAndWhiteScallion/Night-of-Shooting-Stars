@@ -18,13 +18,14 @@
         dying:[]
     };
     var lib={
-        configprefix:'star_0.9_',
+        configprefix:'star_1.9_',
         versionOL:25,
         updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
         //updateURL:'',
         //mirrorURL:'',
         mirrorURL:'https://coding.net/u/BWS/p/Night-of-Shooting-Stars/git/raw',
-        hallURL:'noname.pub',
+        hallURL:'318sgs.6655.la',
+        //hallURL:'noname.pub',
         assetURL:'',
         changeLog:[],
         updates:[],
@@ -50,7 +51,7 @@
         hook:{globaltrigger:{},globalskill:{}},
         hookmap:{},
         imported:{},
-        layoutfixed:['chess','tafang','stone'],
+        layoutfixed:['chess','tafang'],
         characterDialogGroup:{
             '收藏':function(name,capt){
                 return lib.config.favouriteCharacter.contains(name)?capt:null;
