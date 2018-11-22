@@ -9408,6 +9408,9 @@
                     "step 0"
                     // 再见了判定阶段
                     //player.phaseJudge();
+                    // 在这里可以设置一下没有灵力的检测
+                    var nolili = false;
+                    if (player.lili == 0) nolili = true;
                     "step 1"
                     player.phaseDraw();
                     if(!player.noPhaseDelay){
@@ -9428,8 +9431,9 @@
                         }
                     });
                     player.phaseDiscard()
-                    // 这个应该换到固有技能那儿去，注意一下
-                    if (player.lili == 0 && lib.config.regain_lili == true){
+                    // 看来还是不要放到固有技能那儿比较好。
+                    // 如果没有灵力，并且设置中的补灵力开启，并且准备阶段没有灵力
+                    if (player.lili == 0 && lib.config.regain_lili == true && nolili == true){
                         player.gainlili();
                         game.log(player,'因灵力为0，获得了1点灵力')
                     }
@@ -12301,9 +12305,10 @@
                     "step 0"
                     if(num<0) num=0;
                     // 0灵力造成的伤害为0
-                    // 需要想个办法加入设置。
+                    // 如果进行了设置。
+                    // 并且没有灵涌技能牌
                     if (source) {
-                        if (source.lili == 0 && lib.config.damage_lili == true){
+                        if (source.lili == 0 && lib.config.damage_lili == true && source.num('j','lingyong') == 0){
                             game.log(source,'的灵力为0，无法造成伤害')
                             num = 0;
                         }

@@ -14,6 +14,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				_status.mode=_status.brawl.submode;
 			}
 			// 替换牌堆的东西，但是没看到在哪里用的（也不在乎）
+			// 好像是强化牌？顺手换成盛东……？
+			// 好像是某种阵法牌替换还是侠客牌替换。
 			event.replacePile=function(){
 				var list=['shengdong','qijia','caomu','jinchan','zengbin','fulei','qibaodao','zhungangshuo','lanyinjia'];
 				var map={
@@ -76,6 +78,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			}
 			// 这里是新手向导w
+			// 或许可以换到图鉴那儿去？ 或者过程中切到图鉴那里。
+			// 反正是要设置的。就是不是现在。
 			"step 2"
 			if(!lib.config.new_tutorial){
 				_status.new_tutorial=true;
@@ -197,13 +201,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			// 如果是连接模式
 			// 这个是设置布局的好像
+			// 不太对吧，那联机模式就不选将了？？
 			"step 4"
 			if(_status.connectMode){
 				_status.mode=lib.configOL.identity_mode;
 				if(_status.mode=='zhong'){
 					lib.configOL.number=8;	// 8人
 					if(lib.configOL.zhong_card){
-						event.replacePile();		// 怎么又要换牌堆
+						event.replacePile();		// 如果是明忠就又要换牌堆了（耸肩）
 					}
 				}
 				if(lib.configOL.number<2){
@@ -219,6 +224,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				if(_status.brawl&&_status.brawl.chooseCharacterBefore){
 					_status.brawl.chooseCharacterBefore();
 				}
+				// 没有看到别的地方亮身份，那应该就是混在选将这里了？
 				game.chooseCharacter();
 			}
 			// 金币？？？？
@@ -266,7 +272,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.zhong.addSkill('sheshen');
 					}
 				}
-				// 这个是加强主公包的玩意……
+				// 这个是加强主公包的玩意……全删了吧？
 				var enhance_zhu=false;
 				if(_status.connectMode){
 					enhance_zhu=(_status.mode!='zhong'&&lib.configOL.enhance_zhu&&get.population('fan')>=3);
@@ -295,6 +301,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},game.zhu,skill);
 				}
 			}
+			// 这里就游戏开始时了。
 			game.syncState();
 			event.trigger('gameStart');
 
@@ -546,6 +553,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				next.showConfig=true;
 				// 这个是分发身份的东西
 				next.addPlayer=function(player){
+					// 果然是因为list长度的问题而-3和-2啊
+					// 不过，-2的是当前身份，-3的是少一个人的身份，然后玩家的身份是当前-少一人所剩下来的那个
+					// 请容我打出一句一脸懵逼。
 					var list=lib.config.mode_config.identity.identity[game.players.length-3].slice(0);
 					var list2=lib.config.mode_config.identity.identity[game.players.length-2].slice(0);
 					for(var i=0;i<list.length;i++) list2.remove(list[i]);
@@ -561,9 +571,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(_status.brawl.chooseCharacterAi(player,list,list2,back)!==false){
 							return;
 						}
-					}
+					} 
+					// 如果是明忠模式
 					if(_status.event.zhongmode){
+						// 如果是双将
 						if(get.config('double_character')){
+							// 使用-3的两个身份启动是什么鬼
 							player.init(list[0],list[1]);
 						}
 						else{
@@ -576,7 +589,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							player.update();
 						}
 					}
+					// 如果玩家是主公的话
 					else if(player.identity=='zhu'){
+						// 身份随机掉
 						list2.randomSort();
 						var choice,choice2;
 						if(!_status.event.zhongmode&&Math.random()-0.8<0&&list2.length){

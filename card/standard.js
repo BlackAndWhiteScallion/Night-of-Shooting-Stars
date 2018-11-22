@@ -601,14 +601,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:true,
 			fullskin:true,
 			type:'trick',
-			type:'disrupt',
+			subtype:'disrupt',
 			enable:true,
 			enhance:1,
 			filterTarget:function(card,player,target){
+				return player != target;
+				/*
 				if(player==target) return false;
 				return (target.get('h').length||
 					target.classList.contains('unseen')||
 					target.classList.contains('unseen2'))
+				*/
 			},
 			content:function(){
 				"step 0"
