@@ -260,7 +260,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			else{
 				// ？？？game.zhu2才是明忠么？？
 				// game.zhong才是明忠
-				game.zhu.ai.shown=1;
+				// 这个是AI对主公的认识，原数值是1，改成0。
+				game.zhu.ai.shown=0;
 				if(game.zhu2){
 					game.zhong=game.zhu;
 					game.zhu=game.zhu2;
@@ -318,8 +319,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			_status.videoInited=true,
 			game.addVideo('init',null,info);
 			// 这个是抽卡顺序了
-			game.gameDraw(game.zhong||game.zhu||_status.firstAct||game.me);
-			game.phaseLoop(game.zhong||game.zhu||_status.firstAct||game.me);
+			//game.gameDraw(game.zhong||game.zhu||_status.firstAct||game.me);
+			//game.phaseLoop(game.zhong||game.zhu||_status.firstAct||game.me);
+			players.randomSort();
+			game.gameDraw(players[0]||_status.firstAct||game.zhu||game.me);
+			game.phaseLoop(players[0]||_status.firstAct||game.zhu||game.me);
 		},
 		game:{
 			getState:function(){
@@ -536,6 +540,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			// OL都是玩家部分，也就是说这里是确认玩家有没有赢
 			checkOnlineResult:function(player){
 				if(game.zhu.isAlive()){
 					return (player.identity=='zhu'||player.identity=='zhong');
@@ -566,6 +571,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return game.players.randomGet(game.me,game.zhu);
 				};
 				// 这段全是AI吗？好他喵混乱啊囧
+				// 这里的list应该是和addplayer的list是分开的
+				// 看来是武将列表，所以我就不纠结到底是在哪里引用的了
+				// 顺便，list是所有武将池，list2是主公武将池
 				next.ai=function(player,list,list2,back){
 					if(_status.brawl&&_status.brawl.chooseCharacterAi){
 						if(_status.brawl.chooseCharacterAi(player,list,list2,back)!==false){
@@ -589,11 +597,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							player.update();
 						}
 					}
-					// 如果玩家是主公的话
+					// 如果是主公的话
 					else if(player.identity=='zhu'){
-						// 身份随机掉
+						var list2 = [];
 						list2.randomSort();
 						var choice,choice2;
+						// 如果是主公且概率检测过了，随机选择一个主公武将。
 						if(!_status.event.zhongmode&&Math.random()-0.8<0&&list2.length){
 							choice=list2[0];
 							choice2=list[0];
@@ -601,21 +610,27 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								choice2=list[1];
 							}
 						}
+						// 要不然就无脑选1，2
 						else{
 							choice=list[0];
 							choice2=list[1];
 						}
+						// player.init(武将1，武将2)
+						// 总之，这里是武将创建的地方
 						if(get.config('double_character')){
 							player.init(choice,choice2);
 						}
 						else{
 							player.init(choice);
 						}
+						// 如果增加血量，血量上限
+						/*
 						if(game.players.length>4){
 							player.hp++;
 							player.maxHp++;
 							player.update();
 						}
+						*/
 					}
 					else if(player.identity=='zhong'&&Math.random()<0.5){
 						var choice=0;
@@ -695,6 +710,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
+					// 自由选择身份/座位的UI
 					var addSetting=function(dialog){
 						dialog.add('选择身份').classList.add('add-setting');
 						var table=document.createElement('div');
@@ -836,6 +852,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.add(ui.create.div('.placeholder.add-setting'));
 						if(get.is.phoneLayout()) dialog.add(ui.create.div('.placeholder.add-setting'));
 					};
+					// 如果自动选择身份/座位没有打开
 					var removeSetting=function(){
 						var dialog=_status.event.dialog;
 						if(dialog){
@@ -848,10 +865,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							ui.update();
 						}
 					};
+
+					// 这里是读取设置
 					event.addSetting=addSetting;
 					event.removeSetting=removeSetting;
 					event.list=[];
+					// 洗身份
 					identityList.randomSort();
+					// 不是很懂这段是什么，身份事件？
 					if(event.identity){
 						identityList.remove(event.identity);
 						identityList.unshift(event.identity);
@@ -887,12 +908,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							identityList.splice(game.players.indexOf(game.me),0,ban_identity);
 						}
 					}
+					// 所有角色检索：
 					for(i=0;i<game.players.length;i++){
+						// 如果是乱斗模式并且乱斗模式设置明身份
 						if(_status.brawl&&_status.brawl.identityShown){
+							// 所有角色把身份翻出来
 							if(game.players[i].identity=='zhu') game.zhu=game.players[i];
 							game.players[i].identityShown=true;
 						}
+						// 正常模式的话
 						else{
+							// 隐藏所有角色的身份
 							game.players[i].node.identity.classList.add('guessing');
 							game.players[i].identity=identityList[i];
 							game.players[i].setIdentity('cai');
@@ -904,16 +930,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									game.zhu2=game.players[i];
 								}
 							}
+							// 主公设好
 							else{
 								if(identityList[i]=='zhu'){
 									game.zhu=game.players[i];
 								}
 							}
+							// 全部隐藏
 							game.players[i].identityShown=false;
 						}
 					}
 
-					// 没有明忠的特殊身份模式
+					// 有特殊身份，不是明忠，的8人局
 					if(get.config('special_identity')&&!event.zhongmode&&game.players.length==8){
 						for(var i=0;i<game.players.length;i++){
 							delete game.players[i].special_identity;
@@ -947,12 +975,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 
+					// 如果目前没有主，玩家是主
 					if(!game.zhu) game.zhu=game.me;
+					// 否则，亮出主公的身份
 					else{
+						/*
 						game.zhu.setIdentity();
 						game.zhu.identityShown=true;
 						game.zhu.isZhu=(game.zhu.identity=='zhu');
 						game.zhu.node.identity.classList.remove('guessing');
+						*/
 						game.me.setIdentity();
 						game.me.node.identity.classList.remove('guessing');
 					}
@@ -974,6 +1006,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					// 都随机整理
 					event.list.randomSort();
+					// 非主公武将随机
 					list3.randomSort();
 					// 这个应该是乱斗处理掉非将池里的角色
 					if(_status.brawl&&_status.brawl.chooseCharacterFilter){
@@ -989,7 +1022,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					// 如果自己不是主公
 					if(game.zhu!=game.me){
-						event.ai(game.zhu,event.list,list2)
+						// 让身份为主公的AI选将
+						//event.ai(game.zhu,event.list,list2)
 						// 把已经选择的（主公的卡牌扔出去）
 						event.list.remove(game.zhu.name);
 						event.list.remove(game.zhu.name2);
@@ -1021,9 +1055,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						else{
+							// 明忠
 							if(event.zhongmode){
 								list=list3.slice(0,8);
 							}
+							// 合并武将池
 							else{
 								list=list2.concat(list3.slice(0,num));
 							}
@@ -1031,16 +1067,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					delete event.swapnochoose;
 					var dialog;
+					// ？
 					if(event.swapnodialog){
 						dialog=ui.dialog;
 						event.swapnodialog(dialog,list);
 						delete event.swapnodialog;
 					}
 					else{
+						// 开始了！选择角色重头戏！
+						// 消息
 						var str='选择角色';
+						// 如果是乱斗，根据乱斗设置消息
 						if(_status.brawl&&_status.brawl.chooseCharacterStr){
 							str=_status.brawl.chooseCharacterStr;
 						}
+						// 用消息和上面的武将池做一个选择框
 						dialog=ui.create.dialog(str,'hidden',[list,'character']);
 						if(!_status.brawl||!_status.brawl.noAddSetting){
 							if(get.config('change_identity')){
@@ -1065,6 +1106,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					else{
 						lib.init.onfree();
 					}
+					// 这里是作弊，换将卡什么的
 					ui.create.cheat=function(){
 						_status.createControl=ui.cheat2;
 						ui.cheat=ui.create.control('更换',function(){
@@ -1135,7 +1177,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					else{
 						event.dialogxx=ui.create.characterDialog('heightset');
 					}
-
+					// 作弊：自由选将
 					ui.create.cheat2=function(){
 						ui.cheat2=ui.create.control('自由选将',function(){
 							if(this.dialog==_status.event.dialog){
@@ -1205,13 +1247,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addRecentCharacter(game.me.name,game.me.name2);
 					event.list.remove(game.me.name);
 					event.list.remove(game.me.name2);
+					/* 主公加血
 					if(game.me==game.zhu&&game.players.length>4){
 						game.me.hp++;
 						game.me.maxHp++;
 						game.me.update();
 					}
+					*/
 					for(var i=0;i<game.players.length;i++){
-						if(game.players[i]!=game.zhu&&game.players[i]!=game.me){
+						// 主公和玩家不选将（已经选过了）
+						//if(game.players[i]!=game.zhu&&game.players[i]!=game.me){
+						if(game.players[i]!=game.me){
 							event.ai(game.players[i],event.list.splice(0,get.config('choice_'+game.players[i].identity)),null,event.list)
 						}
 					}
@@ -1226,6 +1272,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				});
 			},
+			// 客户端/玩家的选将
 			chooseCharacterOL:function(){
 				var next=game.createEvent('chooseCharacter',false);
 				next.setContent(function(){
@@ -1233,10 +1280,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.arena.classList.add('choose-character');
 					var i;
 					var identityList;
+					// 明忠模式
 					if(_status.mode=='zhong'){
 						event.zhongmode=true;
 						identityList=['zhu','zhong','mingzhong','nei','fan','fan','fan','fan'];
 					}
+					// 正常模式
 					else{
 						identityList=lib.config.mode_config.identity.identity[game.players.length-2].slice(0);
 						if(lib.configOL.double_nei){
@@ -1397,6 +1446,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list2.remove(game.zhu.name);
 					event.list2.remove(game.zhu.name2);
 
+					// 我还是没有搞清楚这里是做什么的
 					if(game.players.length>4){
 						game.zhu.maxHp++;
 						game.zhu.hp++;
@@ -1497,17 +1547,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		translate:{
-			zhu:"主",
-			zhong:"忠",
+			zhu:"黑幕",
+			zhong:"异",
 			mingzhong:"忠",
-			nei:"内",
-			fan:"反",
+			nei:"路",
+			fan:"自",
 			cai:"猜",
-			zhu2:"主公",
-			zhong2:"忠臣",
+			zhu2:"黑幕",
+			zhong2:"异变",
 			mingzhong2:"明忠",
-			nei2:"内奸",
-			fan2:"反贼",
+			nei2:"路人",
+			fan2:"自机",
 			random2:"随机",
 			identity_junshi_bg:'师',
 			identity_dajiang_bg:'将',

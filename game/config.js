@@ -169,10 +169,10 @@ window.config={
 				['zhu','zhong','zhong','nei','fan','fan','fan','fan'],
 			],
 			choice:{
-				zhu:3,
-				zhong:4,
+				zhu:5,
+				zhong:5,
 				nei:5,
-				fan:3,
+				fan:5,
 			},
 			show_identity:true,
 			difficulty:'normal',

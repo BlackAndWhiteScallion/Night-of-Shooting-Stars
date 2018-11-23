@@ -2441,6 +2441,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["spade",12,'wuxie'],
 		["club",7,'wuxie'],
 		["club",12,'wuxie'],
+		["club",1,'wuxie'],
 		["heart",1,'reidaisai'],
 		["heart",6,'reidaisai'],
 		["club",13,'danmakucraze'],
