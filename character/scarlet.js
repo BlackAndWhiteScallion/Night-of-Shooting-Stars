@@ -114,6 +114,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
     		},
             xingmai:{
+                audio:2,
                 enable:'chooseToUse',
                 hiddenCard:function(player,name){
                     return name == 'shan';
@@ -191,7 +192,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     },
                     prompt:function(links,player){
-                        return '将一张手牌当作'+get.translation(links[0][2])+'使用';
+                        return '将一张轰！当作'+get.translation(links[0][2])+'使用';
                     }
                 },
             },
@@ -206,7 +207,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 viewAsFilter:function(player){
                     if(!player.countCards('he',{type:'basic'})) return false;
                 },
-                prompt:'将一张基本牌当杀使用或打出',
+                prompt:'将一张基本牌当轰！使用或打出',
                 check:function(card){return 4-get.value(card)},
                 onuse:function(result,player){
                     player.removeSkill('xingmai2');
@@ -224,7 +225,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{global:'shaBefore'},
                 direct:true,
                 priority:5,
-                usable:1,
                 group:'dizhuan2',
                 filter:function(event,player){
                     if(player.countCards('he')==0) return false;
@@ -655,30 +655,52 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yuezhi_info:'符卡技（2）<永续>你攻击范围内的所有其他角色的攻击范围视为0。',
             yuezhi_audio1:'别以为就这样结束了！',
             yuezhi_audio2:'隐隐透出浑浊的纹章，桀骜不驯张狂的才能；潮涌·否定·麻痹·一瞬，阻碍长眠。爬行的铁之公主，不断自残的泥制人偶，结合·反弹·延伸至地面，知晓自身的无力吧！',
+            rumia_die:'看来是这样呢。',
             meiling:'红美铃',
             xingmai:'星脉',
             xingmai2:'星脉',
             xingmai_info:'你可以将一张“轰！”当作一种基本牌使用或打出；然后，调换描述中“一张‘轰！’”与“一种基本牌”的位置。',
             xingmai2_info:'你可以将一种基本牌当作一张“轰！”使用或打出；然后，调换描述中“一张‘轰！’”与“一种基本牌”的位置。',
+            xingmai_audio1:'Zzzz……',
+            xingmai_audio2:'早睡早起方能……还是晚起好了……',
+            xingmai2_audio1:'啊？什么时候开始打架的？',
+            xingmai2_audio2:'元气弹！',
             dizhuan:'地转',
-            dizhuan_info:'一回合一次，你攻击范围内的一名其他角色成为“轰！”的目标时，你可以弃置一张牌，然后将目标转移给你；你受到以此法转移的牌造成的弹幕伤害后，获得1点灵力。',
-		    jicai:'极彩风暴',
+            dizhuan_info:'你攻击范围内的一名其他角色成为“轰！”的目标时，你可以弃置一张牌，然后将目标转移给你；你受到以此法转移的牌造成的弹幕伤害后，获得1点灵力。',
+		    dizhuang_audio1:'你的对手在这里！',
+            dizhuang_audio2:'你在往哪里打呢！',
+            jicai:'极彩风暴',
             jicai_info:'符卡技（2）<永续>你使用/打出牌时，可以弃置场上一张与之相同花色的牌。',
+            jicai_audio1:'比肉搏我可是不会输的！',
+            jicai_audio2:'哈啊——————————————————————————————',
+            jicai2_audio1:'木大木大木大！',
+            jicai2_audio2:'欧拉欧拉欧拉欧拉欧拉！',
+            meiling_die:'还是你更强一些啊。',
             patchouli:'帕秋莉',
             qiyao:'七曜',
             qiyao3:'七曜',
             qiyao_info:'出牌阶段结束时，若你本阶段内只使用过一种类型的牌，你可以将一张牌当作一种法术牌使用。',
             riyin:'日阴',
             riyin2:'日阴',
-            riyin_info:'一名角色成为牌的目标后，若该角色本回合在此牌前成为过牌的目标，你可以将一张牌当作【魔法障壁】使用。',
+            riyin_info:'一名角色成为牌的目标后，若该角色本回合在此牌前成为过牌的目标，你可以将一张牌当作【请你住口！】使用。',
+            riyin2_audio1:'不行。',
+            riyin2_audio2:'请你安静下来。',
             xianzhe:'贤者之石',
             xianzhe2:'贤者之石',
             xianzhe_info:'符卡技（0）你可以消耗1点灵力，将一张牌当作你本回合没有使用过的一种法术牌使用。',
+            xianzhe_audio1:'是时候稍微用一点厉害的了呢。',
+            xianzhe_audio2:'见识一下真正的魔法吧。',
+            patchouli_die:'切……还是太小看你们了么。',
             koakuma:'小恶魔',
             qishu:'奇术',
             qishu_info:'一回合一次，你可以消耗1点灵力，并跳过一个阶段，然后指定一名其他角色；若如此做，结束阶段，该角色获得1点灵力，并进行一个额外的以此法跳过的阶段。',
+            qishu_audio1:'我、我来给你帮忙啦！',
+            qishu_audio2:'这种事情我还是做得到的！',
             anye:'暗夜',
             anye_info:'锁定技，一回合一次，回合外，你成为法术牌的目标后，若你本回合在此牌前成为过牌的目标，该牌对你无效。',
+            anye_audio1:'不行！',
+            anye_audio2:'不要这么喧哗呀……呜咕……',
+            koakuma_die:'帕秋莉大人不会放过你的……',
         },
 	};
 });

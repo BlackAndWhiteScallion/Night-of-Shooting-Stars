@@ -35,7 +35,7 @@ window.noname_source_list=[
     'layout/newlayout/layout.css',
     'mode/boss.js',
     'mode/chess.js',
-    'mode/guozhan.js',
+    'mode/old_identity.js',
     'mode/identity.js',
     'mode/brawl.js',
     'mode/versus.js',

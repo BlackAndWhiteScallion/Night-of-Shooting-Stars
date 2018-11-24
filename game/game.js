@@ -27,6 +27,7 @@
         hallURL:'318sgs.6655.la',
         //hallURL:'noname.pub',
         assetURL:'',
+        backgroundmusicURL:'',
         changeLog:[],
         updates:[],
         canvasUpdates:[],
@@ -51,6 +52,7 @@
         hook:{globaltrigger:{},globalskill:{}},
         hookmap:{},
         imported:{},
+
         layoutfixed:['chess','tafang'],
         characterDialogGroup:{
             '收藏':function(name,capt){
@@ -3856,6 +3858,485 @@
         },
         mode:{
             identity:{
+                name:'异变',
+                connect:{
+                    update:function(config,map){
+                        if(config.connect_identity_mode=='zhong'){
+                            map.connect_player_number.hide();
+                            map.connect_enhance_zhu.hide();
+                            map.connect_double_nei.hide();
+                            map.connect_zhong_card.show();
+                            map.connect_special_identity.hide();
+                        }
+                        else{
+                            map.connect_player_number.show();
+                            map.connect_enhance_zhu.show();
+                            if(config.connect_player_number!='2'){
+                                map.connect_double_nei.show();
+                            }
+                            else{
+                                map.connect_double_nei.hide();
+                            }
+                            map.connect_zhong_card.hide();
+
+                            if(config.connect_player_number=='8'){
+                                map.connect_special_identity.show();
+                            }
+                            else{
+                                map.connect_special_identity.hide();
+                            }
+                        }
+                    },
+                    connect_identity_mode:{
+                        name:'游戏模式',
+                        init:'normal',
+                        item:{
+                            yibian:'异变',
+                            normal:'经典',
+                            zhong:'明忠'
+                        },
+                        restart:true,
+                        frequent:true,
+                        intro:'异变和明忠模式详见帮助'
+                    },
+                    connect_player_number:{
+                        name:'游戏人数',
+                        init:'8',
+                        item:{
+                            '2':'两人',
+                            '3':'三人',
+                            '4':'四人',
+                            '5':'五人',
+                            '6':'六人',
+                            '7':'七人',
+                            '8':'八人'
+                        },
+                        frequent:true,
+                        restart:true,
+                    },
+                    connect_zhong_card:{
+                        name:'明忠卡牌替换',
+                        init:true,
+                        frequent:true,
+                        restart:true
+                    },
+                    connect_double_nei:{
+                        name:'双内奸',
+                        init:false,
+                        restart:true,
+                        // frequent:true,
+                        intro:'开启后游戏中将有两个内奸（内奸胜利条件仍为主内1v1时击杀主公）'
+                    },
+                    connect_double_character:{
+                        name:'双将模式',
+                        init:false,
+                        frequent:true,
+                        restart:true,
+                    },
+                    connect_special_identity:{
+                        name:'特殊身份',
+                        init:false,
+                        restart:true,
+                        frequent:true,
+                        intro:'开启后游戏中将增加军师、大将、贼首三个身份'
+                    },
+                    connect_ban_weak:{
+                        name:'屏蔽弱将',
+                        init:true,
+                        restart:true,
+                    },
+                    connect_ban_strong:{
+                        name:'屏蔽强将',
+                        init:false,
+                        restart:true,
+                    },
+                    connect_enhance_zhu:{
+                        name:'加强主公',
+                        init:false,
+                        restart:true,
+                        intro:'为主公增加一个额外技能'
+                    },
+                },
+                config:{
+                    update:function(config,map){
+                        if(config.identity_mode=='zhong'){
+                            map.player_number.hide();
+                            map.enhance_zhu.hide();
+                            map.double_nei.hide();
+                            map.auto_identity.hide();
+                            map.choice_zhu.hide();
+                            map.choice_zhong.hide();
+                            map.choice_nei.hide();
+                            map.choice_fan.hide();
+                            map.ban_identity.hide();
+                            map.ban_identity2.hide();
+                            map.ban_identity3.hide();
+                            map.zhong_card.show();
+                            map.special_identity.hide();
+                        }
+                        else{
+                            map.player_number.show();
+                            //map.enhance_zhu.show();
+                            map.auto_identity.show();
+                            if(config.player_number!='2'){
+                                map.double_nei.show();
+                            }
+                            else{
+                                map.double_nei.hide();
+                            }
+                            map.choice_zhu.show();
+                            map.choice_zhong.show();
+                            map.choice_nei.show();
+                            map.choice_fan.show();
+                            map.ban_identity.show();
+                            if(config.ban_identity=='off'){
+                                map.ban_identity2.hide();
+                            }
+                            else{
+                                map.ban_identity2.show();
+                            }
+                            if(config.ban_identity=='off'||config.ban_identity2=='off'){
+                                map.ban_identity3.hide();
+                            }
+                            else{
+                                map.ban_identity3.show();
+                            }
+                            //map.zhong_card.hide();
+                            /*if(config.player_number=='8'){
+                                map.special_identity.show();
+                            }
+                            else{
+                                map.special_identity.hide();
+                            }*/
+                        }
+                        if(config.double_character){
+                            map.double_hp.show();
+                        }
+                        else{
+                            map.double_hp.hide();
+                        }
+                    },
+                    identity_mode:{
+                        name:'游戏模式',
+                        init:'normal',
+                        item:{
+                            normal:'经典',
+                        },
+                        restart:true,
+                        frequent:true,
+                        intro:'很可惜，只有我哟~'
+                    },
+                    player_number:{
+                        name:'游戏人数',
+                        init:'7',
+                        item:{
+                            '2':'两人',
+                            '3':'三人',
+                            '4':'四人',
+                            '5':'五人',
+                            '6':'六人',
+                            '7':'七人',
+                            '8':'八人'
+                        },
+                        frequent:true,
+                        restart:true,
+                    },
+                    double_nei:{
+                        name:'双路人',
+                        init:false,
+                        restart:true,
+                        frequent:true,
+                        intro:'开启后，8人游戏中将有两个路人'
+                    },
+                    double_character:{
+                        name:'双将模式',
+                        init:false,
+                        frequent:true,
+                        restart:true,
+                    },
+                    double_hp:{
+                        name:'双将体力上限',
+                        init:'pingjun',
+                        item:{
+                            hejiansan:'和减三',
+                            pingjun:'平均值',
+                            zuidazhi:'最大值',
+                            zuixiaozhi:'最小值',
+                            zonghe:'相加',
+                        },
+                        restart:true,
+                    },
+                    musicchange:{
+                        name:'异变牌发动时更换BGM',
+                        init:'heimu',
+                        item:{
+                            heimu:'仅限黑幕',
+                            luren:'黑幕&路人',
+                            off:'不更换',
+                        },
+                    },
+                    backgroundchange:{
+                        name:'异变牌发动时更换背景',
+                        init:'heimu',
+                        item:{
+                            heimu:'仅限黑幕',
+                            luren:'黑幕&路人',
+                            off:'不更换',
+                        },
+                    },
+                    auto_identity:{
+                        name:'自动显示身份',
+                        item:{
+                            off:'关闭',
+                            one:'一轮',
+                            two:'两轮',
+                            three:'三轮',
+                            always:'始终'
+                        },
+                        init:'off',
+                        onclick:function(bool){
+                            game.saveConfig('auto_identity',bool,this._link.config.mode);
+                            if(get.config('identity_mode')=='zhong') return;
+                            var num;
+                            switch(bool){
+                                case '一轮':num=1;break;
+                                case '两轮':num=2;break;
+                                case '三轮':num=3;break;
+                                default:num=0;break;
+                            }
+                            if(num&!_status.identityShown&&game.phaseNumber>game.players.length*num&&game.showIdentity){
+                                _status.identityShown=true;
+                                game.showIdentity(false);
+                            }
+                        },
+                        intro:'游戏进行若干轮将自动显示所有角色的身份',
+                    },
+                    auto_mark_identity:{
+                        name:'自动标记身份',
+                        init:false,
+                        intro:'根据角色的出牌行为自动标记可能的身份',
+                    },
+                    ban_weak:{
+                        name:'屏蔽弱将',
+                        init:true,
+                        restart:true,
+                    },
+                    ban_strong:{
+                        name:'屏蔽强将',
+                        init:false,
+                        restart:true,
+                    },
+                    free_choose:{
+                        name:'自由选将',
+                        init:true,
+                        onclick:function(bool){
+                            game.saveConfig('free_choose',bool,this._link.config.mode);
+                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
+                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
+                            else if(ui.cheat2&&!get.config('free_choose')){
+                                ui.cheat2.close();
+                                delete ui.cheat2;
+                            }
+                        }
+                    },
+                    change_identity:{
+                        name:'自由选择身份和座位',
+                        init:true,
+                        onclick:function(bool){
+                            game.saveConfig('change_identity',bool,this._link.config.mode);
+                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
+                            var dialog;
+                            if(ui.cheat2&&ui.cheat2.backup) dialog=ui.cheat2.backup;
+                            else dialog=_status.event.dialog;
+                            if(!_status.brawl||!_status.brawl.noAddSetting){
+                                if(!dialog.querySelector('table')&&get.config('change_identity')) _status.event.getParent().addSetting(dialog);
+                                else _status.event.getParent().removeSetting(dialog);
+                            }
+                            ui.update();
+                        }
+                    },
+                    change_choice:{
+                        name:'开启换将卡',
+                        init:true,
+                        onclick:function(bool){
+                            game.saveConfig('change_choice',bool,this._link.config.mode);
+                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
+                            if(!ui.cheat&&get.config('change_choice')) ui.create.cheat();
+                            else if(ui.cheat&&!get.config('change_choice')){
+                                ui.cheat.close();
+                                delete ui.cheat;
+                            }
+                        }
+                    },
+                    change_card:{
+                        name:'开启手气卡',
+                        init:'disabled',
+                        item:{
+                            disabled:'禁用',
+                            once:'一次',
+                            twice:'两次',
+                            unlimited:'无限',
+                        },
+                    },
+                    continue_game:{
+                        name:'显示再战',
+                        init:false,
+                        onclick:function(bool){
+                            game.saveConfig('continue_game',bool,this._link.config.mode);
+                            if(get.config('continue_game')){
+                                if(!ui.continue_game&&_status.over&&!_status.brawl){
+                                    ui.continue_game=ui.create.control('再战',game.reloadCurrent);
+                                }
+                            }
+                            else if(ui.continue_game){
+                                ui.continue_game.close();
+                                delete ui.continue_game;
+                            }
+                        },
+                        intro:'游戏结束后可选择用相同的武将再进行一局游戏'
+                    },
+                    dierestart:{
+                        name:'坠机后显示重来',
+                        init:true,
+                        onclick:function(bool){
+                            game.saveConfig('dierestart',bool,this._link.config.mode);
+                            if(get.config('dierestart')){
+                                if(!ui.restart&&game.me.isDead()&&!_status.connectMode){
+                                    ui.restart=ui.create.control('restart',game.reload);
+                                }
+                            }
+                            else if(ui.restart){
+                                ui.restart.close();
+                                delete ui.restart;
+                            }
+                        }
+                    },
+                    revive:{
+                        name:'坠机后显示复活',
+                        init:false,
+                        onclick:function(bool){
+                            game.saveConfig('revive',bool,this._link.config.mode);
+                            if(get.config('revive')){
+                                if(!ui.revive&&game.me.isDead()){
+                                    ui.revive=ui.create.control('revive',ui.click.dierevive);
+                                }
+                            }
+                            else if(ui.revive){
+                                ui.revive.close();
+                                delete ui.revive;
+                            }
+                        }
+                    },
+                    ban_identity:{
+                        name:'屏蔽身份',
+                        init:'off',
+                        item:{
+                            off:'关闭',
+                            zhu:'黑幕',
+                            zhong:'异变',
+                            nei:'路人',
+                            fan:'自机',
+                        },
+                    },
+                    ban_identity2:{
+                        name:'屏蔽身份2',
+                        init:'off',
+                        item:{
+                            off:'关闭',
+                            zhu:'黑幕',
+                            zhong:'异变',
+                            nei:'路人',
+                            fan:'自机',
+                        },
+                    },
+                    ban_identity3:{
+                        name:'屏蔽身份3',
+                        init:'off',
+                        item:{
+                            off:'关闭',
+                            zhu:'黑幕',
+                            zhong:'异变',
+                            nei:'路人',
+                            fan:'自机',
+                        },
+                    },
+                    ai_strategy:{
+                        name:'内奸策略',
+                        init:'ai_strategy_1',
+                        item:{
+                            ai_strategy_1:'均衡',
+                            ai_strategy_2:'偏反',
+                            ai_strategy_3:'偏忠',
+                            ai_strategy_4:'酱油',
+                            ai_strategy_5:'天使',
+                            ai_strategy_6:'仇主',
+                        },
+                        intro:'设置内奸对主忠反的态度'
+                    },
+                    difficulty:{
+                        name:'AI对人类态度',
+                        init:'normal',
+                        item:{
+                            easy:'友好',
+                            normal:'一般',
+                            hard:'仇视',
+                        },
+                    },
+                    choice_zhu:{
+                        name:'黑幕候选武将数',
+                        init:'5',
+                        restart:true,
+                        item:{
+                            '3':'三',
+                            '4':'四',
+                            '5':'五',
+                            '6':'六',
+                            '8':'八',
+                            '10':'十',
+                        },
+                    },
+                    choice_zhong:{
+                        name:'异变候选武将数',
+                        init:'5',
+                        restart:true,
+                        item:{
+                            '3':'三',
+                            '4':'四',
+                            '5':'五',
+                            '6':'六',
+                            '8':'八',
+                            '10':'十',
+                        },
+                    },
+                    choice_nei:{
+                        name:'路人候选武将数',
+                        init:'5',
+                        restart:true,
+                        item:{
+                            '3':'三',
+                            '4':'四',
+                            '5':'五',
+                            '6':'六',
+                            '8':'八',
+                            '10':'十',
+                        },
+                    },
+                    choice_fan:{
+                        name:'自机候选武将数',
+                        init:'5',
+                        restart:true,
+                        item:{
+                            '3':'三',
+                            '4':'四',
+                            '5':'五',
+                            '6':'六',
+                            '8':'八',
+                            '10':'十',
+                        },
+                    },
+                }
+            },
+            old_identity:{
                 name:'身份',
                 connect:{
                     update:function(config,map){
@@ -4018,13 +4499,12 @@
                         name:'游戏模式',
                         init:'normal',
                         item:{
-                            yibian:'异变',
                             normal:'经典',
                             zhong:'明忠'
                         },
                         restart:true,
                         frequent:true,
-                        intro:'异变和明忠模式详见帮助'
+                        intro:'明忠模式详见帮助'
                     },
                     player_number:{
                         name:'游戏人数',
@@ -4334,303 +4814,6 @@
                             '8':'八',
                             '10':'十',
                         },
-                    },
-                }
-            },
-            guozhan:{
-                name:'国战',
-                connect:{
-                    update:function(config,map){
-                        if(config.connect_onlyguozhan){
-                            map.connect_junzhu.show();
-                        }
-                        else{
-                            map.connect_junzhu.hide();
-                        }
-                    },
-                    connect_player_number:{
-                        name:'游戏人数',
-                        init:'8',
-                        item:{
-                            '3':'三人',
-                            '4':'四人',
-                            '5':'五人',
-                            '6':'六人',
-                            '7':'七人',
-                            '8':'八人'
-                        },
-                        frequent:true,
-                        restart:true,
-                    },
-                    connect_initshow_draw:{
-                        name:'首亮摸牌',
-                        item:{
-                            '0':'关闭',
-                            '1':'一张',
-                            '2':'两张',
-                            '3':'三张',
-                        },
-                        init:'2',
-                        frequent:true,
-                        intro:'第一个明置身份牌的角色可获得摸牌奖励'
-                    },
-                    connect_zhulian:{
-                        name:'珠联璧合',
-                        init:true,
-                        // frequent:true,
-                        intro:'主将和副将都明置后，若为特定组合，可摸两张牌或回复一点体力'
-                    },
-                    connect_guozhanpile:{
-                        name:'使用国战牌堆',
-                        init:true,
-                        frequent:true,
-                        restart:true,
-                    },
-                    connect_onlyguozhan:{
-                        name:'使用国战武将',
-                        init:true,
-                        frequent:true,
-                        restart:true,
-                        intro:'开启武将技能将替换为国战版本并禁用非国战武将'
-                    },
-                    connect_junzhu:{
-                        name:'替换君主',
-                        init:true,
-                        // frequent:true,
-                        restart:true,
-                        intro:'开启后将使用国战君主替换原武将牌'
-                    },
-                    connect_ban_weak:{
-                        name:'屏蔽弱将',
-                        init:false,
-                        restart:true,
-                    },
-                    connect_ban_strong:{
-                        name:'屏蔽强将',
-                        init:false,
-                        restart:true,
-                    },
-                },
-                config:{
-                    update:function(config,map){
-                        if(config.onlyguozhan){
-                            map.junzhu.show();
-                        }
-                        else{
-                            map.junzhu.hide();
-                        }
-                    },
-                    guozhan_mode:{
-                        name:'游戏模式',
-                        init:'normal',
-                        item:{
-                            normal:'标准',
-                            mingjiang:'明将'
-                        },
-                        frequent:true,
-                    },
-                    player_number:{
-                        name:'游戏人数',
-                        init:'8',
-                        item:{
-                            '3':'三人',
-                            '4':'四人',
-                            '5':'五人',
-                            '6':'六人',
-                            '7':'七人',
-                            '8':'八人'
-                        },
-                        frequent:true,
-                        restart:true,
-                    },
-                    initshow_draw:{
-                        name:'首亮摸牌',
-                        item:{
-                            '0':'关闭',
-                            '1':'一张',
-                            '2':'两张',
-                            '3':'三张',
-                        },
-                        init:'2',
-                        frequent:true,
-                        intro:'第一个明置身份牌的角色可获得摸牌奖励'
-                    },
-                    zhulian:{
-                        name:'珠联璧合',
-                        init:true,
-                        // frequent:true,
-                        intro:'主将和副将都明置后，若为特定组合，可摸两张牌或回复一点体力'
-                    },
-                    guozhanpile:{
-                        name:'使用国战牌堆',
-                        init:true,
-                        frequent:true,
-                        restart:true,
-                    },
-                    onlyguozhan:{
-                        name:'使用国战武将',
-                        init:true,
-                        frequent:true,
-                        restart:true,
-                        intro:'开启武将技能将替换为国战版本并禁用非国战武将'
-                    },
-                    junzhu:{
-                        name:'替换君主',
-                        init:true,
-                        // frequent:true,
-                        restart:true,
-                        intro:'开启后将使用国战君主替换原武将牌'
-                    },
-                    double_hp:{
-                        name:'双将体力上限',
-                        init:'pingjun',
-                        item:{
-                            hejiansan:'和减三',
-                            pingjun:'平均值',
-                            zuidazhi:'最大值',
-                            zuixiaozhi:'最小值',
-                            zonghe:'相加',
-                        },
-                        restart:true,
-                    },
-                    ban_weak:{
-                        name:'屏蔽弱将',
-                        init:true,
-                        restart:true,
-                    },
-                    ban_strong:{
-                        name:'屏蔽强将',
-                        init:false,
-                        restart:true,
-                    },
-                    free_choose:{
-                        name:'自由选将',
-                        init:true,
-                        onclick:function(bool){
-                            game.saveConfig('free_choose',bool,this._link.config.mode);
-                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
-                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
-                            else if(ui.cheat2&&!get.config('free_choose')){
-                                ui.cheat2.close();
-                                delete ui.cheat2;
-                            }
-                        }
-                    },
-                    onlyguozhanexpand:{
-                        name:'默认展开自由选将',
-                        init:false,
-                        restart:true,
-                        intro:'开启后自由选将对话框将默认显示全部武将'
-                    },
-                    change_identity:{
-                        name:'自由选择座位',
-                        init:true,
-                        onclick:function(bool){
-                            game.saveConfig('change_identity',bool,this._link.config.mode);
-                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
-                            var dialog;
-                            if(ui.cheat2&&ui.cheat2.backup) dialog=ui.cheat2.backup;
-                            else dialog=_status.event.dialog;
-                            if(!_status.brawl||!_status.brawl.noAddSetting){
-                                if(!dialog.querySelector('table')&&get.config('change_identity')) _status.event.getParent().addSetting(dialog);
-                                else _status.event.getParent().removeSetting(dialog);
-                            }
-                            ui.update();
-                        }
-                    },
-                    change_choice:{
-                        name:'开启换将卡',
-                        init:true,
-                        onclick:function(bool){
-                            game.saveConfig('change_choice',bool,this._link.config.mode);
-                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
-                            if(!ui.cheat&&get.config('change_choice')) ui.create.cheat();
-                            else if(ui.cheat&&!get.config('change_choice')){
-                                ui.cheat.close();
-                                delete ui.cheat;
-                            }
-                        }
-                    },
-                    change_card:{
-                        name:'开启手气卡',
-                        init:'disabled',
-                        item:{
-                            disabled:'禁用',
-                            once:'一次',
-                            twice:'两次',
-                            unlimited:'无限',
-                        }
-                    },
-                    continue_game:{
-                        name:'显示再战',
-                        init:true,
-                        intro:'游戏结束后可选择用相同的武将再进行一局游戏',
-                        onclick:function(bool){
-                            game.saveConfig('continue_game',bool,this._link.config.mode);
-                            if(get.config('continue_game')){
-                                if(!ui.continue_game&&_status.over&&!_status.brawl){
-                                    ui.continue_game=ui.create.control('再战',game.reloadCurrent);
-                                }
-                            }
-                            else if(ui.continue_game){
-                                ui.continue_game.close();
-                                delete ui.continue_game;
-                            }
-                        }
-                    },
-                    dierestart:{
-                        name:'死亡后显示重来',
-                        init:true,
-                        onclick:function(bool){
-                            game.saveConfig('dierestart',bool,this._link.config.mode);
-                            if(get.config('dierestart')){
-                                if(!ui.restart&&game.me.isDead()&&!_status.connectMode){
-                                    ui.restart=ui.create.control('restart',game.reload);
-                                }
-                            }
-                            else if(ui.restart){
-                                ui.restart.close();
-                                delete ui.restart;
-                            }
-                        }
-                    },
-                    revive:{
-                        name:'死亡后显示复活',
-                        init:false,
-                        onclick:function(bool){
-                            game.saveConfig('revive',bool,this._link.config.mode);
-                            if(get.config('revive')){
-                                if(!ui.revive&&game.me.isDead()){
-                                    ui.revive=ui.create.control('revive',ui.click.dierevive);
-                                }
-                            }
-                            else if(ui.revive){
-                                ui.revive.close();
-                                delete ui.revive;
-                            }
-                        }
-                    },
-                    difficulty:{
-                        name:'AI对人类态度',
-                        init:'normal',
-                        item:{
-                            easy:'友好',
-                            normal:'一般',
-                            hard:'仇视',
-                        }
-                    },
-                    choice_num:{
-                        name:'候选武将数',
-                        init:'7',
-                        restart:true,
-                        item:{
-                            '5':'五',
-                            '6':'六',
-                            '7':'七',
-                            '8':'八',
-                            '9':'九',
-                            '10':'十',
-                        }
                     },
                 }
             },
@@ -11390,6 +11573,24 @@
                             });
                         }
                     }
+
+                    // 使用异变牌时，切换背景/BGM
+                    if (lib.config.background_audio && lib.config.background_music!='music_off' && get.type(card) == 'zhenfa'){
+                        if ((player.identity == 'zhu' && lib.config.musicchange != 'off') 
+                            || (player.identity == 'nei' && lib.config.musicchange == 'luren')){
+                            lib.backgroundmusicURL = ui.backgroundMusic.src;
+                            ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
+                            lib.config.background_music = lib.assetURL+'audio/background/'+card.name;
+                        }
+                        if ((player.identity == 'zhu' && lib.config.backgroundchange != 'off') 
+                            || (player.identity == 'nei' && lib.config.backgroundchange == 'luren')){
+                            var str = lib.assetURL+'image/background/'+card.name+'.jpg';
+                            ui.background.setBackgroundImage(str);
+                        }
+                    }
+
+                    game.log(lib.config.background_music_src);
+
                     event.id=get.id();
                     if(event.oncard){
                         event.oncard(event.card,event.player);
@@ -12652,7 +12853,7 @@
                         player.classList.add('unseen');
                     }
                     if(source&&source!=player){
-                        game.log(player,'被',source,'杀害');
+                        game.log(player,'被',source,'击坠');
                         if(source.stat[source.stat.length-1].kill==undefined){
                             source.stat[source.stat.length-1].kill=1;
                         }
@@ -12661,7 +12862,7 @@
                         }
                     }
                     else{
-                        game.log(player,'阵亡')
+                        game.log(player,'坠机')
                     }
                     event.cards=player.getCards('hej');
                     event.playerCards=player.getCards('he');
@@ -12724,10 +12925,14 @@
                                 ui.exit=ui.create.control('退出房间',ui.click.exit);
                             }
                         }
-
+                        // 播放死亡语音
                         if(lib.config.background_speak){
                             if(lib.character[player.name]&&lib.character[player.name][4].contains('die_audio')){
                                 game.playAudio('die',player.name);
+                                var translation = get.translation(player.name+ '_die');
+                                if (translation != player.name + '_die'){
+                                    player.say(translation);
+                                } 
                             }
                             else if(true){
                                 game.playAudio('die',player.name,function(){
@@ -22536,7 +22741,7 @@
                 (!lib.skill.global.contains(skill)||lib.skill[skill].forceaudio)){
                 var audioname=skill;
                 var audioinfo=info.audio;
-                if(typeof audioinfo=='string'){
+                if(typeof audioinfo=='string'){ 
                     if(audioinfo.indexOf('ext:')==0){
                         audioinfo=audioinfo.split(':');
                         if(audioinfo.length==3){
@@ -22576,20 +22781,22 @@
                         audioname+='_'+player.name2;
                     }
                 }
+                 // 因为目前没有配音，暂时跳过这里所有audio部分
                 // 如果audio里面是数字的话，就随机出
                 if(typeof audioinfo=='number'){
                     var num = Math.ceil(audioinfo*Math.random())
-                    game.playAudio('skill',audioname + num);
+                    //game.playAudio('skill',audioname + num);
                     var translation = get.translation(audioname+ '_audio' + num)
                     if (translation != audioname+'_audio'+num){
                         player.say(translation);
                     }
                 }
                 else if(audioinfo){
-                    game.playAudio('skill',audioname);
+                    //game.playAudio('skill',audioname);
                 }
+               
                 else if(true&&info.audio!==false){
-                    game.playSkillAudio(audioname);
+                    //game.playSkillAudio(audioname);
                 }
             }
         },
@@ -25309,6 +25516,7 @@
                 game.resume();
             }
         },
+        // 这里是游戏结束的设置
         over:function(result){
             if(_status.over) return;
             var i,j,k,num,table,tr,td,dialog;
@@ -25316,6 +25524,7 @@
             ui.control.show();
             ui.clear();
             game.stopCountChoose();
+            lib.config.background_music = lib.backgroundmusicURL;
             if(game.layout=='long2'&&!game.chess){
                 ui.arena.classList.add('choose-character');
                 ui.me.hide();

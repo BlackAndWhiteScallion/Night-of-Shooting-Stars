@@ -384,6 +384,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'',
 	        	'',
 	        	'游戏BGM：<a href="https://www.bilibili.com/video/av30877"> 东方连奏Pianoforte - Shiraha </a>',
+	        	'红月异变BGM：「artificial」 【THE OTHER FLOWER】',
+	        	'散樱异变BGM：「桜風」 【森羅万象】',
 	        	'图鉴BGM：「忘らるる物語」 【凋叶棕】',
 	        	],
 	        	showcase:function(init){

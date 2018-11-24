@@ -527,7 +527,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.over(true);
 					}
 					else{
-						game.over(false);
+						game.over();
 					}
 				}
 				else{
@@ -1571,6 +1571,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			ai_strategy_4:'酱油',
 			ai_strategy_5:'天使',
 			ai_strategy_6:'仇主',
+			_tanpai:'明置身份',
+			_tanpai_bg:'变',
+			_tanyibian:'明置异变',
+			_tanyibian_bg:'变',
 			dongcha:'洞察',
 			dongcha_info:'游戏开始时，随机一名反贼的身份对你可见；准备阶段，你可以弃置场上的一张牌',
 			sheshen:'舍身',
@@ -1578,23 +1582,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		element:{
 			player:{
-				createincident:function(visible){
-					var libincident = {};
-					var list = {};
-					for (i in lib.card){
-						if (lib.card[i].type == 'zhenfa'){
-							libincident.push(i);
-						}
-					}
-					for (i in libincident){
-						if (game.me.pack == i.name){
-							list.push(i);
-							libincident.remove(i);
-						}
-					}
-					list.push(libincident.randomGets(2));
-					ui.create.dialog([list,'vcard']);
-				},
 				$dieAfter:function(){
 					if(_status.video) return;
 					if(!this.node.dieidentity){
@@ -1642,18 +1629,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						},this,this.special_identity,this.identity);
 					}
-					if(this.special_identity){
-						game.broadcastAll(function(zhu,identity){
-							zhu.removeSkill(identity);
-						},game.zhu,this.special_identity);
-					}
 					game.checkResult();
-					if(game.zhu&&game.zhu.isZhu){
+					// 如果只剩主和内/主和反，就身份全亮出来。
+					
+					/* if(game.zhu&&game.zhu.isZhu){
 						if(get.population('zhong')+get.population('nei')==0||
 						get.population('zhong')+get.population('fan')==0){
 							game.broadcastAll(game.showIdentity);
 						}
 					}
+					*/
+
+					// 这里是奖惩：反贼摸3，明忠摸3（主公全弃），主公打死忠臣全弃
+					// 如果只剩2个反就去掉强化主
+					/*
 					if(this.identity=='fan'&&source) source.draw(3);
 					else if(this.identity=='mingzhong'&&source){
 						if(source.identity=='zhu'){
@@ -1670,6 +1659,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.zhu.removeSkill(game.zhu.storage.enhance_zhu);
 						delete game.zhu.storage.enhance_zhu;
 					}
+					// 明忠死亡时亮出主公。
 					if(this==game.zhong){
 						game.broadcastAll(function(player){
 							game.zhu=player;
@@ -1692,7 +1682,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.zhu.playerfocus(1000);
 						_status.event.trigger('zhuUpdate');
 					}
-
+					*/
+					// 奖惩：获得1灵力和1技能牌
+					source.gainlili();
+					source.gain(ui.skillPile.childNodes[0],'draw2');
+					// 投降设置
 					if(!_status.over){
 						var giveup;
 						if(get.population('fan')+get.population('nei')==1){
@@ -1709,7 +1703,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							giveup.showGiveup();
 						}
 					}
-
 				},
 				logAi:function(targets,card){
 					if(this.ai.shown==1||this.isMad()) return;
@@ -2114,380 +2107,116 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
-			tanpai:{
+			// 出牌阶段的摊牌技能。
+			_tanpai:{
 				name:'摊牌',
 				enable:'phaseUse',
+				intro:{
+					content:'cards'
+				},
+				init:function(player){
+					player.storage._tanpai=[];
+				},
 				filter:function(event,player){
     				return player.identityShown != true;
     			},
     			content:function(){
+    				// 使用异变牌
+					// 现在已经是所有异变牌都是任选了（耸肩），不是2张+主场了
+					'step 0'
+					var libincident = [];
+					for (var i in lib.card){
+						if (lib.card[i].type == 'zhenfa'){
+							libincident.add(i);
+						}
+					}
+					/*
+					for (i in libincident){
+						if (game.me.pack == i.name){
+							list.push(i);
+							libincident.remove(i);
+						}
+					}
+					list.push(libincident.randomGets(2));
+					*/
     				'step 0'
     				player.identityShown = true;
     				player.setIdentity(player.identity);
     				player.node.identity.classList.remove('guessing');
-    				if (player.identity=="zhu"){
-    					
-    				} else if (player.identity=="zhong"){
-    					/*
-    					var f = 0;
-    					for(var i=0;i<game.players.length;i++){
-							if(game.players[i].identity=='zhong'){
-								fan=game.players[i];
-							}
-						}
-    					if (get.population("zhong") != f){
-    						player.draw();
+    				if (player.identity=="zhu" || player.identity == "nei"){
+    					player.chooseButton(['选择异变',[libincident,'vcard']]).set('filterButton',function(button){
+    						return true;
+    					}).set('ai',function(button){
+    						var rand=_status.event.rand*2;
+    						switch(button.link[2]){
     					}
-    					*/ 
-    					game.log('dddd');
+    				}).set('rand',Math.random());	
+    				} else if (player.identity=="zhong"){
+    					player.draw();
     				} else if (player.identity=="fan"){
     					player.draw();
-    				} else if (player.identity=="nei"){
-    					player.loseHp();
+    					player.gain(ui.skillPile.childNodes[0],'draw2');
+    				}
+    				'step 1'
+    				if (result.bool){
+    					//game.log(result.links[0][2]);
+    					var card = game.createCard(result.links[0][2],'zhenfa','');
+    					if (player.identity == "zhu"){
+    						player.useCard(card,player);
+							player.$gain2(card);
+							if (!player.storage._tanpai) player.storage._tanpai=[];
+							player.storage._tanpai.add(card);
+							player.markSkill('_tanpai');
+							player.syncStorage('_tanpai');
+						} else if (player.identity == "nei"){
+							if (!player.storage._tanyibian) player.storage._tanyibian=[];
+							player.storage._tanyibian.add(card);
+							player.markSkill('_tanyibian');
+							player.syncStorage('_tanyibian');
+						}
     				}
     			}
 			},
-			identity_junshi:{
-				name:'军师',
+			_tanyibian:{
+				name:'摊异变',
+				enable:'phaseUse',
 				mark:true,
 				intro:{
-					content:'准备阶段开始时，可以观看牌堆顶的三张牌，然后将这些牌以任意顺序置于牌堆顶或牌堆底'
-				},
-				trigger:{player:'phaseBegin'},
-				silent:true,
-				content:function(){
-					"step 0"
-					if(player.isUnderControl()){
-						game.modeSwapPlayer(player);
-					}
-					var num=3;
-					var cards=get.cards(num);
-					event.cards=cards;
-					var switchToAuto=function(){
-						_status.imchoosing=false;
-						if(event.dialog) event.dialog.close();
-						if(event.control) event.control.close();
-						var top=[];
-						var judges=player.node.judges.childNodes;
-						var stopped=false;
-						if(!player.countCards('h','wuxie')){
-							for(var i=0;i<judges.length;i++){
-								var judge=get.judge(judges[i]);
-								cards.sort(function(a,b){
-									return judge(b)-judge(a);
-								});
-								if(judge(cards[0])<0){
-									stopped=true;break;
-								}
-								else{
-									top.unshift(cards.shift());
-								}
-							}
-						}
-						var bottom;
-						if(!stopped){
-							cards.sort(function(a,b){
-								return get.value(b,player)-get.value(a,player);
-							});
-							while(cards.length){
-								if(get.value(cards[0],player)<=5) break;
-								top.unshift(cards.shift());
-							}
-						}
-						bottom=cards;
-						for(var i=0;i<top.length;i++){
-							ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
-						}
-						for(i=0;i<bottom.length;i++){
-							ui.cardPile.appendChild(bottom[i]);
-						}
-						player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(bottom.length)+'下');
-						game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
-						game.delay(2);
-					};
-					var chooseButton=function(online,player,cards){
-						var event=_status.event;
-						player=player||event.player;
-						cards=cards||event.cards;
-						event.top=[];
-						event.bottom=[];
-						event.status=true;
-						event.dialog=ui.create.dialog('按顺序选择置于牌堆顶的牌（先选择的在上）',cards);
-						for(var i=0;i<event.dialog.buttons.length;i++){
-							event.dialog.buttons[i].classList.add('pointerdiv');
-						}
-						event.switchToAuto=function(){
-							event._result='ai';
-							event.dialog.close();
-							event.control.close();
-							_status.imchoosing=false;
-						},
-						event.control=ui.create.control('ok','pileTop','pileBottom',function(link){
-							var event=_status.event;
-							if(link=='ok'){
-								if(online){
-									event._result={
-										top:[],
-										bottom:[]
-									}
-									for(var i=0;i<event.top.length;i++){
-										event._result.top.push(event.top[i].link);
-									}
-									for(var i=0;i<event.bottom.length;i++){
-										event._result.bottom.push(event.bottom[i].link);
-									}
-								}
-								else{
-									var i;
-									for(i=0;i<event.top.length;i++){
-										ui.cardPile.insertBefore(event.top[i].link,ui.cardPile.firstChild);
-									}
-									for(i=0;i<event.bottom.length;i++){
-										ui.cardPile.appendChild(event.bottom[i].link);
-									}
-									for(i=0;i<event.dialog.buttons.length;i++){
-										if(event.dialog.buttons[i].classList.contains('glow')==false&&
-											event.dialog.buttons[i].classList.contains('target')==false)
-										ui.cardPile.appendChild(event.dialog.buttons[i].link);
-									}
-									player.popup(get.cnNumber(event.top.length)+'上'+get.cnNumber(event.cards.length-event.top.length)+'下');
-									game.log(player,'将'+get.cnNumber(event.top.length)+'张牌置于牌堆顶');
-								}
-								event.dialog.close();
-								event.control.close();
-								game.resume();
-								_status.imchoosing=false;
-							}
-							else if(link=='pileTop'){
-								event.status=true;
-								event.dialog.content.childNodes[0].innerHTML='按顺序选择置于牌堆顶的牌';
+					mark:function(dialog,content,player){
+						if(content&&content.length){
+							if(player==game.me||player.isUnderControl()){
+								dialog.addAuto(content);
 							}
 							else{
-								event.status=false;
-								event.dialog.content.childNodes[0].innerHTML='按顺序选择置于牌堆底的牌';
-							}
-						})
-						for(var i=0;i<event.dialog.buttons.length;i++){
-							event.dialog.buttons[i].classList.add('selectable');
-						}
-						event.custom.replace.button=function(link){
-							var event=_status.event;
-							if(link.classList.contains('target')){
-								link.classList.remove('target');
-								event.top.remove(link);
-							}
-							else if(link.classList.contains('glow')){
-								link.classList.remove('glow');
-								event.bottom.remove(link);
-							}
-							else if(event.status){
-								link.classList.add('target');
-								event.top.unshift(link);
-							}
-							else{
-								link.classList.add('glow');
-								event.bottom.push(link);
-							}
-						}
-						event.custom.replace.window=function(){
-							for(var i=0;i<_status.event.dialog.buttons.length;i++){
-								_status.event.dialog.buttons[i].classList.remove('target');
-								_status.event.dialog.buttons[i].classList.remove('glow');
-								_status.event.top.length=0;
-								_status.event.bottom.length=0;
-							}
-						}
-						game.pause();
-						game.countChoose();
-					};
-					event.switchToAuto=switchToAuto;
-
-					if(event.isMine()){
-						chooseButton();
-						event.finish();
-					}
-					else if(event.isOnline()){
-						event.player.send(chooseButton,true,event.player,event.cards);
-						event.player.wait();
-						game.pause();
-					}
-					else{
-						event.switchToAuto();
-						event.finish();
-					}
-					"step 1"
-					if(event.result=='ai'||!event.result){
-						event.switchToAuto();
-					}
-					else{
-						var top=event.result.top||[];
-						var bottom=event.result.bottom||[];
-						for(var i=0;i<top.length;i++){
-							ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
-						}
-						for(i=0;i<bottom.length;i++){
-							ui.cardPile.appendChild(bottom[i]);
-						}
-						for(i=0;i<event.cards.length;i++){
-							if(!top.contains(event.cards[i])&&!bottom.contains(event.cards[i])){
-								ui.cardPile.appendChild(event.cards[i]);
-							}
-						}
-						player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(event.cards.length-top.length)+'下');
-						game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
-						game.delay(2);
-					}
-				}
-			},
-			identity_dajiang:{
-				name:'大将',
-				mark:true,
-				intro:{
-					content:'手牌上限+1'
-				},
-				mod:{
-					maxHandcard:function(player,num){
-						return num+1;
-					}
-				}
-			},
-			identity_zeishou:{
-				name:'贼首',
-				mark:true,
-				intro:{
-					content:'手牌上限-1'
-				},
-				mod:{
-					maxHandcard:function(player,num){
-						return num-1;
-					}
-				}
-			},
-			dongcha:{
-				trigger:{player:'phaseBegin'},
-				direct:true,
-				unique:true,
-				filter:function(event,player){
-					return game.hasPlayer(function(current){
-						return current.countCards('ej');
-					});
-				},
-				forceunique:true,
-				content:function(){
-					'step 0'
-					player.chooseTarget(get.prompt('dongcha'),function(card,player,target){
-						return target.countCards('ej')>0;
-					}).set('ai',function(target){
-						var player=_status.event.player;
-						var att=get.attitude(player,target);
-
-						if(att>0){
-							var js=target.getCards('j');
-							if(js.length){
-								var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-								if(jj.name=='guohe'||js.length>1||get.effect(target,jj,target,player)<0){
-									return 2*att;
-								}
-							}
-							if(target.getEquip('baiyin')&&target.isDamaged()&&
-								get.recoverEffect(target,player,player)>0){
-								if(target.hp==1&&!target.hujia) return 1.6*att;
-								if(target.hp==2) return 0.01*att;
-								return 0;
-							}
-						}
-						var es=target.getCards('e');
-						var noe=target.hasSkillTag('noe');
-						var noe2=(es.length==1&&es[0].name=='baiyin'&&target.isDamaged());
-						if(noe||noe2) return 0;
-						if(att<=0&&!es.length) return 1.5*att;
-						return -1.5*att;
-					});
-					'step 1'
-					if(result.bool){
-						event.target=result.targets[0];
-						event.target.addExpose(0.1);
-						player.logSkill('dongcha',event.target);
-						game.delayx();
-					}
-					else{
-						event.finish();
-					}
-					'step 2'
-					if(event.target){
-						player.discardPlayerCard('ej',true,event.target);
-					}
-				},
-				group:['dongcha_begin','dongcha_log'],
-				subSkill:{
-					begin:{
-						trigger:{global:'gameStart'},
-						forced:true,
-						popup:false,
-						content:function(){
-							var list=[];
-							for(var i=0;i<game.players.length;i++){
-								if(game.players[i].identity=='fan'){
-									list.push(game.players[i]);
-								}
-							}
-							var target=list.randomGet();
-							player.storage.dongcha=target;
-							if(!_status.connectMode){
-								if(player==game.me){
-									target.setIdentity('fan');
-									target.node.identity.classList.remove('guessing');
-									target.fanfixed=true;
-									player.line(target,'green');
-									player.popup('dongcha');
-								}
-							}
-							else{
-								player.chooseControl('ok').set('dialog',[get.translation(target)+'是反贼',[[target.name],'character']]);
+								return '是什么呢，这'+get.cnNumber(content.length)+'异变？';
 							}
 						}
 					},
-					log:{
-						trigger:{player:'useCard'},
-						forced:true,
-						popup:false,
-						filter:function(event,player){
-							return event.targets.length==1&&event.targets[0]==player.storage.dongcha&&event.targets[0].ai.shown<0.95;
-						},
-						content:function(){
-							trigger.targets[0].addExpose(0.2);
+					content:function(content,player){
+						if(content&&content.length){
+							if(player==game.me||player.isUnderControl()){
+								return get.translation(content);
+							}
+							return '是什么呢，这'+get.cnNumber(content.length)+'异变？';
 						}
 					}
-				}
-			},
-			sheshen:{
-				trigger:{global:'dieBefore'},
-				forced:true,
-				unique:true,
-				forceunique:true,
-				filter:function(event,player){
-					return event.player==game.zhu&&player.hp>0;
 				},
-				logTarget:'player',
-				content:function(){
-					'step 0'
-					trigger.player.gainMaxHp();
-					'step 1'
-					var dh=player.hp-trigger.player.hp;
-					if(dh>0){
-						trigger.player.recover(dh);
-					}
-					'step 2'
-					var cards=player.getCards('he');
-					if(cards.length){
-						trigger.player.gain(cards,player);
-						player.$giveAuto(cards,trigger.player);
-					}
-					'step 3'
-					trigger.untrigger();
-					trigger.finish();
-					player.die();
-				}
+				init:function(player){
+					player.storage._tanyibian=[];
+				},
+				filter:function(event,player){
+    				return player.storage._tanyibian;
+    			},
+    			content:function(){
+    				if (lib.config.background_audio && lib.config.background_music!='music_off' && lib.config.musicchange == 'luren'){
+                        ui.backgroundMusic.src=lib.assetURL+'audio/background/'+card.name+'.mp3';
+                        ui.backgroundMusic.play();
+                   	}
+                   	if (lib.config.backgroundchange == 'luren'){
+                   		var str = lib.assetURL+'image/background/'+card.name+'.jpg';
+                   		ui.background.setBackgroundImage(str);
+                   	}
+				},
 			}
 		},
 		help:{

@@ -24,8 +24,8 @@ window.config={
 	all:{
 		sgscharacters:['scarlet', 'sakura'],
 		sgscards:['standard','incident'],
-		sgsmodes:['identity','guozhan','versus','brawl','connect','library'],
-		stockmode:['identity','guozhan','versus','boss','chess','tafang','connect','brawl','library'],
+		sgsmodes:['identity','versus','brawl','connect','library'],
+		stockmode:['old_identity','identity','versus','boss','chess','tafang','connect','brawl','library'],
 		stockextension:['boss','cardpile','coin','wuxing','hs_mod'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple'],
@@ -176,11 +176,6 @@ window.config={
 			},
 			show_identity:true,
 			difficulty:'normal',
-			dierestart:true
-		},
-		guozhan:{
-			difficulty:'normal',
-			initshow_draw:2,
 			dierestart:true
 		},
 	},

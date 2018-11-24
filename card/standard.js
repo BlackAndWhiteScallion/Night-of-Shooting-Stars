@@ -368,7 +368,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(target.num('hej')){
 					player.gainPlayerCard('hej',target,true);
 				}
-				if (!target.storage._mubiao) player.loselili();
+				if (!target.storage._mubiao > 1) player.loselili();
 			},
 			ai:{
 				wuxie:function(target,card,player,viewer){
@@ -1019,6 +1019,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			skills:['magatama_skill']
 		},
+		mirror:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip2',
+			ai:{
+				basic:{
+					equipValue:7.5
+				}
+			},
+			skills:['mirror_skill']
+		},
 		kusanagi:{
 			fullskin:true,
 			type:'equip',
@@ -1426,6 +1437,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return get.color(button.link) != 'black' && get.color(button.link) !='red';
 				});
 			},
+		},
+		mirror_skill:{
 		},
 		lunadial_skill:{
 			audio:2,
@@ -2075,7 +2088,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		_jingxia:{
 			enable:'phaseUse',
 			filter:function(event,player){
-				return player.get('h','jingxia');
+				return player.get('h','jingxia') > 0;
 			},
 			content:function(){
 				'step 0'
@@ -2167,7 +2180,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		_lingbi:{
     		enable:'chooseToUse',
     		filterCard:function(card){
-    			return get.name(card)=='lingbi';
+    			return card.name=='lingbi';
     		},
     		viewAsFilter:function(player){
     			return player.countCards('h',{name:'lingbi'})>0;
@@ -2275,7 +2288,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		louguan:'楼观剑',
 		louguan_info:'锁定技，你使用【轰！】指定目标后，该角色的装备技能无效，直到该牌结算完毕。',
 		ibuki:'伊吹瓢',
-		ibuki_skill:'吨吨吨',
+		ibuki_skill:'伊吹瓢',
 		ibuki_info:'一回合一次，出牌阶段，你可以弃置一张攻击牌，然后获得1点灵力。',
 		deathfan:'凤蝶纹扇',
 		deathfan_skill:'扇子咬他！',
@@ -2287,13 +2300,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		saiqian_skill2:'赛钱！',
 		saiqianxiang_info:'一回合一次，其他角色的出牌阶段，其可以交给你一张牌。',
 		yinyangyu:'阴阳玉',
-		yinyangyu_skill:'阴阳',
+		yinyangyu_skill:'阴阳玉',
 		yinyangyu_info:'你可以将一张红色牌当做【没中】使用/打出; 你可以将一张黑色牌当做【轰！】使用/打出',
 		zhiyuu:'净颇梨之镜',
-		zhiyuu_skill:'照出本质吧',
+		zhiyuu_skill:'净颇梨之镜',
 		zhiyuu_info:'一回合一次，出牌阶段，你可以令一名角色展示一张手牌；然后你可以弃置一张与展示的牌相同花色的手牌，对其造成1点灵击伤害。',
 		mirror:'八咫镜',
-		mirror_skill:'晒瞎她！',
+		mirror_skill:'八咫镜',
 		mirror_info:'你成为攻击牌的目标后，可以判定：若颜色相同，令之对你无效。',
 		/*
 		ryuuuu:'龙宫羽衣',
@@ -2319,7 +2332,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		magatama_info:'一回合一次，出牌阶段，你可以观看一名角色的手牌。',
 		*/
 		lunadial:'月时针',
-		lunadial_skill:'The World',
+		lunadial_skill:'月时针',
 		lunadial_info:'一回合一次，出牌阶段，你可以消耗1点灵力，然后令一名其他角色不能使用或打出手牌，直到结束阶段。',
 		/*
 		kusanagi:'草薙剑',
