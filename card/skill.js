@@ -328,8 +328,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				trigger:{player:'phaseBegin'},
+				forced:true,
 				content:function(){
 					player.removeSkill('qianxing_skill2');
+					for (var i = 0; i <= player.num('j'); i ++){
+						var card=player.get('j',i);
+						if(card&&card.name == ('qianxing')){
+							player.discard(card);
+							break;
+						}
+					}
 				},
 				ai:{
 					noh:true,
@@ -378,7 +386,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			qianxing:'潜行',
 			qianxing_bg:'潜',
 			qianxing_info:'结束阶段，你可以令你获得以下效果直到你的准备阶段：若你有【潜行】，你不能成为攻击牌的目标；准备阶段，弃置此牌。',
-			qianxing2_skill:'若你有【潜行】，你不能成为攻击牌的目标。',
+			qianxing2_skill:'【潜行】已发动',
+			qianxing2_info:'若你有【潜行】，你不能成为攻击牌的目标。',
 			lingyong:'灵涌',
 			lingyong_info:'锁定技，你造成的伤害不会因没有灵力而防止；你的攻击范围至少为2。',
 		},

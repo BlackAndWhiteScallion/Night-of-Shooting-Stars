@@ -451,6 +451,31 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target.$give(result.cards.length,result.targets[0]);
 				}
 			},
+			ai:{
+				wuxie:function(){
+					if(Math.random()<0.5) return 0;
+				},
+				basic:{
+					order:3,
+					useful:1,
+				},
+				result:{
+					target:function(player,target){
+						if(get.is.versus()){
+							if(target==player) return 1.5;
+							return 1;
+						}
+						if(player.hasUnknown(2)){
+							return 0;
+						}
+						return 2-2*get.distance(player,target,'absolute')/game.countPlayer();
+					}
+				},
+				tag:{
+					draw:1,
+					multitarget:1
+				}
+			}
 		},
 		// 无中
 		wuzhong:{
@@ -692,7 +717,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target:2,
 				},
 				tag:{
-					draw:1
+					draw:0.5
 				}
 			}
 		},
@@ -761,6 +786,28 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.gainlili();
 				target.gain(ui.skillPile.childNodes[0],'draw2');
 			},
+			ai:{
+				basic:{
+					order:3,
+					useful:1,
+				},
+				result:{
+					target:function(player,target){
+						if(get.is.versus()){
+							if(target==player) return 1.5;
+							return 1;
+						}
+						if(player.hasUnknown(2)){
+							return 0;
+						}
+						return 2-2*get.distance(player,target,'absolute')/game.countPlayer();
+					}
+				},
+				tag:{
+					draw:1,
+					multitarget:1
+				}
+			}
 		},
 		// 天国之阶
 		tianguo:{
@@ -775,6 +822,28 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				target.draw();
 			},
+			ai:{
+				basic:{
+					order:3,
+					useful:1,
+				},
+				result:{
+					target:function(player,target){
+						if(get.is.versus()){
+							if(target==player) return 1.5;
+							return 1;
+						}
+						if(player.hasUnknown(2)){
+							return 0;
+						}
+						return 2-2*get.distance(player,target,'absolute')/game.countPlayer();
+					}
+				},
+				tag:{
+					draw:1,
+					multitarget:1
+				}
+			}
 		},
 		// 冰域之宴
 		bingyu:{
@@ -790,6 +859,22 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.addSkill(bingyu1);
 				if (target == player) target.addSkill(bingyu2);
 			},
+			ai:{
+				basic:{
+					order:1,
+					useful:[3,1],
+					value:0
+				},
+				result:{
+					target:function(player,target){
+						return (target.hp<2)?2:0;
+					}
+				},
+				tag:{
+					recover:0.5,
+					multitarget:1
+				}
+			}
 		},
 		// 罪业边狱
 		zuiye:{
@@ -851,6 +936,28 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				"step 1"
 				if (result.bool == true) target.damage('thunder');
 			},
+			ai:{
+				basic:{
+					order:3,
+					useful:1,
+				},
+				result:{
+					target:function(player,target){
+						if(get.is.versus()){
+							if(target==player) return 1.5;
+							return 1;
+						}
+						if(player.hasUnknown(2)){
+							return 0;
+						}
+						return 2-2*get.distance(player,target,'absolute')/game.countPlayer();
+					}
+				},
+				tag:{
+					draw:1,
+					multitarget:1
+				}
+			}
 		},
 		// 赛钱箱
 		saiqianxiang:{

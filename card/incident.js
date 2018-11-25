@@ -153,7 +153,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     }
     				return player.isMaxHp(false);
     			},
-    			direct:true,
     			content:function(){
     				game.over(true);
     			}	
@@ -194,6 +193,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return event.player.countCards('j') == 0;
     			},
     			content:function(){
+    				trigger.player.logSkill(this);
 					trigger.player.gain(ui.skillPile.childNodes[0],'draw2');
     			},
     		},
@@ -202,42 +202,81 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			forced:true,
     			mark:true,
     			init:function (player){
-    				player.storage.imperishable = 0;
+    				player.storage.imperishable_win = 1;
     			},
     			intro:{
-    				mark:function(dialog,content,player){
-    					return '第'+get.cnNumber(content.length)+'回合';;
-    				},
-    				content:function(content,player){
-						return '第'+get.cnNumber(content.length)+'回合';
-
-					}
-    			},
+					marktext:'永',
+					content:'mark',
+				},
     			filter:function(event,player){
     				return true;
     			},
     			content:function(){
-    				player.storage.imperishable += 1;
-    				player.syncStorage('imperishable');
-    				player.markSkill('imperishable');
+    				player.storage.imperishable_win += 1;
+    				player.syncStorage('imperishable_win');
+    				player.markSkill('imperishable_win');
     				if (player.storage.imperishable == 7) game.over(true);
     			},
     		},
     		phantasmagoria_normal:{
-
+    			trigger:{global:'phaseEnd'},
+    			forced:true,
+    			filter:function(event,player){
+    				return true;
+    			},
+    			content:function(){
+    				trigger.player.gainlili();
+    			},
     		},
     		phantasmagoria_win:{
-
     		},
     		immaterial_normal:{
-
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.lili > 0;
+				},
+				content:function(){
+					player.useCard({name:'reidaisai'},game.filterPlayers());
+				},
     		},
     		immaterial_win:{
-
+    			enable:'phaseEnd',
+    			forced:true,
+    			direct:true,
+    			filter:function(event,player){
+    				return true;
+    			},
+    			content:function(){
+    				var num = 0;
+    				for (var i in ui.discardPile){
+    					if (i.name == 'tao' || i == "tao"){
+    						num += 1;
+    					}
+    				}
+    				var decknum = 0;
+    				for(var i=0;i<lib.card.list.length;i++){
+    					if(lib.card.list[i][2]=='tao'){
+                            decknum++;
+                        }
+    				}
+    				if (decknum == num){ 
+    					player.logSkill('immaterial_win');
+    					game.over(true);
+    				}
+    			},
     		},
     		sb_normal:{
-
-    		},
+				enable:'phaseUse',
+				usable:1,
+				filterCard:function(card){
+					return true;
+				},
+				filter:function(event,player){
+					return player.getCards('he').length > 0;
+				},
+				viewAs:{name:'caifang'},
+    		},	
     		sb_win:{
 
     		},
@@ -251,7 +290,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 
     		},
     		death_win:{
-
+    			trigger:{global:'die'},
+    			filter:function(event,player){
+    				return game.filterPlayers.length == 1;
+    			},
+    			content:function(){
+    				game.over(true);
+    			},
     		},
 		},
 		translate:{
@@ -265,9 +310,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			sakura_normal:'',
 			sakura_normal_info:'<u>与你同阵营的角色的攻击范围+1。</u>',
 			imperishable:'永夜',
-			imperishable_info:'',
-			imperishable_normal:'',
-			imperishable_normal_info:'',
+			imperishable_info:'<u>胜利条件：</u>明置此牌后的第7个回合开始时。<br/><u>异变效果：</u>一名角色失去牌后，若没有技能牌，摸一张技能牌。',
+			imperishable_normal:'【永夜】异变效果',
+			imperishable_normal_info:'<u>一名角色失去牌后，若其没有技能牌，其摸一张技能牌。</u>',
+			imperishable_win_bg:'永',
+			imperishable_win:'【永夜】异变胜利',
+			imperishable_win_info:'异变发动后的第7个回合开始',
 			phantasmagoria:'花映',
 			phantasmagoria_info:'',
 			phantasmagoria_normal:'',

@@ -11580,7 +11580,7 @@
                             || (player.identity == 'nei' && lib.config.musicchange == 'luren')){
                             lib.backgroundmusicURL = ui.backgroundMusic.src;
                             ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
-                            lib.config.background_music = lib.assetURL+'audio/background/'+card.name;
+                            lib.config.background_music = card.name;
                         }
                         if ((player.identity == 'zhu' && lib.config.backgroundchange != 'off') 
                             || (player.identity == 'nei' && lib.config.backgroundchange == 'luren')){
@@ -11588,8 +11588,6 @@
                             ui.background.setBackgroundImage(str);
                         }
                     }
-
-                    game.log(lib.config.background_music_src);
 
                     event.id=get.id();
                     if(event.oncard){
@@ -20940,6 +20938,25 @@
                         player.storage._enhance += 1;
                     }
                 },
+                ai:{
+                    effect:{
+                        player:function(card,player,target){
+                            if(card.name == 'guohe'){
+                                if (player.lili > 2) return 0;
+                                if (target.getCards('ej').length > 0) return 0;
+                                return 1;
+                            } else if (card.name == 'wuzhong') {
+                                if (player.lili > 2) return 0;
+                                return 1;
+                            } else if (card.name == 'wuxie') {
+                                return 0;
+                            } else if (card.name == 'danmakucraze'){
+                                if (player.lili > 2) return 0;
+                                return 1;
+                            }
+                        }
+                    }
+                },
             },
             _enhanceend:{
                 trigger:{player:'useCardAfter'},
@@ -21180,7 +21197,7 @@
                     event.acted.push(player);
                     var str=get.translation(trigger.player.name)+'濒死，是否帮助？';
                     var str2='当前体力：'+trigger.player.hp;
-                    if(lib.config.tao_enemy&&event.dying.side!=player.side&&lib.config.mode!='identity'&&lib.config.mode!='guozhan'&&!event.dying.hasSkillTag('revertsave')){
+                    if(lib.config.tao_enemy&&event.dying.side!=player.side&&lib.config.mode!='guozhan'&&!event.dying.hasSkillTag('revertsave')){
                         event._result={bool:false}
                     }
                     else if(player.isOnline()||(_status.connectMode&&player==game.me)||player.hasSkillTag('save',true,null,true)||player.hasCard(function(card){
@@ -44023,7 +44040,7 @@
                     if(lib.translate[name+'_info']){
                         if(!uiintro.nosub){
                             if (get.bonus(node) && get.bonus(node) != 0){
-                                uiintro.add('<div class="text center">灵力：'+ lib.card[name].bonus +'</div>');
+                                uiintro.add('<div class="text center">灵力：'+ get.bonus(node) +'</div>');
                             }
                             // 跳过整个武器部分。
                             /*
