@@ -388,6 +388,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'散樱异变BGM：「桜風」 【森羅万象】',
 	        	'永夜异变BGM：「輝夜」 【凋叶棕】',
 	        	'花映异变BGM：「LAST JUDGEMENT」 【SOUND HOLIC】',
+	        	'萃梦异变BGM：「まだ、もう少しだけ」 【Minstrel】',
+	        	'皆杀异变BGM： EastNewSound - 緋色月下、狂咲ノ絶　-1st Anniversary Remix-',
 	        	'图鉴BGM：「忘らるる物語」 【凋叶棕】',
 	        	],
 	        	showcase:function(init){
