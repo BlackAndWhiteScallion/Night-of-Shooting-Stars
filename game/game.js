@@ -14577,27 +14577,27 @@
                 //强行塞入一个装异变的玩意。
                 addIncident:function(card){
                     this.$gain2(card);
-                    if (!this.storage._tanpai) player.storage._tanpai=[];
+                    if (!this.storage._tanpai) this.storage._tanpai=[];
                     this.storage._tanpai.add(card);
-                    player.markSkill('_tanpai');
-                    player.syncStorage('_tanpai');
+                    this.markSkill('_tanpai');
+                    this.syncStorage('_tanpai');
                     // 使用异变牌时，切换背景/BGM
                     if (lib.config.background_audio && lib.config.background_music!='music_off' && get.type(card) == 'zhenfa'){
-                        if ((player.identity == 'zhu' && lib.config.musicchange != 'off') 
-                            || (player.identity == 'nei' && lib.config.musicchange == 'luren')){
+                        if ((this.identity == 'zhu' && lib.config.musicchange != 'off') 
+                            || (this.identity == 'nei' && lib.config.musicchange == 'luren')){
                             lib.backgroundmusicURL = ui.backgroundMusic.src;
                             ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
                             lib.config.background_music = card.name;
                         }
-                        if ((player.identity == 'zhu' && lib.config.backgroundchange != 'off') 
-                            || (player.identity == 'nei' && lib.config.backgroundchange == 'luren')){
+                        if ((this.identity == 'zhu' && lib.config.backgroundchange != 'off') 
+                            || (this.identity == 'nei' && lib.config.backgroundchange == 'luren')){
                             var str = lib.assetURL+'image/background/'+card.name+'.jpg';
                             ui.background.setBackgroundImage(str);
                         }
                     }
                     // 并且，使用异变牌时，强行假装没有用牌，跳过效果
-                    for (var i = 0; i < card.skills.length; i ++){
-                        this.addSkill(card.skills[i]);
+                    for (var i = 0; i < get.info(card).skills.length; i ++){
+                        this.addSkill(get.info(card).skills[i]);
                     }
                 },
                 phase:function(skill){
@@ -43555,9 +43555,9 @@
                 }
                 case 'limited':{
                     if(content){
-                        return '已发动';
+                        return '未发动';
                     }
-                    return '未发动';
+                    return '已发动';
                 }
                 case 'cardCount':{
                     if(typeof content=='object'&&typeof content.length=='number'){

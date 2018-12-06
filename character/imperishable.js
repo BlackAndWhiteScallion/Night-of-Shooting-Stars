@@ -130,6 +130,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                         content:function(){
                               'step 0'
+                              player.loselili();
                                player.chooseTarget('将'+get.translation(trigger.card)+'交给一名角色',true,function(card,player,target){
                                     return true;
                                 }).set('ai',function(target){
@@ -185,8 +186,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               player.turnOver();
                               player.storage.richuguo=false;
                             },
-                            check:function(){
-                              return player.hp > 2;
+                            check:function(event, player){
+                              return player.hp < 2;
                             }
                   },
                   richuguo1:{
@@ -215,8 +216,55 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                   },
                   yinyang:{
-
+                        group:['yinyang2'],
+                        audio:2,
+                        trigger:{global:'phaseEnd'},
+                        frequent:true,
+                        filter:function(event,player){
+                              return player.storage.yinyang;
+                        },
+                        content:function(){
+                              'step 0'
+                              var controls=['draw_card'];
+                              if(trigger.player.countCards('hej')){
+                                    controls.push('spin_card');
+                              }
+                              controls.push('cancel');
+                              player.chooseControl(controls).set('ai',function(){
+                                    var trigger=_status.event.getTrigger();
+                                    if(event.player.countCards('hej')&&get.attitude(_status.event.player,trigger.target)<0){
+                                          return 'spin_card';
+                                    }
+                                    else{
+                                          return 'draw_card';
+                                    }
+                              }).set('prompt',get.prompt('yinyang'));
+                              "step 1"
+                              if(result.control=='draw_card'){
+                                    player.draw();
+                                    player.logSkill('moukui');
+                              }
+                              else if(result.control=='discard_card'&&trigger.target.countCards('he')){
+                                    player.discardPlayerCard(trigger.target,'he',true).logSkill=['moukui',trigger.target];
+                              }
+                              player.draw();
+                              player.storage.yinyang = false;
+                        },
                   },
+                  yinyang2:{
+                        trigger:{player:['damageEnd','useCard']},
+                        direct:true,
+                        popup:false,
+                        filter:function(event,player){
+                              if (event.name == 'damageEnd'){
+                                    return event.nature != 'thunder';
+                              }
+                              return true;
+                        },
+                        content:function(){
+                              player.storage.yinyang = true;
+                        },
+                  }
                   mengdie:{
 
                   },

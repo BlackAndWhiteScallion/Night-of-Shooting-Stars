@@ -2193,12 +2193,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					} else {
 	    					var card = game.createCard(result.links[0][2],'zhenfa','');
 	    					if (player.identity == "zhu"){
-	    						player.useCard(card,player);
-								player.$gain2(card);
-								if (!player.storage._tanpai) player.storage._tanpai=[];
-								player.storage._tanpai.add(card);
-								player.markSkill('_tanpai');
-								player.syncStorage('_tanpai');
+	    						player.addIncident(card);
 							} else if (player.identity == "nei"){
 								if (!player.storage._tanyibian) player.storage._tanyibian=[];
 								player.storage._tanyibian.add(card);
@@ -2273,14 +2268,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				return player.storage._tanyibian;
     			},
     			content:function(){
-    				if (lib.config.background_audio && lib.config.background_music!='music_off' && lib.config.musicchange == 'luren'){
-                        ui.backgroundMusic.src=lib.assetURL+'audio/background/'+card.name+'.mp3';
-                        ui.backgroundMusic.play();
-                   	}
-                   	if (lib.config.backgroundchange == 'luren'){
-                   		var str = lib.assetURL+'image/background/'+card.name+'.jpg';
-                   		ui.background.setBackgroundImage(str);
-                   	}
+    				var card = player.storage._tanyibian[0];
+                   	player.addIncident(card);
+                   	player.storage._tanyibian = [];
 				},
 			}
 		},
