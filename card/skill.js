@@ -285,25 +285,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			trigger:{player:'damageEnd'},
     			direct:true,
     			content:function(){
-    				"step 0"
-    				player.chooseTarget(get.prompt('jinu'),function(card,player,target){
-    					return player!=target && target.countCards('ej')>0;
-    				}).ai=function(target){
-    				}
-    				"step 1"
     				if(result.bool){
-    					player.discardPlayerCard('ej',result.target,true);
-    					/*
-    					for (var i = 0; i <= player.num('j'); i ++){
-							var card=player.get('j',i);
-							if(card&&card.name == ('jinu')){
-								player.discard(card);
-								break;
-							}
-						}
-						*/	
+    					player.discardPlayerCard('ej',trigger.source,true);
     				}
     			},
+    			
 			},
 			lianji_skill:{
 				trigger:{player:'shaBegin'},

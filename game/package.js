@@ -3,6 +3,11 @@ window.noname_package={
         standard:'标准',
         scarlet:'红月',
         sakura:'散樱',
+        imperishable:'永夜',
+        immaterial:'萃梦',
+        phantasmagoria:'花映',
+        sb:'文花',
+        baka:'笨蛋',
     },
     card:{
         standard:'标准',

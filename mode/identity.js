@@ -492,6 +492,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.brawl.checkResult();
 					return;
 				}
+				// 如果这局没有主公（单纯两方对战的话）
 				if(!game.zhu){
 					if(get.population('fan')==0){
 						switch(game.me.identity){
@@ -509,7 +510,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					return;
 				}
-				if(game.zhu.isAlive()&&get.population('fan')+get.population('nei')>0) return;
+				// 如果主公还活着并且反+内还有人存活，不继续检测了
+				if(game.zhu.isAlive()&&get.population('fan')>0) return;
 				if(game.zhong){
 					game.zhong.identity='zhong';
 				}
@@ -799,6 +801,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								_status.event=_status.event.parent;
 								_status.event.step=0;
 								_status.event.identity=link;
+								/*
 								if(link!=(event.zhongmode?'mingzhong':'zhu')){
 									seats.previousSibling.style.display='';
 									seats.style.display='';
@@ -806,7 +809,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								else{
 									seats.previousSibling.style.display='none';
 									seats.style.display='none';
-								}
+								}*/
 								game.resume();
 							});
 						}
@@ -843,10 +846,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							});
 						}
 						dialog.content.appendChild(seats);
+						/*
 						if(game.me==game.zhu){
 							seats.previousSibling.style.display='none';
 							seats.style.display='none';
 						}
+						*/
 
 						dialog.add(ui.create.div('.placeholder.add-setting'));
 						dialog.add(ui.create.div('.placeholder.add-setting'));
@@ -1547,7 +1552,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		translate:{
-			zhu:"黑幕",
+			zhu:"黑",
 			zhong:"异",
 			mingzhong:"忠",
 			nei:"路",
@@ -1573,8 +1578,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			ai_strategy_6:'仇主',
 			_tanpai:'明置身份',
 			_tanpai_bg:'变',
-			_tanyibian:'明置异变',
-			_tanyibian_bg:'变',
+			tanpai_fan:'自机摊牌效果',
+			tanpai_fan_info:'令一名角色选择一项：明置身份牌，或你弃置其一张牌。',
+			_tanyibian:'明置异变？',
+			_tanyibian_bg:'？',
+			discard:'被弃一张牌',
 			dongcha:'洞察',
 			dongcha_info:'游戏开始时，随机一名反贼的身份对你可见；准备阶段，你可以弃置场上的一张牌',
 			sheshen:'舍身',
@@ -2110,6 +2118,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			// 出牌阶段的摊牌技能。
 			_tanpai:{
 				name:'摊牌',
+				line:true,
 				enable:'phaseUse',
 				intro:{
 					content:'cards'
@@ -2130,52 +2139,108 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							libincident.add(i);
 						}
 					}
-					/*
-					for (i in libincident){
-						if (game.me.pack == i.name){
-							list.push(i);
-							libincident.remove(i);
-						}
-					}
-					list.push(libincident.randomGets(2));
-					*/
-    				'step 0'
+					game.log(get.translation(player.name) + '明置了身份，是'+ lib.translate[player.identity+'2']);
     				player.identityShown = true;
     				player.setIdentity(player.identity);
     				player.node.identity.classList.remove('guessing');
+    				// 黑幕和路人拿异变牌
     				if (player.identity=="zhu" || player.identity == "nei"){
-    					player.chooseButton(['选择异变',[libincident,'vcard']]).set('filterButton',function(button){
+    					player.chooseButton(['选择异变',[libincident,'vcard']],true).set('filterButton',function(button){
     						return true;
     					}).set('ai',function(button){
-    						var rand=_status.event.rand*2;
-    						switch(button.link[2]){
-    					}
-    				}).set('rand',Math.random());	
+    						/*
+    						if (Math.random()-0.8<0){
+    							for (i in libincident){
+									if (player.pack == i.name){
+										return i;
+									}
+								}
+							} else {
+							*/
+								libincident.randomSort();
+								return libincident[0];
+							//}
+    					});
+    				// 异变：抽牌	
     				} else if (player.identity=="zhong"){
     					player.draw();
+    				// 自机：伪采访一个
     				} else if (player.identity=="fan"){
-    					player.draw();
-    					player.gain(ui.skillPile.childNodes[0],'draw2');
+    					player.chooseTarget(get.prompt('tanpai_fan'),function(card,player,target){
+							return player!=target;
+						}).set('ai',function(target){
+							var player=_status.event.player;
+							if(player.maxHp-player.hp==1&&target.countCards('he')==0){
+								return 0;
+							}
+							if(get.attitude(_status.event.player,target)>0){
+								return 10+get.attitude(_status.event.player,target);
+							}
+							return 1;
+						});
     				}
     				'step 1'
     				if (result.bool){
-    					//game.log(result.links[0][2]);
-    					var card = game.createCard(result.links[0][2],'zhenfa','');
-    					if (player.identity == "zhu"){
-    						player.useCard(card,player);
-							player.$gain2(card);
-							if (!player.storage._tanpai) player.storage._tanpai=[];
-							player.storage._tanpai.add(card);
-							player.markSkill('_tanpai');
-							player.syncStorage('_tanpai');
-						} else if (player.identity == "nei"){
-							if (!player.storage._tanyibian) player.storage._tanyibian=[];
-							player.storage._tanyibian.add(card);
-							player.markSkill('_tanyibian');
-							player.syncStorage('_tanyibian');
+    					if (result.targets != ''){
+    						player.line(result.targets[0],'green');
+    						var list = ['discard'];
+    						event.target=result.targets[0];
+    						if (result.targets[0].identityShown != true) list.push('_tanpai');
+    						result.targets[0].chooseControl(list,function(event,player){
+								if (list.contains('_tanpai')) return '_tanpai';
+								return 'discard';
+							});
+    					} else {
+	    					var card = game.createCard(result.links[0][2],'zhenfa','');
+	    					if (player.identity == "zhu"){
+	    						player.useCard(card,player);
+								player.$gain2(card);
+								if (!player.storage._tanpai) player.storage._tanpai=[];
+								player.storage._tanpai.add(card);
+								player.markSkill('_tanpai');
+								player.syncStorage('_tanpai');
+							} else if (player.identity == "nei"){
+								if (!player.storage._tanyibian) player.storage._tanyibian=[];
+								player.storage._tanyibian.add(card);
+								player.markSkill('_tanyibian');
+								player.syncStorage('_tanyibian');
+							}
 						}
     				}
-    			}
+    				'step 2'
+    				if (result.control){
+    					if(result.control=='discard'){
+    						player.discardPlayerCard('hej',event.target,true);
+						} else {
+							event.target.useSkill('_tanpai');
+						}
+    				}
+    			},
+    			ai:{
+					order:function(name,player){
+						var cards=player.getCards('h');
+						if(player.countCards('h','sha')==0){
+							return 1;
+						}
+						for(var i=0;i<cards.length;i++){
+							if(cards[i].name!='sha'&&cards[i].number>11&&get.value(cards[i])<7){
+								return 9;
+							}
+						}
+						return get.order({name:'sha'})-1;
+					},
+					result:{
+						player:function(player){
+							if (player.identity == 'fan') return 1;
+							if (player.identity == 'zhu') return 0.6;
+							if (player.identity == 'zhong'){
+								if (game.zhu.identity == 'zhu') return 1;
+								else return 0;
+							}
+							if (player.identity == 'nei') return 1.5;
+						},
+					},
+				}
 			},
 			_tanyibian:{
 				name:'摊异变',

@@ -330,28 +330,44 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					trigger.num++;
 				}
 			},
-			tiandu:{
+			tiandu:{	
 				audio:2,
-				trigger:{player:'judgeEnd'},
-				frequent:'check',
-				check:function(event){
-					if(event.result.card.name=='du') return false;
-					return true;
-				},
-				filter:function(event,player){
-					if(get.owner(event.result.card)){
-						return false;
-					}
-					if(event.nogain&&event.nogain(event.result.card)){
-						return false;
-					}
-					return true;
-				},
-				content:function(){
-					player.gain(trigger.result.card);
-					player.$gain2(trigger.result.card);
-				}
-			},
+                trigger:{player:'phaseJudgeBefore'},
+                forced:true,
+                filter:function (event,player){
+                    //if(!player.getCards('j')<1) return true;       
+                	return true;
+                },
+                content:function(){
+	                'step 0'
+	                player.judge();
+	                'step 1'
+	                game.log(result.color);
+	                game.log(result.card.color);
+                    if(result.color=='black'){
+                        player.loseHp();
+                    }        
+                },
+                group:'tiandu1',
+            },
+            tiandu1:{
+                audio:2,
+                trigger:{player:'judgeEnd'},
+                forced:true,
+                filter:function (event,player){
+                    if(get.owner(event.result.card)){
+                        return false;
+                    }
+                    if(event.nogain&&event.nogain(event.result.card)){
+                        return false;
+                    }
+                    return true;
+                },
+                content:function (){        
+                    player.gain(trigger.result.card);
+                    player.$gain2(trigger.result.card);
+                },
+            },
 			yiji:{
 				audio:2,
 				trigger:{player:'damageEnd'},

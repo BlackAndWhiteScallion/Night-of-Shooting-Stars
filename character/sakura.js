@@ -5,22 +5,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		character:{
 			letty:['female','3',4,['shuangjiang','baofengxue']],
-            cirno:['female','3',4,[]],
             chen:['female','3',3,['mingdong','shihuo','shuanggui']],
             lilywhite:['female','5',3,['chunxiao','mengya']],
+            lunasa:['female','2',3,[]],
+            merlin:['female','3',3,[]],
+            lyrica:['female','4',3,[]],
+            alice:['female','2',3,[]],
             youmu:['female','3',4,['yishan','yinhuashan']],
             yuyuko:['female','1',3,['youdie','moyin','fanhundie']],
             ran:['female','2',3,['jiubian','shiqu','tianhugongzhu']],
             yukari:['female','1',3,['huanjing','mengjie','mengjing']],
 		},
 		characterIntro:{
-			letty:'',
-            chen:'',
-            lilywhite:'',
-            youmu:'',
-            yuyuko:'',
-            ran:'',
-            yukari:'',
+			letty:'全名蕾蒂·霍瓦特洛克。在冬天才会出来的雪女。能力是操纵寒气，也可以强化冬天的效果。<br> <b>画师：国家飯</b>',
+            chen:'一只妖怪猫化作的，八云蓝的式神。因为是式神的式神所以比较弱，习性也更接近猫而不是妖怪。能力是使用妖术的能力。<br> <b>画师：水佾</b>',
+            lilywhite:'在春天才会出现的，宣告春天到来的妖精。<br> <b>画师：oninoko</b>',
+            lunasa:'<br> <b>画师：中島楓</b>',
+            merlin:'<br> <b>画师：中島楓</b>',
+            lyrica:'<br> <b>画师：中島楓</b>',
+            alice:'<br> <b>画师：藤原</b>',
+            youmu:'<br> <b>画师：daiaru</b>',
+            yuyuko:'<br> <b>画师：.SIN</b>',
+            ran:'<br> <b>画师：ルリア</b>',
+            yukari:'<br> <b>画师：Shionty</b>',
 		},       
 		perfectPair:{
 		},
@@ -79,6 +86,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.baofengxue.cost;
+                },
+                check:function(event,player){
+                    if(player.countCards('h')>3 && player.lili > 3) return true;
+                    return false;
                 },
                 content:function(){
                     player.loselili(lib.skill.baofengxue.cost);
@@ -146,11 +157,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 //group:['mingdong2'],
                 usable:1,
                 mark:true,
+                frequent:true,
                 audio:2,
                 intro:{
                     content:function(storage,player){
-                        return lib.translate[player.storage.mindong];
+                        return lib.translate[player.storage.mingdong];
                     }
+                },
+                hiddenCard:function(player,name){
+                    return name == "shan" || name == 'tao';
                 },
                 init:function(player){
                     player.storage.mingdong=[];
@@ -169,12 +184,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         list[i]=[get.type(list[i]),'',list[i]];
                     }
                     player.chooseButton([get.prompt('mingdong'),[list,'vcard']]).set('ai',function(button){
-                        return Math.random();
+                        if (trigger.card == 'sha') return 'shan';
+                        if (_status.currentPhase==player && player.hp == player.maxHp && !player.countCards('h','sha')) return 'sha';
+                        return 'tao';
                     });
                     'step 1'
                     if (result.bool){
                         var name=result.links[0][2];
-                        player.storage.mingdong = name;
+                        player.storage.mingdong.push(name);
                         player.addTempSkill('mingdong2');
                         lib.skill.mingdong2.viewAs = {name:name};
                         game.log(player,'选择了',lib.translate[name]);
@@ -185,7 +202,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:3,
                 enable:['chooseToRespond','chooseToUse'],
                 hiddenCard:function(player,name){
-                    return name == "shan";
+                    return name == "shan" || name == "tao";
                 },
                 filter:function(event,player){
                     return player.countCards('h',{type:'trick'})>0;
@@ -196,6 +213,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 position:'h',
                 check:function(card){return 4-get.value(card)},
                 ai:{
+                    respondSha:true,
+                    respondShan:true,
+                    order:4,
+                    useful:-1,
+                    value:-1
                 },
             },
             shihuo:{
@@ -225,6 +247,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 spell:['shuanggui2','shuanggui3'],
                 roundi:true,
                 trigger:{player:'phaseBegin'},
+                check:function(event,player){
+                    if (player.countCards('h') > player.hp) return false;
+                    if (player.lili > 3) return true;
+                    return false;
+                },
                 filter:function(event,player){
                     return player.lili > lib.skill.shuanggui.cost;
                 },
@@ -285,11 +312,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filter:function(event,player){
                     return player.lili > player.hp;
                 },
+                check:function(event,player){
+                    return true;
+                },
                 content:function(){
                     "step 0"
                     event.current=player;
                     event.players=game.filterPlayer();
                     event.num=0;
+                    player.line(event.players,'green');
                     "step 1"
                     if(event.num<event.players.length){
                         var target=event.players[event.num];
@@ -312,6 +343,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }); 
                     "step 3"
                     if(result.bool){
+                        event.current.line(result.targets,'green');
                         //player.logSkill('chunxiao',result.targets);
                         event.targets=result.targets;
                         event.current.discardPlayerCard(event.targets[0],'hej',[1,1],true);
@@ -340,6 +372,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 0'
                     player.chooseControl(choice).set('ai',function(){
+                        if (player.num('h') > player.hp){
+                            if (player.getStat().skill.mengya>0) return 'gain_lili';
+                            if (player.lili < 3) return 'gain_lili';
+                            return 'lose_lili'; 
+                        } else {
+                            return 'lose_lili';
+                        }
                         return 'lose_lili';
                     });
                     'step 1'
@@ -351,6 +390,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.draw();
                     }
                 },
+                ai:{
+                    order:8,
+                    result:{
+                        player:function(player,target){
+                            return 1;
+                        }
+                    }
+                }
             },
             yishan:{
                 audio:2,
@@ -376,6 +423,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.useCard({name:'sha'},result.targets[0],false);
                     }
                 },
+                check:function(){
+                    return true;
+                }
             },
             yinhuashan:{
                 audio:2,
@@ -601,7 +651,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseUseBegin', target:'useCardToBegin'},
                 audio:2,
                 filter:function(event,player){
-                    if (event.triggername=='useCardToBegin') return event.card.name=='sha' || event.card.name == 'juedou';
+                    if (event.triggername=='useCardToBegin') return (event.card.name=='sha' || event.card.name == 'juedou');
                     else return true;
                 },
                 content:function(event,player){

@@ -14,6 +14,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target==player;
 				},
 				modTarget:true,
+				skills:['scarlet_normal','scarlet_win'],
 				content:function(){
 					target.addSkill('scarlet_normal');
 					target.addSkill('scarlet_win');
@@ -29,6 +30,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				modTarget:true,
+				skills:['sakura_normal','sakura_win'],
 				content:function(){
 					target.addSkill('sakura_normal');
 					target.addSkill('sakura_win');
@@ -44,6 +46,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				modTarget:true,
+				skills:['imperishable_normal','imperishable_win'],
 				content:function(){
 					target.addSkill('imperishable_normal');
 					target.addSkill('imperishable_win');
@@ -59,6 +62,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				modTarget:true,
+				skills:['phantasmagoria_normal','phantasmagoria_win'],
 				content:function(){
 					target.addSkill('phantasmagoria_normal');
 					target.addSkill('phantasmagoria_win');
@@ -74,6 +78,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				modTarget:true,
+				skills:['immaterial_normal','immaterial_win'],
 				content:function(){
 					target.addSkill('immaterial_normal');
 					target.addSkill('immaterial_win');
@@ -89,12 +94,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				modTarget:true,
+				skills:['sb_normal','sb_win'],
 				content:function(){
 					target.addSkill('sb_normal');
 					target.addSkill('sb_win');
 				}
 			},
-			nine:{
+			baka:{
 				type:'zhenfa',
 				fullskin:true,
 				enable:true,
@@ -104,9 +110,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				modTarget:true,
+				skills:['baka_normal','baka_win'],
 				content:function(){
-					target.addSkill('nine_normal');
-					target.addSkill('nine_win');
+					target.addSkill('baka_normal');
+					target.addSkill('baka_win');
 				}
 			},
 			death:{
@@ -119,6 +126,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				modTarget:true,
+				skills:['death_normal','death_win'],
 				content:function(){
 					target.addSkill('death_normal');
 					target.addSkill('death_win');
@@ -189,6 +197,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		imperishable_normal:{
     			trigger:{global:'loseEnd'},
     			forced:true,
+    			direct:true,
     			filter:function(event,player){
     				return event.player.countCards('j') == 0;
     			},
@@ -276,18 +285,43 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return player.getCards('he').length > 0;
 				},
 				viewAs:{name:'caifang'},
+				ai:{
+					basic:{
+						order:5
+					}
+				}
     		},	
     		sb_win:{
+    			trigger:{global:'useSkillAfter'},
+    			filter:function(event,player){
+    				return event.skill.spell;
+    			},
+    			content:function(){
 
+    			},
     		},
-    		nine_normal:{
-
+    		baka_normal:{
+    			// 啊？你以为这个技能有效果的？baka！ 
     		},
-    		nine_win:{
-
+    		baka_win:{
+    			trigger:{global:'die'},
+    			filter:function(event,player){
+    				return player == source;	
+    			},
+    			intro:'mark',
+    			content:function(){
+    				if (!player.storage.baka_win){
+    					player.storage.baka_win = 1;
+    				} else {
+    					player.storage.baka_win += 1;
+    				}
+    				if (player.storage.baka_win == 2){
+    					game.over(true);
+    				}
+    			},
     		},
     		death_normal:{
-
+    			// 这要怎么写比较好啊……
     		},
     		death_win:{
     			trigger:{global:'die'},
@@ -317,24 +351,25 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			imperishable_win:'【永夜】异变胜利',
 			imperishable_win_info:'异变发动后的第7个回合开始',
 			phantasmagoria:'花映',
-			phantasmagoria_info:'',
-			phantasmagoria_normal:'',
-			phantasmagoria_normal_info:'',
+			phantasmagoria_info:'<u>胜利条件：</u>牌堆洗牌时，没有角色坠机。<br/><u>异变效果：</u>一名角色的结束阶段，其获得1点灵力。',
+			phantasmagoria_normal:'【花映】异变效果',
+			phantasmagoria_normal_info:'<u>一名角色的结束阶段，其获得1点灵力。</u>',
 			immaterial:'萃梦',
-			immaterial_info:'',
-			immaterial_normal:'',
-			immaterial_normal_info:'',
+			immaterial_info:'<u>胜利条件：</u>结束阶段，弃牌堆内包括所有【葱】。<br/><u>异变效果：</u>一回合一次，你可以消耗1点灵力，视为使用一张【博丽神社例大祭】。',
+			immaterial_normal:'【萃梦】异变效果',
+			immaterial_normal_info:'<u>一回合一次，你可以消耗1点灵力，视为使用一张【博丽神社例大祭】。</u>',
 			sb:'文花',
-			sb_info:'',
-			sb_normal:'',
-			sb_normal_info:'',
-			nine:'笨蛋',
-			nine_info:'',
-			nine_normal:'',
-			nine_normal_info:'',
+			sb_info:'<u>胜利条件：</u>准备阶段，所有存活角色均发动过符卡。<br/><u>异变效果：</u>一回合一次，你可以将一张牌当作【突击采访】使用 。',
+			sb_normal:'【文花】异变效果',
+			sb_normal_info:'<u>一回合一次，你可以将一张牌当作【突击采访】使用 。</u>',
+			baka:'笨蛋',
+			baka_info:'<u>胜利条件：</u>你击坠两名角色。<br/><u>异变效果：</u>所有数字视为⑨进制。',
+			baka_normal:'【笨蛋】效果',
+			baka_normal_info:'<u>所有数字视为⑨进制。</u>',
 			death:'皆杀',
-			death_normal:'',
-			death_normal_info:'',
+			death_info:'<u>胜利条件：</u>所有其他角色坠机。<br/><u>异变效果：</u>所有其他角色的胜利条件无效；你的其他胜利条件无效；你击坠角色后，摸三张牌。',
+			death_normal:'【皆杀】异变效果',
+			death_normal_info:'所有其他角色的胜利条件无效；你的其他胜利条件无效；你击坠角色后，摸三张牌。',
 		},
 		list:[
 			//["diamond",1,'sakura'],

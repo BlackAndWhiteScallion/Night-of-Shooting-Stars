@@ -19,7 +19,7 @@
     };
     var lib={
         configprefix:'star_1.9_',
-        versionOL:25,
+        versionOL:27,
         updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
         //updateURL:'',
         //mirrorURL:'',
@@ -2619,8 +2619,8 @@
                     turned_style:{
                         name:'翻面文字',
                         intro:'角色被翻面时显示“翻面”',
-                        init:true,
-                        unfrequent:true,
+                        init:false,
+                        unfrequent:false,
                         onclick:function(bool){
                             game.saveConfig('turned_style',bool);
                             if(bool){
@@ -3286,7 +3286,7 @@
                     },
                     volumn_audio:{
                         name:'音效音量',
-                        init:8,
+                        init:4,
                         item:{
                             '0':'〇',
                             '1':'一',
@@ -3304,7 +3304,7 @@
                     },
                     volumn_background:{
                         name:'音乐音量',
-                        init:8,
+                        init:4,
                         item:{
                             '0':'〇',
                             '1':'一',
@@ -11574,21 +11574,6 @@
                         }
                     }
 
-                    // 使用异变牌时，切换背景/BGM
-                    if (lib.config.background_audio && lib.config.background_music!='music_off' && get.type(card) == 'zhenfa'){
-                        if ((player.identity == 'zhu' && lib.config.musicchange != 'off') 
-                            || (player.identity == 'nei' && lib.config.musicchange == 'luren')){
-                            lib.backgroundmusicURL = ui.backgroundMusic.src;
-                            ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
-                            lib.config.background_music = card.name;
-                        }
-                        if ((player.identity == 'zhu' && lib.config.backgroundchange != 'off') 
-                            || (player.identity == 'nei' && lib.config.backgroundchange == 'luren')){
-                            var str = lib.assetURL+'image/background/'+card.name+'.jpg';
-                            ui.background.setBackgroundImage(str);
-                        }
-                    }
-
                     event.id=get.id();
                     if(event.oncard){
                         event.oncard(event.card,event.player);
@@ -13098,7 +13083,7 @@
                         }
                         // 多了就扔掉
                         if (player.num('j',{type:'delay'})>player.maxjudge){
-                            player.chooseToDiscard(1,{type:'delay'},'j',true);
+                            player.discardPlayerCard(player,'j',true);
                         }
                         player.update();
                         ui.updatej(player);
@@ -13227,6 +13212,20 @@
                     // 不仅是翻面的UI还是代表翻面了的东西？？？
                     // 看来只能去layout把翻面的动画改成正常的并且去掉翻面的翻译了……
                     player.classList.toggle('turnedover');
+                    // 这里开始是翻面时扔出符卡动画
+                    if (player.isTurnedOver()){
+                        player.node.turnedover.setBackgroundImage('theme/spell.gif');
+                        player.node.turnedover.style.backgroundSize='123px 123px';
+                        player.node.turnedover.style.opacity=0.4;
+                        player.node.turnedover.style.backgroundRepeat = 'no-repeat';
+                        player.node.turnedover.style.backgroundPosition = "center";
+                        ui.refresh(player);
+                    } else {
+                        player.node.turnedover.setBackgroundImage('');
+                        player.node.turnedover.style.opacity=0;
+                        ui.refresh(player);
+                    }
+                    // 到这里结束
                     game.broadcast(function(player){
                         player.classList.toggle('turnedover');
                     },player);
@@ -13340,7 +13339,7 @@
                     this.lili=info[1];
                     this.maxlili=info[6];
                     this.maxequip=3;
-                    this.maxskill=3;
+                    this.maxjudge=3;
                     this.hujia=0;
                     this.node.intro.innerHTML=lib.config.intro;
                     this.node.name.dataset.nature=get.groupnature(this.group);
@@ -13741,7 +13740,7 @@
                     // 浮空时间。原数值：2000毫秒
                     setTimeout(function(){
                         dialog.delete();
-                    },4000);
+                    },3500);
                     var info=[get.translation(this.name)||this.nickname,str];
                     lib.chatHistory.push(info);
                     if(_status.addChatEntry){
@@ -14574,6 +14573,32 @@
                     next.skill=skill||_status.event.name;
                     next.setContent('phase');
                     return next;
+                },
+                //强行塞入一个装异变的玩意。
+                addIncident:function(card){
+                    this.$gain2(card);
+                    if (!this.storage._tanpai) player.storage._tanpai=[];
+                    this.storage._tanpai.add(card);
+                    player.markSkill('_tanpai');
+                    player.syncStorage('_tanpai');
+                    // 使用异变牌时，切换背景/BGM
+                    if (lib.config.background_audio && lib.config.background_music!='music_off' && get.type(card) == 'zhenfa'){
+                        if ((player.identity == 'zhu' && lib.config.musicchange != 'off') 
+                            || (player.identity == 'nei' && lib.config.musicchange == 'luren')){
+                            lib.backgroundmusicURL = ui.backgroundMusic.src;
+                            ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
+                            lib.config.background_music = card.name;
+                        }
+                        if ((player.identity == 'zhu' && lib.config.backgroundchange != 'off') 
+                            || (player.identity == 'nei' && lib.config.backgroundchange == 'luren')){
+                            var str = lib.assetURL+'image/background/'+card.name+'.jpg';
+                            ui.background.setBackgroundImage(str);
+                        }
+                    }
+                    // 并且，使用异变牌时，强行假装没有用牌，跳过效果
+                    for (var i = 0; i < card.skills.length; i ++){
+                        this.addSkill(card.skills[i]);
+                    }
                 },
                 phase:function(skill){
                     var next=game.createEvent('phase');
@@ -19497,7 +19522,8 @@
                         }
                     }
                     for(var i=0;i<name.length;i++){
-                        this.node.name.innerHTML+=name[i]+'<br/>';
+                        //this.node.name.innerHTML+=name[i]+'<br/>';
+                        this.node.name.innerHTML+=name[i];
                     }
                     if(name.length>=5){
                         this.node.name.classList.add('long');
@@ -20657,7 +20683,9 @@
             priority:function(a,b){
                 var i1=get.info(a[0]),i2=get.info(b[0]);
                 if(i1.priority==undefined) i1.priority=0;
+                if (i1.spell) i1.priority = 10;
                 if(i2.priority==undefined) i2.priority=0;
+                if (i2.spell) i2.priority = 10;
                 if(i1.priority==i2.priority){
                     if(i1.forced==undefined&&i2.forced==undefined) return 0;
                     if(i1.forced&&i2.forced) return 0;
@@ -21021,13 +21049,15 @@
                     if (player.isTurnedOver()){
                         var info = ""
                         for(var i=0;i<player.skills.length;i++){
-                            if (player.skills[i].spell){
-                                info = lib.skill[player.skills[i]];
-                                break;
+                            if (lib.skill[player.skills[i]].spell){
+                                var info = lib.skill[player.skills[i]];
+                                if (player.hasSkill(info.spell[0])){
+                                    if (!info.infinite){
+                                        player.turnOver();
+                                    }
+                        //          break;
+                                }
                             }
-                        }
-                        if (info != "" && !info.infinite){
-                            player.turnOver();
                         }
                     }
                     player.ai.tempIgnore=[];
@@ -21069,17 +21099,16 @@
             },
             // 灵力值变为0时，符卡结束
             _0lili:{
-                trigger:{player:'changeliliAfter'},
+                trigger:{player:'changelili'},
                 forced:true,
                 priority:20,
                 popup:false,
                 filter:function(event,player){
-                    return player.isTurnedOver() && player.lili == 0;
+                    return player.isTurnedOver() && player.lili < 1;
                 },
                 content:function(){
-                    var info = "";
                     for(var i in player.skills){
-                        if (player.skills[i].spell){
+                        if (i.spell){
                             game.log(player+'的灵力值变为0,'+get.translation(i)+'符卡结束');
                         }
                     }
@@ -21110,7 +21139,7 @@
             },
             // 本阶段已经成为过牌的目标啦
             _mubiao:{
-                trigger:{target:'useCardToBefore'},
+                trigger:{target:'useCardToAfter'},
                 forced:true,
                 priority:-100,
                 content:function(){
@@ -25519,6 +25548,12 @@
             else{
                 card=ui.create.card(ui.special);
             }
+            // 花色是“null”的话，砸掉花色点数跟属性 
+            if (suit == "null"){
+                suit = null;
+                number = null;
+                nature = null;
+            }
             card.storage.vanish=true;
             return card.init([suit,number,name,nature]);
         },
@@ -29360,7 +29395,8 @@
                                     else{
                                         node._link.menu.appendChild(visualMenu);
                                     }
-                                    ui.create.div('.name',get.verticalStr(config.item[i]),visualMenu);
+                                    //ui.create.div('.name',get.verticalStr(config.item[i]),visualMenu);
+                                    ui.create.div('.name',config.item[i],visualMenu);
                                     visualMenu._link=i;
                                     if(config.visualMenu(visualMenu,i,config.item[i],config)!==false){
                                         visualMenu.listen(clickMenuItem);
@@ -32251,7 +32287,8 @@
                                 button.style.backgroundSize='cover';
                                 button.listen(clickButton);
                                 button.classList.add('noclick');
-                                button.nodename=ui.create.div(button,'.name',get.verticalStr(page.content.pack.translate[name]));
+                                //button.nodename=ui.create.div(button,'.name',get.verticalStr(page.content.pack.translate[name]));
+                                button.nodename=ui.create.div(button,'.name',page.content.pack.translate[name]);
                                 button.nodename.style.top='8px';
                                 page.insertBefore(button,page.childNodes[1]);
                             }
@@ -32602,7 +32639,8 @@
                                         currentButton.image=fakeme.image64;
                                         currentButton.style.backgroundImage='url('+fakeme.image64+')';
                                     }
-                                    currentButton.nodename.innerHTML=get.verticalStr(translate);
+                                    //currentButton.nodename.innerHTML=get.verticalStr(translate);
+                                    currentButton.nodename.innerHTML=translate;
                                 }
                                 resetEditor();
                                 dash1.link.classList.add('active');
@@ -32717,7 +32755,8 @@
                                 }
                                 button.listen(clickButton);
                                 button.classList.add('noclick');
-                                button.nodename=ui.create.div(button,'.name',get.verticalStr(page.content.pack.translate[name]));
+                                //button.nodename=ui.create.div(button,'.name',get.verticalStr(page.content.pack.translate[name]));
+                                button.nodename=ui.create.div(button,'.name',page.content.pack.translate[name]);
                                 page.insertBefore(button,page.childNodes[1]);
                             }
                             page.reset=function(name){
@@ -33176,7 +33215,8 @@
                                             currentButton.classList.remove('fullskin');
                                         }
                                     }
-                                    currentButton.nodename.innerHTML=get.verticalStr(translate);
+                                    //currentButton.nodename.innerHTML=get.verticalStr(translate);
+                                    currentButton.nodename.innerHTML=translate;
                                 }
                                 resetEditor();
                                 updatePile();
@@ -36208,7 +36248,8 @@
                     }
                 }
                 if(!thisiscard){
-                    var groups=['wei','shu','wu','qun'];
+                    //var groups=['wei','shu','wu','qun'];
+                    var groups = ['1','2','3','4','5'];
                     for(var i in lib.character){
                         if(lib.character[i][1]=='shen'){
                             groups.add('shen');break;
@@ -37677,7 +37718,8 @@
                 node.node={
                     avatar:ui.create.div('.avatar',node,ui.click.avatar).hide(),
                     avatar2:ui.create.div('.avatar2',node,ui.click.avatar2).hide(),
-                    turnedover:ui.create.div('.turned','<div>翻<br>面<div>',node),
+                    //turnedover:ui.create.div('.turned','<div>翻<br>面<div>',node),
+                    turnedover:ui.create.div('.turned','<div>符<br>卡<div>',node),
                     framebg:ui.create.div('.framebg',node),
                     intro:ui.create.div('.intro',node),
                     identity:ui.create.div('.identity',node),
@@ -37723,7 +37765,7 @@
                     node[i]=lib.element.player[i];
                 }
                 node.node.link=node.mark(' ',{mark:get.linkintro});
-                node.node.link.firstChild.setBackgroundImage('image/card/tiesuo_mark.png')
+                //node.node.link.firstChild.setBackgroundImage('image/card/tiesuo_mark.png')
                 node.node.link.firstChild.style.backgroundSize='cover';
                 ui.create.div(node.node.identity);
                 if(!noclick){

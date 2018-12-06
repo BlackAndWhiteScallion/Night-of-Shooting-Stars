@@ -8,12 +8,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             meiling:['female','2',4,['xingmai','dizhuan','jicai']],
             koakuma:['female','4',3,['qishu','anye']],
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
+            sakuya:['female','2',3,[]],
+            remilia:['female','5',4,[]],
+            flandre:['female','1',4,[]],
 		},
 		characterIntro:{
-			diaochan:'中国古代四大美女之一，有闭月羞花之貌。司徒王允之义女，由王允授意施行连环计，离间董卓、吕布，借布手除卓。后貂蝉成为吕布的妾。',
-		},
+		  rumia:'',
+          meiling:'',
+          koakuma:'',
+          patchouli:'',
+          sakuya:'',
+          remilia:'',
+          flandre:'',
+        },
 		perfectPair:{
-			xiahoudun:['xiahouyuan'],
 		},
 		skill:{
 			heiguan:{
@@ -83,6 +91,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     			spell:['yuezhi2'],
     			roundi:true,
     			trigger:{player:'phaseBegin'},
+                check:function(event,player){
+                    if (player.hp < 3) return true;
+                    return false;
+                },
     			filter:function(event,player){
     				return player.lili > lib.skill.yuezhi.cost;
     			},
@@ -250,7 +262,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         trigger.targets.remove(result.targets[0]);
                         //trigger.targets.push(player);
                         trigger.target=player;
-                        player.storage.dizhuan = 1;
                     }
                     else{
                         event.finish();
@@ -261,6 +272,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     trigger.trigger('shaBefore');
                     game.delay();
                 },
+                check:function(event,player){
+                    if (player.num('h') < 2) return false;
+                    if (player.hp < event.target.hp) return false;
+                    return get.attitude(player,event.target)>0;
+                },
             },
             dizhuan2:{
                 audio:2,
@@ -268,11 +284,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 forced:true,
                 direct:true,
                 filter:function(event,player){
-                    return (player.storage.dizhuan == 1);
+                    return event.cards[0].name == 'sha';
                 },
                 content:function(){
                     player.gainlili();
-                    player.storage.dizhuan = 0;
                 },
             },
             jicai:{
@@ -281,6 +296,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 spell:['jicai2'],
                 roundi:true,
                 trigger:{player:'phaseBegin'},
+                check:function(event,player){
+                    if (player.countCards('h') > 3 && player.lili > 3) return true;
+                    return false;
+                },
                 filter:function(event,player){
                     return player.lili > lib.skill.jicai.cost;
                 },

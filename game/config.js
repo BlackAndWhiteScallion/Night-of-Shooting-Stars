@@ -22,8 +22,8 @@ window.config={
 	forbidboss:['caiwenji','gjqt_aruan','pal_xuanxiao','swd_hupo'],
 	forbiddouble:['zhugedan','swd_kangnalishi','dongzhuo','wutugu','hs_siwangzhiyi','hs_ronghejuren','hs_shanlingjuren'],
 	all:{
-		sgscharacters:['scarlet', 'sakura'],
-		sgscards:['standard','incident'],
+		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka'],
+		sgscards:['standard','incident','skill'],
 		sgsmodes:['identity','versus','brawl','connect','library'],
 		stockmode:['old_identity','identity','versus','boss','chess','tafang','connect','brawl','library'],
 		stockextension:['boss','cardpile','coin','wuxing','hs_mod'],
@@ -73,7 +73,7 @@ window.config={
 	hiddenPlayPack:[],
 	hiddenBackgroundPack:[],
 	customBackgroundPack:[],
-	favouriteCharacter:[],
+	favouriteCharacter:['marisa'],
 	recentIP:[],
 	alteredSkills:[],
 	brokenFile:[],
@@ -133,7 +133,7 @@ window.config={
 	sort:'type_sort',
 
 	cards:['standard','incident','skill'],
-	characters:['scarlet','sakura'],
+	characters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka'],
 	connect_characters:[],
 	connect_cards:[],
 	plays:[],

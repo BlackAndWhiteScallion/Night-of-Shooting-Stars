@@ -204,7 +204,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		},
 	    	},
 	        characterview:{
-	            name:'角色一览',
+	            name:'角色牌',
 	            mode:'',
 	            intro:'关闭，打开，和查看角色简介在左上角的选项/角色进行。',
 	            showcase:function(init){
@@ -240,7 +240,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            },
 	        },
 	        cardview:{
-	        	name:'卡牌一览',
+	        	name:'游戏牌',
 	        	mode:'',
 	        	intro:'卡牌花色点数以牌局内为准。',
 	        	showcase:function(init){
@@ -257,7 +257,58 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.style.width = "100%";
 					dialog.style.height = "100%";
 					for (i in lib.card){
-						if(lib.translate[i] && lib.card[i].type != 'zhenfa' && !lib.card[i].vanish){
+						if(lib.translate[i] && lib.card[i].type != 'zhenfa' && !lib.card[i].vanish && lib.card[i].type != 'delay'){
+							var card=game.createCard(i, undefined, undefined, undefined);
+                            dialog.add(card);
+                        }
+					}
+					this.appendChild(dialog);
+					dialog.noopen=true;
+	        	},
+	        },
+	        skillview:{
+	        	name:'技能牌',
+	        	mode:'',
+	        	intro:'技能牌是特殊的游戏卡牌，没有花色点数，也不可以转化',
+	        	showcase:function(init){
+	        		var i;
+	            	var list=[];
+					event.list=list;
+	            	var dialog=ui.create.dialog('hidden');
+					//var dialog=this;
+					dialog.classList.add('fixed');
+					//dialog.classList.add('bosscharacter');
+					//dialog.classList.add('withbg');
+					dialog.style.left = "0px";
+					dialog.style.top = "0px";
+					dialog.style.width = "100%";
+					dialog.style.height = "100%";
+					for (i in lib.card){
+						if(lib.translate[i] && !lib.card[i].vanish && lib.card[i].type == 'delay'){
+							var card=game.createCard(i);
+                            dialog.add(card);
+                        }
+					}
+					this.appendChild(dialog);
+					dialog.noopen=true;
+	        	},
+	        },
+	        incidentview:{
+	        	name:'异变牌',
+	        	mode:'identity',
+	        	intro:'异变牌持有胜利条件，特殊效果。不是游戏牌，也没有花色点数的。',
+	        	showcase:function(init){
+	        		var i;
+	            	var list=[];
+					event.list=list;
+	            	var dialog=ui.create.dialog('hidden');
+					dialog.classList.add('fixed');
+					dialog.style.left = "0px";
+					dialog.style.top = "0px";
+					dialog.style.width = "100%";
+					dialog.style.height = "100%";
+					for (i in lib.card){
+						if(lib.translate[i] && lib.card[i].type == 'zhenfa'){
 							var card=game.createCard(i, undefined, undefined, undefined);
                             dialog.add(card);
                         }
@@ -279,7 +330,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	},
 	        },
 	        modeview:{
-	        	name:'模式一览',
+	        	name:'游戏模式',
 	        	mode:'',
 	        	intro:[
 	        		'模式介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
