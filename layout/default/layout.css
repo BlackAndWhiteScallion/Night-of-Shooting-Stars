@@ -2356,8 +2356,8 @@ div:not(.handcards)>.card>.info>span,
 .hp>.lost {
 	background: rgba(57, 123, 4,1);
 	border: 1px solid rgba(39, 79, 7, 1);
-	filter: grayscale(1);
-	-webkit-filter: grayscale(1);
+	/*filter: grayscale(1); */
+	/*-webkit-filter: grayscale(1);*/
 }
 .hp.text[data-condition="low"],
 .hp.textstyle[data-condition="low"] {

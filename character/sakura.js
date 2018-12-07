@@ -428,7 +428,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
             },
             yinhuashan:{
-                audio:2,
+                audio:3,
                 cost:0,
                 spell:['yinhuashan2'],
                 trigger:{player:'phaseBegin'},
@@ -618,15 +618,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             huanjing:{
                 trigger:{global:'phaseBegin'},
-                priority:5,
+                audioname:['reimu'],
                 audio:2,
                 filter:function(event,player){
                     return player.countCards('hej');
                 },
+                check:function(event,player){
+                    if(!player.storage.bot) return false;
+                    if(player.countCards('he')<3) return false;
+                    if(lib.card[player.storage.bot[0]].subtype == 'attack' || lib.card[player.storage.bot[0]].subtype == 'disrupt') return get.attitude(player,event.player) < 0;
+                    if(lib.card[player.storage.bot[0]].type == 'equip' || lib.card[player.storage.bot[0]].subtype == 'support') return get.attitude(player,event.player) > 0;
+                    return false;
+                },
                 content:function(){
                     'step 0'
-                    player.chooseToDiscard('he',get.prompt('huanjing')).ai=function(){
-                        return -1;
+                    player.chooseToDiscard(true,'hej',get.prompt('huanjing')).ai=function(){
+                        return true;
                     }
                     'step 1'
                     if(result.bool){
@@ -644,6 +651,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         } else if (get.type(event.cards[0]) == 'equip'){
                             current.equip(event.cards[0]);
                         }
+                        if (player.storage.bot) player.storage.bot.remove(player.storage.bot[0]);
                     }
                 }
             },
@@ -651,7 +659,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseUseBegin', target:'useCardToBegin'},
                 audio:2,
                 filter:function(event,player){
-                    if (event.triggername=='useCardToBegin') return (event.card.name=='sha' || event.card.name == 'juedou');
+                    if (event.name=='useCardToBegin') return (event.card.name=='sha' || event.card.name == 'juedou');
                     else return true;
                 },
                 content:function(event,player){
@@ -696,13 +704,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             }
                         }
                         bottom=cards;
+                        player.storage.bot = bottom;
                         for(var i=0;i<top.length;i++){
                             ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
                         }
                         for(i=0;i<bottom.length;i++){
                             ui.cardPile.appendChild(bottom[i]);
                         }
-                        //player.draw();
                         player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(bottom.length)+'下');
                         game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
                         game.delay(2);
@@ -845,11 +853,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
                         game.delay(2);
                     }
-                    /*
-                    if (!player==_status.currentPhase){
-                        player.chooseDrawRecover(1,0,false);
-                    }
-                    */
                 }
             },  
             mengjing:{
@@ -872,11 +875,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		translate:{
             letty:'蕾蒂',
             shuangjiang:'霜降',
-            shuangjiang_info:'结束阶段，你可以对本回合成为过牌的目标，且没有使用/打出过牌的一名角色造成1点灵击伤害。',
+            shuangjiang_info:'结束阶段，你可以对本回合成为过牌的目标，且没有使用/打出过牌的所有角色造成1点灵击伤害。',
+            shuangjiang_audio1:'下次，记得穿厚一些哟。',
+            shuangjiang_audio2:'怎么，这就觉得太冷了吗？',
             baofengxue:'暴风雪之眼',
             baofengxue2:'暴风雪之眼',
             baofengxue3:'暴风雪之眼',
+            baofengxue_audio1:'这是我新的符卡！',
+            baofengxue_audio2:'感受一下自然的力量吧！',
             baofengxue_info:'符卡技（2）你使用一张牌时，可以令其他角色不能使用/打出与之相同花色的牌，直到结束阶段；【霜降】中的“一名”视为“所有”',
+            letty_die:'冬天可不会就这么结束哟。',
             chen:'橙',
             mingdong:'鸣动',
             mingdong2:'鸣动',
@@ -888,8 +896,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shihuo_audio1:'喵呜~',
             shihuo_audio2:'喵帕斯！……喵？',
             shuanggui:'青鬼赤鬼',
+            shuanggui_audio1:'鬼符「青鬼赤鬼」!',
+            shuanggui_audio2:'不要因为我是猫就小看我了喵！',
             shuanggui4:'鬼',
             shuanggui_info:'符卡技（2）<永续>准备阶段，你指定一名其他角色，与其各摸一张牌；该角色需要消耗灵力时，须改为消耗你的灵力。',
+            chen_die:'蓝大人不会放过你的！',
             lilywhite:'莉莉白',
             chunxiao:'春晓',
             chunxiao_info:'准备阶段，若你的灵力值不小于体力值，你可以令所有角色各摸一张牌，然后各弃置与其最近的一名角色一张牌。',
@@ -899,6 +910,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mengya_info:'一回合两次，出牌阶段，你可以选择一项：获得1点灵力，然后弃置一张牌；或消耗1点灵力，然后摸一张牌。',
             mengya_audio1:'春天是万物复苏的季节！',
             mengya_audio2:'春天是风调雨顺的季节！',
+            lilywhite_die:'哎，原来立春是明天吗？',
             youmu:'妖梦',
             yishan:'一闪',
             yishan_info:'一回合一次，你使用【轰！】结算完毕后，你可以令一名角色摸一张牌，视为对其使用一张无视装备的【轰！】。',
@@ -908,6 +920,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             yinhuashan_info:'符卡技（0）你使用【轰！】指定目标时，可以消耗1点灵力，并选择一项：额外指定一名目标角色，或重置【一闪】。',
             yinhuashan_audio1:'妖怪锻造的这把剑，斩不断的东西根本没有！',
             yinhuashan_audio2:'我的名字是魂魄妖梦！幽幽子大人之剑！',
+            yinhuashan_audio3:'空观剑「六根清净斩」!',
             // 众所周知，六根有七个是常识
             yinhuashan2_audio1:'眼根！',
             yinhuashan2_audio2:'耳根！',

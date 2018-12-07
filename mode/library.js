@@ -200,9 +200,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		mode:'',
 	    		intro:'暂无更新',
 	    		showcase:function(init){
-
+	    			
 	    		},
 	    	},
+	    	ruleview:{
+	        	name:'规则帮助',
+	        	mode:'',
+	        	intro:[
+	        		'规则简略可以在<a href="game/guide.pdf">这里</a>读到',
+	        		'详细的资源可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
+	        		'游戏内的资料正在制作中',
+	        		],
+	        	showcase:function(init){
+
+	        	},
+	        },
+	        modeview:{
+	        	name:'游戏模式',
+	        	mode:'',
+	        	intro:[
+	        		'模式介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
+	        		'游戏内的资料正在制作中',
+	        		],
+	        	showcase:function(init){
+
+	        	},
+	        },
 	        characterview:{
 	            name:'角色牌',
 	            mode:'',
@@ -315,29 +338,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					this.appendChild(dialog);
 					dialog.noopen=true;
-	        	},
-	        },
-	       	ruleview:{
-	        	name:'规则帮助',
-	        	mode:'',
-	        	intro:[
-	        		'规则简略可以在<a href="game/guide.pdf">这里</a>读到',
-	        		'详细的资源可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
-	        		'游戏内的资料正在制作中',
-	        		],
-	        	showcase:function(init){
-
-	        	},
-	        },
-	        modeview:{
-	        	name:'游戏模式',
-	        	mode:'',
-	        	intro:[
-	        		'模式介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
-	        		'游戏内的资料正在制作中',
-	        		],
-	        	showcase:function(init){
-
 	        	},
 	        },
 	        download:{

@@ -10,7 +10,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
             sakuya:['female','2',3,[]],
             remilia:['female','5',4,[]],
-            flandre:['female','1',4,[]],
+            flandre:['female','1',4,['kuangyan','zhihou']],
 		},
 		characterIntro:{
 		  rumia:'',
@@ -26,6 +26,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		skill:{
 			heiguan:{
     			audio:2,
+                direct:true,
     			trigger:{player:'phaseUseBegin'},
     			//prompt:'选择一些灵力小于你，并且相邻的角色，和他们依次拼点：若你赢，视为对其使用一张【轰！】；若没赢，你须选择：消耗1点灵力，或取消其他目标并结束出牌阶段。',
     			filter:function(event,player){
@@ -588,7 +589,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             qishu:{
                 audio:2,
-                trigger:{player:['phaseJudgeBefore','phaseDrawBefore','phaseUseBefore','phaseDiscardBefore']},
+                trigger:{player:'phaseBegin'},
                 usable:1,
                 popup:false,
                 filter:function(event,player){
@@ -596,23 +597,37 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    player.chooseTarget(1,get.prompt('qishu')+get.translation(trigger.name),function(card,player,target){
-                        return target != player;
-                    }).set('ai',function(target){
+                    var list = ['phaseDraw', 'phaseUse', 'phaseDiscard'];
+                    player.chooseControl(list, function(event,player){
+                        if (player.getCards('h').length < 2) return 'phaseDiscard';
+                        if (player.getCards('h').length > player.hp) return 'phaseDraw';
+                        return 'phaseUse';
                     });
                     "step 1"
+                    if (result.control) player.storage.qishu = result.control;
+                    player.chooseTarget(1,get.prompt('qishu')+get.translation(result.control),function(card,player,target){
+                        return target != player;
+                    }).set('ai',function(target){
+                        if (player.storage.qishu == 'phaseDiscard'){
+                            if (get.attitude(player,target)<0 && target.getCards('h') > target.hp) return target;
+                            return get.attitude(player,target)<0;
+                        } else {
+                            return get.attitude(player,target)>0;
+                        }
+                    });
+                    "step 2"
                     if(result.bool){
                         player.loselili();
                         result.targets[0].addTempSkill('qishu2');
-                        result.targets[0].storage.qishu = trigger.name;
-                        trigger.untrigger();
-                        trigger.finish();
+                        result.targets[0].storage.qishu = player.storage.qishu;
+                        player.skip(player.storage.qishu[0]);
+                        player.storage.qishu = null;
                     } else {
                         event.finish();
                     }
                 },
                 prompt:function(){
-                    var str = "你可以消耗1点灵力，并跳过";
+                    var str = "选择一名角色，令其获得1点灵力并执行一个额外的";
                     return str;
                 },
             },
@@ -631,6 +646,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.phaseDiscard();
                     }
                     player.storage.qishu = null;
+                    player.removeSkill('qishu2');
                 },
             },
             anye:{
@@ -660,7 +676,62 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 }
             },
-            
+            kuangyan:{
+                group:['kuangyan2'],
+                trigger:{player:['phaseUseBegin','damageEnd']},
+                filter:function(event,player){
+                    if (event.name == 'damage') return event.nature == 'thunder';
+                    return true;
+                },
+                content:function(){
+                    "step 0"
+                    event.current=player;
+                    event.players=game.filterPlayer();
+                    for (var i = 0; i < event.players.length; i ++){
+                        if (!get.distance(player,event.players[i],'attack')<=1) event.players.remove(event.players[i]);
+                    }
+                    event.num=0;
+                    player.line(event.players,'green');
+                    "step 1"
+                    if(event.num<event.players.length){
+                        var target=event.players[event.num];
+                        player.discardPlayerCard(event.players[0],'hej',[1,1],true);
+                        event.num++;
+                        event.redo();
+                    }
+                    "step 2"
+                    for (var i = 0; i < event.players.length; i ++){
+                        if (!event.players[i].getCards('h')) event.players[i].damage();
+                    }
+                    'step 3'
+                    lib.skill['kuangyan'].forced = true;
+                },
+            },
+            kuangyan2:{
+                trigger:{global:'dieEnd'},
+                forced:true,
+                direct:true,
+                content:function(){
+                    lib.skill['kuangyan'].forced = false;
+                }
+            },
+            zhihou:{
+                audio:2,
+                cost:0,
+                spell:['zhihou2'],
+                infinite:true,
+                trigger:{player:'phaseBegin'},
+                filter:function(event,player){
+                    return player.lili > player.hp();
+                },
+                content:function(){
+                    player.loselili(player.hp);
+                    player.turnOver();
+                },
+            },
+            zhihou2:{
+
+            },
         },
 		translate:{
 			rumia:'露米娅',
@@ -690,11 +761,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             dizhuang_audio2:'你在往哪里打呢！',
             jicai:'极彩风暴',
             jicai_info:'符卡技（2）<永续>你使用/打出牌时，可以弃置场上一张与之相同花色的牌。',
-            jicai_audio1:'比肉搏我可是不会输的！',
+            jicai_audio1:'华符「极彩风暴」！',
             jicai_audio2:'哈啊——————————————————————————————',
             jicai2_audio1:'木大木大木大！',
             jicai2_audio2:'欧拉欧拉欧拉欧拉欧拉！',
-            meiling_die:'还是你更强一些啊。',
+            meiling_die:'好吧好吧……还是你强一些呢。',
             patchouli:'帕秋莉',
             qiyao:'七曜',
             qiyao3:'七曜',
@@ -707,9 +778,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             xianzhe:'贤者之石',
             xianzhe2:'贤者之石',
             xianzhe_info:'符卡技（0）你可以消耗1点灵力，将一张牌当作你本回合没有使用过的一种法术牌使用。',
-            xianzhe_audio1:'是时候稍微用一点厉害的了呢。',
+            xianzhe_audio1:'火水木金土符「贤者之石」。',
             xianzhe_audio2:'见识一下真正的魔法吧。',
-            patchouli_die:'切……还是太小看你们了么。',
+            patchouli_die:'只是今天哮喘发作了而已……',
             koakuma:'小恶魔',
             qishu:'奇术',
             qishu_info:'一回合一次，你可以消耗1点灵力，并跳过一个阶段，然后指定一名其他角色；若如此做，结束阶段，该角色获得1点灵力，并进行一个额外的以此法跳过的阶段。',
@@ -719,7 +790,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             anye_info:'锁定技，一回合一次，回合外，你成为法术牌的目标后，若你本回合在此牌前成为过牌的目标，该牌对你无效。',
             anye_audio1:'不行！',
             anye_audio2:'不要这么喧哗呀……呜咕……',
-            koakuma_die:'帕秋莉大人不会放过你的……',
+            koakuma_die:'帕秋莉大人~~~~',
+            flandre:'芙兰朵露',
+            kuangyan:'狂宴',
+            kuangyan_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以弃置攻击范围内的所有角色各一张牌；然后对以此法失去最后牌的角色各造成1点弹幕伤害；你发动此技能后，此技能改为锁定技，直到一名角色坠机。',
+            zhihou:'之后就一个人都没有了吗？',
+            zhihou_info:'符卡技（X）【极意】（X 为你的体力值）你视为持有【皆杀】异变牌；你造成弹幕伤害后，选择一项：令受伤角色：1. 将灵力调整至1；2. 所有技能无效，直到结束阶段；3. 弃置其一个有牌的区域内所有牌；4. 扣减1点体力上限，直到此符卡结束。',
         },
 	};
 });

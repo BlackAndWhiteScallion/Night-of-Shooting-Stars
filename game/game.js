@@ -1481,6 +1481,7 @@
                                 else if(link!='custom'){
                                     div.setBackgroundImage('theme/style/hp/image/'+link+i+'.png');
                                 }
+                                //
                                 if(i==4){
                                     div.style.webkitFilter='grayscale(1)';
                                 }
@@ -19493,7 +19494,8 @@
                         this.node.info.innerHTML=info.modinfo;
                     }
                     else{
-                        this.node.info.innerHTML=get.translation(card[0])+'<span> </span>'+card[1];
+                        this.node.info.innerHTML=get.translation(card[0])+'<span></span>'+card[1];
+                        this.node.info.style.letterSpacing='1.5px';
                     }
                     if(info.addinfo){
                         if(!this.node.addinfo){
@@ -19531,6 +19533,7 @@
                             this.node.name.classList.add('longlong');
                         }
                     }
+                    this.node.name.style.fontSize = '13px';
                     this.node.name2.innerHTML=get.translation(card[0])+card[1]+' '+name;
                     this.suit=card[0];
                     this.number=card[1];
@@ -21129,6 +21132,9 @@
                             for (var j = 0; j < info.spell.length; j ++){
                                 if (!player.isTurnedOver()){
                                     player.removeSkill(info.spell[j]);
+                                    if (info.infinite){
+                                        player.die();
+                                    }
                                 } else {
                                     player.addSkill(info.spell[j]);
                                 }
@@ -21139,7 +21145,7 @@
             },
             // 本阶段已经成为过牌的目标啦
             _mubiao:{
-                trigger:{target:'useCardToAfter'},
+                trigger:{target:'useCardAfter'},
                 forced:true,
                 priority:-100,
                 content:function(){
@@ -43119,7 +43125,7 @@
             }
             if(arg=='skill'){
                 if(lib.translate[str+'_ab']) return lib.translate[str+'_ab'];
-                if(lib.translate[str]) return lib.translate[str].slice(0,10);
+                if(lib.translate[str]) return lib.translate[str].slice(0,15);
                 return str;
             }
             else if(arg=='info'){
@@ -43511,7 +43517,7 @@
                     else{
                         opacity='';
                     }
-                    var skilltrans=get.translation(skills[i]).slice(0,10);
+                    var skilltrans=get.translation(skills[i]).slice(0,15);
                     str+='<div class="skill" style="'+opacity+
                     '">【'+skilltrans+'】</div><div style="'+opacity+'">'+
                     get.skillInfoTranslation(skills[i])+'</div><div style="display:block;height:10px"></div>';
@@ -43684,7 +43690,7 @@
                 for(i=0;i<skills.length;i++){
                     if(lib.skill[skills[i]]&&lib.skill[skills[i]].nopop) continue;
                     if(lib.translate[skills[i]+'_info']){
-                        translation=get.translation(skills[i]).slice(0,10);
+                        translation=get.translation(skills[i]).slice(0,15);
                         if(node.forbiddenSkills[skills[i]]){
                             var forbidstr='<div style="opacity:0.5"><div class="skill">【'+translation+'】</div><div>';
                             if(node.forbiddenSkills[skills[i]].length){
@@ -43732,7 +43738,7 @@
                             if(typeof name=='function'){
                                 name=name(storage[i],node);
                             }
-                            translation='<div><div class="skill">『'+name.slice(0,10)+'』</div><div>';
+                            translation='<div><div class="skill">『'+name.slice(0,15)+'』</div><div>';
                             var stint=get.storageintro(intro.content,storage[i],node,null,i);
                             if(stint){
                                 translation+=stint+'</div></div>';
@@ -44241,7 +44247,7 @@
                     var skills=infoitem[3];
                     for(i=0;i<skills.length;i++){
                         if(lib.translate[skills[i]+'_info']){
-                            translation=get.translation(skills[i]).slice(0,10);
+                            translation=get.translation(skills[i]).slice(0,15);
                             if(lib.skill[skills[i]]&&lib.skill[skills[i]].nobracket){
                                 uiintro.add('<div><div class="skill">'+get.translation(skills[i])+'</div><div>'+get.skillInfoTranslation(skills[i])+'</div></div>');
                             }

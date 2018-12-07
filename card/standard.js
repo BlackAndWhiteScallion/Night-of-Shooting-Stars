@@ -993,7 +993,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:8
 				}
 			},
-			skills:['saiqian_skill']
+			skills:['saiqian_skill','saiqian_skill3']
 		},
 		yinyangyu:{
 			fullskin:true,
@@ -1282,6 +1282,19 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target:5
 				}
 			}
+		},
+		saiqian_skill3:{
+				enable:'chooseToUse',
+				filterCard:function(card){
+					return true;
+				},
+				position:'he',
+				viewAs:{name:'reidaisai'},
+				viewAsFilter:function(player){
+					if(!player.countCards('he')) return false;
+				},
+				prompt:'将一张牌当【例大祭】使用',
+				check:function(card){return 3-get.value(card)}
 		},
 		louguan_skill:{
 			trigger:{player:'useCardtoBegin'},
@@ -2536,9 +2549,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		windfan_info:'一回合一次，你可以将一张红色牌当做【疾风骤雨】使用/打出',
 		saiqianxiang:'赛钱箱',
 		saiqian_skill2:'赛钱！',
-		saiqianxiang_info:'一回合一次，其他角色的出牌阶段，其可以交给你一张牌。',
+		saiqian_skill3:'例大祭',
+		saiqianxiang_info:'一回合一次，其他角色的出牌阶段，其可以交给你一张牌;一回合一次，你可以将一张手牌当作【例大祭】使用。',
 		yinyangyu:'阴阳玉',
 		yinyangyu_skill:'阴阳玉',
+		yinyangyu_skill_1:'阴阳玉（没中）',
+		yinyangyu_skill_2:'阴阳玉（轰！）',
 		yinyangyu_info:'你可以将一张红色牌当做【没中】使用/打出; 你可以将一张黑色牌当做【轰！】使用/打出',
 		zhiyuu:'净颇梨之镜',
 		zhiyuu_skill:'净颇梨之镜',

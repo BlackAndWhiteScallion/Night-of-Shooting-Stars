@@ -7,7 +7,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			wriggle:['female','4',3,['yingguang','yechong']],
                   mystia:['female','4',3,[]],
                   keine:['female','3',4,['jiehuo','richuguo']],
-                  reimu:['female','2',3,[]],
+                  reimu:['female','2',3,['yinyang','mengdie','mengxiang']],
                   marisa:['female','2',3,[]],
                   twi:['female','3',3,[]],
                   reisen:['female','2',4,[]],
@@ -144,7 +144,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                         check:function(event,player){
-                              return get.value(event.card >= 5);
+                              return get.value(event.card) >= 5;
                         },
                   },
                   richuguo:{
@@ -223,16 +223,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         filter:function(event,player){
                               return player.storage.yinyang;
                         },
+                        check:function(event,player){
+                              if (player.getCards('h').length <= (player.maxHp - player.hp) && event.player.getCards('hej').length) return get.attitude(_status.event.player,trigger.target)<0;
+                              return true;
+                        },
                         content:function(){
                               'step 0'
                               var controls=['draw_card'];
                               if(trigger.player.countCards('hej')){
                                     controls.push('spin_card');
                               }
-                              controls.push('cancel');
                               player.chooseControl(controls).set('ai',function(){
                                     var trigger=_status.event.getTrigger();
-                                    if(event.player.countCards('hej')&&get.attitude(_status.event.player,trigger.target)<0){
+                                    if(trigger.player.countCards('hej')&&get.attitude(_status.event.player,trigger.target)<0){
                                           return 'spin_card';
                                     }
                                     else{
@@ -242,12 +245,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               "step 1"
                               if(result.control=='draw_card'){
                                     player.draw();
-                                    player.logSkill('moukui');
                               }
-                              else if(result.control=='discard_card'&&trigger.target.countCards('he')){
-                                    player.discardPlayerCard(trigger.target,'he',true).logSkill=['moukui',trigger.target];
+                              else if(result.control=='spin_card'&&trigger.player.countCards('he')){
+                                    //player.discardPlayerCard(trigger.target,'he',true).logSkill=['moukui',trigger.target];
+                                    player.choosePlayerCard(trigger.player,'hej', 1 ,get.prompt('yinyang',trigger.player));
                               }
-                              player.draw();
+                              'step 2'
+                              if (result.bool&&result.links.length){
+                                    trigger.player.showCards(result.links[0]);
+                                    if (get.type(result.links[0]) == 'delay'){
+                                      ui.skillPile.appendChild(result.links[0]);
+                                    } else {
+                                      ui.cardPile.appendChild(result.links[0]);
+                                      if (!player.storage.bot) player.storage.bot = result.links[0];
+                                      else player.storage.bot.insertBefore(result.links[0]); 
+                                    }
+                                    trigger.player.lose(result.links[0]);
+                              }
                               player.storage.yinyang = false;
                         },
                   },
@@ -256,20 +270,75 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         direct:true,
                         popup:false,
                         filter:function(event,player){
-                              if (event.name == 'damageEnd'){
+                              if (event.name == 'damage'){
                                     return event.nature != 'thunder';
                               }
                               return true;
                         },
                         content:function(){
-                              player.storage.yinyang = true;
+                            player.storage.yinyang = true;
                         },
-                  }
+                  },
                   mengdie:{
-
+                      skillAnimation:true,
+                      audio:2,
+                      unique:true,
+                      priority:-10,
+                      derivation:'huanjing',
+                      trigger:{player:'phaseBeginStart'},
+                      forced:true,
+                      filter:function(event,player){
+                        if(player.storage.mengdie) return false;
+                        return player.countCards('h')<=(player.maxHp-player.hp);
+                      },
+                      content:function(){
+                        "step 0"
+                        player.awakenSkill('mengdie');
+                        player.gainlili(player.maxlili-player.lili);
+                        "step 1"
+                        player.storage.mengdie=true;
+                        player.update();
+                        player.addSkill('huanjing');
+                      }
                   },
                   mengxiang:{
-
+                      audio:2,
+                      cost:2,
+                      spell:['mengxiang1'],
+                      trigger:{player:['phaseBegin']},
+                      filter:function(event,player){
+                          return player.lili > lib.skill.mengxiang.cost;
+                      },
+                      content:function(){
+                          player.loselili(lib.skill.mengxiang.cost);
+                          player.turnOver();
+                      },
+                  },
+                  mengxiang1:{
+                    trigger:{player:'useCardtoBegin'},
+                    filter:true,
+                    content:function(){
+                      'step 0'
+                      var list = [];
+                      if (trigger.target.storage._tanpai){
+                          list.push('damage & discard');
+                      } else {
+                        if (trigger.target.countCards('hej')){
+                          list.push('discard');
+                        }
+                        list.push('lilidamage');
+                      }
+                      trigger.target.chooseControl(list).set('prompt',get.prompt('mengxiang'));
+                      'step 1'
+                      if (result.control != 'lilidamage'){
+                        if (trigger.target.countCards('hej')){
+                          player.chooseToDiscard(true,'hej');
+                        }
+                      }
+                      if (result.control != 'discard'){
+                        trigger.target.damage('thunder');
+                      }
+                    }
                   },
             },
             translate:{
@@ -283,6 +352,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   jiehuo_info:'一回合一次，一名角色的出牌阶段，一张牌因你使用/打出进入弃牌堆时，可以消耗1点灵力，令一名角色获得之。',
                   richuguo:'日出国的天子',
                   richuguo_info:'符卡技（3）【限定】【永续】你可以弃置三张不同的类型的牌来代替符卡消耗；准备阶段，你可以指定一名角色，重置其体力值，灵力值，和手牌数；你进入决死状态时，重置此符卡技。',
+                  reimu:'灵梦',
+                  yinyang:'阴阳',
+                  spin_card:'将当前角色一张牌置入牌堆底',
+                  yinyang_info:'一名角色的结束阶段，若你本回合使用过牌，或受到过弹幕伤害，你可以选择一项：摸一张牌；或展示当前回合角色的一张牌，并将之置于牌堆底。',
+                  mengdie:'梦蝶',
+                  mengdie_info:'觉醒技，准备阶段，若你的手牌数不大于你已受伤值，你将灵力值补至上限，并获得〖幻境〗',
+                  mengxiang:'梦想封印',
+                  mengxiang_info:'符卡技（2）【永续】你使用牌指定目标后，可以选择一项：令目标角色：受到1点灵击伤害；或弃置一张牌；若其有明置异变牌，改为选择两项。',
             },
       };
 });
