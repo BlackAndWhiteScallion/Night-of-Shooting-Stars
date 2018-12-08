@@ -626,7 +626,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 check:function(event,player){
                     if(!player.storage.bot) return false;
                     if(player.countCards('he')<3) return false;
-                    if(lib.card[player.storage.bot[0]].subtype == 'attack' || lib.card[player.storage.bot[0]].subtype == 'disrupt') return get.attitude(player,event.player) < 0;
+                    //if(lib.card[player.storage.bot[0]].subtype == 'attack' || lib.card[player.storage.bot[0]].subtype == 'disrupt') return get.attitude(player,event.player) < 0;
                     if(lib.card[player.storage.bot[0]].type == 'equip' || lib.card[player.storage.bot[0]].subtype == 'support') return get.attitude(player,event.player) > 0;
                     return false;
                 },

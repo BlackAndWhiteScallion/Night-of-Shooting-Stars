@@ -722,7 +722,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 infinite:true,
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
-                    return player.lili > player.hp();
+                    return player.lili > player.hp;
                 },
                 content:function(){
                     player.loselili(player.hp);
