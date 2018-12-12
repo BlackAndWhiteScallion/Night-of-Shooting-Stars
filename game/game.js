@@ -11187,12 +11187,14 @@
                             }
                             else{
                                 if (target.storage.mingzhi){
-                                    for (var i = 0; i < hs.length; i ++){
-                                        if (target.storage.mingzhi.contains(hs[i])){
-                                            event.dialog.add(hs[i]);
+                                    for (var j = 0; j < hs.length; j ++){
+                                        if (target.storage.mingzhi.contains(hs[j])){
+                                            event.dialog.add([hs[j]]);
+                                        } else {
+                                            event.dialog.add([[hs[j]],'blank']);
                                         }
-                                        else event.dialog.add([hs[i],'blank']);
                                     }
+                                    directh=false;
                                 } else {
                                     event.dialog.add([hs,'blank']);
                                 }
@@ -11306,7 +11308,18 @@
                                 directh=false;
                             }
                             else{
-                                event.dialog.add([hs,'blank']);
+                                if (target.storage.mingzhi){
+                                    for (var j = 0; j < hs.length; j ++){
+                                        if (target.storage.mingzhi.contains(hs[j])){
+                                            event.dialog.add([hs[j]]);
+                                        } else {
+                                            event.dialog.add([[hs[j]],'blank']);
+                                        }
+                                    }
+                                    directh=false;
+                                } else {
+                                    event.dialog.add([hs,'blank']);
+                                }
                             }
                         }
                         else if(event.position[i]=='e'&&target.countCards('e')){
