@@ -3716,7 +3716,7 @@ div[data-decoration="bronze"]::after{
 	text-shadow: none;
 }
 .card.fullskin>.info.red {
-	color: #631515;
+	color: #ff0000;
 }
 
 .config>.toggle.onoff {

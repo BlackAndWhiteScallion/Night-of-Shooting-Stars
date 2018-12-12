@@ -7,10 +7,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			letty:['female','3',4,['shuangjiang','baofengxue']],
             chen:['female','3',3,['mingdong','shihuo','shuanggui']],
             lilywhite:['female','5',3,['chunxiao','mengya']],
-            lunasa:['female','2',3,[]],
+            lunasa:['female','2',3,['shenxuan']],
             merlin:['female','3',3,[]],
             lyrica:['female','4',3,[]],
-            alice:['female','2',3,[]],
+            alice:['female','2',3,['huanfa','mocai','hanghourai']],
             youmu:['female','3',4,['yishan','yinhuashan']],
             yuyuko:['female','1',3,['youdie','moyin','fanhundie']],
             ran:['female','2',3,['jiubian','shiqu','tianhugongzhu']],
@@ -310,7 +310,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
-                    return player.lili > player.hp;
+                    return player.lili >= player.hp;
                 },
                 check:function(event,player){
                     return true;
@@ -392,6 +392,37 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 ai:{
                     order:8,
+                    result:{
+                        player:function(player,target){
+                            return 1;
+                        }
+                    }
+                }
+            },
+            shenxuan:{
+                enable:'phaseUse',
+                usable:1,
+                filter:function(event,player){
+                    return player.getCards('h');
+                },
+                content:function(event,player){
+                    'step 0'
+                    player.chooseCard(get.prompt('shenxuan'),'h',function(card){
+                        if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
+                        else return true;
+                    }).set('ai',function(card){
+                        return 1;
+                    });
+                    'step 1'
+                    if (result.bool){
+                        if (!player.storage.mingzhi) player.storage.mingzhi = [result.cards[0]];
+                        else player.storage.mingzhi.push(result.cards[0]);
+                        player.markSkill('mingzhi');
+                        player.syncStorage('mingzhi');   
+                    }
+                },
+                ai:{
+                    order:1,
                     result:{
                         player:function(player,target){
                             return 1;
@@ -627,7 +658,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(!player.storage.bot) return false;
                     if(player.countCards('he')<3) return false;
                     //if(lib.card[player.storage.bot[0]].subtype == 'attack' || lib.card[player.storage.bot[0]].subtype == 'disrupt') return get.attitude(player,event.player) < 0;
-                    if(lib.card[player.storage.bot[0]].type == 'equip' || lib.card[player.storage.bot[0]].subtype == 'support') return get.attitude(player,event.player) > 0;
+                    //if(lib.card[player.storage.bot[0]].type == 'equip' || lib.card[player.storage.bot[0]].subtype == 'support') return get.attitude(player,event.player) > 0;
                     return false;
                 },
                 content:function(){
@@ -659,7 +690,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseUseBegin', target:'useCardToBegin'},
                 audio:2,
                 filter:function(event,player){
-                    if (event.name=='useCardToBegin') return (event.card.name=='sha' || event.card.name == 'juedou');
+                    if (event.name=='useCardTo') return (event.card.name=='sha' || event.card.name == 'juedou');
                     else return true;
                 },
                 content:function(event,player){
@@ -869,7 +900,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             mengjing2:{
-
+                // 紫妈还没完成呢
             },
         },
 		translate:{
@@ -911,6 +942,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mengya_audio1:'春天是万物复苏的季节！',
             mengya_audio2:'春天是风调雨顺的季节！',
             lilywhite_die:'哎，原来立春是明天吗？',
+            lunasa:'露娜萨',
+            shenxuan:'神弦',
+            shenxuan_info:'一回合一次，出牌阶段，你可以明置一张手牌；每名角色一回合一次，其可以将一张【轰！】当作与你一张非装备明置手牌同名的牌使用/打出。',
+            mingguan:'冥管',
+            mingguan_info:'',
             youmu:'妖梦',
             yishan:'一闪',
             yishan_info:'一回合一次，你使用【轰！】结算完毕后，你可以令一名角色摸一张牌，视为对其使用一张无视装备的【轰！】。',

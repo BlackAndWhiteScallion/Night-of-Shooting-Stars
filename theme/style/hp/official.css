@@ -29,6 +29,8 @@
     background-size: 100% 100%;
     transform: scale(1.4);
     border-radius: 0px;
+    filter:grayscale(0);
+    -webkit-filter: grayscale(0);
 }
 
 #arena.oldlayout .player .hp:not(.text):not(.actcount):not(.treasure)[data-condition="high"]>div:not(.lost){

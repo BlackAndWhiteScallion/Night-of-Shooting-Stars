@@ -1147,7 +1147,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					result:{
 						target:function(player,target){
 							if (target == player) return false;
-							return (target.hp>2)?2:0;
+							return (target.lili>2)?-2:0;
 						}
 					},
 					tag:{
@@ -1252,6 +1252,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		saiqian_skill2:{
 			audio:true,
 			enable:'phaseUse',
+			usable:1,
 			discard:false,
 			line:true,
 			prepare:function(cards,player,targets){
@@ -1269,7 +1270,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filterTarget:function(card,player,target){
 				return target!=player&&target.hasSkill('saiqian_skill',player);
 			},
-			usable:1,
 			forceaudio:true,
 			prompt:'请选择要供奉的牌',
 			content:function(){
@@ -1293,6 +1293,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				viewAsFilter:function(player){
 					if(!player.countCards('he')) return false;
 				},
+				usable:1,
 				prompt:'将一张牌当【例大祭】使用',
 				check:function(card){return 3-get.value(card)}
 		},
@@ -1584,14 +1585,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							if(target.countCards('h')==0) return 0;
 							if(player.countCards('h')<=1) return 0;
 							if(target==player){
-								if(typeof _status.event.filterCard=='function'&&
-									_status.event.filterCard({name:'huogong'})){
 									return -1.5;
-								}
 								if(_status.event.skill){
 									var viewAs=get.info(_status.event.skill).viewAs;
-									if(viewAs=='huogong') return -1.5;
-									if(viewAs&&viewAs.name=='huogong') return -1.5;
 								}
 								return 0;
 							}
@@ -1599,7 +1595,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					tag:{
-						damage:1,
 						thunderDamage:1,
 					}
 				}
@@ -1841,7 +1836,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     							if(ui.selected.cards.length){
     								return true;
     							} else{
-    								return (card.name == 'stone');
+    								return (get.name(card) == 'stone');
     							}
     							return true;
     						},
@@ -2705,7 +2700,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["spade",12,'guohe'],
 		["club",3,'guohe'],
 		["club",4,'guohe'],
-		["spade",9,'frog',-1],
+		["spade",9,'frog',""],
 		["spade",11,'wuxie'],
 		["spade",12,'wuxie'],
 		["club",7,'wuxie'],
@@ -2732,7 +2727,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["spade",6,'louguan',"",1],
 		["spade",8,'guohe'],
 		["club",8,'mirror'],
-		["club",9,'frog',-1],
+		["club",9,'frog',""],
 		["spade",11,'book',"",1],
 		["spade",7,'stone'],
 		["heart",12,'yuzhi',"",1],

@@ -1586,7 +1586,7 @@
                         item:{
                             default:'简易',
                             official:'默认',
-                            custom:'自定',
+                            //custom:'自定',
                         },
                         visualBar:function(node,item,create,switcher){
                             if(node.created){
@@ -1664,33 +1664,6 @@
                                     div.style.webkitFilter='grayscale(1)';
                                 }*/
                             }
-                            if(link=='custom'){
-                                node.classList.add('transparent');
-                                var getDB=function(num){
-                                    node.parentNode.lastChild.currentDB=num;
-                                    game.getDB('image','hp_style'+num,function(fileToLoad){
-                                        if(!fileToLoad) return;
-                                        var fileReader = new FileReader();
-                                        fileReader.onload = function(fileLoadedEvent)
-                                        {
-                                            var data = fileLoadedEvent.target.result;
-                                            node.childNodes[num-1].style.backgroundImage='url('+data+')';
-                                            node.classList.add('shown');
-                                            node.parentNode.lastChild.classList.add('showdelete');
-                                            if(num<4){
-                                                getDB(num+1);
-                                            }
-                                            else{
-                                                node.parentNode.lastChild.classList.add('hideadd');
-                                                node.classList.remove('transparent');
-                                                delete node.parentNode.firstChild.currentDB;
-                                            }
-                                        };
-                                        fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                    });
-                                }
-                                getDB(1);
-                            }
                         },
                         onclick:function(layout){
                             game.saveConfig('lili_style',layout);
@@ -1708,56 +1681,6 @@
                             if(ui.css.lili_stylesheet3){
                                 ui.css.lili_stylesheet3.remove();
                                 delete ui.css.lili_stylesheet3;
-                            }
-                            if(ui.css.lili_stylesheet4){
-                                ui.css.lili_stylesheet4.remove();
-                                delete ui.css.lili_stylesheet4;
-                            }
-                            if(layout=='custom'){
-                                game.getDB('image','lili_style1',function(fileToLoad){
-                                    if(!fileToLoad) return;
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent){
-                                        if(ui.css.lili_stylesheet1){
-                                            ui.css.lili_stylesheet1.remove();
-                                        }
-                                        ui.css.lili_stylesheet1=lib.init.sheet('.hp.actcount>div:not(.lost){background-image:url('+fileLoadedEvent.target.result+')}');
-                                    };
-                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                });
-                                game.getDB('image','lili_style2',function(fileToLoad){
-                                    if(!fileToLoad) return;
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent){
-                                        if(ui.css.lili_stylesheet2){
-                                            ui.css.lili_stylesheet2.remove();
-                                        }
-                                        ui.css.lili_stylesheet2=lib.init.sheet('.hp.actcount>div:not(.lost){background-image:url('+fileLoadedEvent.target.result+')}');
-                                    };
-                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                });
-                                game.getDB('image','lili_style3',function(fileToLoad){
-                                    if(!fileToLoad) return;
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent){
-                                        if(ui.css.lili_stylesheet3){
-                                            ui.css.lili_stylesheet3.remove();
-                                        }
-                                        ui.css.lili_stylesheet3=lib.init.sheet('.hp.actcount>div:not(.lost){background-image:url('+fileLoadedEvent.target.result+')}');
-                                    };
-                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                });
-                                game.getDB('image','lili_style4',function(fileToLoad){
-                                    if(!fileToLoad) return;
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent){
-                                        if(ui.css.lili_stylesheet4){
-                                            ui.css.lili_stylesheet4.remove();
-                                        }
-                                        ui.css.lili_stylesheet4=lib.init.sheet('.hp.actcount>.lost{background-image:url('+fileLoadedEvent.target.result+')}');
-                                    };
-                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                });
                             }
                         },
                         unfrequent:true,
@@ -5178,26 +5101,26 @@
                         frequent:true,
                     },
                     enable_all:{
-                        name:'启用全部武将',
-                        init:false,
+                        name:'启用全部角色',
+                        init:true,
                         frequent:true,
                         restart:true,
                     },
                     enable_all_cards_four:{
                         name:'启用全部卡牌',
-                        init:false,
+                        init:true,
                         frequent:true,
                         restart:true,
                     },
                     enable_all_three:{
-                        name:'启用全部武将',
-                        init:false,
+                        name:'启用全部角色',
+                        init:true,
                         frequent:true,
                         restart:true,
                     },
                     enable_all_cards:{
                         name:'启用全部卡牌',
-                        init:false,
+                        init:true,
                         frequent:true,
                         restart:true,
                     },
@@ -7137,7 +7060,7 @@
                     ui.css.card_style=lib.init.css(lib.assetURL+'theme/style/card',lib.config.card_style,styleLoaded);
                     ui.css.cardback_style=lib.init.css(lib.assetURL+'theme/style/cardback',lib.config.cardback_style,styleLoaded);
                     ui.css.hp_style=lib.init.css(lib.assetURL+'theme/style/hp',lib.config.hp_style,styleLoaded);
-
+                    ui.css.lili_style=lib.init.css(lib.assetURL+'theme/style/lili',lib.config.lili_style,styleLoaded);
                     if(lib.config.player_style&&lib.config.player_style!='default'&&lib.config.player_style!='custom'){
                         var str='';
                         switch(lib.config.player_style){
@@ -7483,21 +7406,6 @@
                         fileReader.readAsDataURL(fileToLoad, "UTF-8");
                     });
                 }
-                /*
-                if(lib.config.lili_style=='custom'){
-                    game.getDB('image','lili_style1',function(fileToLoad){
-                        if(!fileToLoad) return;
-                        var fileReader = new FileReader();
-                        fileReader.onload = function(fileLoadedEvent){
-                            if(ui.css.hp_stylesheet1){
-                                ui.css.hp_stylesheet1.remove();
-                            }
-                            ui.css.hp_stylesheet1=lib.init.sheet('.hp:not(.text):not(.actcount)[data-condition="high"]>div:not(.lost){background-image:url('+fileLoadedEvent.target.result+')}');
-                        };
-                        fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                    });
-                }
-                */
                 if(lib.config.player_style=='custom'){
                     ui.css.player_stylesheet=lib.init.sheet('#window .player{background-image:none;background-size:100% 100%;}');
                     game.getDB('image','player_style',function(fileToLoad){
@@ -9099,6 +9007,8 @@
             club:"♣︎",
             ghujia:'护甲',
             ghujia_bg:'甲',
+            mingzhi:'明置手牌',
+            mingzhi_bg:'明',
             heart2:"红桃",
             diamond2:"方片",
             spade2:"黑桃",
@@ -11168,12 +11078,24 @@
                             if(event.visible||target.isUnderControl(true)){
                                 event.dialog.add(hs);
                                 directh=false;
+                            } else{
+                                if (target.storage.mingzhi){
+                                    for (var i = 0; i < hs.length; i ++){
+                                        if (target.storage.mingzhi.contains(hs[i])){
+                                            event.dialog.add([hs[i]]);
+                                        } else {
+                                            event.dialog.add([[hs[i]],'blank']);
+                                        }
+                                    }
+                                    directh=false;
+                                } else {
+                                    event.dialog.add([hs,'blank']);
+                                }
                             }
-                            else{
-                                event.dialog.add([hs,'blank']);
-                            }
+                            game.log('there');
                         }
                         else if(event.position[i]=='e'&&target.countCards('e')){
+                            game.log('here');
                             event.dialog.addText('装备区');
                             event.dialog.add(target.getCards('e'));
                             directh=false;
@@ -11264,7 +11186,16 @@
                                 directh=false;
                             }
                             else{
-                                event.dialog.add([hs,'blank']);
+                                if (target.storage.mingzhi){
+                                    for (var i = 0; i < hs.length; i ++){
+                                        if (target.storage.mingzhi.contains(hs[i])){
+                                            event.dialog.add(hs[i]);
+                                        }
+                                        else event.dialog.add([hs[i],'blank']);
+                                    }
+                                } else {
+                                    event.dialog.add([hs,'blank']);
+                                }
                             }
                         }
                         else if(event.position[i]=='e'&&target.countCards('e')){
@@ -12588,6 +12519,16 @@
                         }
                         else{
                             cards[i].delete();
+                        }
+                        // 明置的话就去除标记
+                        if (player.storage.mingzhi && player.storage.mingzhi.contains(cards[i])){
+                            if (player.storage.mingzhi.length == 1) {
+                                delete player.storage.mingzhi;
+                                player.unmarkSkill('mingzhi');
+                            } else {
+                                player.storage.mingzhi.remove(cards[i]);
+                                player.syncStorage('mingzhi');
+                            }
                         }
                         if(!hej.contains(cards[i])){
                             cards.splice(i--,1);
@@ -19826,6 +19767,9 @@
                     }
                     return false;
                 },
+                cardEquals:function(card){
+                    return this.name == card.name && this.number == card.number && this.suit == card.suit;
+                },
                 moveDelete:function(player){
                     this.fixed=true;
                     if(!this._listeningEnd||this._transitionEnded){
@@ -20152,6 +20096,9 @@
                         var num=0;
                         if(info.priority){
                             num=info.priority*100;
+                        }
+                        if (info.spell && !info.priority){
+                            num=100;
                         }
                         if(info.forced){
                             num++;
@@ -20879,9 +20826,9 @@
             priority:function(a,b){
                 var i1=get.info(a[0]),i2=get.info(b[0]);
                 if(i1.priority==undefined) i1.priority=0;
-                if (i1.spell) i1.priority = 10;
+                if (i1.spell) i1.priority = 100;
                 if(i2.priority==undefined) i2.priority=0;
-                if (i2.spell) i2.priority = 10;
+                if (i2.spell) i2.priority = 100;
                 if(i1.priority==i2.priority){
                     if(i1.forced==undefined&&i2.forced==undefined) return 0;
                     if(i1.forced&&i2.forced) return 0;
@@ -21067,6 +21014,11 @@
                     // 那么应该使用game.player.isOut()之类的么？
                 },
                 group:['undist','mianyi']
+            },
+            mingzhi:{
+                intro:{
+                    content:'cards'
+                }
             },
             mad:{
                 mark:true,

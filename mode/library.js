@@ -441,6 +441,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'花映异变BGM：「LAST JUDGEMENT」 【SOUND HOLIC】',
 	        	'萃梦异变BGM：「まだ、もう少しだけ」 【Minstrel】',
 	        	'皆杀异变BGM： EastNewSound - 緋色月下、狂咲ノ絶　-1st Anniversary Remix-',
+	        	'笨蛋异变BGM： 「ちるのりずむ」 【ShibayanRecords】',
 	        	'图鉴BGM：「忘らるる物語」 【凋叶棕】',
 	        	],
 	        	showcase:function(init){

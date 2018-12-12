@@ -1,6 +1,5 @@
 window.noname_package={
     character:{
-        standard:'标准',
         scarlet:'红月',
         sakura:'散樱',
         imperishable:'永夜',
@@ -36,8 +35,6 @@ window.noname_package={
     },
     music:{
         music_diaochan:'貂蝉',
-        music_shezhan:'舌战',
-        music_danji:'单骑',
     },
     font:{
         xiaozhuan:'小篆',

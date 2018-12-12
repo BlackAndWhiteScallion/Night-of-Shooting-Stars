@@ -8,18 +8,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             meiling:['female','2',4,['xingmai','dizhuan','jicai']],
             koakuma:['female','4',3,['qishu','anye']],
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
-            sakuya:['female','2',3,[]],
+            sakuya:['female','2',3,['huanzang','shijing','world']],
             remilia:['female','5',4,[]],
             flandre:['female','1',4,['kuangyan','zhihou']],
 		},
 		characterIntro:{
-		  rumia:'',
-          meiling:'',
-          koakuma:'',
-          patchouli:'',
-          sakuya:'',
-          remilia:'',
-          flandre:'',
+		  rumia:'以吃人为生的一只宵暗妖怪。天真浪漫还有点笨蛋的萝莉。她可以以自己为中心制造一个完全黑暗的地带，但是她在其中也看不见，其他人也看不见她，结果她还经常会撞树上。',
+          meiling:'红魔馆的门卫。擅长中国功夫，据说还会放元气弹？因为红魔馆的门卫好像就她一个人24小时值班，所以几乎24小时都可以看到她在门口打盹……',
+          koakuma:'红魔馆图书馆的管理员（？）。没有名字没有设定没有官方插画，留下来的只有小恶魔这一个称呼，和对她的主人帕秋莉大人的忠贞不渝。',
+          patchouli:'全名帕秋莉·萝雷姬。红魔馆图书馆的馆长（？）。持有贤者之石，并会操纵全七种元素魔法的大魔女。但是同时也是个怎么都不肯出门的病弱家里蹲。',
+          sakuya:'全名十六夜咲夜。红魔馆的女仆长。持有操控时间和空间的能力，并用来做家务，因此被称作“完美而潇洒的女仆长”。似乎和蕾米过去有什么孽缘……？',
+          remilia:'全名蕾米莉亚·斯卡雷特。红魔馆的女主人。已经活了500年的萝莉吸血鬼，持有传说中的神枪冈格尼尔，和影响他人命运的能力……但是总是被红魔馆的其他人欺负着玩。',
+          flandre:'全名芙兰朵露·斯卡雷特。是蕾米小5岁的妹妹。破坏力在幻想乡里是数一数二的，但是因为精神不稳定，被姐姐关在了红魔馆的地下室495年。最近好像渐渐和解了，加入了调戏姐姐的红魔馆大家里。',
         },
 		perfectPair:{
 		},
@@ -502,6 +502,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.xianzhe.cost);
                     player.turnOver();
                 },
+                check:function(){
+                    return false;
+                },
             },
             xianzhe2:{
                 enable:'chooseToUse',
@@ -605,7 +608,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     "step 1"
                     if (result.control) player.storage.qishu = result.control;
-                    player.chooseTarget(1,get.prompt('qishu')+get.translation(result.control),function(card,player,target){
+                    player.chooseTarget(1,"选择一名角色，令其获得1点灵力并执行一个额外的"+get.translation(result.control),function(card,player,target){
                         return target != player;
                     }).set('ai',function(target){
                         if (player.storage.qishu == 'phaseDiscard'){
@@ -625,10 +628,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     } else {
                         event.finish();
                     }
-                },
-                prompt:function(){
-                    var str = "选择一名角色，令其获得1点灵力并执行一个额外的";
-                    return str;
                 },
             },
             qishu2:{
@@ -676,7 +675,134 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 }
             },
+            huanzang:{
+                audio:2,
+                group:['huanzang_1','huanzang_2'],
+                trigger:{target:'useCardtoBegin'},
+                filter:function(event,player){
+                    if (!event.card) return false;
+                    if (event.target.length)
+                    return (player.countCards('he',{suit:event.card.suit}) || player.countCards('he', {number:event.card.number}));
+                },
+                content:function(){
+                    'step 0'
+                    var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
+                    player.chooseToDiscard(get.prompt('huanzang'),function(card){
+                        return (get.type(card) == get.type(trigger.card) || get.number(card) == get.number(trigger.card));
+                    }).set('ai',function(card){
+                        if(_status.event.eff>0){
+                            return 10-get.value(card);
+                        }
+                        return 0;
+                    }).set('eff',eff);
+                    'step 1'
+                    if (result.bool){
+                        //trigger.cancel();
+                        trigger.untrigger();
+                    }
+                },
+            },
+            huanzang_1:{
+                trigger:{global:['useCardToBefore']},
+                filter:function(event,player){
+                    if (!event.card) return false;
+                    if (_status.currentPhase!=player) return false;
+                    if (event.player == player) return false;
+                    if(event.targets&&event.targets.length>1) return false;
+                    return (player.countCards('he',{suit:event.card.suit}) || player.countCards('he', {number:event.card.number}));
+                },
+                content:function(){
+                    'step 0'
+                    player.chooseToDiscard(get.prompt('huanzang'),function(card){
+                        return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
+                    }).set('ai',function(card){
+                        return 0;
+                    });
+                    'step 1'
+                    if (result.bool){
+                        //trigger.cancel();
+                        trigger.untrigger();
+                    }
+                },
+            },
+            huanzang_2:{
+                trigger:{global:'shaMiss'},
+                filter:function(event,player){
+                    if (!event.responded) return false;
+                    if (get.itemtype(event.responded.cards)!='cards') return false;
+                    if (_status.currentPhase!=player) return false;
+                    if (event.responded.cards.length > 1) return false;
+                    return (player.countCards('he',{suit:event.responded.cards[0].suit}) || player.countCards('he', {number:event.responded.cards[0].number}));
+                },
+                content:function(){
+                    "step 0"
+                    var next=player.chooseToDiscard(get.prompt('huanzang'),'he',function(card){
+                        return (get.suit(card) == get.suit(trigger.responded.cards[0]) || get.number(card) == get.number(trigger.responded.cards[0]));
+                    });
+                    next.set('ai',function(card){
+                        return -1;
+                    });
+                    "step 1"
+                    if(result.bool){
+                        trigger.untrigger();
+                        trigger.trigger('shaHit');
+                        trigger._result.bool=false;
+                    }
+                }
+            },
+            shijing:{
+                group:['shijing_mark'],
+                trigger:{player:'phaseEnd'},
+                mark:true,
+                intro:{
+                    content:'cards'
+                },
+                filter:function(event,player){
+                    return player.lili > 0 && player.storage.shijing;
+                },
+                content:function(){
+                    'step 0'
+                    event.num = player.getHandcardLimit() - player.countCards('h');
+                    player.chooseCardButton(player.storage.shijing,'获得'+event.num+'张牌',event.num,true).ai=function(button){
+                        var val=get.value(button.link);
+                        if(val<0) return -10;
+                        return val;
+                    }
+                    'step 1'
+                    player.gain(result.links)._triggered=null;
+                    for(var i=0;i<result.links.length;i++){
+                        ui.discardPile.remove(result.links[i]);
+                    }
+                    player.storage.shijing = [];
+                    player.syncStorage('shijing');
+                },
+            },
+            shijing_mark:{
+                trigger:{global:'loseEnd'},
+                popup:false,
+                forced:true,
+                filter:function(event,player){
+                    for(var i=0;i<event.cards.length;i++){
+                        if(get.position(event.cards[i])=='d'){
+                            return true;
+                        }
+                    }
+                    return _status.currentPhase==player;
+                },
+                content:function(){
+                    for (var i = 0; i < trigger.cards.length; i ++){
+                        if (!player.storage.shijing) player.storage.shijing = [trigger.cards[i]];
+                        else player.storage.shijing.push(trigger.cards[i]); 
+                    }
+                    player.markSkill('shijing');
+                    player.syncStorage('shijing');
+                },
+            },
+            world:{
+
+            },
             kuangyan:{
+                audio:2,
                 group:['kuangyan2'],
                 trigger:{player:['phaseUseBegin','damageEnd']},
                 filter:function(event,player){
@@ -726,11 +852,68 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.loselili(player.hp);
+                    player.addIncident('death');
                     player.turnOver();
                 },
             },
             zhihou2:{
-
+                group:['zhihou3'],
+                audio:4,
+                forced:true,
+                trigger:{source:'damageEnd'},
+                filter:function(event,player){
+                    return event.nature != 'thunder';
+                },
+                content:function(){
+                    'step 0'
+                    player.chooseControl('弃牌','扣灵力','技能无效','扣上限',function(){
+                        var player=_status.event.player;
+                        var trigger=_status.event.getTrigger();
+                        if(get.attitude(player,trigger.player)<0){
+                            return '弃牌';
+                        }
+                    }).set('prompt','想要和'+get.translation(trigger.player)+'怎么玩呢？');
+                    'step 1'
+                    if (result.bool){
+                        if (result.control == '弃牌'){
+                            var list = [];
+                            if (trigger.player.getCards('h')) list.push('手牌区');
+                            if (trigger.player.getCards('e')) list.push('装备区');
+                            if (trigger.player.getCards('j')) list.push('技能牌区');
+                            player.chooseControl(list,true,function(){
+                                return '手牌区';
+                            }).set('prompt','想要撕掉'+get.translation(trigger.player)+'哪里的所有牌呢？');
+                        } else if (result.control == '扣灵力'){
+                            trigger.player.lili = 1;
+                        } else if (result.control == '扣上限'){
+                            trigger.player.loseMaxHp();
+                            if (trigger.player.storage.zhihou) 
+                                trigger.player.storage.zhihou += 1;
+                            else 
+                                trigger.player.storage.zhihou = 1;
+                        } else if (result.control == '技能无效'){
+                            trigger.player.addTempSkill('fengyin');
+                        }
+                    }
+                    'step 2'
+                    if (result.bool){
+                        var cards;
+                        if (result.control == '手牌区') cards = trigger.player.getCards('h');
+                        if (result.control == '装备区') cards = trigger.player.getCards('e');
+                        if (result.control == '技能牌区') cards = trigger.player.getCards('j');
+                        trigger.player.discard(cards);
+                    }
+                },
+            },
+            zhihou3:{
+                forced:true,
+                trigger:{player:'dieEnd'},
+                content:function(){
+                    var players = game.filterPlayer();
+                    for (var i = 0; i < players.length; i ++){
+                        if (players[i].storage.zhihou) players[i].addMaxHp(players[i].storage.zhihou);
+                    }
+                }
             },
         },
 		translate:{
@@ -791,11 +974,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             anye_audio1:'不行！',
             anye_audio2:'不要这么喧哗呀……呜咕……',
             koakuma_die:'帕秋莉大人~~~~',
+            sakuya:'咲夜',
+            huanzang:'幻葬',
+            huanzang_1:'幻葬',
+            huanzang_2:'幻葬',
+            huanzang_info:'你成为其他角色的牌的唯一目标后，或其他角色于你的回合内使用牌指定目标后，你可以打出一张相同花色/点数的牌：令该牌对目标无效。',
+            shijing:'时静',
+            shijing_info:'结束阶段，你可以消耗1点灵力：获得本回合进入弃牌堆的牌，直到你的手牌数等于手牌上限。',
+            world:'咲夜的世界',
+            world_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定目标时，若该牌不是以此法使用，你可以消耗1点灵力：取消目标，并弃置一名角色的一张牌；若弃置牌可以对目标使用，来源将弃置牌对目标使用。',
             flandre:'芙兰朵露',
             kuangyan:'狂宴',
-            kuangyan_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以弃置攻击范围内的所有角色各一张牌；然后对以此法失去最后牌的角色各造成1点弹幕伤害；你发动此技能后，此技能改为锁定技，直到一名角色坠机。',
+            kuangyan_audio1:'嗯？捏一下这个，你就会爆炸吗？',
+            kuangyan_audio2:'这么就碎掉的话，一点也不好玩呢……',
+            kuangyan_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以弃置攻击范围内的所有其他角色各一张牌；然后，对其中没有手牌的角色各造成1点弹幕伤害；你发动此技能后，此技能改为锁定技，直到一名角色坠机。',
             zhihou:'之后就一个人都没有了吗？',
-            zhihou_info:'符卡技（X）【极意】（X 为你的体力值）你视为持有【皆杀】异变牌；你造成弹幕伤害后，选择一项：令受伤角色：1. 将灵力调整至1；2. 所有技能无效，直到结束阶段；3. 弃置其一个有牌的区域内所有牌；4. 扣减1点体力上限，直到此符卡结束。',
+            zhihou_info:'符卡技（X）<极意>（X 为你的体力值）你视为持有【皆杀】异变牌；你造成弹幕伤害后，选择一项：令受伤角色：1. 将灵力调整至1；2. 所有技能无效，直到结束阶段；3. 弃置其一个有牌的区域内所有牌；4. 扣减1点体力上限，直到此符卡结束。',
+            zhihou_audio1:'秘弹「之后就一个人都没有了吗？」!',
+            zhihou_audio2:'哈哈哈哈哈哈！太好玩了，太好玩了！',
+            zhihou2_audio1:'就算玩坏也没有关系的吧！',
+            zhihou2_audio2:'继续继续继续继续跳舞吧！',
+            zhihou2_audio3:'这真的是太棒了！<b>太棒了！<u>太棒了！</b></u>',
+            zhihou2_audio4:'呐，如果对你用这个会怎么样呢？',
+            flandre_die:'结果，最后还是只剩下我一个了……',
         },
 	};
 });

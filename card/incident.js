@@ -156,8 +156,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			trigger:{player:'phaseBegin'},
     			filter:function(event,player){
     				for(var i=0;i<game.players.length;i++){
-                        if(game.players[i].isOut()||game.players[i]==this) continue;
-                        if(game.players[i].lili>this.lili) return false;
+                        if(game.players[i].isOut()||game.players[i]==player) continue;
+                        if(game.players[i].lili>=player.lili) return false;
                     }
     				return player.isMaxHp(false);
     			},

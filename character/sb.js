@@ -91,9 +91,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                           return true;
                                     }).set('ai',function(target){
                                           var att=get.attitude(_status.event.player,target);
-                                          if(_status.event.neg) return -att;
                                           return att;
-                                    }).set('neg',get.value(result.card,player,'raw')<0);
+                                    });
                               }
                               'step 2'
                               player.line(result.targets,'green');
@@ -203,6 +202,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               player.syncStorage('lianxu3');
                         },
          },
+         
       },
       translate:{
          hetate:'果果',
