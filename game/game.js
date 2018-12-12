@@ -11080,11 +11080,11 @@
                                 directh=false;
                             } else{
                                 if (target.storage.mingzhi){
-                                    for (var i = 0; i < hs.length; i ++){
-                                        if (target.storage.mingzhi.contains(hs[i])){
-                                            event.dialog.add([hs[i]]);
+                                    for (var j = 0; j < hs.length; j ++){
+                                        if (target.storage.mingzhi.contains(hs[j])){
+                                            event.dialog.add([hs[j]]);
                                         } else {
-                                            event.dialog.add([[hs[i]],'blank']);
+                                            event.dialog.add([[hs[j]],'blank']);
                                         }
                                     }
                                     directh=false;
