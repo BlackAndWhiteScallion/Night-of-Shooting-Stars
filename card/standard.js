@@ -72,7 +72,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			usable:1,
 			range:{attack:1},
 			selectTarget:1,
-			filterTarget:function(card,player,target){return player!=target},
+			//filterTarget:function(card,player,target){return player!=target},
+			filterTarget:true,
 			content:function(){
 				"step 0"
 				if(event.skipShan){

@@ -93,22 +93,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         audio:2,
                         trigger:{target:'useCardToBefore'},
                         usable:1,
+                        direct:true,
                         filter:function(event,player){
-                              return event.card.name=='sha' && player.getCards('h','sha');
+                              return event.card.name=='sha' && player.countCards('h','sha') > 0;
                         },
                         content:function(){
                               "step 0"
-                              var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
                               player.chooseCard(get.prompt('bingbi'),function(card){
                                     return card.name=='sha';
                               }).set('ai',function(card){
                                     return 1;
-                              }).set('eff',eff);
+                              });
                               "step 1"
-                              if(result.bool && result.cards){
+                              if(result.bool){
                                     player.respond(result.cards,'highlight');
-                                    trigger.untrigger();
-                                    player.draw(player.storage._mubiao + 1);
+                                    trigger.cancel();
+                                    if (player.storage._mubiao) player.draw(player.storage._mubiao + 1);
+                                    else player.draw();
                               }
                         },
                         ai:{
@@ -131,7 +132,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                           }
                                     }
                               }
-                        }
+                        },
                   },
                   perfect:{
                       audio:2,

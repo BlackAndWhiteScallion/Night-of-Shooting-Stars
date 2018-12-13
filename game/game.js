@@ -19883,6 +19883,11 @@
                 goto:function(step){
                     this.step=step-1;
                 },
+                cancel:function(){
+                    this.untrigger.call(this,arguments);
+                    this.finish();
+                    this.trigger(this.name+'Cancelled');
+                },
                 redo:function(){
                     this.step--;
                 },

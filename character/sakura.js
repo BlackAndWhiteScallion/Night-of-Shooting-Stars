@@ -631,7 +631,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:2,
                 group:['hezou_2'],
-                spell:['mengxiang1'],
+                spell:['henzou_skill'],
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.hezou.cost;
@@ -643,10 +643,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             hezou_2:{
                 trigger:{player:'useCardToBegin'},
+                cost:2,
+                spell:['henzou_skill'],
                 filter:function(event,player){
                     return player.lili > lib.skill.hezou.cost;
-                }
-            }
+                },
+                content:function(){
+                    player.loselili(lib.skill.hezou.cost);
+                    player.turnOver();
+                },
+            },
             henzou_skill:{
 
             },
