@@ -1834,9 +1834,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					return {
     						filterCard:function(card,player){
     							if(ui.selected.cards.length){
-    								return true;
-    							} else{
     								return (get.name(card) == 'stone');
+    							} else{
+    								return true;
     							}
     							return true;
     						},

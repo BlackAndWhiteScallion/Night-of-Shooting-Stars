@@ -2857,7 +2857,7 @@
                     },
                     show_history:{
                         name:'出牌记录栏',
-                        init:'off',
+                        init:'left',
                         intro:'在屏幕左侧或右侧显示出牌记录',
                         unfrequent:true,
                         item:{
@@ -2885,7 +2885,7 @@
                     },
                     show_log:{
                         name:'历史记录栏',
-                        init:'off',
+                        init:'left',
                         intro:'在屏幕中部显示出牌文字记录',
                         unfrequent:true,
                         item:{
@@ -2921,7 +2921,7 @@
                     show_time:{
                         name:'显示时间',
                         intro:'在屏幕顶部显示当前时间',
-                        init:false,
+                        init:true,
                         unfrequent:true,
                         onclick:function(bool){
                             game.saveConfig('show_time',bool);
@@ -3157,7 +3157,7 @@
                     show_favourite:{
                         name:'显示添加收藏',
                         intro:'在角色的右键菜单中显示添加收藏',
-                        init:false,
+                        init:true,
                         unfrequent:true
                     },
                     show_favourite_menu:{
@@ -3201,7 +3201,7 @@
                     },
                     show_replay:{
                         name:'显示重来按钮',
-                        init:false,
+                        init:true,
                         unfrequent:true,
                         onclick:function(bool){
                             game.saveConfig('show_replay',bool);
@@ -3316,7 +3316,7 @@
                     show_wuxie:{
                         name:'显示无懈按钮',
                         intro:'在右上角显示不询问无懈',
-                        init:false,
+                        init:true,
                         unfrequent:true,
                         onclick:function(bool){
                             game.saveConfig('show_wuxie',bool);
@@ -3335,7 +3335,7 @@
                     },
                     show_discardpile:{
                         name:'暂停时显示弃牌堆',
-                        init:false,
+                        init:true,
                         unfrequent:true,
                     },
                     show_extensionmaker:{
@@ -9696,8 +9696,7 @@
                     // 再见了判定阶段
                     //player.phaseJudge();
                     // 在这里可以设置一下没有灵力的检测
-                    var nolili = false;
-                    if (player.lili == 0) nolili = true;
+                    if (player.lili == 0) var nolili = true;
                     "step 1"
                     player.phaseDraw();
                     if(!player.noPhaseDelay){
@@ -9720,7 +9719,7 @@
                     player.phaseDiscard()
                     // 看来还是不要放到固有技能那儿比较好。
                     // 如果没有灵力，并且设置中的补灵力开启，并且准备阶段没有灵力
-                    if (player.lili == 0 && lib.config.regain_lili == true && nolili == true){
+                    if (player.lili == 0 && lib.config.regain_lili == true && nolili){
                         player.gainlili();
                         game.log(player,'因灵力为0，获得了1点灵力')
                     }
@@ -11092,10 +11091,8 @@
                                     event.dialog.add([hs,'blank']);
                                 }
                             }
-                            game.log('there');
                         }
                         else if(event.position[i]=='e'&&target.countCards('e')){
-                            game.log('here');
                             event.dialog.addText('装备区');
                             event.dialog.add(target.getCards('e'));
                             directh=false;
@@ -21031,7 +21028,7 @@
             mingzhi:{
                 intro:{
                     content:'cards'
-                }
+                },
             },
             mad:{
                 mark:true,

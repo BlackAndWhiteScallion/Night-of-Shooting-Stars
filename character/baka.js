@@ -107,7 +107,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               "step 1"
                               if(result.bool && result.cards){
                                     player.respond(result.cards,'highlight');
-                                    trigger.cancel();
+                                    trigger.untrigger();
                                     player.draw(player.storage._mubiao + 1);
                               }
                         },
@@ -145,7 +145,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.loselili(lib.skill.perfect.cost);
                           player.turnOver();
                       },
-                      check:function(){
+                      check:function(event,player){
                         return player.getCards('h').length < 3;
                       },
                   },

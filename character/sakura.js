@@ -7,9 +7,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			letty:['female','3',4,['shuangjiang','baofengxue']],
             chen:['female','3',3,['mingdong','shihuo','shuanggui']],
             lilywhite:['female','5',3,['chunxiao','mengya']],
-            lunasa:['female','2',3,['shenxuan']],
-            merlin:['female','3',3,[]],
-            lyrica:['female','4',3,[]],
+            lunasa:['female','2',3,['shenxuan','zhenhun','hezou']],
+            merlin:['female','3',3,['mingguan','kuangxiang','hezou']],
+            lyrica:['female','4',3,['mingjian','huanzou','hezou']],
             alice:['female','2',3,['huanfa','mocai','hanghourai']],
             youmu:['female','3',4,['yishan','yinhuashan']],
             yuyuko:['female','1',3,['youdie','moyin','fanhundie']],
@@ -20,14 +20,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			letty:'全名蕾蒂·霍瓦特洛克。在冬天才会出来的雪女。能力是操纵寒气，也可以强化冬天的效果。<br> <b>画师：国家飯</b>',
             chen:'一只妖怪猫化作的，八云蓝的式神。因为是式神的式神所以比较弱，习性也更接近猫而不是妖怪。能力是使用妖术的能力。<br> <b>画师：水佾</b>',
             lilywhite:'在春天才会出现的，宣告春天到来的妖精。<br> <b>画师：oninoko</b>',
-            lunasa:'<br> <b>画师：中島楓</b>',
-            merlin:'<br> <b>画师：中島楓</b>',
-            lyrica:'<br> <b>画师：中島楓</b>',
-            alice:'<br> <b>画师：藤原</b>',
-            youmu:'<br> <b>画师：daiaru</b>',
-            yuyuko:'<br> <b>画师：.SIN</b>',
-            ran:'<br> <b>画师：ルリア</b>',
-            yukari:'<br> <b>画师：Shionty</b>',
+            lunasa:'全名露娜萨·普莉兹姆利巴。骚灵三姐妹中的大姐，因此也担任乐团的领队。有些阴沉，但又不喜欢拐弯抹角，且很容易较真的性子。使用乐器为小提琴，演奏的曲调带有令观众镇静，低落，甚至忧郁的效果。<br><b>画师：中島楓</b>',
+            merlin:'全名梅露兰·普莉兹姆利巴。骚灵三姐妹中的二姐。很是开朗，但是感觉上有点神经质。力量上是姐妹中最强的。使用乐器为小号，演奏的曲调带有令观众激动，激昂，甚至抓狂的效果。<br><b>画师：中島楓</b>',
+            lyrica:'全名莉莉卡·普莉兹姆利巴。骚灵三姐妹中的三妹。聪明，但是总是想用小聪明去赚姐姐们的便宜。力量上是姐妹中最强的。使用乐器为键盘，打击乐器也可以使用。<br><b>画师：中島楓</b>',
+            alice:'全名爱丽丝·玛格特罗伊德。住在魔法森林中，以操纵人偶出名的魔法使。因为是人偶使，大部分人不太敢接近，所以比较孤僻的样子。顺便也有着收集各种道具的坏习惯。<br><b>画师：藤原</b>',
+            youmu:'全名魂魄妖梦。冥界白玉楼的庭师（同时也是女仆，厨师，剑术指导）。是半人半幽灵的混血，因此持有更长的寿命和更强的身体能力。使用楼观剑和白楼剑的二刀流剑豪。<br><b>画师：daiaru</b>',
+            yuyuko:'全名西行寺幽幽子。冥界白玉楼的大小姐。冥界的管理者，可以控制死亡，也可以控制已死的幽灵。已经成为亡灵千年以上，并且没有生前的记忆，因而很是乐天和无忧无虑。<br><b>画师：.SIN</b>',
+            ran:'全名八云蓝。八云紫的式神，传说中的九尾妖狐。因为紫长期睡觉，还需要冬眠，所以工作从日常打理到大结界的维护都是蓝来进行。<br> <b>画师：ルリア</b>',
+            yukari:'全名八云紫。持有如同GM权限的控制境界的能力，力量深不可测。幻想乡的创始人之一。大部分时候都在睡觉，或者是用隙间做些很逗比的事情。<br> <b>画师：Shionty</b>',
 		},       
 		perfectPair:{
 		},
@@ -400,6 +400,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
             },
             shenxuan:{
+                global:['shenxuan_viewAs'],
                 enable:'phaseUse',
                 usable:1,
                 filter:function(event,player){
@@ -429,6 +430,260 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     }
                 }
+            },
+            shenxuan_viewAs:{
+                enable:'phaseUse',
+                usable:1,
+                audio:2,
+                filter:function(event,player){
+                    if (player.countCards('h','sha')== 0) return false;
+                    return game.hasPlayer(function(target){
+                        return target.hasSkill('shenxuan') && target.storage.mingzhi && get.distance(target,player,'attack')<=1;
+                    });
+                },
+                chooseButton:{
+                    dialog:function(event,player){
+                        var players = game.filterPlayer();
+                        var list = [];
+                        for (var i = 0; i < players.length; i ++){
+                            if (players[i].hasSkill('shenxuan') && players[i].storage.mingzhi && get.distance(players[i],player,'attack')<=1){
+                                for (var j = 0; j < players[i].storage.mingzhi.length; j ++){
+                                    game.log(players[i].storage.mingzhi[j].type);
+                                    if (players[i].storage.mingzhi[j].type != 'equip') list.push(players[i].storage.mingzhi[j].name);
+                                }
+                            }
+                        }
+                        return ui.create.dialog([list,'vcard']);
+                    },
+                    filter:function(button,player){
+                        return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent());
+                    },
+                    check:function(button){
+                        var player=_status.event.player;
+                        var recover=0,lose=1,players=game.filterPlayer();
+                        for(var i=0;i<players.length;i++){
+                            if(players[i].hp==1&&get.damageEffect(players[i],player,player)>0&&!players[i].hasSha()){
+                                return (button.link[2]=='juedou')?2:-1;
+                            }
+                            if(!players[i].isOut()){
+                                if(players[i].hp<players[i].maxHp){
+                                    if(get.attitude(player,players[i])>0){
+                                        if(players[i].hp<2){
+                                            lose--;
+                                            recover+=0.5;
+                                        }
+                                        lose--;
+                                        recover++;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        if(players[i].hp<2){
+                                            lose++;
+                                            recover-=0.5;
+                                        }
+                                        lose++;
+                                        recover--;
+                                    }
+                                }
+                                else{
+                                    if(get.attitude(player,players[i])>0){
+                                        lose--;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        lose++;
+                                    }
+                                }
+                            }
+                        }
+                        if(lose>recover&&lose>0) return (button.link[2]=='nanman')?1:-1;
+                        if(lose<recover&&recover>0) return (button.link[2]=='taoyuan')?1:-1;
+                        return (button.link[2]=='wuzhong')?1:-1;
+                    },
+                    backup:function(links,player){
+                        return {
+                            filterCard:{name:'sha'},
+                            selectCard:1,
+                            audio:2,
+                            popname:true,
+                            viewAs:{name:links[0][2]},
+                        }
+                    },
+                    prompt:function(links,player){
+                        return '将一张【轰！】当作'+get.translation(links[0][2])+'使用';
+                    }
+                },
+                ai:{
+                    order:1,
+                    result:{
+                        player:function(player){
+                            var num=0;
+                            var cards=player.getCards('h');
+                            if(cards.length>=3&&player.hp>=3) return 0;
+                            for(var i=0;i<cards.length;i++){
+                                num+=Math.max(0,get.value(cards[i],player,'raw'));
+                            }
+                            num/=cards.length;
+                            num*=Math.min(cards.length,player.hp);
+                            return 12-num;
+                        }
+                    },
+                    threaten:1.6,
+                }
+            },
+            zhenhun:{
+                trigger:{global:'phaseEnd'},
+                group:['zhenhun_mark','zhenhun_remove'],
+                //mark:true,
+                direct:true,
+                audio:2,
+                intro:{content:'cards'},
+                filter:function(event,player){
+                    return (player.storage.zhenhun) || (player.storage.mingzhi);
+                },
+                content:function(){
+                    'step 0'
+                    var list = ['cancel2'];
+                    if (player.storage.zhenhun && player.storage.zhenhun.length) list.push('获得牌');
+                    if (player.storage.mingzhi && player.storage.mingzhi.length) list.push('交出去明置牌');
+                    event.list = list;
+                    'step 1'
+                    player.chooseControl(event.list,function(event,player){
+                        if (event.list.contains('获得牌')) return '获得牌';
+                        return 'cancel2';
+                    }).set('prompt',get.prompt('zhenhun'));
+                    "step 2"
+                    event.control = result.control;
+                    if(result.control=='获得牌'){
+                        player.chooseCardButton(player.storage.zhenhun,'获得本回合因弃置进入弃牌堆的一张牌',1,true).ai=function(button){
+                            var val=get.value(button.link);
+                            if(val<0) return -10;
+                            return val;
+                        }
+                    } else if (result.control == '交出去明置牌'){
+                        player.chooseCardTarget({
+                            filterCard:function(card,player){
+                                return player.storage.mingzhi.contains(card) || get.position(card) == 'e' || get.position(card) == 'j';
+                            },
+                            filterTarget:function(card,player,target){
+                                return player!=target;
+                            },
+                            forced:true,
+                            position:'hej',
+                            prompt:get.prompt('zhenhun'),
+                        });
+                    } else if (result.control == 'cancel2'){
+                        event.finish();
+                    }
+                    "step 3"
+                    if (result.bool && event.control == '获得牌'){
+                        if (result.links.length){
+                            //player.$gain(result.links);
+                            player.gain(result.links,'log');
+                        }
+                    }
+                    if (result.bool && event.control == '交出去明置牌'){
+                        if(result.targets&&result.targets[0]){
+                            result.targets[0].gain(result.cards,player);
+                            player.$give(result.cards.length,result.targets[0]);
+                        }
+                    }
+                    event.list.remove(event.control);
+                    if (!event.list.length || event.list.length > 2) event.finish();
+                    else event.goto(1);
+                },
+            },
+            zhenhun_mark:{
+                direct:true,
+                popup:false,
+                forced:true,
+                trigger:{global:'discardAfter'},
+                filter:function(event,player){
+                    for(var i=0;i<event.cards.length;i++){
+                        if(get.position(event.cards[i])=='d'){
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                content:function(){
+                    "step 0"
+                    if(trigger.delay==false) game.delay();
+                    "step 1"
+                    if (!player.storage.zhenhun) player.storage.zhenhun = [];
+                    for(var i=0;i<trigger.cards.length;i++){
+                        if(get.position(trigger.cards[i])=='d'){
+                            player.storage.zhenhun.push(trigger.cards[i]);
+                        }
+                    }
+                    player.markSkill('zhenhun');
+                    player.syncStorage('zhenhun');
+                },
+            },
+            zhenhun_remove:{
+                popup:false,
+                forced:true,
+                trigger:{global:'phaseAfter'},
+                content:function(){
+                    player.storage.zhenhun = [];
+                    player.unmarkSkill('zhenhun');
+                },
+            },
+            hezou:{
+                audio:2,
+                cost:2,
+                group:['hezou_2'],
+                spell:['mengxiang1'],
+                trigger:{player:'phaseBegin'},
+                filter:function(event,player){
+                    return player.lili > lib.skill.hezou.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.hezou.cost);
+                    player.turnOver();
+                },
+            },
+            hezou_2:{
+                trigger:{player:'useCardToBegin'},
+                filter:function(event,player){
+                    return player.lili > lib.skill.hezou.cost;
+                }
+            }
+            henzou_skill:{
+
+            },
+            mingguan:{
+                global:['mingguan_viewAs'],
+                enable:'phaseUse',
+                usable:1,
+                filter:function(event,player){
+                    return player.getCards('h');
+                },
+                content:function(event,player){
+                    'step 0'
+                    player.chooseCard(get.prompt('mingguan'),'h',function(card){
+                        if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
+                        else return true;
+                    }).set('ai',function(card){
+                        return 1;
+                    });
+                    'step 1'
+                    if (result.bool){
+                        if (!player.storage.mingzhi) player.storage.mingzhi = [result.cards[0]];
+                        else player.storage.mingzhi.push(result.cards[0]);
+                        player.markSkill('mingzhi');
+                        player.syncStorage('mingzhi');   
+                    }
+                },
+                ai:{
+                    order:1,
+                    result:{
+                        player:function(player,target){
+                            return 1;
+                        }
+                    }
+                }
+            },
+            mingguan_viewAs:{
+
             },
             yishan:{
                 audio:2,
@@ -945,8 +1200,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             lunasa:'露娜萨',
             shenxuan:'神弦',
             shenxuan_info:'一回合一次，出牌阶段，你可以明置一张手牌；每名角色一回合一次，其可以将一张【轰！】当作与你一张非装备明置手牌同名的牌使用/打出。',
+            shenxuan_viewAs:'神弦（转化）',
+            zhenhun:'镇魂',
+            zhenhun_info:'一名角色的结束阶段，你可以选择一至两项：1. 获得本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其他角色一张明置牌。',
+            hezou:'棱镜协奏曲',
+            hezou_info:'符卡技（2）<瞬发>你成为一张【轰！】的目标时，可以选择一项：令之对你无效；或为之额外指定两名目标。',
+            merlin:'梅露兰',
             mingguan:'冥管',
-            mingguan_info:'',
+            mingguan_viewAs:'冥管（转化）',
+            mingguan_info:'一回合一次，出牌阶段，你可以明置一张手牌；你攻击范围内的角色的与你的明置手牌同名的手牌均视为【轰！】。',
+            kuangxiang:'狂想',
+            kuangxiang_info:'一回合一次，灵力值不大于你的一名角色成为【轰！】的目标时，你可以重铸你与其各一张牌；然后，若目标不包括你，将目标转移给你。',
+            lyrica:'莉莉卡',
+            mingjian:'冥键',
+            mingjian_info:'一回合各一次，出牌阶段，你可以明置一张手牌，或将一张牌交给一名其他角色并明置；你视为拥有所有有明置手牌的其他角色的装备技能；有明置手牌的其他角色视为拥有你的装备技能。',
+            huanzou:'幻奏',
+            huanzou_info:'一名角色因使用，打出，替换，或自己弃置而失去一张明置牌后，你可以令其摸一张牌。',
             youmu:'妖梦',
             yishan:'一闪',
             yishan_info:'一回合一次，你使用【轰！】结算完毕后，你可以令一名角色摸一张牌，视为对其使用一张无视装备的【轰！】。',
