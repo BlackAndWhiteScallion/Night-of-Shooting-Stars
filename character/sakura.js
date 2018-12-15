@@ -306,6 +306,155 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 mark:true,
                 intro:true,
             },
+            huanfa:{
+                trigger:{player:'phaseDiscardBegin'},
+                audio:2,
+                init:function(player){
+                    player.storage.huanfa=[];
+                },
+                intro:{
+                    mark:function(dialog,content,player){
+                        if(content&&content.length){
+                            if(player==game.me||player.isUnderControl()){
+                                dialog.addAuto(content);
+                            }
+                            else{
+                                return '共有'+get.cnNumber(content.length)+'张';
+                            }
+                        }
+                    },
+                    content:function(content,player){
+                        if(content&&content.length){
+                            if(player==game.me||player.isUnderControl()){
+                                return get.translation(content);
+                            }
+                            return '共有'+get.cnNumber(content.length)+'张';
+                        }
+                    }
+                },
+                filter:function(event,player){
+                    if (player.storage.huanfa.length > game.filterPlayer.length) return false;
+                    return player.countCards('he') > 0; 
+                },
+                content:function(){
+                    'step 0'
+                    player.chooseCard('he',[1,2],'将一至两张牌置为“手办”').set('ai',function(card){
+                        return get.value(card);
+                    });
+                    'step 1'
+                    if(result.cards&&result.cards.length){
+                        player.lose(result.cards,ui.special);
+                        player.storage.huanfa=player.storage.huanfa.concat(result.cards);
+                        player.syncStorage('huanfa');
+                        player.markSkill('huanfa');
+                        game.log(player,'将',result.cards,'置为“手办”');
+                        player.draw();
+                    }
+                },
+            },
+            mocai:{
+                audio:2,
+                direct:true,
+                priority:5,
+                trigger:{global:'useCardToBefore'},
+                filter:function(event,player){
+                    if (get.distance(player,event.target,'attack')>1) return false;
+                    if (player.storage.huanfa.length == 0) return false;
+                    return (get.subtype(event.card) == 'attack');
+                },
+                check:function(event,player){
+                    return get.attitude(player,event.player)>0;
+                },
+                content:function(){
+                    'step 0'
+                    player.chooseControlList(get.prompt('mocai'),'给目标一张“手办”','给目标找一张技能牌',function(event,player){
+                        return '给目标一张“手办”';
+                    });
+                    'step 1'
+                    if (result.control){
+                        event.control = result.control;
+                        player.chooseCardButton('选择一张“手办”',player.storage.huanfa,1, true).ai=function(button){
+                            return get.value(button.link);
+                        };
+                    } else {
+                        event.finish();
+                    }
+                    'step 2'
+                    if (result.links && result.links.length > 0){
+                        player.storage.huanfa.remove(result.links[0]);
+                        if (event.control == '给目标一张“手办”'){
+                            trigger.target.gain(result.links[0]);
+                            event.finish();
+                        } else {
+                            var cards = [];
+                            for(var i=0;i<3;i++){
+                                cards.push(ui.skillPile[i]);
+                            }
+                            player.chooseCardButton(cards,'选择一张技能牌',1,true);
+                        }
+                    }
+                    'step 3'
+                    if (event.control == '给目标找一张技能牌' && result.links) trigger.target.gain(result.links[0]);
+                },
+            },
+            hanghourai:{
+                audio:2,
+                spell:['hanghuorai1'],
+                cost:2,
+                trigger:{player:['phaseBegin']},
+                filter:function(event,player){
+                    return player.lili > lib.skill.hanghourai.cost;
+                },
+                content:function(){
+                    'step 0'
+                    player.loselili(lib.skill.hanghourai.cost);
+                    player.turnOver();
+                    player.chooseCard('he',[1,player.countCards('he')],'将任意张牌置为“手办”').set('ai',function(card){
+                        return get.value(card);
+                    });
+                    'step 1'
+                    if (result.bool && result.cards.length){
+                        player.lose(result.cards,ui.special);
+                        player.storage.huanfa=player.storage.huanfa.concat(result.cards);
+                        player.syncStorage('huanfa');
+                        player.markSkill('huanfa');
+                        game.log(player,'将',result.cards,'置为“手办”');
+                        player.draw(result.cards.length);
+                    }
+                },
+            },
+            hanghuorai1:{
+                audio:2,
+                trigger:{global:'phaseEnd'},
+                filter:function(event,player){
+                    return player.storage.huanfa.length > 0;
+                },
+                content:function(){
+                    'step 0'
+                    event.player = _status.currentPhase;
+                    player.chooseCardButton(player.storage.huanfa,'选择一张“手办”交给'+get.translation(event.player),1,true).ai=function(button){
+                        return get.value(button.link);
+                    };
+                    'step 1'
+                    if (result.bool && result.links.length){
+                        var players = game.filterPlayer();
+                        event.card = result.links[0];
+                        for (var i = 0; i < players.length;i++){
+                            if (!event.player.canUse(event.card, players[i])) players.remove(players[i]);
+                        }
+                        if (players.length == 0) event.finish();
+                        else {
+                            player.chooseTarget(('选择'+get.translation(event.player)+'使用'+get.translation(event.card)+'的目标'),function(card,player,target){
+                                return players.contains(target);
+                            });
+                        }
+                    }
+                    'step 2'
+                    if (result.bool && result.target.length){
+                        event.player.useCard(event.card,result.target);
+                    }
+                }
+            },
             chunxiao:{
                 audio:2,
                 trigger:{player:'phaseBegin'},
@@ -642,10 +791,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             hezou_2:{
-                trigger:{player:'useCardToBegin'},
+                trigger:{target:'useCardToBegin'},
                 cost:2,
                 spell:['henzou_skill'],
                 filter:function(event,player){
+                    if (event.card.name != 'sha') return false;
                     return player.lili > lib.skill.hezou.cost;
                 },
                 content:function(){
@@ -654,7 +804,44 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             henzou_skill:{
+                trigger:{target:'useCardToBegin'},
+                audio:2,
+                audioname:['merlin','lyrica'],
+                filter:function(event,player){
+                    return event.card.name == 'sha';
+                },
+                content:function(){
+                    'step 0'
+                    var players = game.filterPlayer();
+                    for (var i = 0; i < players.length; i ++){
+                        if (!trigger.player.canUse('sha',players[i])) players.remove(players[i]);
+                        if (players[i] == player) players.remove(player);
+                    }
+                    var list = ['该【轰！】无效'];
+                    if (players.length != 0) list.push('追加目标');
+                    player.chooseControl(list, get.prompt('hezou'),function(event,player){
+                        return '该【轰！】无效';
+                    });
+                    'step 1'
+                    if (result.bool){
+                        if (result.control == '该【轰！】无效'){
+                            trigger.cancel();
+                            event.finish();
+                        } else if (result.control == '追加目标'){
+                            player.chooseTarget(get.prompt('jieming'),[1,2],function(card,player,target){
+                                return trigger.player.canUse('sha',target);
+                            }).set('ai',function(target){
+                                var att=get.attitude(_status.event.player,target);
+                                return -att;
+                            });
 
+                        }
+                    }
+                    'step 2'
+                    if (result.bool && result.targets){
+                        for (var j = 0; j < result.targets.length; j ++) trigger.targets.push(result.targets[j]);
+                    }
+                },
             },
             mingguan:{
                 global:['mingguan_viewAs'],
@@ -689,8 +876,61 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
             },
             mingguan_viewAs:{
-
+                audio:2,
+                enable:'phaseUse',
+                viewAs:{name:'sha'},
+                filter:function(event,player){
+                    return game.hasPlayer(function(target){
+                        return target.hasSkill('mingguan') && target.storage.mingzhi && get.distance(target,player,'attack')<=1;
+                    });
+                },
+                filterCard:function(card,player){
+                    var players = game.filterPlayer();
+                    var list = [];
+                    for (var i = 0; i < players.length; i ++){
+                        if (players[i].hasSkill('mingguan') && players[i].storage.mingzhi){
+                            for (var j in players[i].storage.mingzhi) list.push(j.name);
+                        }
+                    }
+                    return list.contains(card.name);
+                },
+                check:function(card){
+                    return 8-get.value(card);
+                },
+                ai:{
+                    basic:{
+                        order:10
+                    }
+                }
             },
+            kuangxiang:{
+                audio:2,
+                trigger:{global:'shaBefore'},
+                direct:true,
+                filter:function(event,player){
+                    if (event.target == player) return player.countCards('he') > 1;
+                    if (player.countCards('he') < 1 || event.target.countCards('he') < 1) return false; 
+                    return player.lili >= event.target.lili;
+                },
+                content:function(){
+                    'step 0'
+                    player.discardPlayerCard(trigger.target,'he',true);
+                    'step 1'
+                    if (result.bool){
+                        trigger.target.draw();
+                        player.discardPlayerCard(player,'he',true);
+                    }
+                    'step 2'
+                    if (result.bool){
+                        player.draw();
+                        if (!trigger.target.contains(player)){
+                            trigger.target.remove(trigger.target[0]);
+                            trigger.target=player;
+                        }
+                    }
+                },
+            },
+
             yishan:{
                 audio:2,
                 direct:true,
@@ -951,7 +1191,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseUseBegin', target:'useCardToBegin'},
                 audio:2,
                 filter:function(event,player){
-                    if (event.name=='useCardTo') return (event.card.name=='sha' || event.card.name == 'juedou');
+                    if (event.name=='useCard') return get.subtype(event.card) == 'attack';
                     else return true;
                 },
                 content:function(event,player){
@@ -1193,6 +1433,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shuanggui4:'鬼',
             shuanggui_info:'符卡技（2）<永续>准备阶段，你指定一名其他角色，与其各摸一张牌；该角色需要消耗灵力时，须改为消耗你的灵力。',
             chen_die:'蓝大人不会放过你的！',
+            alice:'爱丽丝',
+            huanfa:'幻法',
+            huanfa_info:'弃牌阶段开始时，若“手办”数小于场上角色数，你可以将一至两张手牌扣置于角色牌上，称为“手办”：然后，摸一张牌。',
+            mocai:'魔彩',
+            mocai_info:'你攻击范围内的一名角色成为攻击牌的目标后，你可以选择一项：将一张“手办”置于其区域内；或弃置一张“手办”，观看技能牌堆顶的三张牌，并将其中一张交给目标。',
+            hanghourai:'上吊的蓬莱人形',
+            hanghourai_info:'符卡技（2）<永续> 符卡发动时，你可以将任意张手牌扣置为“手办”，并摸等量牌；一名角色的结束阶段，你可以交给其一张“手办”；若其可以使用该牌，你令其使用之，目标由你指定。',
             lilywhite:'莉莉白',
             chunxiao:'春晓',
             chunxiao_info:'准备阶段，若你的灵力值不小于体力值，你可以令所有角色各摸一张牌，然后各弃置与其最近的一名角色一张牌。',
@@ -1217,7 +1464,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mingguan_info:'一回合一次，出牌阶段，你可以明置一张手牌；你攻击范围内的角色的与你的明置手牌同名的手牌均视为【轰！】。',
             kuangxiang:'狂想',
             kuangxiang_info:'一回合一次，灵力值不大于你的一名角色成为【轰！】的目标时，你可以重铸你与其各一张牌；然后，若目标不包括你，将目标转移给你。',
-            lyrica:'莉莉卡',
+            //lyrica:'莉莉卡',
             mingjian:'冥键',
             mingjian_info:'一回合各一次，出牌阶段，你可以明置一张手牌，或将一张牌交给一名其他角色并明置；你视为拥有所有有明置手牌的其他角色的装备技能；有明置手牌的其他角色视为拥有你的装备技能。',
             huanzou:'幻奏',

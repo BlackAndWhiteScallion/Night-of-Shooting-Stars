@@ -9696,7 +9696,7 @@
                     // 再见了判定阶段
                     //player.phaseJudge();
                     // 在这里可以设置一下没有灵力的检测
-                    if (player.lili == 0) var nolili = true;
+                    if (player.lili == 0) event.nolili = true;
                     "step 1"
                     player.phaseDraw();
                     if(!player.noPhaseDelay){
@@ -9719,7 +9719,7 @@
                     player.phaseDiscard()
                     // 看来还是不要放到固有技能那儿比较好。
                     // 如果没有灵力，并且设置中的补灵力开启，并且准备阶段没有灵力
-                    if (player.lili == 0 && lib.config.regain_lili == true && nolili){
+                    if (player.lili == 0 && lib.config.regain_lili == true && event.nolili){
                         player.gainlili();
                         game.log(player,'因灵力为0，获得了1点灵力')
                     }
@@ -43008,6 +43008,7 @@
         bonus:function(card){
             return card.bonus;
         },
+        // 这里是怎么拿牌/获得牌堆顶的牌
         cards:function(num){
             if(_status.waitingForCards){
                 ui.create.cards.apply(ui.create,_status.waitingForCards);

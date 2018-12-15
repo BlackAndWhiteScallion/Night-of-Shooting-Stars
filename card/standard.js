@@ -655,7 +655,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						player.draw();
 					}
 					if(result.control!='被'+get.translation(player)+'观看手牌') {
-						target.useSkill('_tanpai');
+						if (target.identityShown != true) target.useSkill('_tanpai');
 					}
 				}
 			},
@@ -1636,7 +1636,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{target:'useCardToBegin'},
 			frequent:true,
 			filter:function(event,player){
-				return lib.card[event.card.name].subtype == 'attack';
+				return get.subtype(event.card) == 'attack';
 			},
 			content:function(){
 				'step 0'
