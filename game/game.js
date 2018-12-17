@@ -21117,7 +21117,6 @@
             },
             _enhance:{
                 trigger:{player:'useCard'},
-                frequent:false,
                 filter:function(event){
                     return (lib.card[event.card.name].enhance && !(event.player.lili < lib.card[event.card.name].enhance));
                 },
@@ -21129,23 +21128,20 @@
                         player.storage._enhance += 1;
                     }
                 },
-                ai:{
-                    effect:{
-                        player:function(card,player,target){
-                            if(card.name == 'guohe'){
-                                if (player.lili > 2) return 0;
-                                if (target.getCards('ej').length > 0) return 0;
-                                return 1;
-                            } else if (card.name == 'wuzhong') {
-                                if (player.lili > 2) return 0;
-                                return 1;
-                            } else if (card.name == 'wuxie') {
-                                return 0;
-                            } else if (card.name == 'danmakucraze'){
-                                if (player.lili > 2) return 0;
-                                return 1;
-                            }
-                        }
+                check:function(event,player){
+                    if (player.lili > 2) return false;
+                    var card = event.card;
+                    if(card.name == 'guohe'){
+                        if (!target.getCards('ej').length) return false;
+                            return get.attitude(player,event.target)<0;
+                    } else if (card.name == 'wuzhong') {
+                        return (!player.getCards('j').length > 2);
+                    } else if (card.name == 'wuxie') {
+                        return false;
+                    } else if (card.name == 'danmakucraze'){
+                        return player.countCards('h') < player.hp;
+                    } else if (card.name == 'caifang'){
+                        return (event.target.identityShown != true);
                     }
                 },
             },

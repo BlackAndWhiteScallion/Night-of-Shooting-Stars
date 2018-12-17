@@ -354,7 +354,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             mocai:{
                 audio:2,
-                direct:true,
                 priority:5,
                 trigger:{global:'useCardToBefore'},
                 filter:function(event,player){
@@ -372,8 +371,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.control){
-                        event.control = result.control;
-                        player.chooseCardButton('选择一张“手办”',player.storage.huanfa,1, true).ai=function(button){
+                        event.index=result.index;
+                        player.chooseCardButton('选择一张“手办”',player.storage.huanfa, 1, true).ai=function(button){
                             return get.value(button.link);
                         };
                     } else {
@@ -382,19 +381,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 2'
                     if (result.links && result.links.length > 0){
                         player.storage.huanfa.remove(result.links[0]);
-                        if (event.control == '给目标一张“手办”'){
-                            trigger.target.gain(result.links[0]);
+                        player.syncStorage('huanfa');
+                        if (event.index == 0){
+                            trigger.target.gain(result.links[0],'log');
                             event.finish();
                         } else {
                             var cards = [];
                             for(var i=0;i<3;i++){
-                                cards.push(ui.skillPile[i]);
+                                cards.push(ui.skillPile.childNodes[i]);
                             }
                             player.chooseCardButton(cards,'选择一张技能牌',1,true);
                         }
                     }
                     'step 3'
-                    if (event.control == '给目标找一张技能牌' && result.links) trigger.target.gain(result.links[0]);
+                    if (event.index == 1 && result.links) trigger.target.gain(result.links[0],'log');
                 },
             },
             hanghourai:{
@@ -439,7 +439,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.bool && result.links.length){
                         var players = game.filterPlayer();
                         event.card = result.links[0];
-                        for (var i = 0; i < players.length;i++){
+                        for (var i = 0; i < players.length; i++){
                             if (!event.player.canUse(event.card, players[i])) players.remove(players[i]);
                         }
                         if (players.length == 0) event.finish();
@@ -930,7 +930,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
             },
-
             yishan:{
                 audio:2,
                 direct:true,
@@ -945,7 +944,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if(player==target) return false;
                         return player.canUse({name:'sha'},target,false);
                     }).set('ai',function(target){
-                        if(!_status.event.check) return 0;
                         return get.effect(target,{name:'sha'},_status.event.player);
                     });
                     "step 1"
@@ -961,7 +959,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             yinhuashan:{
                 audio:3,
-                cost:0,
+                cost:1,
                 spell:['yinhuashan2'],
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
@@ -971,6 +969,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.yinhuashan.cost);
                     player.turnOver();
                 },
+                check:function(event,player){
+                    return player.countCards('h','sha') && player.lili > 3;
+                },
             },
             yinhuashan2:{
                 audio:7,
@@ -978,6 +979,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'useCard'},
                 filter:function(event,player){
                     return (event.card.name=='sha' && player.lili > 0);
+                },
+                check:function(event,player){
+                    return player.lili > 1;
                 },
                 content:function(){
                     "step 0"
