@@ -21132,8 +21132,8 @@
                     if (player.lili > 2) return false;
                     var card = event.card;
                     if(card.name == 'guohe'){
-                        if (!target.getCards('ej').length) return false;
-                            return get.attitude(player,event.target)<0;
+                        if (!event.targets[0].getCards('ej').length) return false;
+                            return get.attitude(player,event.targets[0])<0;
                     } else if (card.name == 'wuzhong') {
                         return (!player.getCards('j').length > 2);
                     } else if (card.name == 'wuxie') {
@@ -21141,7 +21141,7 @@
                     } else if (card.name == 'danmakucraze'){
                         return player.countCards('h') < player.hp;
                     } else if (card.name == 'caifang'){
-                        return (event.target.identityShown != true);
+                        return (event.targets[0].identityShown != true);
                     }
                 },
             },

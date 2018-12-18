@@ -224,6 +224,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'gainliliAfter'},
                 usable:1,
                 audio:2,
+                direct:true,
                 filter:function(event, player){
                     return event.num > 0;
                 },

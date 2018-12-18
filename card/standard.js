@@ -718,7 +718,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			fullskin:true,
 			type:'trick',
 			subtype:'defense',
-			enhance:1,
+			//enhance:1,
 			ai:{
 				basic:{
 					useful:[6,4],
@@ -1772,12 +1772,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		stone_skill:{
     		enable:'chooseToUse',
-    		hiddenCard:function(player,name){
-    			return name == 'wuxie';
-    		},
     		filter:function(event,player){
     			return (player.num('e',{name:'stone'}) > 0);
     		},
+    		audio:2,
+    		usable:1,
 			chooseButton:{
   				dialog:function(){
     					var list = [];
@@ -1835,16 +1834,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					return {
     						filterCard:function(card,player){
     							if(ui.selected.cards.length){
-    								return (get.name(card) == 'stone');
+    								if (ui.selected.cards[0].name == 'stone') return true;
+    								return (card.name == 'stone');
     							} else{
     								return true;
     							}
-    							return true;
+    							return false;
     						},
     						position:'he',
     						selectCard:2,
-    						audio:2,
-    						usable:1,
+    						complexCard:true,
     						popname:true,
     						viewAs:{name:links[0][2]},
     					}
@@ -2460,6 +2459,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.syncStorage('_lingbi2');
 				}
 			},
+		},
+		_huanxiang:{
+			trigger:{global:'gameStart'},
+			filter:function(event,player){
+				return player.countCards('huanxiang','h') > 0;
+			},
+			content:function(){
+				for (var i = 0; i < game.filterPlayer().length; i ++){
+					game.filterPlayer()[i].draw();
+				}
+			}
 		},
 		danmaku_skill:{
 			/* trigger:{player:'shaBegin'},
