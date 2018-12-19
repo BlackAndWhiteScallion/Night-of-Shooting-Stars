@@ -4,7 +4,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'imperishable',
 		connect:true,
 		character:{
-			wriggle:['female','4',3,['yingguang','yechong']],
+			   wriggle:['female','4',3,['yingguang','yechong']],
                   mystia:['female','4',3,[]],
                   keine:['female','3',4,['jiehuo','richuguo']],
                   reimu:['female','2',3,['yinyang','mengdie','mengxiang']],
@@ -16,7 +16,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mokou:['female','1',4,[]],
 		},
 		characterIntro:{
-			letty:'',
+			wriggle:'',
+                mystia:'',
+                keine:'',
+                reimu:'',
+                marisa:'',
+                tewi:'',
+                reisen:'',
+                eirin:'',
+                kaguya:'',
+                mokou:'',
 		},       
 		perfectPair:{
 		},
@@ -148,47 +157,47 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                   },
                   richuguo:{
-                      audio:2,
-                      cost:3,
-                      spell:['yechong1','yechong2'],
-                      trigger:{player:['phaseBegin']},
-                        init:function(player){
+                         audio:2,
+                         cost:3,
+                         spell:['yechong1','yechong2'],
+                         trigger:{player:'phaseBegin'},
+                         init:function(player){
                               player.storage.richuguo=true;
-                        },
-                        mark:true,
-                        intro:{
-                              content:'limited'
-                        },
-                            filter:function(event,player){
-                              if (!player.storage.richuguo) return false;
-                               var num = 0;
-                               if (player.getCards('h',{type:'basic'})) num ++;
-                               if (player.getCards('h',{type:'trick'})) num ++;
-                               if (player.getCards('he',{type:'equip'})) num ++;
-                               if (player.getCards('h'),{type:'jinji'}) num ++;
-                                return (player.lili > lib.skill.richuguo.cost) || num >= 3;
-                            },
-                            content:function(){
-                              'step 0'
-                              player.chooseCard(3,'he',function(card){
-                                    for (var i = 0; i < ui.selected.cards.length; i ++){
-                                          if (get.type(card) == get.type(ui.selected.cards[i])) return false;
-                                    }
-                                    return true;
-                              },'弃置3张不同种类的牌，或消耗3点灵力。');
-                              'step 1'
-                              if (result.cards){
-                                    //player.$throw(result.cards);
-                                    player.discard(result.cards);
-                              } else {
-                                player.loselili(lib.skill.richuguo.cost);
-                              }
-                              player.turnOver();
-                              player.storage.richuguo=false;
-                            },
-                            check:function(event, player){
-                              return player.hp < 2;
-                            }
+                          },
+                             mark:true,
+                             intro:{
+                                   content:'limited'
+                             },
+                       filter:function(event,player){
+                         if (!player.storage.richuguo) return false;
+                          var num = 0;
+                          if (player.getCards('h',{type:'basic'})) num ++;
+                          if (player.getCards('h',{type:'trick'})) num ++;
+                          if (player.getCards('he',{type:'equip'})) num ++;
+                          if (player.getCards('h'),{type:'jinji'}) num ++;
+                           return (player.lili > lib.skill.richuguo.cost) || num >= 3;
+                       },
+                       content:function(){
+                         'step 0'
+                         player.chooseCard(3,'he',function(card){
+                               for (var i = 0; i < ui.selected.cards.length; i ++){
+                                     if (get.type(card) == get.type(ui.selected.cards[i])) return false;
+                               }
+                               return true;
+                         },'弃置3张不同种类的牌，或消耗3点灵力。');
+                         'step 1'
+                         if (result.cards){
+                               //player.$throw(result.cards);
+                               player.discard(result.cards);
+                         } else {
+                           player.loselili(lib.skill.richuguo.cost);
+                         }
+                         player.turnOver();
+                         player.storage.richuguo=false;
+                       },
+                       check:function(event, player){
+                         return player.hp < 2;
+                       }
                   },
                   richuguo1:{
                         trigger:{player:['phaseBegin']},

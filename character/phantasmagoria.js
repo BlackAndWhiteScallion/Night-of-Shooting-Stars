@@ -7,16 +7,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			lilyblack:['female','5',3,['chunmian','bamiao']],
                   medicine:['female','1',3,['zaidu','zhanfang','huayuan']],
                   yuuka:['female','1',4,['zanghua','xiaofeng']],
-                  komachi:['female','3',4,[]],
+                  komachi:['female','3',4,['guihang','wujian']],
                   eiki:['female','1',4,[]],
 		},
 		characterIntro:{
-			letty:'',
+			lilyblack:'',
+                  medicine:'',
+                  yuuka:'',
+                  komachi:'',
+                  eiki:'',
 		},       
 		perfectPair:{
 		},
             skill:{
-                chunmian:{
+                  chunmian:{
                       audio:2,
                       trigger:{player:'phaseBegin'},
                       filter:function(event,player){
@@ -247,13 +251,103 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                   },
+                  guihang:{
+                        group:['guihang_cost'],
+                        audio:2,
+                        enable:['chooseToUse'],
+                        mod:{
+                              targetInRange:function(card){
+                                    if(_status.event.skill=='guihang') return true;
+                              }
+                        },
+                        filterCard:function(card,player){
+                              return true;
+                        },
+                        position:'he',
+                        viewAs:{name:'sha'},
+                        viewAsFilter:function(player){
+                              if (!player.countCards('he')) return false;
+                              return player.lili > 0;
+                        },
+                        prompt:'消耗1点灵力，将一张牌当【轰！】使用',
+                        check:function(card){return 4-get.value(card)},
+                        ai:{
+                              skillTagFilter:function(player){
+                                    if (player.lili < 2) return false;
+                                    if(!player.countCards('he')) return false;
+                              },
+                        }
+                  },
+                  guihang_cost:{
+                        trigger:{player:['useCard']},
+                        forced:true,
+                        popup:false,
+                        filter:function(event,player){
+                              return event.skill=='guihang';
+                        },
+                        content:function(){
+                              player.loselili();
+                              player.getStat().card.sha--;
+                        },
+                  },
+                  wujian:{
+                      audio:2,
+                      cost:0,
+                      spell:['wujian_skill'],
+                      trigger:{player:['phaseBegin']},
+                      filter:function(event,player){
+                          return player.lili > 1;
+                      },
+                      content:function(){
+                        'step 0'
+                        var list = [];
+                        for (var i = 1; i <= player.lili; i ++){
+                              list.push(i);
+                        }
+                          player.chooseControl(list,function(){
+                                    return get.cnNumber(_status.event.goon,true);
+                              }).set('prompt','消耗任意点灵力');
+                          'step 1'
+                          if (result.control){
+                              player.loselili(result.control);
+                              player.storage.wujian = result.control;
+                              player.turnOver();
+                          }
+                      },
+                  },
+                  wujian_skill:{
+                        enable:'phaseUse',
+                        filter:function(event,player){
+                              return player.getStat().skill.wujian_skill<player.storage.wujian;
+                        },
+                        content:function(){
+                              var list = [];
+                              var players = game.filterPlayer();
+                              for (var i = 0; i < players.length; i ++){
+                                    if (get.distance(players[i],player,'attack')<=1 && players[i] != player){
+                                          list.push(players[i]);
+                                    }
+                              }
+                              for (var j = 0; j < list.length; j++){
+                                    list[j].damage('thunder');
+                              }
+                              for (var j = 0; j < list.length; j++){
+                                    if (list[j].lili == 0) player.gainPlayerCard(list[j],true,'hej');
+                              }
+                        },
+                  },
             },
             translate:{
                   lilyblack:'莉莉黑',
                   chunmian:'春眠',
+                  chunmian_audio1:'春天马上就到了呢。',
+                  chunmian_audio2:'春眠不觉晓……',
                   chunmian_info:'准备阶段，若你的灵力值不大于体力值，你可以令所有角色各弃置与其最近的一名角色一张牌；然后，所有以此法失去牌的角色各摸一张牌。',
                   bamiao:'拔苗',
+                  bamiao_audio1:'光靠自己生长，是长不出好苗子的！',
+                  bamiao_audio2:'拔尖是越早做起越好的！',
                   bamiao_info:'一回合两次，出牌阶段，你可以：获得1点灵力，然后摸一张牌；或消耗1点灵力，然后弃置一张牌。',
+                  lilyblack_die:'那我继续春眠去了……',
                   medicine:'梅蒂欣',
                   zaidu:'灾毒',
                   zaidu_info:'结束阶段，你可以指定一名灵力不大于你的角色，令其受到１点灵击伤害；你造成弹幕伤害后，或回复体力后，你获得１点灵力。',
@@ -271,6 +365,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   xiaofeng_audio2:'那么，你死后的灵魂会长出什么花来呢？',
             	xiaofeng_info:'符卡技（4）<u>若你的体力为1，符卡消耗-2。</u>准备阶段，你视为使用一张【花之祝福】；你的攻击范围无限；你造成伤害时，令该伤害+1；你的牌点数均视为Q。',
             	yuuka_die:'嗯，我承认你还是挺强的呢。',
+                  komachi:'小町',
+                  guihang:'归航',
+                  guihang_info:'你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法对距离大于１的角色造成弹幕伤害后，弃置其一张牌，并令你与其距离视为１，且此技能无效，直到回合结束。',
+                  wujian:'无间之狭间',
+                  wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；你以此法令一名角色的灵力变成0后，获得其场上一张牌。',
             },
       };
 });

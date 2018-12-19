@@ -511,7 +511,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return event.card.type == 'trick'; 
                 },
                 content:function(){
-                    player.storage.enhance = 1;
+                    if (!player.storage._enhance){
+                        player.storage._enhance = 1;
+                    } else {
+                        player.storage._enhance += 1;
+                    }
                 },
             },
             riyin:{
@@ -565,8 +569,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             xianzhe_enhance:{
                 audio:2,
                 trigger:{player:'useCard'},
-                filter:function(event,card){
-                    return player.lili > 1;
+                filter:function(event,player){
+                    return player.lili > 1 && event.card.type == 'trick';
                 },
                 content:function(){
                     player.loselili();
@@ -576,9 +580,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.storage._enhance += 1;
                     }
                 },
+                mod:{
+                    wuxieRespondable:function(card,player,target){
+                        return card.type == 'trick' && player.storage._enhance;
+                    }
+                },
             },
             xianzhe2:{
-                trigger:{player:''},
+                trigger:{player:'useCardtoBegin'},
+                filter:function(event,player){
+                    return event.card.type == 'trick' && player.storage._enhance;
+                },
+                content:function(){
+                    
+                },
             },
             qishu:{
                 audio:2,
@@ -992,9 +1007,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             qiyao:'七曜',
             qiyao_info:'准备阶段，你可以选择任意项：跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张牌；跳过摸牌阶段，视为使用一种法术牌；跳过出牌阶段，将一张牌当作法术牌使用；你不能以此法使用同名牌。',
             qiyao3:'七曜',
-            qiyao_audio1:'',
-            qiyao_audio2:'',
-            qiyao_audio3:'',
+            qiyao_audio1:'就稍微用点手段吧。',
+            qiyao_audio2:'无趣。',
+            qiyao_audio3:'……',
             phaseUse_qiyao:'跳过出牌阶段，将一张牌当作一种法术牌使用',
             phaseDraw_qiyao:'跳过摸牌阶段，视为使用一种法术牌',
             phaseDiscard_qiyao:'跳过弃牌阶段并消耗1点灵力，强化你本回合使用的所有法术牌',
@@ -1023,17 +1038,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             huanzang:'幻葬',
             huanzang_1:'幻葬',
             huanzang_2:'幻葬',
-            huanzang_audio1:'',
-            huanzang_audio2:'',
+            huanzang_audio1:'啊？这玩笑可不好笑啊。',
+            huanzang_audio2:'呵，多谢款待了。',
             huanzang_info:'你成为其他角色的牌的唯一目标后，或其他角色于你的回合内使用牌指定目标后，你可以打出一张相同花色/点数的牌：令该牌对目标无效。',
             shijing:'时静',
-            shijing_audio1:'',
-            shijing_audio2:'',
+            shijing_audio1:'时间不是不等人，它只是不等你而已。',
+            shijing_audio2:'我好像少拿东西了，你就等我一会儿吧？',
             shijing_info:'结束阶段，你可以消耗1点灵力：获得本回合进入弃牌堆的牌，直到你的手牌数等于手牌上限。',
             world:'咲夜的世界',
             world_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定目标时，若该牌不是以此法使用，你可以消耗1点灵力：取消目标，并弃置一名角色的一张牌；若弃置牌可以对目标使用，来源将弃置牌对目标使用。',
             world_audio1:'「咲夜的世界」！',
             world_audio2:'ザ・ワールド！',
+            world_skill_audio1:'在我的世界里想要做什么呢。',
+            world_skill_audio2:'你是勇气可嘉呢，还是单纯是个笨蛋呢？',
             sakuya_die:'啊啊……我还是回去好了。',
             flandre:'芙兰朵露',
             kuangyan:'狂宴',

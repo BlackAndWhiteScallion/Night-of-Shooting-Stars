@@ -369,7 +369,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(target.num('hej')){
 					player.gainPlayerCard('hej',target,true);
 				}
-				if (!target.storage._mubiao > 1) player.loselili();
+				if (!target.storage._mubiao || target.storage._mubiao == 0) player.loselili();
 			},
 			ai:{
 				wuxie:function(target,card,player,viewer){
@@ -2329,7 +2329,19 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		// 如果明置就有急冻
 		_bingyu:{
-
+			forced:true,
+			popup:false,
+			trigger:{player:'phaseBegin'},
+			filter:function(event,player){
+				if (!player.storage.mingzhi) return false;
+				for (var i in player.storage.mingzhi){
+					if (i.name == 'bingyu') return true;
+				}
+				return false;
+			},
+			content:function(){
+				player.useSkill('jidong');
+			},
 		},
 		_zuiye:{
     		trigger:{source:'damageBefore'},

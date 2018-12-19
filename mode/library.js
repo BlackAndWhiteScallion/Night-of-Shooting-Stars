@@ -203,6 +203,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    			
 	    		},
 	    	},
+	    	help:{
+	    		name:'游戏帮助',
+	    		mode:'',
+	    		intro:[],
+	    		showcase:function(init){
+	        	},
+	    	},
 	    	ruleview:{
 	        	name:'规则帮助',
 	        	mode:'',
@@ -308,10 +315,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.style.height = "100%";
 					for (i in lib.card){
 						if(lib.translate[i] && !lib.card[i].vanish && lib.card[i].type == 'delay'){
-							var card=game.createCard(i);
-                            dialog.add(card);
+							list.push(i);
                         }
 					}
+					dialog.add([list,'vcard']);
 					this.appendChild(dialog);
 					dialog.noopen=true;
 	        	},
@@ -332,10 +339,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.style.height = "100%";
 					for (i in lib.card){
 						if(lib.translate[i] && lib.card[i].type == 'zhenfa'){
-							var card=game.createCard(i, undefined, undefined, undefined);
-                            dialog.add(card);
+							list.push(i);
                         }
 					}
+					dialog.add([list,'vcard']);
 					this.appendChild(dialog);
 					dialog.noopen=true;
 	        	},

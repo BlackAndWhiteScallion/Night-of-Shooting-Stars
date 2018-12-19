@@ -5629,16 +5629,6 @@
             brawl:{
                 name:'场景',
                 config:{
-                    duzhansanguo:{
-                        name:'毒战三国',
-                        init:true,
-                        frequent:true
-                    },
-                    daozhiyueying:{
-                        name:'导师月英',
-                        init:true,
-                        frequent:true
-                    },
                     weiwoduzun:{
                         name:'唯我独尊',
                         init:true,
@@ -5646,11 +5636,6 @@
                     },
                     tongxingzhizheng:{
                         name:'同姓之争',
-                        init:true,
-                        frequent:true
-                    },
-                    tongqueduopao:{
-                        name:'铜雀夺袍',
                         init:true,
                         frequent:true
                     },
@@ -13781,10 +13766,16 @@
 
                     return this;
                 },
-                smoothAvatar:function(){
+                smoothAvatar:function(vice,video){
                     var div=ui.create.div('.fullsize');
-                    div.style.background=getComputedStyle(this.node.avatar).background;
-                    this.node.avatar.appendChild(div);
+                    if(vice){
+                        div.style.background=getComputedStyle(this.node.avatar2).background;
+                        this.node.avatar2.appendChild(div);
+                    }
+                    else{
+                        div.style.background=getComputedStyle(this.node.avatar).background;
+                        this.node.avatar.appendChild(div);
+                    }
                     ui.refresh(div);
                     div.style.transition='all 1s';
                     setTimeout(function(){
@@ -13793,7 +13784,9 @@
                             div.remove();
                         },2000);
                     },100);
-                    game.addVideo('smoothAvatar',this);
+                    if(video!=false){
+                        game.addVideo('smoothAvatar',this,vice);
+                    }
                 },
                 changeSeat:function(position,video){
                     var player=this;
@@ -21301,7 +21294,7 @@
             },
             // 本阶段已经成为过牌的目标啦
             _mubiao:{
-                trigger:{target:'useCardAfter'},
+                trigger:{target:'useCardToAfter'},
                 forced:true,
                 priority:-100,
                 content:function(){
@@ -22941,12 +22934,14 @@
             ui.window.appendChild(audio);
             return audio;
         },
-        trySkillAudio:function(skill,player,directaudio){
+        trySkillAudio:function(skill,player,directaudio,index){
             game.broadcast(game.trySkillAudio,skill,player,directaudio);
             var info=get.info(skill);
             if(!info) return;
+            // 如果设置里打开了音效的话
             if((!info.direct||directaudio)&&lib.config.background_speak&&
                 (!lib.skill.global.contains(skill)||lib.skill[skill].forceaudio)){
+                // audioname:技能名; audioinfo:技能的audio部分
                 var audioname=skill;
                 var audioinfo=info.audio;
                 if(typeof audioinfo=='string'){ 

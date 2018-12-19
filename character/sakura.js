@@ -1383,12 +1383,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 ui.cardPile.appendChild(event.cards[i]);
                             }
                         }
-                        if (!player==_status.currentPhase){
-                            player.chooseDrawRecover(1,0,false);
-                        }
                         player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(event.cards.length-top.length)+'下');
                         game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
-                        game.delay(2);
+                        if (player!=_status.currentPhase){
+                            player.chooseBool(get.prompt('mengjie')).set('choice',true);
+                        }
+                    }
+                    'step 2'
+                    if (result.bool){
+                        player.draw();
                     }
                 }
             },  
