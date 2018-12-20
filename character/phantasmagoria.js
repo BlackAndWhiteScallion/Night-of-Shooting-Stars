@@ -113,7 +113,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   zaidu:{
                         group:['zaidu2'],
-                        audio:2,
+                        audio:6,
+                        direct:true,
                         trigger:{player:'phaseEnd'},
                         content:function(){
                            'step 0'
@@ -127,9 +128,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               });
                               "step 1"
                               if(result.bool){
-                                    if (!player.storage.zaidu) result.targets[0].damage('thunder');
-                                    else if (player.storage.zaidu == 'heal') result.targets[0].recover();
-                                    else if (player.storage.zaidu == 'damage') result.targets[0].damage();
+                                    if (!player.storage.zaidu){
+                                         result.targets[0].damage('thunder');
+                                         game.trySkillAudio('zaidu',player,true,1);
+                                    } else if (player.storage.zaidu == 'heal'){
+                                         result.targets[0].recover(); 
+                                         game.trySkillAudio('zaidu',player,true,2);
+                                    } else if (player.storage.zaidu == 'damage'){ 
+                                          result.targets[0].damage();
+                                          game.trySkillAudio('zaidu',player,true,3);
+                                    }
                               }   
                         },
                         intro:{
@@ -155,6 +163,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   zhanfang:{
                         skillAnimation:true,
                         audio:2,
+                        direct:true,
                         unique:true,
                         priority:-10,
                         trigger:{player:'phaseBeginStart'},
@@ -165,8 +174,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               "step 0"
                               player.awakenSkill('zhanfang');
-                              if (player.hp == player.maxHp) player.storage.zaidu == 'damage';
-                              else player.storage.zaidu == 'heal';
+                              if (player.hp == player.maxHp) {
+                                    player.storage.zaidu = 'damage';
+                                    game.trySkillAudio('zhanfang',player,true,1);
+                              } else {
+                                    player.storage.zaidu = 'heal';
+                                    game.trySkillAudio('zhanfang',player,true,2);
+                              }
                               player.markSkill('zaidu');
                               player.syncStorage('zaidu');
                               player.gainMaxHp();
@@ -188,6 +202,37 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               player.loselili(lib.skill.huayuan.cost);
                               player.turnOver();
+                        },
+                  },
+                  huayuan_1:{
+                        audio:2,
+                        trigger:{global:'recoverBegin'},
+                        direct:true,
+                        usable:1,
+                        content:function(){
+                              'step 0'
+                              player.chooseControl('令回复量-1','令回复量+1',function(event,player){
+                                    return '令回复量-1';
+                              });
+                              'step 1'
+                              if (result.control == '令回复量-1'){
+                                    game.log();
+                                    trigger.num--;
+                              } else {
+                                    game.log();
+                                    trigger.num++;
+                              }
+                        }
+                  },
+                  huayuan_2:{
+                        audio:2,
+                        forced:true,
+                        trigger:{global:['recoverAfter','damageEnd']},
+                        filter:function(event,player){
+                              return (event.player.hp == 0 || event.player.hp == event.player.maxHp);
+                        },
+                        content:function(){
+                              player.draw();
                         },
                   },
                   zanghua_boom:{
@@ -350,11 +395,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   lilyblack_die:'那我继续春眠去了……',
                   medicine:'梅蒂欣',
                   zaidu:'灾毒',
-                  zaidu_info:'结束阶段，你可以指定一名灵力不大于你的角色，令其受到１点灵击伤害；你造成弹幕伤害后，或回复体力后，你获得１点灵力。',
+                  zaidu_info:'结束阶段，你可以指定一名灵力不大于你的角色，令其受到1点灵击伤害；你造成弹幕伤害后，或回复体力后，你获得1点灵力。',
+                  zaidu_audio1:'',
+                  zaidu_audio2:'',
+                  zaidu_audio3:'',
+                  zaidu2_audio1:'啊……这个花的毒不错。',
+                  zaidu2_audio2:'毒性好像稍微强了一些呢？',
                   zhanfang:'绽放',
-                  zhanfang_info:'觉醒技，准备阶段，若你的灵力等于上限：若你未受伤，将【灾毒】中的“受到１点灵击伤害”改为“受到１点弹幕伤害”；否则，改为“回复１点体力”；然后，你增加１点体力上限，并发动【毒气花园】（需要消耗）。',
+                  zhanfang_audio1:'有这么多毒的话，就是世界也可以征服的吧？',
+                  zhanfang_audio2:'只用毒伤害别人，是不会成长的啦……所以！',
+                  zhanfang_info:'觉醒技，准备阶段，若你的灵力等于上限：若你未受伤，将【灾毒】中的“受到1点灵击伤害”改为“受到1点弹幕伤害”；否则，改为“回复1点体力”；然后，你增加１点体力上限，并发动【毒气花园】（需要消耗）。',
             	huayuan:'毒气花园',
-                  huayuan_info:'符卡技（2）<u>若你体力为场上最高（或之一），符卡视为持有【永续】。</u>一回合一次，一名角色回复体力时，你可以：防止之，或令其额外回复１点；一名角色的体力值变动后，若为０，或为上限，你摸一张牌。',
+                  huayuan_info:'符卡技（2）<u>若你体力为场上最高（或之一），符卡视为持有【永续】。</u>一回合一次，一名角色回复体力时，你可以：防止之，或令其额外回复1点；一名角色的体力值变动后，若为0，或为上限，你摸一张牌。',
+                  huayuan_audio1:'霧符「毒气花园」!',
+                  huayuan_audio2:'在铃兰的花园之中，永久的沉睡吧！',
+                  huayuan_1:'毒气花园',
+                  huayuan_2:'毒气花园',
+                  medicine_die:'哎，下次得多带点毒来。',
                   yuuka:'幽香',
             	zanghua:'葬花',
                   zanghua_audio1:'花儿们好像对你很感兴趣呢。',

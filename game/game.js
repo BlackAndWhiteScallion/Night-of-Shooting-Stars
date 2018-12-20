@@ -21,7 +21,8 @@
         configprefix:'star_1.9_',
         versionOL:27,
         updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
-        //updateURL:'',
+        //updateURL:'https://raw.githubusercontent.com/libccy/noname',
+        extensionURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/master/',
         //mirrorURL:'',
         mirrorURL:'https://coding.net/u/BWS/p/Night-of-Shooting-Stars/git/raw',
         hallURL:'318sgs.6655.la',
@@ -22944,6 +22945,7 @@
                 // audioname:技能名; audioinfo:技能的audio部分
                 var audioname=skill;
                 var audioinfo=info.audio;
+                // 如果audio部分是文字
                 if(typeof audioinfo=='string'){ 
                     if(audioinfo.indexOf('ext:')==0){
                         audioinfo=audioinfo.split(':');
@@ -22986,8 +22988,10 @@
                 }
                  // 因为目前没有配音，暂时跳过这里所有audio部分
                 // 如果audio里面是数字的话，就随机出
-                if(typeof audioinfo=='number'){
+                if(typeof audioinfo=='number'){ 
                     var num = Math.ceil(audioinfo*Math.random())
+                    // 如果给出了音效数字的话，换成对应音效
+                    if (index) num = index;
                     //game.playAudio('skill',audioname + num);
                     var translation = get.translation(audioname+ '_audio' + num)
                     if (translation != audioname+'_audio'+num){
@@ -22997,7 +23001,6 @@
                 else if(audioinfo){
                     //game.playAudio('skill',audioname);
                 }
-               
                 else if(true&&info.audio!==false){
                     //game.playSkillAudio(audioname);
                 }
@@ -34128,8 +34131,8 @@
                         importExtension.style.textAlign='left';
                         ui.create.div('','<input type="file" accept="application/zip" style="width:153px"><button>确定</button>',importExtension);
 
-                        var extensionURL=lib.updateURL.replace(/noname/,'noname-extension')+'/master/';
-
+                        //var extensionURL=lib.updateURL.replace(/noname/,'noname-extension')+'/master/';
+                        var extensionURL = lib.extensionURL;
                         var reloadnode=ui.create.div('.config.toggle.pointerdiv','重新启动',page,game.reload);
                         reloadnode.style.display='none';
                         var placeholder=ui.create.div('.config.toggle',page);
@@ -34263,7 +34266,6 @@
                                 });
                             });
                         };
-
                         node.update=function(){
                             if(this.updated) return;
                             if(!window.JSZip){
@@ -34281,8 +34283,14 @@
 
                             var loading=ui.create.div('.loading.config.toggle','载入中...',page);
                             var loaded=function(list){
-                                var list=window.noname_extension_list;
-                                delete window.noname_extension_list;
+                                var list=[];
+                                var extension=window.extension;
+                                for(var i in extension){
+                                    extension[i].name=i;
+                                    list.push(extension[i]);
+                                }
+                                list.randomSort();
+                                delete window.extension;
                                 loading.style.display='none';
                                 for(var i =0;i<list.length;i++){
                                     var node=ui.create.div('.videonode.menubutton.extension.large',page,clickExtension);
@@ -34290,7 +34298,7 @@
                                     ui.create.div('.text.author','作者：'+list[i].author+'<span>('+list[i].size+')</span>',node);
                                     ui.create.div('.text',list[i].intro,node);
                                     var download=ui.create.div('.menubutton.text.active','下载扩展',node.firstChild);
-                                    if(game.download){
+                                    if(!game.download){
                                         if(list[i].netdisk){
                                             var linknode=ui.create.div('.text',node);
                                             ui.create.node('span.hrefnode','网盘链接',function(){
@@ -34306,7 +34314,12 @@
                                         download.listen(downloadExtension);
                                         if(lib.config.extensions.contains(list[i].name)){
                                             download.classList.remove('active');
-                                            if(lib.config['extension_'+list[i].name+'_version']!=list[i].version){
+                                            if(lib.extensionPack[list[i].name]&&lib.extensionPack[list[i].name].version==list[i].version){
+                                                download.classList.add('transparent2');
+                                                download.classList.remove('active');
+                                                download.innerHTML='已安装';
+                                            }
+                                            else if(lib.config['extension_'+list[i].name+'_version']!=list[i].version){
                                                 download.innerHTML='更新扩展';
                                                 download.classList.add('highlight');
                                                 download.classList.add('update');
@@ -34334,25 +34347,30 @@
                                     }
                                 }
                             };
+                            window.extension={};
                             if(game.download){
-                                lib.init.req(extensionURL+'package.js',function(){
+                                lib.init.req(extensionURL+'catalog.js',function(){
                                     try{
                                         eval(this.responseText);
-                                        if(!window.noname_extension_list){
-                                            throw('err');
-                                        }
+                                        // if(!window.noname_extension_list){
+                                        //  throw('err');
+                                        // }
                                     }
                                     catch(e){
+                                        delete window.extension;
                                         loading.innerHTML='连接失败';
                                         return;
                                     }
                                     loaded();
                                 },function(){
+                                    delete window.extension;
                                     loading.innerHTML='连接失败';
                                 });
                             }
                             else{
-                                lib.init.js(extensionURL.replace(/raw\.githubusercontent\.com/,'rawgit.com')+'package.js',null,loaded,function(){
+                                lib.init.js('https://cdn.jsdelivr.net/gh/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions@master/catalog.js',null,loaded,function(){
+                                //lib.init.js(extensionURL.replace(/raw\.githubusercontent\.com/,'rawgit.com')+'catalog.js',null,loaded,function(){
+                                    delete window.extension;
                                     loading.innerHTML='连接失败';
                                 });
                             }

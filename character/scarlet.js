@@ -13,13 +13,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             flandre:['female','1',4,['kuangyan','zhihou']],
 		},
 		characterIntro:{
-		  rumia:'以吃人为生的一只宵暗妖怪。天真浪漫还有点笨蛋的萝莉。她可以以自己为中心制造一个完全黑暗的地带，但是她在其中也看不见，其他人也看不见她，结果她还经常会撞树上。',
-          meiling:'红魔馆的门卫。擅长中国功夫，据说还会放元气弹？因为红魔馆的门卫好像就她一个人24小时值班，所以几乎24小时都可以看到她在门口打盹……',
-          koakuma:'红魔馆图书馆的管理员（？）。没有名字没有设定没有官方插画，留下来的只有小恶魔这一个称呼，和对她的主人帕秋莉大人的忠贞不渝。',
-          patchouli:'全名帕秋莉·萝雷姬。红魔馆图书馆的馆长（？）。持有贤者之石，并会操纵全七种元素魔法的大魔女。但是同时也是个怎么都不肯出门的病弱家里蹲。',
-          sakuya:'全名十六夜咲夜。红魔馆的女仆长。持有操控时间和空间的能力，并用来做家务，因此被称作“完美而潇洒的女仆长”。似乎和蕾米过去有什么孽缘……？',
-          remilia:'全名蕾米莉亚·斯卡雷特。红魔馆的女主人。已经活了500年的萝莉吸血鬼，持有传说中的神枪冈格尼尔，和影响他人命运的能力……但是总是被红魔馆的其他人欺负着玩。',
-          flandre:'全名芙兰朵露·斯卡雷特。是蕾米小5岁的妹妹。破坏力在幻想乡里是数一数二的，但是因为精神不稳定，被姐姐关在了红魔馆的地下室495年。最近好像渐渐和解了，加入了调戏姐姐的红魔馆大家里。',
+		  rumia:'以吃人为生的一只宵暗妖怪。天真浪漫还有点笨蛋的萝莉。她可以以自己为中心制造一个完全黑暗的地带，但是她在其中也看不见，其他人也看不见她，结果她还经常会撞树上。<br> <b>画师：こけこっこ</b>',
+          meiling:'红魔馆的门卫。擅长中国功夫，据说还会放元气弹？因为红魔馆的门卫好像就她一个人24小时值班，所以几乎24小时都可以看到她在门口打盹……<br> <b>画师：もねてぃ</b>',
+          koakuma:'红魔馆图书馆的管理员（？）。没有名字没有设定没有官方插画，留下来的只有小恶魔这一个称呼，和对她的主人帕秋莉大人的忠贞不渝。<br> <b>画师：Dhiea</b>',
+          patchouli:'全名帕秋莉·萝雷姬。红魔馆图书馆的馆长（？）。持有贤者之石，并会操纵全七种元素魔法的大魔女。但是同时也是个怎么都不肯出门的病弱家里蹲。<br> <b>画师：忘川の泉眼</b>',
+          sakuya:'全名十六夜咲夜。红魔馆的女仆长。持有操控时间和空间的能力，并用来做家务，因此被称作“完美而潇洒的女仆长”。似乎和蕾米过去有什么孽缘……？<br> <b>画师：ds</b>',
+          remilia:'全名蕾米莉亚·斯卡雷特。红魔馆的女主人。已经活了500年的萝莉吸血鬼，持有传说中的神枪冈格尼尔，和影响他人命运的能力……但是总是被红魔馆的其他人欺负着玩。<br> <b>画师：</b>',
+          flandre:'全名芙兰朵露·斯卡雷特。是蕾米小5岁的妹妹。破坏力在幻想乡里是数一数二的，但是因为精神不稳定，被姐姐关在了红魔馆的地下室495年。最近好像渐渐和解了，加入了调戏姐姐的红魔馆大家里。<br> <b>画师：黑果冻dog</b>',
         },
 		perfectPair:{
 		},
@@ -283,7 +283,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 trigger:{player:'damageEnd'},
                 forced:true,
-                direct:true,
                 filter:function(event,player){
                     return event.cards[0].name == 'sha';
                 },
@@ -344,6 +343,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             qiyao:{
                 audio:3,
+                direct:true,
                 trigger:{player:'phaseBegin'},
                 content:function(){
                     'step 0'
@@ -358,16 +358,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (list.length == 0) event.finish();
                     event.list = list;
                     player.chooseControlList(event.list,function(){
-                            return 3;
-                        });
+                        return 3;
+                    });
                     'step 1'
                     if (result.control){
                         if (event.list[result.index] == '跳过摸牌阶段，视为使用一种法术牌'){
                             player.skip('phaseDraw');
+                            game.trySkillAudio('qiyao',player,true,1);
+                            game.log(get.translation(player)+'跳过了摸牌阶段');
                             player.useSkill('qiyao2');
                         } else if (event.list[result.index] == '跳过出牌阶段，将一张牌当作一种法术牌使用'){
                             player.skip('phaseUse');
+                            game.trySkillAudio('qiyao',player,true,2);
                             player.addTempSkill('qiyao3');
+                            game.log(get.translation(player)+'跳过了出牌阶段');
                             player.chooseToUse(function(card){
                                 if(!lib.filter.cardEnabled(card,_status.event.player,_status.event)){
                                     return false;
@@ -378,7 +382,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         } else if (event.list[result.index] == '跳过弃牌阶段并消耗1点灵力，强化你本回合使用的所有法术牌'){
                             player.skip('phaseDiscard');
                             player.loselili();
+                            game.trySkillAudio('qiyao',player,true,3);
                             player.addTempSkill('qiyao4');
+                            game.log(get.translation(player)+'跳过了弃牌阶段');
                         } else {
                             event.finish();
                         }
@@ -508,9 +514,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 priority:1000,
                 trigger:{player:'useCard'},
                 filter:function(event,player){
+                    if (!lib.card[event.card.name].enhance || player.hasSkill('xianzhe')) return false;
                     return event.card.type == 'trick'; 
                 },
                 content:function(){
+                    game.log('【七曜】效果：强化一次'+get.translation(event.card));
                     if (!player.storage._enhance){
                         player.storage._enhance = 1;
                     } else {
@@ -788,12 +796,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 popup:false,
                 forced:true,
                 filter:function(event,player){
+                    if (_status.currentPhase!=player) return false;
                     for(var i=0;i<event.cards.length;i++){
                         if(get.position(event.cards[i])=='d'){
                             return true;
                         }
                     }
-                    return _status.currentPhase==player;
+                    return false;
                 },
                 content:function(){
                     for (var i = 0; i < trigger.cards.length; i ++){

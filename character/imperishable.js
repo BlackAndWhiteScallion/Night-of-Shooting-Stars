@@ -8,24 +8,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mystia:['female','4',3,[]],
                   keine:['female','3',4,['jiehuo','richuguo']],
                   reimu:['female','2',3,['yinyang','mengdie','mengxiang']],
-                  marisa:['female','2',3,[]],
-                  tewi:['female','3',3,[]],
-                  reisen:['female','2',4,[]],
-                  eirin:['female','1',3,[]],
-                  kaguya:['female','1',3,[]],
-                  mokou:['female','1',4,[]],
+                  marisa:['female','2',3,['liuxing','xingchen','stardust']],
+                  tewi:['female','3',3,['kaiyun','mitu','yuangu']],
+                  reisen:['female','2',4,['huanshi','zhenshi']],
+                  eirin:['female','1',3,['zhaixing','lanyue','tianwen']],
+                  kaguya:['female','1',3,['nanti','poxiao','yongye']],
+                  mokou:['female','1',4,['yuhuo','businiao']],
 		},
 		characterIntro:{
-			wriggle:'',
-                mystia:'',
-                keine:'',
-                reimu:'',
-                marisa:'',
-                tewi:'',
-                reisen:'',
-                eirin:'',
-                kaguya:'',
-                mokou:'',
+			wriggle:'全名莉格露·奈特巴格。萤火虫妖怪，并且是虫王，可以操纵大量的各种虫子（和听起来一样恶心）。但是惧怕虫子的人越来越少，妖力下降到只是个萝莉，还是个笨蛋。<br> <b>画师：羽々斩</b>',
+                mystia:'全名米斯蒂娅·萝蕾拉。夜雀妖怪，可以通过歌声让人疯狂或是变成夜盲。以前以吃人为生，现在因种种原因在开烧烤店。<br> <b>画师：鶖（かしどり）</b>',
+                keine:'全名上白泽慧音。虽然是妖怪，平时与人类住在一起，并给人类孩子们教书。在月圆之夜会变身成兽人，然后做些……不可描述的事情。<br> <b>画师：にしもん</b>',
+                reimu:'全名博丽灵梦。东方project的主角，博丽神社的巫女，符卡规则的创建人。因为是巫女，在幻想乡是绝对权威势力。但是平常懒到连异变都不去解决……<br> <b>画师：萩原</b>',
+                marisa:'全名雾雨魔理沙。东方project的主角。住在魔法森林里的人类魔法使（魔炮流派）。总是抢在巫女之前冲去解决异变。因为种种原因与多名少女有说不清楚的关系。<br> <b>画师：フアルケン</b> <br><s>据说其实是创星神的分身？</s>',
+                tewi:'全名因蟠帝。住在迷途竹林里的兔妖。据说在竹林里见到她的人能获得好运。虽然，从竹林里活着出来的人并没有发现他们怎么好运了。<br> <b>画师：ねこぜ</b>',
+                reisen:'全名铃仙·优昙华院·因蟠。从月亮逃下，躲入幻想乡的一只月兔妖。因为在永远亭中是最下级的位置，总是被其他人欺负。持有令人解释不清楚程度的能力。<br> <b>画师：k2pudding</b>',
+                eirin:'全名八意永琳。不老不死的药师，月都创立人之一。数千年前从月亮逃出，带着辉夜躲入幻想乡。最近才冒出来，并开设了一个诊所。<br> <b>画师：minusT</b>',
+                kaguya:'全名蓬莱山辉夜。不老不死的月亮的公主，数千年前从月亮逃出，与永琳一同躲入幻想乡，最近才冒出来。<br> <b>画师：Riv</b>',
+                mokou:'全名藤原妹红。原本是人类，数千年前因为辉夜成为了不老不死。一段时间前流浪入了幻想乡，最近住在竹林里。<br> <b>画师：palinus</b>',
 		},       
 		perfectPair:{
 		},
@@ -349,6 +349,64 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                     }
                   },
+                  yuhuo:{
+                    audio:2,
+                    enable:'chooseToUse',
+                    subSkill:{
+                         clear:{
+                              trigger:{player:'phaseAfter'},
+                              silent:true,
+                              content:function(){
+                                   delete player.storage.yuhuo_type;
+                              }
+                         },
+                         count:{
+                              trigger:{player:'shaBegin'},
+                              silent:true,
+                              filter:function(){
+                                   return _status.event.skill=='yuhuo';
+                              },
+                              content:function(){
+                                   if (!player.storage.yuhuo_type) player.storage.yuhuo._type = [get.type(trigger.card)];
+                                   else player.storage.yuhuo._type.push(get.type(trigger.card));
+                              },
+                         },
+                    },
+                    group:['yuhuo_clear','yuhuo_count','yuhuo_2'],
+                    filterCard:function(card,player){
+                         if (!player.storage.yuhuo_type) return true;
+                         return (!player.storage.yuhuo_type.contains(get.type(card)));
+                    },
+                    position:'he',
+                    viewAs:{name:'sha'},
+                    prompt:'将一张牌当【轰！】使用',
+                    check:function(card){return 4-get.value(card)},
+                    ai:{
+                         skillTagFilter:function(player){
+                              if(get.zhu(player,'shouyue')){
+                                   if(!player.countCards('he')) return false;
+                              }
+                              else{
+                                   if(!player.countCards('he',{color:'red'})) return false;
+                              }
+                         },
+                         respondSha:true,
+                    }  
+                  },
+                  yuhuo_2:{
+                    audio:2,
+                    trigger:{player:'shaBegin'},
+                    filter:function(event,player){
+                         return player.hp > 0;
+                    },
+                    content:function(){
+                         player.loseHp();
+                         player.getStat().card.sha--;
+                    },
+                  },
+                  businiao:{
+
+                  },
             },
             translate:{
                   wriggle:'莉格露',
@@ -388,6 +446,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mengxiang_audio1:'灵符「梦想封印」！',
                   mengxiang_audio2:'以博丽巫女之名，我会退治你这个异变！',
                   reimu_die:'',
+                  mokou:'妹红',
+                  yuhuo:'狱火',
+                  yuhuo_info:'你可以将一张牌当作【轰！】使用，每回合每种类型限一次；你使用【轰！】指定目标后，可以失去1点体力，令之不算次数。',
+                  businiao:'不死鸟之羽',
+                  businiao_info:'符卡技（1）【终语】你不坠机；当前回合的结束阶段，你可以消耗1点灵力值，并使用一张攻击牌；你可以重复此流程任意次；然后，你须消耗所有灵力，将体力回复至1，并将手牌补至3张。',
             },
       };
 });
