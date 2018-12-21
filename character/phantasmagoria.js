@@ -4,7 +4,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'phantasmagoria',
 		connect:true,
 		character:{
-			lilyblack:['female','5',3,['chunmian','bamiao']],
+			lilyblack:['female','1',3,['chunmian','bamiao']],
                   medicine:['female','1',3,['zaidu','zhanfang','huayuan']],
                   yuuka:['female','1',4,['zanghua','xiaofeng']],
                   komachi:['female','3',4,['guihang','wujian']],
@@ -113,8 +113,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   zaidu:{
                         group:['zaidu2'],
-                        audio:6,
-                        direct:true,
+                        audio:0,
                         trigger:{player:'phaseEnd'},
                         content:function(){
                            'step 0'

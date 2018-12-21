@@ -781,7 +781,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:2,
                 group:['hezou_2'],
-                spell:['henzou_skill'],
+                spell:['hezou_skill'],
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.hezou.cost;
@@ -804,7 +804,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.turnOver();
                 },
             },
-            henzou_skill:{
+            hezou_skill:{
                 trigger:{target:'useCardToBegin'},
                 audio:2,
                 audioname:['merlin','lyrica'],
@@ -820,22 +820,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     var list = ['该【轰！】无效'];
                     if (players.length != 0) list.push('追加目标');
-                    player.chooseControl(list, get.prompt('hezou'),function(event,player){
+                    player.chooseControl(list,function(event,player){
                         return '该【轰！】无效';
                     });
                     'step 1'
-                    if (result.bool){
+                    if (result.control){
                         if (result.control == '该【轰！】无效'){
                             trigger.cancel();
                             event.finish();
                         } else if (result.control == '追加目标'){
-                            player.chooseTarget(get.prompt('jieming'),[1,2],function(card,player,target){
+                            player.chooseTarget(get.prompt('hezou'),[1,2],function(card,player,target){
                                 return trigger.player.canUse('sha',target);
                             }).set('ai',function(target){
                                 var att=get.attitude(_status.event.player,target);
                                 return -att;
                             });
-
                         }
                     }
                     'step 2'
@@ -890,7 +889,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     var list = [];
                     for (var i = 0; i < players.length; i ++){
                         if (players[i].hasSkill('mingguan') && players[i].storage.mingzhi){
-                            for (var j in players[i].storage.mingzhi) list.push(j.name);
+                            for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
                         }
                     }
                     return list.contains(card.name);
@@ -907,7 +906,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             kuangxiang:{
                 audio:2,
                 trigger:{global:'shaBefore'},
-                direct:true,
                 filter:function(event,player){
                     if (event.target == player) return player.countCards('he') > 1;
                     if (player.countCards('he') < 1 || event.target.countCards('he') < 1) return false; 
@@ -924,9 +922,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 2'
                     if (result.bool){
                         player.draw();
-                        if (!trigger.target.contains(player)){
-                            trigger.target.remove(trigger.target[0]);
+                        player.logSkill(event.name,result.targets);
+                        if (!trigger.targets.contains(player)){
+                            trigger.targets.remove(trigger.target);
                             trigger.target=player;
+                            trigger.targets.push(player);
                         }
                     }
                 },
@@ -1465,6 +1465,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             zhenhun:'镇魂',
             zhenhun_info:'一名角色的结束阶段，你可以选择一至两项：1. 获得本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其他角色一张明置牌。',
             hezou:'棱镜协奏曲',
+            hezou_2:'棱镜协奏曲',
+            hezou_skill:'棱镜协奏曲',
             hezou_info:'符卡技（2）<瞬发>你成为一张【轰！】的目标时，可以选择一项：令之对你无效；或为之额外指定两名目标。',
             merlin:'梅露兰',
             mingguan:'冥管',

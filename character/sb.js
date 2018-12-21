@@ -82,6 +82,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               'step 0'
                               player.judge(function(card){
+                                 if (!player.storage.nianxie_storage.contains(get.suit(card))) return -1; 
                                  return 1;   
                               });
                               'step 1'
@@ -93,10 +94,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                           var att=get.attitude(_status.event.player,target);
                                           return att;
                                     });
+                              } else {
+                                 event.finish();
                               }
                               'step 2'
-                              player.line(result.targets,'green');
-                              result.targets[0].gain(event.card,'gain2');
+                              if (result.targets.length){
+                                 player.line(result.targets,'green');
+                                 result.targets[0].gain(event.card,'gain2');
+                              }
                         },
          },
          jilan:{

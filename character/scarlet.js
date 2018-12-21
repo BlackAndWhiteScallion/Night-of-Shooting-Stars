@@ -236,7 +236,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             dizhuan:{
                 audio:2,
                 trigger:{global:'shaBefore'},
-                direct:true,
                 priority:5,
                 group:'dizhuan2',
                 filter:function(event,player){
@@ -342,8 +341,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
             },
             qiyao:{
-                audio:3,
-                direct:true,
+                audio:0,
                 trigger:{player:'phaseBegin'},
                 content:function(){
                     'step 0'
@@ -769,22 +767,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shijing:{
                 group:['shijing_mark', 'shijing_mark2'],
                 trigger:{player:'phaseEnd'},
-                mark:true,
                 intro:{
                     content:'cards'
                 },
                 filter:function(event,player){
-                    return player.lili > 0 && player.storage.shijing;
+                    return player.lili > 0 && player.storage.shijing.length > 0 && player.countCards('h') < 3;
                 },
                 content:function(){
                     'step 0'
-                    event.num = player.getHandcardLimit() - player.countCards('h');
-                    player.chooseCardButton(player.storage.shijing,'获得'+event.num+'张牌',event.num,true).ai=function(button){
+                    event.num = 3 - player.countCards('h');
+                    player.chooseCardButton(player.storage.shijing,'获得'+event.num+'张牌',[1,event.num],true).ai=function(button){
                         var val=get.value(button.link);
                         if(val<0) return -10;
                         return val;
                     }
                     'step 1'
+                    player.loselili();
                     player.gain(result.links)._triggered=null;
                     for(var i=0;i<result.links.length;i++){
                         ui.discardPile.remove(result.links[i]);
@@ -817,12 +815,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseEnd'},
                 popup:false,
                 forced:true,
+                priority:-100,
                 filter:function(event,player){
                     return _status.currentPhase == player && player.storage.shijing;
                 },
                 content:function(){
                     player.storage.shijing = [];
                     player.syncStorage('shijing');
+                    player.unmarkSkill('shijing');
                 },
             },
             world:{

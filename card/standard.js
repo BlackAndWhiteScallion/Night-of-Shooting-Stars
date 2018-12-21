@@ -1139,6 +1139,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.damage(1,'thunder');
 				target.equip(event.card);
 			},
+			skills:['frog_skill'],
 			ai:{
 					basic:{
 						order:1,
@@ -1409,6 +1410,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		windfan_skill:{
 			audio:true,
+			usable:1,
 			enable:['chooseToUse'],
 			filterCard:function(card){
 				return get.color(card)=='red';
@@ -1524,6 +1526,21 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				player.loselili(2);
 			},
+		},
+		frog_skill:{
+				enable:['chooseToUse'],
+				filterCard:function(card,player){
+					return card.name=='frog';
+				},
+				position:'e',
+				viewAs:{name:'sha'},
+				prompt:'将一张青蛙扔出去！',
+				check:function(card){return 4-get.value(card)},
+				ai:{
+					skillTagFilter:function(player){
+						return true;
+					}
+				}
 		},
 		zhiyuu_skill:{
 			audio:true,
@@ -2310,7 +2327,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		_jingxia:{
 			enable:'phaseUse',
 			filter:function(event,player){
-				return player.get('h','jingxia') > 0;
+				return player.countCards('h','jingxia') > 0;
 			},
 			content:function(){
 				'step 0'
@@ -2598,6 +2615,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		hourai_info:'你成为攻击牌的目标后，可以收回装备区中的此牌，令该牌对你无效。',
 		frog:'冰镇青蛙',
 		frog_info:'你可以将此牌置入一名其他角色的装备区（可以替换），令一名其他角色消耗1点灵力；你可以将此牌当作【轰！】使用。',
+		frog_skill:'吃我一青蛙！',
 		/*
 		magatama:'八咫琼勾玉',
 		magatama_skill:'解密',
@@ -2738,7 +2756,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["diamond",1,'deathfan'],
 		["spade",1,'windfan',"",1],
 		["club",1,'wuxie'],
-		["heart",1,'lunadial',"",1],
+		["heart",1,'lunadial',""],
 		["spade",2,'ibuki',"",1],
 		["club",2,'hourai',"",-1],
 		["heart",3,'pantsu',"", 1],

@@ -159,22 +159,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   richuguo:{
                          audio:2,
                          cost:3,
-                         spell:['yechong1','yechong2'],
+                         spell:['richuguo1','richuguo2'],
                          trigger:{player:'phaseBegin'},
                          init:function(player){
                               player.storage.richuguo=true;
                           },
-                             mark:true,
-                             intro:{
-                                   content:'limited'
-                             },
+                         mark:true,
+                         intro:{
+                              content:'limited'
+                         },
                        filter:function(event,player){
                          if (!player.storage.richuguo) return false;
                           var num = 0;
-                          if (player.getCards('h',{type:'basic'})) num ++;
-                          if (player.getCards('h',{type:'trick'})) num ++;
-                          if (player.getCards('he',{type:'equip'})) num ++;
-                          if (player.getCards('h'),{type:'jinji'}) num ++;
+                          if (player.countCards('h',{type:'basic'}) > 0) num ++;
+                          if (player.countCards('h',{type:'trick'}) > 0) num ++;
+                          if (player.countCards('he',{type:'equip'}) > 0) num ++;
+                          if (player.countCards('h',{type:'jinji'}) > 0) num ++;
                            return (player.lili > lib.skill.richuguo.cost) || num >= 3;
                        },
                        content:function(){
@@ -337,7 +337,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                         list.push('lilidamage');
                       }
-                      trigger.target.chooseControl(list).set('prompt',get.prompt('mengxiang'));
+                      player.chooseControl(list).set('prompt',get.prompt('mengxiang'));
                       'step 1'
                       if (result.control != 'lilidamage'){
                         if (trigger.target.countCards('hej')){

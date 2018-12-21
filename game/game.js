@@ -387,10 +387,10 @@
                         }
                     },
                     doubleclick_intro:{
-                        name:'双击显示武将资料',
+                        name:'双击显示角色资料',
                         init:true,
                         unfrequent:true,
-                        intro:'双击武将头像后显示其资料卡',
+                        intro:'双击角色头像后显示其资料卡',
                     },
                     video:{
                         name:'保存录像',
@@ -1108,7 +1108,7 @@
                     change_skin:{
                         name:'开启换肤',
                         init:false,
-                        intro:'在武将的右键菜单中换肤，皮肤可在选项-文件-图片文件-皮肤图片中添加'
+                        intro:'在角色的右键菜单中换肤，皮肤可在选项-文件-图片文件-皮肤图片中添加'
                     },
                     change_skin_auto:{
                         name:'自动换肤',
@@ -2695,7 +2695,7 @@
                     },
                     die_move:{
                         name:'阵亡效果',
-                        intro:'阵亡后武将的显示效果',
+                        intro:'阵亡后角色的显示效果',
                         init:'flip',
                         unfrequent:true,
                         item:{
@@ -3132,8 +3132,8 @@
                         unfrequent:true,
                     },
                     recent_character_number:{
-                        name:'最近使用武将',
-                        intro:'自由选将对话框中最近使用武将的数量',
+                        name:'最近使用角色',
+                        intro:'自由选将对话框中最近使用角色的数量',
                         init:'12',
                         item:{
                             '6':'6',
@@ -3150,8 +3150,8 @@
                         unfrequent:true,
                     },
                     show_charactercard:{
-                        name:'显示武将资料',
-                        intro:'在武将界面单击时弹出武将资料卡',
+                        name:'显示角色资料',
+                        intro:'在角色界面单击时弹出角色资料卡',
                         init:true,
                         unfrequent:true
                     },
@@ -3163,13 +3163,13 @@
                     },
                     show_favourite_menu:{
                         name:'显示收藏菜单',
-                        intro:'在选项-武将中显示收藏一栏',
+                        intro:'在选项-角色中显示收藏一栏',
                         init:true,
                         unfrequent:true
                     },
                     show_ban_menu:{
                         name:'显示禁将菜单',
-                        intro:'在选项-武将中显示禁将一栏',
+                        intro:'在选项-角色中显示禁将一栏',
                         init:true,
                         unfrequent:true
                     },
@@ -3824,7 +3824,7 @@
                     restart:true,
                 },
                 intro:{
-                    name:'将挑战模式的武将添加到其它模式',
+                    name:'将挑战模式的角色添加到其它模式',
                     clear:true,
                     nopointer:true,
                 },
@@ -4296,7 +4296,7 @@
                                 delete ui.continue_game;
                             }
                         },
-                        intro:'游戏结束后可选择用相同的武将再进行一局游戏'
+                        intro:'游戏结束后可选择用相同的角色再进行一局游戏'
                     },
                     dierestart:{
                         name:'坠机后显示重来',
@@ -4386,7 +4386,7 @@
                         },
                     },
                     choice_zhu:{
-                        name:'黑幕候选武将数',
+                        name:'黑幕候选角色数',
                         init:'5',
                         restart:true,
                         item:{
@@ -4399,7 +4399,7 @@
                         },
                     },
                     choice_zhong:{
-                        name:'异变候选武将数',
+                        name:'异变候选角色数',
                         init:'5',
                         restart:true,
                         item:{
@@ -4412,7 +4412,7 @@
                         },
                     },
                     choice_nei:{
-                        name:'路人候选武将数',
+                        name:'路人候选角色数',
                         init:'5',
                         restart:true,
                         item:{
@@ -4425,7 +4425,7 @@
                         },
                     },
                     choice_fan:{
-                        name:'自机候选武将数',
+                        name:'自机候选角色数',
                         init:'5',
                         restart:true,
                         item:{
@@ -4777,7 +4777,7 @@
                                 delete ui.continue_game;
                             }
                         },
-                        intro:'游戏结束后可选择用相同的武将再进行一局游戏'
+                        intro:'游戏结束后可选择用相同的角色再进行一局游戏'
                     },
                     dierestart:{
                         name:'死亡后显示重来',
@@ -4867,7 +4867,7 @@
                         },
                     },
                     choice_zhu:{
-                        name:'主公候选武将数',
+                        name:'主公候选角色数',
                         init:'3',
                         restart:true,
                         item:{
@@ -4880,7 +4880,7 @@
                         },
                     },
                     choice_zhong:{
-                        name:'忠臣候选武将数',
+                        name:'忠臣候选角色数',
                         init:'4',
                         restart:true,
                         item:{
@@ -4893,7 +4893,7 @@
                         },
                     },
                     choice_nei:{
-                        name:'内奸候选武将数',
+                        name:'内奸候选角色数',
                         init:'5',
                         restart:true,
                         item:{
@@ -4906,7 +4906,7 @@
                         },
                     },
                     choice_fan:{
-                        name:'反贼候选武将数',
+                        name:'反贼候选角色数',
                         init:'3',
                         restart:true,
                         item:{
@@ -4957,7 +4957,7 @@
                         intro:'最后行动的角色可在开局时重铸一次手牌'
                     },
                     connect_choice_num:{
-                        name:'侯选武将数',
+                        name:'侯选角色数',
                         init:'20',
                         frequent:true,
                         item:{
@@ -5228,15 +5228,15 @@
                         name:'替补模式',
                         init:false,
                         frequent:true,
-                        intro:'每个额外选择一名武将，死亡后用该武将代替重新上场，替补武将用完时失败'
+                        intro:'每个额外选择一名角色，死亡后用该角色代替重新上场，替补角色用完时失败'
                     },
                     expand_dialog:{
                         name:'默认展开选将框',
-                        intro:'选将框打开时直接显示全部武将（可能使游戏在开始时卡顿）',
+                        intro:'选将框打开时直接显示全部角色（可能使游戏在开始时卡顿）',
                         init:false,
                     },
                     siguo_character:{
-                        name:'专属武将出场率',
+                        name:'专属角色出场率',
                         init:'increase',
                         item:{
                             increase:'大概率',
@@ -5504,7 +5504,7 @@
                         init:true,
                     },
                     chess_character:{
-                        name:'战棋武将',
+                        name:'战棋角色',
                         init:true,
                         frequent:true,
                     },
@@ -9028,7 +9028,7 @@
             draw_card:'摸牌',
             discard_card:'弃牌',
             take_damage:'受伤害',
-            reset_character:'复原武将牌',
+            reset_character:'复原角色牌',
             recover_hp:'回复体力',
             lose_hp:'流失体力',
             get_damage:'受伤害',
@@ -21110,12 +21110,14 @@
                 },
             },
             _enhance:{
+                popup:false,
                 trigger:{player:'useCard'},
                 filter:function(event){
                     return (lib.card[event.card.name].enhance && !(event.player.lili < lib.card[event.card.name].enhance));
                 },
                 content:function(){
                     player.loselili(lib.card[trigger.card.name].enhance);
+                    game.log(get.translation(player)+'强化了'+get.translation(trigger.card.name)+'。');
                     if (!player.storage._enhance){
                         player.storage._enhance = 1;
                     } else {
@@ -27614,14 +27616,14 @@
                             e.stopPropagation();
                             event.freechoosedialog.style.transform='scale(0.8)';
                             if(event.replacing){
-                                event.prompt('用'+get.translation(event.replacing)+'替换一名武将');
+                                event.prompt('用'+get.translation(event.replacing)+'替换一名角色');
                             }
                             else{
                                 if(event.side==0){
-                                    event.prompt('请选择两名武将');
+                                    event.prompt('请选择两名角色');
                                 }
                                 else{
-                                    event.prompt('请选择一名武将');
+                                    event.prompt('请选择一名角色');
                                 }
                             }
                         });
@@ -27637,10 +27639,10 @@
                         if(event.replacing){
                             delete event.replacing;
                             if(event.side==0){
-                                event.prompt('请选择两名武将');
+                                event.prompt('请选择两名角色');
                             }
                             else{
-                                event.prompt('请选择一名武将');
+                                event.prompt('请选择一名角色');
                             }
                         }
                     };
@@ -27723,10 +27725,10 @@
                 if(event.side<2){
                     event.imchoosing=true;
                     if(event.side==0){
-                        event.prompt('请选择两名武将');
+                        event.prompt('请选择两名角色');
                     }
                     else{
-                        event.prompt('请选择一名武将');
+                        event.prompt('请选择一名角色');
                         event.fast=get.time();
                     }
                     game.pause();
@@ -27785,7 +27787,7 @@
                 }
                 game.delay();
                 'step 5'
-                event.prompt('选择'+get.cnNumber(event.config.num)+'名出场武将');
+                event.prompt('选择'+get.cnNumber(event.config.num)+'名出场角色');
                 event.enemylist=[];
                 for(var i=0;i<event.avatars.length;i++){
                     if(event.avatars[i].index>event.config.width){
@@ -29500,10 +29502,10 @@
                     if(!config.clear){
                         if(config.name!='开启'){
                             if(config.name=='屏蔽弱将'){
-                                config.intro='强度过低的武将（孙策除外）不会出现在选将框，也不会被AI选择'
+                                config.intro='强度过低的角色（孙策除外）不会出现在选将框，也不会被AI选择'
                             }
                             else if(config.name=='屏蔽强将'){
-                                config.intro='强度过高的武将不会出现在选将框，也不会被AI选择'
+                                config.intro='强度过高的角色不会出现在选将框，也不会被AI选择'
                             }
                             else if(!config.intro){
                                 config.intro='设置'+config.name;
@@ -29690,7 +29692,7 @@
                             clickContainer.call(menuContainer);
                         }
                     }
-                    menux=createMenu(['开始','选项','武将','卡牌','扩展','其它'],{
+                    menux=createMenu(['开始','选项','角色','卡牌','扩展','其它'],{
                         position:menuContainer,bar:40
                     });
                 }
@@ -29724,7 +29726,7 @@
                         }
                     }
 
-                    menux=createMenu(['模式','武将','卡牌'],{
+                    menux=createMenu(['模式','角色','卡牌'],{
                         position:menuContainer,bar:123
                     });
                     menu=menux.menu;
@@ -30992,7 +30994,7 @@
                                 placeholder.style.display='block';
                                 placeholder.style.width='100%';
                                 placeholder.style.height='14px';
-                                createDash2('将','武将图片','image/character',page);
+                                createDash2('将','角色图片','image/character',page);
                                 createDash2('肤','皮肤图片','image/skin',page);
                                 createDash2('卡','卡牌图片','image/card',page);
                                 createDash2('模','模式图片','image/mode',page);
@@ -31222,7 +31224,7 @@
                                     name:'平衡强度',
                                     _name:mode,
                                     init:charactersToAlter.length==0,
-                                    intro:'以下武将将被削弱：'+get.translation(alterableCharacters),
+                                    intro:'以下角色将被削弱：'+get.translation(alterableCharacters),
                                     onclick:function(bool){
                                         if(bool){
                                             for(var i=0;i<alterableSkills.length;i++){
@@ -31301,9 +31303,9 @@
                         page.classList.add('leftbutton');
                         if(!connectMenu){
                             if(mode.indexOf('mode_')!=0){
-                                ui.create.div('.config.pointerspan','<span>隐藏武将包</span>',page,function(){
-                                    if(this.firstChild.innerHTML=='隐藏武将包'){
-                                        this.firstChild.innerHTML='武将包将在重启后隐藏';
+                                ui.create.div('.config.pointerspan','<span>隐藏角色包</span>',page,function(){
+                                    if(this.firstChild.innerHTML=='隐藏角色包'){
+                                        this.firstChild.innerHTML='角色包将在重启后隐藏';
                                         lib.config.hiddenCharacterPack.add(mode);
                                         if(!lib.config.prompt_hidepack){
                                             alert('隐藏的扩展包可通过选项-其它-重置隐藏内容恢复');
@@ -31311,7 +31313,7 @@
                                         }
                                     }
                                     else{
-                                        this.firstChild.innerHTML='隐藏武将包';
+                                        this.firstChild.innerHTML='隐藏角色包';
                                         lib.config.hiddenCharacterPack.remove(mode);
                                     }
                                     game.saveConfig('hiddenCharacterPack',lib.config.hiddenCharacterPack);
@@ -32433,8 +32435,8 @@
                                     skillList.firstChild.appendChild(node);
                                 }
 
-                                toggle.innerHTML='编辑武将 <div>&gt;</div>';
-                                editnode.innerHTML='编辑武将';
+                                toggle.innerHTML='编辑角色 <div>&gt;</div>';
+                                editnode.innerHTML='编辑角色';
                                 editnode.classList.remove('disabled');
                                 delnode.innerHTML='删除';
                                 delnode.button=this;
@@ -32546,7 +32548,7 @@
                                 image:{}
                             };
                             var newCharacter;
-                            var toggle=ui.create.div('.config.more.on','创建武将 <div>&gt;</div>',page,function(){
+                            var toggle=ui.create.div('.config.more.on','创建角色 <div>&gt;</div>',page,function(){
                                 this.classList.toggle('on');
                                 if(this.classList.contains('on')){
                                     newCharacter.style.display='';
@@ -32572,8 +32574,8 @@
                                     inputs[i].value='';
                                 }
                                 skillList.firstChild.innerHTML='';
-                                toggle.innerHTML='创建武将 <div>&gt;</div>';
-                                editnode.innerHTML='创建武将';
+                                toggle.innerHTML='创建角色 <div>&gt;</div>';
+                                editnode.innerHTML='创建角色';
                                 editnode.classList.add('disabled');
                                 delnode.innerHTML='取消';
                                 delete delnode.button;
@@ -32732,10 +32734,10 @@
                             };
                             var skillList=ui.create.div('.skill_list',newCharacter);
                             ui.create.div(skillList);
-                            var editnode=ui.create.div('.menubutton.large.disabled','创建武将',ui.create.div(skillList),function(){
+                            var editnode=ui.create.div('.menubutton.large.disabled','创建角色',ui.create.div(skillList),function(){
                                 var name=page.querySelector('input.new_name').value;
                                 if(!name){
-                                    alert('请填写武将名\n提示：武将名格式为id+|+中文名，其中id必须惟一');
+                                    alert('请填写角色名\n提示：角色名格式为id+|+中文名，其中id必须惟一');
                                     return;
                                 }
                                 name=name.split('|');
@@ -32744,7 +32746,7 @@
                                 if(currentButton){
                                     if(currentButton.link!=name){
                                         if(lib.character[name]||page.content.pack.character[name]){
-                                            alert('武将名与现有武将重复，请更改\n提示：武将名格式为id+|+中文名，其中id必须惟一');
+                                            alert('角色名与现有角色重复，请更改\n提示：角色名格式为id+|+中文名，其中id必须惟一');
                                             return;
                                         }
                                         page.content.image[name+'.jpg']=page.content.image[currentButton.link+'.jpg'];
@@ -32756,7 +32758,7 @@
                                 }
                                 else{
                                     if(lib.character[name]||page.content.pack.character[name]){
-                                        alert('武将名与现有武将重复，请更改\n提示：武将名格式为id+|+中文名，其中id必须惟一');
+                                        alert('角色名与现有角色重复，请更改\n提示：角色名格式为id+|+中文名，其中id必须惟一');
                                         return;
                                     }
                                 }
@@ -32765,7 +32767,7 @@
                                 }
                                 else{
                                     if(!page.content.image[name+'.jpg']){
-                                        alert('请选择武将头像');
+                                        alert('请选择角色头像');
                                         return;
                                     }
                                 }
@@ -32791,7 +32793,7 @@
 
                                 page.content.pack.translate[name]=translate;
                                 page.content.pack.character[name]=[sexes.value,groups.value,hp,skills,tags];
-                                if(this.innerHTML=='创建武将'){
+                                if(this.innerHTML=='创建角色'){
                                     createButton(name,fakeme.image64);
                                 }
                                 else if(currentButton){
@@ -33958,7 +33960,7 @@
                                     }
                                 }
                                 else{
-                                    dashes.content.node.code='function(config,pack){\n    \n}\n\n\/*\n函数执行时机为游戏数据加载之后、界面加载之前\n参数1扩展选项（见选项代码）；参数2为扩展定义的武将、卡牌和技能等（可在此函数中修改）\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/';
+                                    dashes.content.node.code='function(config,pack){\n    \n}\n\n\/*\n函数执行时机为游戏数据加载之后、界面加载之前\n参数1扩展选项（见选项代码）；参数2为扩展定义的角色、卡牌和技能等（可在此函数中修改）\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/';
                                     dashes.precontent.node.code='function(){\n    \n}\n\n\/*\n函数执行时机为游戏数据加载之前，且不受禁用扩展的限制\n除添加模式外请慎用\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/';
                                     dashes.config.node.code='config={\n    \n}\n\n\/*\n示例：\nconfig={\n    switcher_example:{\n        name:"示例列表选项",\n        init:"3",\n        item:{"1":"一","2":"二","3":"三"}\n    },\n    toggle_example:{\n        name:"示例开关选项",\n        init:true\n    }\n}\n此例中传入的主代码函数的默认参数为{switcher_example:"3",toggle_example:true}\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/';
                                     dashes.help.node.code='help={\n    \n}\n\n\/*\n示例：\nhelp={\n    "帮助条目":"<ul><li>列表1-条目1<li>列表1-条目2</ul><ol><li>列表2-条目1<li>列表2-条目2</ul>"\n}\n帮助内容将显示在菜单－选项－帮助中\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/';
@@ -34083,14 +34085,14 @@
                                 }
                             };
                             page.content={}
-                            createCode('主','主代码',page,clickCode,'content','function(config,pack){\n    \n}\n\n\/*\n函数执行时机为游戏数据加载之后、界面加载之前\n参数1扩展选项（见选项代码）；参数2为扩展定义的武将、卡牌和技能等（可在此函数中修改）\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/');
+                            createCode('主','主代码',page,clickCode,'content','function(config,pack){\n    \n}\n\n\/*\n函数执行时机为游戏数据加载之后、界面加载之前\n参数1扩展选项（见选项代码）；参数2为扩展定义的角色、卡牌和技能等（可在此函数中修改）\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/');
                             createCode('启','启动代码',page,clickCode,'precontent','function(){\n    \n}\n\n\/*\n函数执行时机为游戏数据加载之前，且不受禁用扩展的限制\n除添加模式外请慎用\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/');
                             createCode('选','选项代码',page,clickCode,'config','config={\n    \n}\n\n\/*\n示例：\nconfig={\n    switcher_example:{\n        name:"示例列表选项",\n        init:"3",\n        item:{"1":"一","2":"二","3":"三"}\n    },\n    toggle_example:{\n        name:"示例开关选项",\n        init:true\n    }\n}\n此例中传入的主代码函数的默认参数为{switcher_example:"3",toggle_example:true}\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/');
                             createCode('帮','帮助代码',page,clickCode,'help','help={\n    \n}\n\n\/*\n示例：\nhelp={\n    "帮助条目":"<ul><li>列表1-条目1<li>列表1-条目2</ul><ol><li>列表2-条目1<li>列表2-条目2</ul>"\n}\n帮助内容将显示在菜单－选项－帮助中\n导出时本段代码中的换行、缩进以及注释将被清除\n*\/');
 
                             return page;
                         }());
-                        createDash('将','编辑武将',dash1);
+                        createDash('将','编辑角色',dash1);
                         createDash('卡','编辑卡牌',dash2);
                         createDash('技','编辑技能',dash3);
                         createDash('码','编辑代码',dash4);
@@ -34298,7 +34300,7 @@
                                     ui.create.div('.text.author','作者：'+list[i].author+'<span>('+list[i].size+')</span>',node);
                                     ui.create.div('.text',list[i].intro,node);
                                     var download=ui.create.div('.menubutton.text.active','下载扩展',node.firstChild);
-                                    if(!game.download){
+                                    if(game.download){
                                         if(list[i].netdisk){
                                             var linknode=ui.create.div('.text',node);
                                             ui.create.node('span.hrefnode','网盘链接',function(){
@@ -34368,7 +34370,7 @@
                                 });
                             }
                             else{
-                                lib.init.js('https://cdn.jsdelivr.net/gh/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions@master/catalog.js',null,loaded,function(){
+                                lib.init.js('https://cdn.jsdelivr.net/gh/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions@48810f8/catalog.js',null,loaded,function(){
                                 //lib.init.js(extensionURL.replace(/raw\.githubusercontent\.com/,'rawgit.com')+'catalog.js',null,loaded,function(){
                                     delete window.extension;
                                     loading.innerHTML='连接失败';
@@ -36301,7 +36303,7 @@
                             if(!packsource.onlypack){
                                 packsource.classList.remove('thundertext');
                                 if(!get.is.phoneLayout()||!lib.config.filternode_button){
-                                    packsource.innerHTML='武将包';
+                                    packsource.innerHTML='角色包';
                                 }
                             }
                         }
@@ -36537,7 +36539,7 @@
                             packsource.previousSibling.style.display='none';
                         }
                         else{
-                            packsource.innerHTML='武将包';
+                            packsource.innerHTML='角色包';
                         }
                     }
 
@@ -42124,7 +42126,7 @@
                 name=name.slice(name.indexOf('_')+1);
             }
             if(lib.characterIntro[name]) return lib.characterIntro[name];
-            return '暂无武将介绍';
+            return '暂无角色介绍';
         },
         groupnature:function(group,method){
             var nature;

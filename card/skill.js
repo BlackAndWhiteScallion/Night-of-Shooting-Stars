@@ -149,14 +149,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
 			},
 			ziheng_skill:{
-    			audio:2,
     			trigger:{player:'phaseDrawEnd'},
-    			direct:true,
     			content:function(){
     				"step 0"
-    				player.chooseToDiscard(true);
+    				player.chooseToDiscard();
     				"step 1"
-    				if(result.bool==false){
+    				if(result.bool){
     					player.draw();
     				}
     			}

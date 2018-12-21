@@ -195,20 +195,38 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        lib.init.onfree();
 	    },
 	    brawl:{
+	    	help:{
+	    		name:'请读这里',
+	    		mode:'',
+	    		intro:['欢迎来到东方流星夜！',
+	    				'本游戏是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏',
+	    				'本游戏的程序化，是基于无名杀1.9.36版的大型魔改版mod。',
+	    				'对游戏的不解，',
+	    				'',
+	    				'<u>程序使用须知：</u>',
+	    				'1. 使用刷新键（f5）可以重置游戏。',
+	    				'2.左上的“选项”可以更改很多游戏相关的设置，包括并不限于：',
+	    				'<t>游戏模式的人数，身份分配，可选角色数，显示的特效种类，卡牌的样式，打开关闭角色，和自动游戏录像。',
+	    				'记得多多探索一下，没准有奇怪的东西！',
+	    				'3. 双击角色牌可以查看角色简介，也可以换皮肤和听配音（虽然没有配音）。',
+	    				'3.1 在左上的选项/角色里双击角色牌也可以看到简介。',
+	    				'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
+	    				],
+	    		showcase:function(init){
+	        	},
+	    	},
 	    	updatelog:{
 	    		name:'更新注释',
 	    		mode:'',
-	    		intro:'暂无更新',
+	    		intro:['请点我→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">更新链接</a>',
+	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
+	    				'',
+	    				'<u>更新注释：</u>',
+	    				'暂无',
+	    				],
 	    		showcase:function(init){
 	    			
 	    		},
-	    	},
-	    	help:{
-	    		name:'游戏帮助',
-	    		mode:'',
-	    		intro:[],
-	    		showcase:function(init){
-	        	},
 	    	},
 	    	ruleview:{
 	        	name:'规则帮助',
@@ -440,7 +458,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'我们衷心希望，你能在这里玩的开心。',
 	        	'',
 	        	'',
-	        	'',
+	        	'各个角色的画师可以在角色简介内找到。',
 	        	'游戏BGM：<a href="https://www.bilibili.com/video/av30877"> 东方连奏Pianoforte - Shiraha </a>',
 	        	'红月异变BGM：「artificial」 【THE OTHER FLOWER】',
 	        	'散樱异变BGM：「桜風」 【森羅万象】',
