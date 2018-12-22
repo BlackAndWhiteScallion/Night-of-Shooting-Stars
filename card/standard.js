@@ -1454,10 +1454,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			if (event.control == 'lose_lili'){
     				player.loselili(2);
     			} else {
-					for (var i = 0; i <= player.num('e'); i ++){
-						var card=player.get('e',i);
-						if(card&&card.name == ('gungnir')){
-							player.discard(card);
+    				var cards = player.getCards('e');
+					for (var i = 0; i <= cards.length; i ++){
+						if(cards[i]&&cards[i].name == 'gungnir'){
+							player.discard(cards[i]);
 							break;
 						}
 					}

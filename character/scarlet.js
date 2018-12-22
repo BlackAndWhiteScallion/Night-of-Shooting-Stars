@@ -666,6 +666,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 trigger:{target:'useCardToBegin'},
                 forced:true,
+                usable:1,
                 priority:15,
                 check:function(event,player){
                     return get.effect(event.target,event.card,event.player,player)<0;
@@ -874,11 +875,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    event.players=game.filterPlayer();
-                    for (var i = 0; i < event.players.length; i ++){
-                        if (!get.distance(player,event.players[i],'attack')<=1) event.players.remove(event.players[i]);
-                        if (event.players[i] == player) event.players.remove(event.players[i]);
-                    }
+                    event.players=game.filterPlayer(function(current){
+                        return current!=player&&get.distance(player,current,'attack')<=1;
+                    });
                     event.num=0;
                     player.line(event.players,'green');
                     "step 1"

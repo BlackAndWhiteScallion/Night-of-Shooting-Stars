@@ -790,6 +790,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.hezou.cost);
                     player.turnOver();
                 },
+                check:function(){
+                    return false;
+                }
             },
             hezou_2:{
                 trigger:{target:'useCardToBegin'},
@@ -976,7 +979,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             yinhuashan2:{
                 audio:7,
-                direct:true,
                 trigger:{player:'useCard'},
                 filter:function(event,player){
                     return (event.card.name=='sha' && player.lili > 0);

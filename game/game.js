@@ -4004,7 +4004,7 @@
                     },
                     connect_player_number:{
                         name:'游戏人数',
-                        init:'8',
+                        init:'7',
                         item:{
                             '2':'两人',
                             '3':'三人',
@@ -17334,7 +17334,19 @@
                             this.removeSkillTrigger(info.group[i]);
                         }
                     }
-                    if(!triggeronly) this.initedSkills.remove(skill);
+                    if(!triggeronly){
+                        if(info.global){
+                            if(typeof info.global=='string'){
+                                game.removeGlobalSkill(info.global);
+                            }
+                            else{
+                                for(var j=0;j<info.global.length;j++){
+                                    game.removeGlobalSkill(info.global[j]);
+                                }
+                            }
+                        }
+                        this.initedSkills.remove(skill);
+                    }
                     if(info.trigger){
                         var playerid=this.playerid;
                         var removeTrigger=function(i,evt){
@@ -25580,9 +25592,11 @@
         removeGlobalSkill:function(skill){
             lib.skill.global.remove(skill);
             delete lib.skill.globalmap[skill];
+            if (lib.hook.globalskill[skill]) lib.hook.globalskill.remove(skill);
+            /*
             for(var i in lib.hook.globalskill){
                 lib.hook.globalskill.remove(skill);
-            }
+            }*/
         },
         resetSkills:function(){
             for(var i=0;i<game.players.length;i++){

@@ -405,8 +405,48 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                   },
                   businiao:{
-
+                      audio:2,
+                      cost:1,
+                      group:'businiao_die',
+                      spell:['businiao1','businiao2'],
+                      trigger:{player:'phaseBegin'},
+                      filter:function(event,player){
+                          return player.lili > lib.skill.businiao.cost;
+                      },
+                      content:function(){
+                          player.loselili(lib.skill.businiao.cost);
+                          player.turnOver();
+                      },
                   },
+                  businiao_die:{
+                    audio:2,
+                    cost:1,
+                     spell:['businiao1','businiao2'],
+                      enable:'chooseToUse',
+                      filter:function(event,player){
+                         if(event.type!='dying') return false;
+                         if(player!=event.dying) return false;
+                         return player.lili > lib.skill.businiao.cost;
+                      },
+                      content:function(){
+                          player.loselili(lib.skill.businiao.cost);
+                          player.turnOver();
+                      },
+                  },
+                  businiao1:{
+                    enable:'chooseToUse',
+                    filter:function(event,player){
+                         if(event.type!='dying') return false;
+                         if(player!=event.dying) return false;
+                    },
+                    content:function(){
+
+                    },
+                  },
+                  businiao2:{
+                    trigger:{global:'phaseEnd'},
+
+                  }
             },
             translate:{
                   wriggle:'莉格露',

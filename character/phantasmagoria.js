@@ -150,7 +150,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   zaidu2:{
                         audio:2,
                         forced:true,
-                        trigger:{player:['damageEnd','recoverAfter']},
+                        trigger:{player:'recoverAfter',source:'damageEnd'},
                         filter:function(event,player){
                               if (event.name == 'damage') return event.nature != 'thunder';
                               return true;

@@ -321,7 +321,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     		},
     		death_normal:{
-    			// 这要怎么写比较好啊……
+    			// 不给胜利应该怎么写比较好啊……
+    			trigger:{source:'dieAfter'},
+				priority:-10,
+				forced:true,
+				content:function(){
+					player.draw(3);
+				},
     		},
     		death_win:{
     			trigger:{global:'die'},
