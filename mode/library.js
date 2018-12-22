@@ -199,9 +199,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		name:'请读这里',
 	    		mode:'',
 	    		intro:['欢迎来到东方流星夜！',
-	    				'本游戏是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏',
-	    				'本游戏的程序化，是基于无名杀1.9.36版的大型魔改版mod。',
-	    				'对游戏的不解，',
+	    				'东方流星夜是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏。',
+	    				'而流星夜的程序化，也就是你现在所在的游戏，是基于无名杀1.9.36版的大型魔改版mod。',
+	    				'对游戏的不解，在我这里是有大量的信息的：先读一下规则，模式介绍，如果还有不懂的，在更多资源里可以找到更多的帮助哟。',
 	    				'',
 	    				'<u>程序使用须知：</u>',
 	    				'1. 使用刷新键（f5）可以重置游戏。',
@@ -222,7 +222,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
 	    				'',
 	    				'<u>更新注释：</u>',
-	    				'更新了一堆bug（懒得列出来了）',
+	    				'异变身份明置效果改为“令一名角色摸一张牌。”',
 	    				'',
 	    				'<u>特殊事项：</u>',
 	    				'没有名字的角色没有技能',
@@ -247,7 +247,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	intro:[
 	        		'规则简略可以在<a href="game/guide.pdf">这里</a>读到',
 	        		'详细的资源可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
-	        		'游戏内的资料正在制作中',
+	        		'',
+	        		'',
 	        		],
 	        	showcase:function(init){
 
@@ -385,7 +386,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA">雾雨家的魔法店吧</a>',
 	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com">雾雨魔法店的仓库</a>',
 	                '官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜总会</a>',
-	                '无论是聊天，想反映问题，还是想提出建议，都可以到以上任意一个地方去发表意见，我们会看到并尊重你的每一个意见。',
+	                '无论是聊天，看漫画，反映问题，还是想提出建议，都可以到以上任意一个地方去发表意见，我们会看到并尊重你的每一个意见。',
 	            ],
 	        	showcase:function(init){
 					var node=this;

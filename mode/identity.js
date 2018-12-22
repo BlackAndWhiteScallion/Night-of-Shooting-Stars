@@ -96,7 +96,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				var step1=function(){
 					ui.create.dialog('欢迎来到无名杀，是否进入新手向导？');
 					game.saveConfig('new_tutorial',true);
-					ui.dialog.add('<div class="text center">跳过后，你可以在选项-其它中重置新手向导');
+					ui.dialog.add('<div class="text center">跳过后，你可以在左上角的选项-其它中重置新手向导');
 					ui.auto.hide();
 					ui.create.control('跳过向导',function(){
 						clear();
@@ -149,11 +149,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.create.control('在菜单中，可以进行各项设置',function(){
 						ui.click.menuTab('选项');
 						ui.controls[0].replace('如果你感到游戏较卡，可以开启流畅模式',function(){
-							ui.controls[0].replace('在技能一栏中，可以设置自动发动或双将禁配的技能',function(){
-								ui.click.menuTab('武将');
-								ui.controls[0].replace('在武将或卡牌一栏中，单击武将/卡牌可以将其禁用',function(){
-									ui.click.menuTab('战局');
-									ui.controls[0].replace('在战局中可以输入游戏命令，或者管理录像',function(){
+							ui.controls[0].replace('在技能一栏中，可以设置自动发动的技能',function(){
+								ui.click.menuTab('角色');
+								ui.controls[0].replace('在角色或卡牌一栏中，单击角色/卡牌可以将其禁用',function(){
 										ui.click.menuTab('帮助');
 										ui.controls[0].replace('在帮助中，可以检查更新和下载素材',function(){
 											ui.click.configMenu();
@@ -166,12 +164,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								});
 							});
 						});
-					})
 				};
 				var step5=function(){
 					clear();
-					ui.create.dialog('如果还有其它问题，欢迎来到百度无名杀吧进行交流');
-					ui.create.control('完成',function(){
+					ui.create.dialog('如果还有其它问题，在图鉴里可以找到更多的帮助');
+					ui.create.control('谢谢。',function(){
 						clear();
 						clear2();
 						game.resume();
@@ -1580,6 +1577,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			_tanpai_bg:'变',
 			tanpai_fan:'自机摊牌效果',
 			tanpai_fan_info:'令一名角色选择一项：明置身份牌，或你弃置其一张牌。',
+			tanpai_zhong:'异变摊牌效果',
+			tanpai_zhong_info:'令一名角色摸一张牌',
 			_tanyibian:'明置异变？',
 			_tanyibian_bg:'？',
 			discard:'被弃一张牌',
@@ -2161,9 +2160,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								return libincident[0];
 							//}
     					});
-    				// 异变：抽牌	
+    				// 异变：令一名角色抽牌	
     				} else if (player.identity=="zhong"){
-    					player.draw();
+    					player.chooseTarget(get.prompt('tanpai_zhong'),function(card,player,target){
+							return true;
+						}).set('ai',function(target){
+							if (target.identity == 'zhu') return true;
+							return get.attitude(_status.event.player,target) > 0;
+						});
     				// 自机：伪采访一个
     				} else if (player.identity=="fan"){
     					player.chooseTarget(get.prompt('tanpai_fan'),function(card,player,target){
@@ -2182,14 +2186,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				'step 1'
     				if (result.bool){
     					if (result.targets != ''){
-    						player.line(result.targets[0],'green');
-    						var list = ['discard'];
-    						event.target=result.targets[0];
-    						if (result.targets[0].identityShown != true) list.push('_tanpai');
-    						result.targets[0].chooseControl(list,function(event,player){
-								if (list.contains('_tanpai')) return '_tanpai';
-								return 'discard';
-							});
+    						if (player.identity == 'fan'){
+	    						player.line(result.targets[0],'green');
+	    						var list = ['discard'];
+	    						event.target=result.targets[0];
+	    						if (result.targets[0].identityShown != true) list.push('_tanpai');
+	    						result.targets[0].chooseControl(list,function(event,player){
+									if (list.contains('_tanpai')) return '_tanpai';
+									return 'discard';
+								});
+    						} else if (player.identity == 'zhong'){
+    							player.line(result.targets[0],'green');
+    							result.targets[0].draw();
+    						}
     					} else {
 	    					var card = game.createCard(result.links[0][2],'zhenfa','');
 	    					if (player.identity == "zhu"){
@@ -2270,7 +2279,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				var card = player.storage._tanyibian[0];
                    	player.addIncident(card);
-                   	player.storage._tanyibian = [];
+                   	delete player.storage._tanyibian;
+                   	player.unmarkSkill('_tanyibian');
 				},
 			}
 		},

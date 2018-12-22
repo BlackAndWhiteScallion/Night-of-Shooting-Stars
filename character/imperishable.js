@@ -434,14 +434,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                   },
                   businiao1:{
-                    enable:'chooseToUse',
-                    filter:function(event,player){
-                         if(event.type!='dying') return false;
-                         if(player!=event.dying) return false;
-                    },
-                    content:function(){
-
-                    },
+                    trigger:{},
+                    
                   },
                   businiao2:{
                     trigger:{global:'phaseEnd'},

@@ -2404,6 +2404,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 					if(cards.contains(card.name)) return false;
 				},
+				cardRespondable:function(card, player){
+					var players=game.filterPlayer();
+					var cards = [];
+					for(var i=0;i<players.length;i++){
+						if (players[i].storage._lingbi2) cards = cards.concat(players[i].storage._lingbi2);
+					}
+					if(cards.contains(card.name)) return false;
+				},
 				cardSavable:function(card,player){
 					var players=game.filterPlayer();
 					var cards = [];

@@ -160,7 +160,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			}
 			},
 			shengdun_skill:{
-				audio:2,
     			filter:function(event,player){
     				return event.player==player&&event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack');
     			},
@@ -187,14 +186,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				}
     				return false;
     			},
-    			priority:10,
     			trigger:{target:'useCardToBefore'},
     			content:function(){
     				"step 0"
     				player.chooseToCompare(trigger.player);
     				"step 1"
     				if(result.bool&&trigger.player.countCards('he')){
-    					trigger.untrigger();
+    					trigger.cancel();
     					trigger.finish();
     				}
     			},
@@ -203,7 +201,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			}
 			},
 			qusan_skill:{
-				audio:2,
     			filter:function(event,player){
     				return event.player==player&&event.card&&(get.type(event.card)=='trick');
     			},
@@ -230,14 +227,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				}
     				return false;
     			},
-    			priority:10,
     			trigger:{target:'useCardToBefore'},
     			content:function(){
     				"step 0"
     				player.chooseToCompare(trigger.player);
     				"step 1"
     				if(result.bool&&trigger.player.countCards('he')){
-    					trigger.untrigger();
+    					trigger.cancel();
     					trigger.finish();
     				}
     			},
@@ -261,7 +257,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							break;
 						}
 					}
-					trigger.untrigger();
+					trigger.cancel();
     			},
 			},
 			shenyou_skill_2:{
@@ -350,20 +346,22 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			qicheng_info:'你是怎么摸到这张牌的？',
 			ziheng:'制衡',
 			ziheng_bg:'制',
+			ziheng_skill:'制衡',
 			ziheng_info:'摸牌阶段结束时，你可以重铸一张牌。',
 			shengdun:'圣盾',
 			shengdun_bg:'盾',
-			shengdun_skill:'',
+			shengdun_skill:'圣盾',
 			shengdun_info:'你成为攻击牌的目标后，可以与来源拼点；若你赢，弃置此牌，该牌对你无效。',
 			qusan:'驱散',
 			qusan_bg:'散',
-			qusan_skill:'',
+			qusan_skill:'驱散',
 			qusan_info:'你成为法术牌的目标后，可以并与来源拼点；若你赢，弃置此牌，该牌对你无效。',
 			shenyou:'神佑',
 			shenyou_bg:'神',
 			shenyou_info:'锁定技，你的判定牌生效前，你弃置此牌，令之视为红桃；你受到伤害时，若伤害大于你的体力值，你弃置此牌，防止该伤害。',
 			jinu:'激怒',
 			jinu_bg:'怒',
+			jinu_skill:'激怒',
 			jinu_info:'你受到伤害后，可以弃置伤害来源场上一张牌',
 			lianji:'连击',
 			lianji_bg:'连',
