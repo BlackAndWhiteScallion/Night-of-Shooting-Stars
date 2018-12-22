@@ -34384,7 +34384,7 @@
                                 });
                             }
                             else{
-                                lib.init.js('https://cdn.jsdelivr.net/gh/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions@48810f8/catalog.js',null,loaded,function(){
+                                lib.init.js('https://cdn.jsdelivr.net/gh/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions@93c2c7a/catalog.js',null,loaded,function(){
                                 //lib.init.js(extensionURL.replace(/raw\.githubusercontent\.com/,'rawgit.com')+'catalog.js',null,loaded,function(){
                                     delete window.extension;
                                     loading.innerHTML='连接失败';
