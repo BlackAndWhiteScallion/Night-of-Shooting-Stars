@@ -80,14 +80,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        }
 	        // 应该是这里是制作列表的地方
 	        var createNode=function(name){
-	        	/*
-	            ui.background=ui.create.div('.background');
-				ui.background.style.backgroundSize="cover";
-				ui.background.style.backgroundPosition='50% 50%';
-				ui.background.setBackgroundImage('image/background/library.jpg');
-				*/
-
-
 				var info=lib.brawl[name];
 	            var node=ui.create.div('.dialogbutton.menubutton.large',info.name,packnode,clickCapt);
 	            node.style.transition='all 0s';
@@ -104,7 +96,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	            var intro;
 	            if(Array.isArray(info.intro)){
-	                intro='<ul style="text-align:left;margin-top:0;width:450px">';
+	                intro='<ul style="text-align:left;margin-top:0">';
 	                if(modeinfo){
 	                    intro+='<li>'+modeinfo;
 	                }
@@ -218,7 +210,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    	updatelog:{
 	    		name:'更新注释',
 	    		mode:'',
-	    		intro:['请点我→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">更新链接</a>',
+	    		intro:['更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://coding.net/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
 	    				'',
 	    				'<u>更新注释：</u>',

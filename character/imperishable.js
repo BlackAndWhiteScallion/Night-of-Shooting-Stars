@@ -288,6 +288,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             player.storage.yinyang = true;
                         },
                   },
+                  
                   mengdie:{
                       skillAnimation:true,
                       audio:2,
@@ -419,9 +420,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                   },
                   businiao_die:{
-                    audio:2,
+                    audio:'businiao',
                     cost:1,
-                     spell:['businiao1','businiao2'],
+                     spell:['businiao2'],
                       enable:'chooseToUse',
                       filter:function(event,player){
                          if(event.type!='dying') return false;
@@ -433,14 +434,38 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.turnOver();
                       },
                   },
-                  businiao1:{
-                    trigger:{},
-                    
-                  },
                   businiao2:{
+                    init:function(){
+                      player.nodying=true;
+                      player.hp=0;
+                      player.update();
+                    },
+                    onremove:function(){
+                      delete player.nodying;
+                      if (player.hp <= 0) player.hp=-1;
+                      player.update();
+                    },
+                    audio:2,
                     trigger:{global:'phaseEnd'},
-
-                  }
+                    forced:true,
+                    content:function(){
+                        'step 0'
+                        if (player.lili > 0){
+                            player.chooseToUse('【不死鸟之羽】：你可以消耗1点灵力，使用一张【轰！】；可以重复此流程。',{name:'sha'},function(card,player,target){
+                                return player.canUse('sha',target, true);
+                            });
+                        }
+                        'step 1'
+                        if (result.bool){
+                            player.loselili();
+                            event.goto(0);
+                        }
+                        'step 2'
+                        player.loselili(player.lili);
+                        if (player.hp < 1) player.recover(1-player.hp);
+                        player.draw(3 - player.countCards('h'));
+                    },
+                  },
             },
             translate:{
                   wriggle:'莉格露',
@@ -461,30 +486,40 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   jiehuo_audio1:'这是这张牌的正确使用方式，知道了吗？',
                   jiehuo_audio2:'这是下次考试的知识点，一定要记住。',
                   richuguo:'日出国的天子',
-                  richuguo_info:'符卡技（3）【限定】【永续】你可以弃置三张不同的类型的牌来代替符卡消耗；准备阶段，你可以指定一名角色，重置其体力值，灵力值，和手牌数；你进入决死状态时，重置此符卡技。',
+                  richuguo_info:'符卡技（3）<限定><永续>你可以弃置三张不同的类型的牌来代替符卡消耗；准备阶段，你可以指定一名角色，重置其体力值，灵力值，和手牌数；你进入决死状态时，重置此符卡技。',
                   richuguo_audio1:'「日出国之天子」！',
                   richuguo_audio2:'我不允许这种事情的存在！',
                   keine_die:'要是是满月，怎么会输给你们呢……',
                   reimu:'灵梦',
                   yinyang:'阴阳',
-                  yinyang_audio1:'',
-                  yinyang_audio2:'',
+                  yinyang_audio1:'太极生两仪，两仪生四象，后面的我不知道了。',
+                  yinyang_audio2:'啊，多谢款待！请下次一定还要再来！',
                   spin_card:'将当前角色一张牌置入牌堆底',
                   yinyang_info:'一名角色的结束阶段，若你本回合使用过牌，或受到过弹幕伤害，你可以选择一项：摸一张牌；或展示当前回合角色的一张牌，并将之置于牌堆底。',
                   mengdie:'梦蝶',
-                  mengdie_audio1:'',
-                  mengdie_audio2:'',
+                  mengdie_audio1:'不知周之梦为胡蝶与？胡蝶之梦为周与？',
+                  mengdie_audio2:'现在想放弃的话还来的及哟？',
                   mengdie_info:'觉醒技，准备阶段，若你的手牌数不大于你已受伤值，你将灵力值补至上限，并获得〖幻境〗',
+                  huanjing_reimu_audio1:'哼，别忘了我可会这招！',
+                  huanjing_reimu_audio2:'嗯……这里附近应该有张【葱】来着？',
                   mengxiang:'梦想封印',
-                  mengxiang_info:'符卡技（2）【永续】你使用牌指定目标后，可以选择一项：令目标角色：受到1点灵击伤害；或弃置一张牌；若其有明置异变牌，改为选择两项。',
+                  mengxiang_info:'符卡技（2）<永续>你使用牌指定目标后，可以选择一项：令目标角色：受到1点灵击伤害；或弃置一张牌；若其有明置异变牌，改为选择两项。',
                   mengxiang_audio1:'灵符「梦想封印」！',
                   mengxiang_audio2:'以博丽巫女之名，我会退治你这个异变！',
-                  reimu_die:'',
+                  reimu_die:'啊啊，肚子饿了，回去了回去了。',
                   mokou:'妹红',
                   yuhuo:'狱火',
+                  yuhuo_audio1:'给老娘变成烤串吧！',
+                  yuhuo_audio2:'火起！',
+                  yuhuo2_audio1:'即使是变成灰烬……！',
+                  yuhuo2_audio2:'我的怨念可不止这点程度！',
                   yuhuo_info:'你可以将一张牌当作【轰！】使用，每回合每种类型限一次；你使用【轰！】指定目标后，可以失去1点体力，令之不算次数。',
                   businiao:'不死鸟之羽',
-                  businiao_info:'符卡技（1）【终语】你不坠机；当前回合的结束阶段，你可以消耗1点灵力值，并使用一张攻击牌；你可以重复此流程任意次；然后，你须消耗所有灵力，将体力回复至1，并将手牌补至3张。',
+                  businiao_audio1:'凤凰涅槃！欲火焚身！',
+                  businiao_audio2:'炎符「不死鸟之羽」！',
+                  businiao2:'不死鸟之羽',
+                  businiao2_audio1:'……浴火重生*',
+                  businiao_info:'符卡技（1）<终语>你不坠机；当前回合的结束阶段，你可以消耗1点灵力值，并使用一张攻击牌；你可以重复此流程任意次；然后，你须消耗所有灵力，将体力回复至1，并将手牌补至3张。',
             },
       };
 });

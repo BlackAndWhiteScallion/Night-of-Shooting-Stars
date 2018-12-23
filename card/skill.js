@@ -271,7 +271,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				"step 0"
     				player.logSkill('shenyou_skill_2');
     				trigger.player.judging[0].suit = "heart";
-    				game.log(trigger.player,'的判定牌的花色改为'+get.translate("heart"));
+    				for (var i = 0; i <= player.num('j'); i ++){
+						var card=player.get('j',i);
+						if(card&&card.name == ('shenyou')){
+							player.discard(card);
+							break;
+						}
+					}
+    				game.log(trigger.player,'的判定牌的花色改为'+get.translation("heart"));
     			},
 			},
 			jinu_skill:{
@@ -358,6 +365,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			qusan_info:'你成为法术牌的目标后，可以并与来源拼点；若你赢，弃置此牌，该牌对你无效。',
 			shenyou:'神佑',
 			shenyou_bg:'神',
+			shenyou_skill_1:'神佑（抵伤）',
+			shenyou_skill_2:'神佑（改判）',
 			shenyou_info:'锁定技，你的判定牌生效前，你弃置此牌，令之视为红桃；你受到伤害时，若伤害大于你的体力值，你弃置此牌，防止该伤害。',
 			jinu:'激怒',
 			jinu_bg:'怒',

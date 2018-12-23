@@ -21243,16 +21243,19 @@
                     if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
                         player.popup('回合结束');
                     }
-                    // 结束阶段，如果角色牌是背面朝上的，就翻过去。
-                    if (player.isTurnedOver()){
-                        for(var i=0;i<player.skills.length;i++){
-                            if (lib.skill[player.skills[i]].spell){
-                                var info = lib.skill[player.skills[i]];
-                                if (player.hasSkill(info.spell[0])){
-                                    if (!info.roundi && !info.infinite){
-                                        player.turnOver();
+                    // 结束阶段，如果有角色是背面朝上的，就翻过去。
+                    var players = game.filterPlayer();
+                    for (var j = 0; j < players.length; j ++) {
+                        if (players[j].isTurnedOver()){
+                            for(var i=0;i<players[j].skills.length;i++){
+                                if (lib.skill[players[j].skills[i]].spell){
+                                    var info = lib.skill[players[j].skills[i]];
+                                    if (players[j].hasSkill(info.spell[0])){
+                                        if (!info.roundi && !info.infinite){
+                                            players[j].turnOver();
+                                        }
+                            //          break;
                                     }
-                        //          break;
                                 }
                             }
                         }

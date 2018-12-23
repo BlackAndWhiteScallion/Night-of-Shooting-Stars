@@ -11,11 +11,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   eiki:['female','1',4,[]],
 		},
 		characterIntro:{
-			lilyblack:'',
-                  medicine:'',
-                  yuuka:'',
-                  komachi:'',
-                  eiki:'',
+			           lilyblack:'似乎就是莉莉白换了身衣服？',
+                  medicine:'全名梅蒂欣·梅兰可莉。被人类抛弃，受铃兰之毒多年后妖怪化的人偶。',
+                  yuuka:'全名风间幽香。',
+                  komachi:'全名小野塚小町。',
+                  eiki:'全名四季映姬。',
 		},       
 		perfectPair:{
 		},

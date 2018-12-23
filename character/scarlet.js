@@ -128,9 +128,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     		},
             xingmai:{
                 audio:2,
-                enable:'chooseToUse',
+                enable:['chooseToUse','chooseToRespond'],
                 hiddenCard:function(player,name){
-                    return name == 'shan';
+                    return name == 'shan' || name == 'tao';
                 },
                 filter:function(event,player){
                     return (player.num('he',{name:'sha'}) > 0);
@@ -205,7 +205,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     },
                     prompt:function(links,player){
-                        return '将一张轰！当作'+get.translation(links[0][2])+'使用';
+                        return '将一张轰！当作'+get.translation(links[0][2])+'使用/打出';
                     }
                 },
             },
@@ -355,8 +355,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     if (list.length == 0) event.finish();
                     event.list = list;
-                    player.chooseControlList(event.list,function(){
-                        return 3;
+                    player.chooseControlList(event.list,function(event,player){
+                        if (event.list[0] == '跳过摸牌阶段，视为使用一种法术牌') return 0;
+                        if (event.list[0] == '跳过出牌阶段，将一张牌当作一种法术牌使用'){
+                            if (player.skiplist.contains('phaseDiscard')) return 0;
+                            if (player.lili > 1  && player.countCards('h','sha') == 0) return 1;
+                            else return 2;
+                        }
+                        return event.list.length - 1;
                     });
                     'step 1'
                     if (result.control){

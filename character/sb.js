@@ -8,7 +8,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
          hetate:['female','2',3,['nianxie','jilan','lianxu']],
 		},
 		characterIntro:{
-			letty:'',
+			aya:'全名射命丸文，妖怪之山的天狗记者。以持有幻想乡最快的报导速度而闻名（也以报导的片面性和捏造闻名）。',
+         hetate:'全名姬海棠果，妖怪之山的天狗记者。以不用出门就能写报导的念写能力而闻名（也以报导的过期性闻名）。',
 		},       
 		perfectPair:{
 		},

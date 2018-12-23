@@ -7,8 +7,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   daiyousei:['female','5',3,['zhufu','zhiyue']],
 		},
 		characterIntro:{
-		    cirno:'',
-                daiyousei:'',
+		    cirno:'冰之妖精，在众多妖精中是能力最强的！（然而对于妖怪来说只是杂鱼）是个喜欢到处游荡和搞恶作剧的笨蛋。',
+                daiyousei:'不知名不知能力不知长相的一只妖精。跟琪露诺的关系很不错（大部分时候充当她的监护人……）',
 		},       
 		perfectPair:{
 		},
