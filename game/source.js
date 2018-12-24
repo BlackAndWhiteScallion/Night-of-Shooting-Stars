@@ -1,5 +1,4 @@
 window.noname_source_list=[
-    /*
     'card/incident.js',
     'card/skill.js',
     'card/standard.js',
@@ -47,6 +46,8 @@ window.noname_source_list=[
     'mode/brawl.js',
     'mode/versus.js',
     'mode/connect.js',
+    'mode/library.js',
+    'mode/old_identity.js',
     'extension/boss/extension.js',
     'extension/cardpile/extension.js',
     'extension/coin/extension.js',
@@ -133,16 +134,4 @@ window.noname_source_list=[
     'node_modules/ultron/test.js',
     'node_modules/options/package.json',
     'node_modules/options/lib/options.js',
-    */
-    'game/*',
-    'audio/*',
-    'card/*',
-    'character/*',
-    'layout/*',
-    'image/*',
-    'theme/*'
-    'mode/*',
-    'extension/*',
-    'font/*',
-    'node_modules/*',
 ];
