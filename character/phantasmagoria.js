@@ -162,10 +162,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   zhanfang:{
                         skillAnimation:true,
                         audio:2,
-                        direct:true,
                         unique:true,
                         priority:-10,
-                        trigger:{player:'phaseBeginStart'},
+                        trigger:{player:'phaseBegin'},
                         forced:true,
                         filter:function(event,player){
                               return player.lili == player.maxlili;
@@ -190,6 +189,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   huayuan:{
                         audio:2,
+                        cost:2,
                         spell:['huayuan_1'],
                         trigger:{player:['phaseBegin']},
                         roundi:function(event,player){

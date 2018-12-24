@@ -1,6 +1,6 @@
 window.noname_update={
-    version:'1.9.36.3',
-    update:'1.9.36.1',
+    version:'0.69',
+    update:'0.69',
     changeLog:[
         '更新成功！',
     ],
@@ -25,7 +25,7 @@ window.noname_update={
         // 'character/rank.js',
         // 'character/yijiang.js',
         // 'character/xianjian.js',
-        //'mode/*',
+        'mode/*',
         // 'mode/identity.js',
         // 'mode/guozhan.js',
         // 'mode/versus.js',
