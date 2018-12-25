@@ -509,6 +509,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   reimu_die:'啊啊，肚子饿了，回去了回去了。',
                   mokou:'妹红',
                   yuhuo:'狱火',
+                  yuhuo_2:'狱火',
                   yuhuo_audio1:'给老娘变成烤串吧！',
                   yuhuo_audio2:'火起！',
                   yuhuo2_audio1:'即使是变成灰烬……！',
@@ -519,6 +520,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   businiao_audio2:'炎符「不死鸟之羽」！',
                   businiao2:'不死鸟之羽',
                   businiao2_audio1:'……浴火重生*',
+                  businiao2_audio2:'无论是多少次，无论是多少次！',
                   businiao_info:'符卡技（1）<终语>你不坠机；当前回合的结束阶段，你可以消耗1点灵力值，并使用一张攻击牌；你可以重复此流程任意次；然后，你须消耗所有灵力，将体力回复至1，并将手牌补至3张。',
             },
       };

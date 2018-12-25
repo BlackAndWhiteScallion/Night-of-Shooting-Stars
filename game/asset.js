@@ -10,7 +10,7 @@ window.noname_asset_list=[
     'image/background/sakura.jpg',
     'image/background/scarlet.jpg',
     'image/background/sb.jpg',
-    'image/card/baka.png',
+    'image/card/bailou.png',
     'image/card/bingyu.png',
     'image/card/book.png',
     'image/card/caifang.png',

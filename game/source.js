@@ -24,6 +24,7 @@ window.noname_source_list=[
     'game/server.js',
     'game/source.js',
     'game/update.js',
+    'game/guide.pdf',
     'layout/default/codemirror.css',
     'layout/default/layout.css',
     'layout/default/menu.css',

@@ -806,6 +806,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.hezou.cost);
                     player.turnOver();
                 },
+                check:function(){
+                    return false;
+                }
             },
             hezou_skill:{
                 trigger:{target:'useCardToBegin'},

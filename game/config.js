@@ -82,7 +82,7 @@ window.config={
 	layout:'mobile',
 	card_style:'ol',
 	cardback_style:'ol',
-	hp_style:'default',
+	hp_style:'official',
 
 	image_character:'default',
 	image_background:'shengshi_bg',
