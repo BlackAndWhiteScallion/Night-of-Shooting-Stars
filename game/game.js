@@ -1107,7 +1107,7 @@
                     },
                     change_skin:{
                         name:'开启换肤',
-                        init:false,
+                        init:true,
                         intro:'在角色的右键菜单中换肤，皮肤可在选项-文件-图片文件-皮肤图片中添加'
                     },
                     change_skin_auto:{
@@ -17792,6 +17792,18 @@
                     }
                     return true;
                 },
+                isMaxlili:function(equal){
+                    for(var i=0;i<game.players.length;i++){
+                        if(game.players[i].isOut()||game.players[i]==this) continue;
+                        if(equal){
+                            if(game.players[i].lili>=this.lili) return false;
+                        }
+                        else{
+                            if(game.players[i].lili>this.lili) return false;
+                        }
+                    }
+                    return true;
+                },
                 isMaxCard:function(equal){
                     var nh=this.countCards('he');
                     for(var i=0;i<game.players.length;i++){
@@ -25991,7 +26003,7 @@
                     td.innerHTML='出牌';
                     tr.appendChild(td);
                     td=document.createElement('td');
-                    td.innerHTML='杀敌';
+                    td.innerHTML='击坠';
                     tr.appendChild(td);
                     table.appendChild(tr);
                     for(i=0;i<game.players.length;i++){
@@ -26060,7 +26072,7 @@
                         td.innerHTML='出牌';
                         tr.appendChild(td);
                         td=document.createElement('td');
-                        td.innerHTML='杀敌';
+                        td.innerHTML='击坠';
                         tr.appendChild(td);
                         table.appendChild(tr);
                     }
@@ -40971,6 +40983,8 @@
                     this.classList.add('active');
                     intro2.innerHTML='<span style="font-weight:bold;margin-right:5px">'+get.translation(this.link)+'</span>'+get.skillInfoTranslation(this.link);
                     var info=get.info(this.link);
+                    var skill=this.link;
+                    var skillnode=this;
                     if(info.derivation){
                         var derivation=info.derivation;
                         if(typeof derivation=='string'){
@@ -40979,6 +40993,28 @@
                         for(var i=0;i<derivation.length;i++){
                             intro2.innerHTML+='<br><br><span style="font-weight:bold;margin-right:5px">'+get.translation(derivation[i])+'</span>'+get.skillInfoTranslation(derivation[i]);
                         }
+                    }
+                    if(info.alter){
+                        intro2.innerHTML+='<br><br><div class="hrefnode skillversion"></div>';
+                        var skillversionnode=intro2.querySelector('.hrefnode.skillversion');
+                        if(lib.config.vintageSkills.contains(skill)){
+                            skillversionnode.innerHTML='切换至新版';
+                        }
+                        else{
+                            skillversionnode.innerHTML='切换至旧版';
+                        }
+                        skillversionnode.listen(function(){
+                            if(lib.config.vintageSkills.contains(skill)){
+                                lib.config.vintageSkills.remove(skill);
+                                lib.translate[skill+'_info']=lib.translate[skill+'_info_alter'];
+                            }
+                            else{
+                                lib.config.vintageSkills.push(skill);
+                                lib.translate[skill+'_info']=lib.translate[skill+'_info_origin'];
+                            }
+                            game.saveConfig('vintageSkills',lib.config.vintageSkills);
+                            clickSkill.call(skillnode,'init');
+                        });
                     }
                     if(lib.config.background_speak&&e!=='init'){
                         var audioname=this.link;

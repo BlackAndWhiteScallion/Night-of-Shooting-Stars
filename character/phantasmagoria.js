@@ -8,7 +8,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   medicine:['female','1',3,['zaidu','zhanfang','huayuan']],
                   yuuka:['female','1',4,['zanghua','xiaofeng']],
                   komachi:['female','3',4,['guihang','wujian']],
-                  eiki:['female','1',4,[]],
+                  eiki:['female','1',4,['huiwu','caijue','shenpan']],
 		},
 		characterIntro:{
 			           lilyblack:'似乎就是莉莉白换了身衣服？',
@@ -380,6 +380,134 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                   },
+                  huiwu:{
+                    audio:0,
+                    trigger:{global:'phaseEnd'},
+                    filter:function(event,player){
+                        return event.player.countCards('hej') > 0;
+                    },
+                    forced:true,
+                    content:function(){
+                        'step 0'
+                        if (trigger.player.getStat('damage')>0){
+                            player.discardPlayerCard('hej',trigger.player,true);
+                            game.trySkillAudio('huiwu',player,true,1);
+                        } else {
+                            trigger.player.chooseToDiscard(true,'hej',get.prompt('huiwu'));
+                            game.trySkillAudio('huiwu',player,true,2);
+                        }
+                        'step 1'
+                        if (result.bool){
+                            trigger.player.draw();
+                        }
+                    }
+              },
+              caijue:{
+                audio:2,
+                trigger:{player:'phaseBegin'},
+                group:'caijue2',
+                filter:function(event,player){
+                    return !player.storage.caijue;
+                },
+                content:function(){
+                    'step 0'
+                    player.chooseTarget(get.prompt('caijue'),function(card,player,target){
+                              return target.countCards('h') > 0;
+                              }).set('ai',function(target){
+                                    return get.attitude(player, target) < 0 && target.countCards('h') > 3;
+                              });
+                    'step 1'
+                    if (result.bool && result.targets[0]){
+                        result.targets[0].showHandcards();
+                        var cards = result.targets[0].getCards('h');
+                        var list = [];
+                        for (var i = 0; i < cards.length; i ++){
+                            if (get.subtype(cards[i]) == 'attack'){
+                                list.push(cards[i]);
+                            }
+                        }
+                        var num = list.length;
+                        console.log(list.length);
+                        if (list.length > 0){
+                            result.targets[0].discard(list);
+                            result.targets[0].damage(Math.min(num, player.lili-1), 'thunder');
+                            player.loselili(Math.min(num, player.lili-1));
+                        } else {
+                            player.storage.caijue = true;
+                        }
+                    }
+                },
+              },
+              caijue2:{
+                direct:true,
+                trigger:{player:'damageEnd'},
+                content:function(){
+                    player.storage.caijue = false;
+                },
+              },   
+              shenpan:{
+                    skillAnimation:true,
+                      audio:2,
+                      cost:0,
+                      spell:'shenpan_1',
+                      trigger:{player:'phaseBegin'},
+                      init:function(player){
+                           player.storage.shenpan=true;
+                       },
+                      mark:true,
+                      intro:{
+                           content:'limited'
+                      },
+                    filter:function(event,player){
+                      if (!player.storage.shenpan) return false;
+                      return player.lili > player.hp;
+                    },
+                    content:function(){
+                         player.loselili(player.hp);
+                         player.turnOver();
+                         player.storage.shenpan=false;
+                         player.useCard({name:'lingbi'},game.filterPlayer());
+                    },
+                    check:function(event, player){
+                         return player.hp < 2;
+                    }
+              },
+              shenpan_1:{
+                    audio:2,
+                    forced:true,
+                    trigger:{player:'phaseEnd'},
+                    content:function(){
+                         'step 0'
+                         event.num = 0;
+                         'step 1'
+                         player.chooseTarget(get.prompt('shenpan'),true,function(card,player,target){
+                              if (event.num == 0) return target.isMaxHp(true);
+                              if (event.num == 1) return target.isMaxlili(true);
+                              if (event.num == 2) return target.isMaxHandcard(true);
+                              if (event.num == 3){
+                                   var list = [player];
+                                   for (var i = 0; i < game.filterPlayer.length; i ++){
+                                        if (game.filterPlayer[i].getStat('kill') > list[0].getStat('kill')){
+                                             list = [];
+                                             list.push(game.filterPlayer[i]);
+                                        } else if (game.filterPlayer[i].getStat('kill') == list[0].getStat('kill')){
+                                             list.push(game.filterPlayer[i]);
+                                        }
+                                   }
+                                   return list.contains(target);
+                              }
+                         }).set('ai',function(target){
+                              return -get.attitude(_status.event.player,target);
+                         });
+                         'step 2'
+                         if (result.targets[0]){
+                              result.targets[0].damage();
+                              event.num ++;
+                              if (event.num == 4) event.finish();
+                              event.goto(1);
+                         }
+                    },
+              },
             },
             translate:{
                   lilyblack:'莉莉黑',
@@ -395,16 +523,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   medicine:'梅蒂欣',
                   zaidu:'灾毒',
                   zaidu_info:'结束阶段，你可以指定一名灵力不大于你的角色，令其受到1点灵击伤害；你造成弹幕伤害后，或回复体力后，你获得1点灵力。',
-                  zaidu_audio1:'',
-                  zaidu_audio2:'',
-                  zaidu_audio3:'',
+                  zaidu_audio1:'即使是妖怪，也是躲不掉这个毒的。',
+                  zaidu_audio2:'没事，我会保护你的。',
+                  zaidu_audio3:'哈哈哈哈哈哈，无论是什么都阻挡不了我的！',
                   zaidu2_audio1:'啊……这个花的毒不错。',
                   zaidu2_audio2:'毒性好像稍微强了一些呢？',
                   zhanfang:'绽放',
                   zhanfang_audio1:'有这么多毒的话，就是世界也可以征服的吧？',
                   zhanfang_audio2:'只用毒伤害别人，是不会成长的啦……所以！',
                   zhanfang_info:'觉醒技，准备阶段，若你的灵力等于上限：若你未受伤，将【灾毒】中的“受到1点灵击伤害”改为“受到1点弹幕伤害”；否则，改为“回复1点体力”；然后，你增加１点体力上限，并发动【毒气花园】（需要消耗）。',
-            	huayuan:'毒气花园',
+            	   huayuan:'毒气花园',
                   huayuan_info:'符卡技（2）<u>若你体力为场上最高（或之一），符卡视为持有【永续】。</u>一回合一次，一名角色回复体力时，你可以：防止之，或令其额外回复1点；一名角色的体力值变动后，若为0，或为上限，你摸一张牌。',
                   huayuan_audio1:'霧符「毒气花园」!',
                   huayuan_audio2:'在铃兰的花园之中，永久的沉睡吧！',
@@ -426,6 +554,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   guihang_info:'你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法对距离大于１的角色造成弹幕伤害后，弃置其一张牌，并令你与其距离视为１，且此技能无效，直到回合结束。',
                   wujian:'无间之狭间',
                   wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；你以此法令一名角色的灵力变成0后，获得其场上一张牌。',
+                  komachi_die:'被暴打可真的不能叫放松啊。',
+                eiki:'映姬',
+                huiwu:'悔悟',
+                huiwu_audio1:'果然你是完全没有听从我的教诲。（其实也有点习惯了。）你可知道这样随随便便的攻击是不会有任何好结果的。无意义的纷争和骚乱，破坏其他人的生活，难道，你真的认为破坏其他人，对你是不会有任何后果的吗？听着，以后一定要收拾你的情绪——我还会再回来检查你的表现的。',
+                huiwu_audio2:'虽然说进行弹幕对战是不可避免的，甚至是幻想乡中必要的一环，但是这并不代表斗争就是好的。斗争只会让你们越来越意气用事，越来越控制不住自己，这对任何人都是没有任何好处的。因此，你们要学会控制自己的情绪，不要让弹幕战变成你的重心。只有多多反思和思考，才能成为更好的人，更好的自己。',
+                huiwu_info:'锁定技，一名角色的回合结束时，其须重铸一张牌；若其本回合造成过伤害，该牌由你指定。',
+                caijue:'裁决',
+                caijue_info:'准备阶段，你可以展示一名角色的手牌：弃置其中所有攻击牌，然后你消耗等量灵力（不够耗至1）， 对其造成消耗量的灵击伤害；若其中没有攻击牌，【裁决】无效，直到你受到弹幕伤害后。',
+                shenpan:'最终审判',
+                shenpan_info:'符卡技（X）<限定>（X 为体力值）符卡发动时，你视为使用一张【令避之间】；结束阶段，你对场上体力最高的角色造成１点弹幕伤害，然后对灵力，手牌数，和击坠角色数重复此流程。',
+               eiki_die:'打倒我也是没有任何意义的。',
             },
       };
 });

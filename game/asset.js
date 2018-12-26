@@ -218,5 +218,5 @@ window.noname_asset_list=[
     'theme/style/player/silver_d2.png',
 ];
 window.noname_skin_list={
-    bulianshi:4,
+    reimu:2,
 };

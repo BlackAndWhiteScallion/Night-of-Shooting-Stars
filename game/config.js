@@ -42,7 +42,7 @@ window.config={
 	volumn_background:8,
 	volumn_audio:8,
 
-	connect_avatar:'caocao',
+	connect_avatar:'reimu',
 	connect_nickname:'无名玩家',
 	config_menu:true,
 	directstartmode:false,
