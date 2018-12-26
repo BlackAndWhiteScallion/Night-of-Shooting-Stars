@@ -128,7 +128,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     		},
             xingmai:{
                 audio:2,
-                enable:['chooseToUse','chooseToRespond'],
+                enable:'chooseToUse',
+                group:'xingmai1',
                 hiddenCard:function(player,name){
                     return name == 'shan' || name == 'tao';
                 },
@@ -136,12 +137,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return (player.num('he',{name:'sha'}) > 0);
                 },
                 chooseButton:{
-                    dialog:function(){
+                    dialog:function(event,player){
                         var list = [];
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
-                            if(lib.card[i].type == 'basic'){
+                            if(lib.card[i].type == 'basic' && event.filterCard({name:i},player,event)){
                                 list.add(i);
                             }
                         }
@@ -149,9 +150,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             list[i]=[get.type(list[i]),'',list[i]];
                         }
                         return ui.create.dialog([list,'vcard']);
-                    },
-                    filter:function(button,player){
-                        return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent());
                     },
                     check:function(button){
                         var player=_status.event.player;
@@ -201,11 +199,43 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             onuse:function(result,player){
                                 player.removeSkill('xingmai');
                                 player.addSkill('xingmai2');
-                            }
+                            },
                         }
                     },
                     prompt:function(links,player){
                         return '将一张轰！当作'+get.translation(links[0][2])+'使用/打出';
+                    }
+                },
+            },
+            xingmai1:{
+                audio:2,
+                trigger:{player:'chooseToRespondBegin'},
+                filter:function(event,player){
+                    if(event.responded) return false;
+                    if(!event.filterCard({name:'shan'}) && !event.filterCard({name:'sha'})) return false;
+                    return player.num('he',{name:'sha'}) > 0;
+                },
+                direct:true,
+                content:function(){
+                    "step 0"
+                    player.chooseCard(get.prompt('xingmai'),'he',function(card){
+                        return card.name == 'sha';
+                    }).set('ai',function(card){
+                        return 6-get.value(card);
+                    });
+                    "step 1"
+                    if(result.bool){
+                        trigger.untrigger();
+                        trigger.responded=true;
+                        if (trigger.filterCard({name:'shan'})) trigger.result={bool:true,card:{name:'shan'}};
+                        else if (trigger.filterCard({name:'sha'})) trigger.result = {bool:true,card:{name:'sha'}};
+                        player.lose(result.cards,ui.special);
+                        player.$throw(result.cards);
+                        player.removeSkill('xingmai');
+                        player.addSkill('xingmai2');
+                    }
+                    else{
+                        event.finish();
                     }
                 },
             },
@@ -215,6 +245,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filterCard:function(card,player){
                     return get.type(card)=='basic';
                 },
+                selectCard:1,
                 position:'he',
                 viewAs:{name:'sha'},
                 viewAsFilter:function(player){
@@ -225,6 +256,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 onuse:function(result,player){
                     player.removeSkill('xingmai2');
                     player.addSkill('xingmai');
+                },
+                onrespond:function(result,player){
+                    player.removeSkill('xingmai');
+                    player.addSkill('xingmai2');
                 },
                 ai:{
                     skillTagFilter:function(player){
@@ -845,6 +880,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.world.cost);
                     player.turnOver();
                 },
+                check:function(event,player){
+                    return player.lili > 3;
+                },
             },
             world_skill:{
                 trigger:{global:'useCardToBegin'},
@@ -864,7 +902,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return get.attitude(player,target)<0;
                     });
                     'step 1'
-                    player.discardPlayerCard(result.targets[0],'hej',true);
+                    if (result.bool){
+                        player.discardPlayerCard(result.targets[0],'hej',true);
+                    }
                     'step 2'
                     if (result.cards && result.cards[0].type != 'delay'){
                         if (trigger.player.canUse(result.cards[0],trigger.target)) trigger.player.useCard(result.cards[0],trigger.target);
@@ -1063,6 +1103,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             world_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定目标时，若该牌不是以此法使用，你可以消耗1点灵力：取消目标，并弃置一名角色的一张牌；若弃置牌可以对目标使用，来源将弃置牌对目标使用。',
             world_audio1:'「咲夜的世界」！',
             world_audio2:'ザ・ワールド！',
+            world_skill:'咲夜的世界',
             world_skill_audio1:'在我的世界里想要做什么呢。',
             world_skill_audio2:'你是勇气可嘉呢，还是单纯是个笨蛋呢？',
             sakuya_die:'啊啊……我还是回去好了。',

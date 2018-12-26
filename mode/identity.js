@@ -2176,11 +2176,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							return player!=target;
 						}).set('ai',function(target){
 							var player=_status.event.player;
+							if (target.identity == "fan") return -10;
 							if(player.maxHp-player.hp==1&&target.countCards('he')==0){
 								return 0;
 							}
-							if(get.attitude(_status.event.player,target)>0){
-								return 10+get.attitude(_status.event.player,target);
+							if(get.attitude(_status.event.player,target)<0){
+								return get.attitude(_status.event.player,target);
 							}
 							return 1;
 						});

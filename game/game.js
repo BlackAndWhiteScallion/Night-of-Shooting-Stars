@@ -21397,7 +21397,7 @@
                         return;
                     }
                     event.acted.push(player);
-                    var str=get.translation(trigger.player.name)+'濒死，是否帮助？';
+                    var str=get.translation(trigger.player.name)+'决死，是否帮助？';
                     var str2='当前体力：'+trigger.player.hp;
                     if(lib.config.tao_enemy&&event.dying.side!=player.side&&lib.config.mode!='guozhan'&&!event.dying.hasSkillTag('revertsave')){
                         event._result={bool:false}
@@ -40085,7 +40085,7 @@
                     clearTimeout(this._longpresstimeout);
                 }
                 if(lib.config.longpress_info){
-                    this._longpresstimeout=setTimeout(ui.click.longpresscallback,500);
+                    this._longpresstimeout=setTimeout(ui.click.longpresscallback,200);
                 }
                 this._longpressevent=e;
                 if(_status.longpressing&&_status.longpressing!=this){

@@ -45,6 +45,7 @@ window.config={
 	connect_avatar:'caocao',
 	connect_nickname:'无名玩家',
 	config_menu:true,
+	directstartmode:false,
 	auto_popped_config:true,
 	auto_popped_history:false,
 	auto_skill:true,
