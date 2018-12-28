@@ -92,7 +92,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							if(mod!='unchanged') return mod;
 							return true;
 						},});
-					next.set('ai',function(){
+					next.set('ai1',function(){
 						var target=_status.event.player;
 						var evt=_status.event.getParent();
 						var sks=target.get('s');
@@ -101,10 +101,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							sks.contains('lingbo')){
 							return 1;
 						}
-						if(ai.get.damageEffect(target,evt.player,target,evt.card.nature)>=0) return -1;
+						//if(ai.get.damageEffect(target,evt.player,target,evt.card.nature)>=0) return -1;
 						return 1;
 					});
-					next.autochoose=lib.filter.autoRespondShan;
+					//next.autochoose=lib.filter.autoRespondShan;
 				}
 				"step 1"
 				if(result.bool==false){
@@ -214,10 +214,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			ai:{
 				basic:{
-					useful:[7,2],
-					value:[7,2]
-				}
-			}
+					useful:[6,4],
+					value:[6,4],
+				},
+				result:{player:1},
+				expose:0.2
+			},
 		},
 		// 桃
 		tao:{
