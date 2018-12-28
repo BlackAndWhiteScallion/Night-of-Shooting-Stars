@@ -9,6 +9,7 @@
         event:{
             finished:true,
             next:[],
+            after:[]
         },
         ai:{},
         lastdragchange:[],
@@ -34,8 +35,11 @@
         canvasUpdates:[],
         video:[],
         skilllist:[],
-        characterIntro:{},
-        characterPack:{},
+		connectBanned:[],
+		characterIntro:{},
+		characterTitle:{},
+		characterPack:{},
+		characterFilter:{},
         cardPack:{},
         onresize:[],
         onphase:[],
@@ -53,8 +57,7 @@
         hook:{globaltrigger:{},globalskill:{}},
         hookmap:{},
         imported:{},
-
-        layoutfixed:['chess','tafang'],
+        layoutfixed:['chess','tafang'],        
         characterDialogGroup:{
             '收藏':function(name,capt){
                 return lib.config.favouriteCharacter.contains(name)?capt:null;
@@ -2422,6 +2425,21 @@
                             }
                         }
                     },
+					glass_ui:{
+						name:'玻璃主题',
+						intro:'为游戏主题打开玻璃效果（手机暂不支持）',
+						init:false,
+						unfrequent:true,
+						onclick:function(bool){
+							game.saveConfig('glass_ui',bool);
+							if(bool){
+								ui.window.classList.add('glass_ui');
+							}
+							else{
+								ui.window.classList.remove('glass_ui');
+							}
+						}
+					},
                     cardshape:{
                         name:'手牌显示',
                         intro:'将手牌设置为正方形或长方形',
@@ -2694,8 +2712,8 @@
                         }
                     },
                     die_move:{
-                        name:'阵亡效果',
-                        intro:'阵亡后角色的显示效果',
+                        name:'坠机效果',
+                        intro:'坠机后角色的显示效果',
                         init:'flip',
                         unfrequent:true,
                         item:{
@@ -2776,12 +2794,18 @@
             view:{
                 name:'显示',
                 config:{
-                    update:function(config,map){
+update:function(config,map){
                         if(lib.config.mode=='versus'||lib.config.mode=='chess'||lib.config.mode=='tafang'||lib.config.mode=='boss'){
                             map.show_handcardbutton.show();
                         }
                         else{
                             map.show_handcardbutton.hide();
+                        }
+                        if(lib.config.touchscreen){
+                            map.pop_logv.hide();
+                        }
+                        else{
+                            map.pop_logv.show();
                         }
                         if(lib.device){
                             if(lib.device=='android'){
@@ -2806,6 +2830,7 @@
                         }
                         if(get.is.phoneLayout()){
                             map.remember_round_button.show();
+                            map.popequip.show();
                             map.filternode_button.show();
                             map.show_pause.hide();
                             map.show_auto.hide();
@@ -2818,6 +2843,7 @@
                             map.show_replay.show();
                             map.show_round_menu.hide();
                             map.remember_round_button.hide();
+                            map.popequip.hide();
                             map.filternode_button.hide();
                         }
                         if(lib.config.show_card_prompt){
@@ -2883,6 +2909,11 @@
                                 ui.window.classList.remove('rightbar');
                             }
                         }
+                    },
+                    pop_logv:{
+                        name:'自动弹出记录',
+                        init:false,
+                        unfrequent:true
                     },
                     show_log:{
                         name:'历史记录栏',
@@ -3071,6 +3102,7 @@
                             }
                             else{
                                 ui.roundmenu.style.display='none';
+								alert('关闭触屏按钮后可通过手势打开菜单（默认为下划）')
                             }
                         }
                     },
@@ -3143,6 +3175,12 @@
                         },
                         unfrequent:true
                     },
+					popequip:{
+						name:'触屏装备选择',
+						intro:'设置触屏布局中选择装备的方式',
+						init:true,
+						unfrequent:true,
+					},
                     filternode_button:{
                         name:'触屏筛选按钮',
                         intro:'设置自由选将对话框中筛选按钮的样式',
@@ -3484,10 +3522,14 @@
                             var node=this;
                             if(node._clearing){
                                 var noname_inited=localStorage.getItem('noname_inited');
-                                localStorage.clear();
-                                if(noname_inited){
-                                    localStorage.setItem('noname_inited',noname_inited);
-                                }
+								var onlineKey=localStorage.getItem(lib.configprefix+'key');
+								localStorage.clear();
+								if(noname_inited){
+									localStorage.setItem('noname_inited',noname_inited);
+								}
+								if(onlineKey){
+									localStorage.setItem(lib.configprefix+'key',onlineKey);
+								}
                                 game.deleteDB('config');
                                 game.deleteDB('data');
                                 game.reload();
@@ -3822,7 +3864,39 @@
                     name:'开启',
                     init:false,
                     restart:true,
-                },
+					onswitch:function(bool){
+						if(bool){
+							var storage={boss:{},versus:{},translate:{}};
+							var loadversus=function(){
+								game.loadModeAsync('versus',function(mode){
+									for(var i in mode.translate){
+										storage.translate[i]=mode.translate[i];
+									}
+									for(var i in mode.jiangeboss){
+										if(mode.jiangeboss[i][4].contains('bossallowed')){
+											storage.versus[i]=mode.jiangeboss[i];
+										}
+									}
+									localStorage.setItem('boss_storage_playpackconfig',JSON.stringify(storage));
+								});
+							};
+							game.loadModeAsync('boss',function(mode){
+								for(var i in mode.translate){
+									storage.translate[i]=mode.translate[i];
+								}
+								for(var i in mode.characterPack.mode_boss){
+									if(mode.characterPack.mode_boss[i][4].contains('bossallowed')){
+										storage.boss[i]=mode.characterPack.mode_boss[i];
+									}
+								}
+								loadversus();
+							});
+						}
+						else{
+							localStorage.removeItem('boss_storage_playpackconfig');
+						}
+					}
+				},
                 intro:{
                     name:'将挑战模式的角色添加到其它模式',
                     clear:true,
@@ -5032,7 +5106,7 @@
                             map.enable_all_three.hide();
                             map.enable_all_cards.hide();
                         }
-                        if(config.versus_mode=='jiange'||config.versus_mode=='two'||
+                        if(config.versus_mode=='jiange'||config.versus_mode=='two'||config.versus_mode=='endless'||
                             config.versus_mode=='three'||config.versus_mode=='one'||config.versus_mode=='siguo'){
                             map.free_choose.show();
                         }
@@ -5326,6 +5400,23 @@
                             }
                         }
                     },
+					room_button:{
+						name:'创建服务器按钮',
+						init:false,
+						frequent:true,
+						intro:'开启后可创建一个空房间但不加入游戏',
+						onclick:function(bool){
+							game.saveConfig('room_button',bool,'connect');
+							if(ui.connectRoom){
+								if(bool){
+									ui.connectRoom.style.display='';
+								}
+								else{
+									ui.connectRoom.style.display='none';
+								}
+							}
+						}
+					}
                 }
             },
             boss:{
@@ -5635,11 +5726,6 @@
                         init:true,
                         frequent:true
                     },
-                    tongxingzhizheng:{
-                        name:'同姓之争',
-                        init:true,
-                        frequent:true
-                    },
                     tongjiangmoshi:{
                         name:'同将模式',
                         init:true,
@@ -5684,23 +5770,33 @@
             '<div style="margin:10px">游戏操作</div><ul style="margin-top:0"><li>在命令框中输出结果<br>game.print(str)<li>清除命令框中的内容<br>cls<li>上一条/下一条输入的内容<br>up/down<li>游戏结束<br>game.over(bool)'+
             '<li>角色资料<br>lib.character<li>卡牌资料<br>lib.card</ul>',
         },
-        setIntro:function(node,func){
-            if(lib.config.touchscreen){
-                lib.setLongPress(node,ui.click.intro);
-            }
-            else{
-                if(lib.config.hover_all){
-                    lib.setHover(node,ui.click.hoverplayer);
-                }
-                if(lib.config.right_info){
-                    node.oncontextmenu=ui.click.rightplayer;
-                }
-            }
-            lib.setPressure(node,ui.click.rightpressure);
-            if(func){
-                node._customintro=func;
-            }
-        },
+        setIntro:function(node,func,left){
+			if(lib.config.touchscreen){
+				if(left){
+					node.listen(ui.click.touchintro);
+				}
+				else{
+					lib.setLongPress(node,ui.click.intro);
+				}
+			}
+			else{
+				if(left){
+					node.listen(ui.click.intro);
+				}
+				if(lib.config.hover_all){
+					lib.setHover(node,ui.click.hoverplayer);
+				}
+				if(lib.config.right_info){
+					node.oncontextmenu=ui.click.rightplayer;
+				}
+			}
+			if(!left){
+				lib.setPressure(node,ui.click.rightpressure);
+			}
+			if(func){
+				node._customintro=func;
+			}
+		},
         setPressure:function(node,func){
             if(window.Pressure){
                 window.Pressure.set(node,{change: func}, {polyfill: false});
@@ -5839,6 +5935,16 @@
         },
         init:{
             init:function(){
+				if(typeof __dirname==='string'&&__dirname.length){
+					var dirsplit=__dirname.split('/');
+					for(var i=0;i<dirsplit.length;i++){
+						if(dirsplit[i]){
+							var c=dirsplit[i][0];
+							lib.configprefix+=/[A-Z]|[a-z]/.test(c)?c:'_';
+						}
+					}
+					lib.configprefix+='_';
+				}
                 window.resetGameTimeout=setTimeout(lib.init.reset,parseInt(localStorage.getItem(lib.configprefix+'loadtime'))||5000);
                 if(window.cordovaLoadTimeout){
                     clearTimeout(window.cordovaLoadTimeout);
@@ -5854,8 +5960,15 @@
                 var index=window.location.href.indexOf('index.html?server=');
                 if(index!=-1){
                     window.isNonameServer=window.location.href.slice(index+18);
-                    window.indexedDB=null;
-                }
+					window.nodb=true;
+				}
+				else{
+					index=localStorage.getItem(lib.configprefix+'asserver');
+					if(index){
+						window.isNonameServer=index;
+						window.isNonameServerIp=lib.hallURL;
+					}
+				}
                 var htmlbg=localStorage.getItem(lib.configprefix+'background');
                 if(htmlbg){
                     if(htmlbg[0]=='['){
@@ -5877,13 +5990,6 @@
                         document.documentElement.style.backgroundPosition='50% 50%';
                     }
                 }
-
-                // index=localStorage.getItem(lib.configprefix+'asserver');
-                // if(index){
-                //  window.isNonameServer=index;
-                //  window.isNonameServerIp=lib.hallURL;
-                // }
-
                 lib.get=get;
                 lib.ui=ui;
                 lib.ai=ai;
@@ -5952,7 +6058,9 @@
 
                     var that=this;
                     this.timeout=setTimeout(function(){
-                        position.appendChild(that);
+						if(!that.destroyed){
+							position.appendChild(that);
+						}
                         that.classList.remove('removing');
                         delete that.destiny;
                     },time);
@@ -6012,6 +6120,9 @@
                                 else if(nameinfo[4][i].indexOf('mode:')==0){
                                     modeimage=nameinfo[4][i].slice(5);break;
                                 }
+								else if(nameinfo[4][i].indexOf('character:')==0){
+									name=nameinfo[4][i].slice(10);break;
+								}
                             }
                         }
                         if(extimage){
@@ -6118,28 +6229,6 @@
                             this.style[i]=style[i];
                         }
                     }
-                    return this;
-                };
-                HTMLDivElement.prototype.transform=function(transform){
-                    var str='';
-                    for(var i in transform){
-                        switch(i){
-                            case 'scale':str+='scale('+transform[i]+') ';break;
-                            case 'rotate':str+='rotate('+transform[i]+'deg) ';break;
-                        }
-                    }
-                    if(typeof transform=='object'){
-                        if(transform.left&&transform.top){
-                            str+='translate('+parseInt(transform.left)+'px,'+parseInt(transform.top)+'px) ';
-                        }
-                        else if(transform.left){
-                            str+='translate('+parseInt(transform.left)+'px) ';
-                        }
-                        else if(transform.top){
-                            str+='translate(0,'+parseInt(transform.top)+'px) ';
-                        }
-                    }
-                    this.style.transform=str;
                     return this;
                 };
                 HTMLTableElement.prototype.get=function(row,col){
@@ -6252,10 +6341,14 @@
                             if(e.shiftKey){
                                 if(confirm('是否重置游戏？')){
                                     var noname_inited=localStorage.getItem('noname_inited');
-                                    localStorage.clear();
-                                    if(noname_inited){
-                                        localStorage.setItem('noname_inited',noname_inited);
-                                    }
+									var onlineKey=localStorage.getItem(lib.configprefix+'key');
+									localStorage.clear();
+									if(noname_inited){
+										localStorage.setItem('noname_inited',noname_inited);
+									}
+									if(onlineKey){
+										localStorage.setItem(lib.configprefix+'key',onlineKey);
+									}
                                     if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
                                     game.reload();
                                     return;
@@ -6307,10 +6400,14 @@
                             if(e.shiftKey){
                                 if(confirm('是否重置游戏？')){
                                     var noname_inited=localStorage.getItem('noname_inited');
-                                    localStorage.clear();
-                                    if(noname_inited){
-                                        localStorage.setItem('noname_inited',noname_inited);
-                                    }
+									var onlineKey=localStorage.getItem(lib.configprefix+'key');
+									localStorage.clear();
+									if(noname_inited){
+										localStorage.setItem('noname_inited',noname_inited);
+									}
+									if(onlineKey){
+										localStorage.setItem(lib.configprefix+'key',onlineKey);
+									}
                                     if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
                                     game.reload();
                                     return;
@@ -6357,6 +6454,12 @@
                 if(window.noname_update){
                     lib.version=window.noname_update.version;
                     lib.changeLog=window.noname_update.changeLog;
+					if(window.noname_update.players){
+						lib.changeLog.push('players://'+JSON.stringify(window.noname_update.players));
+					}
+					if(window.noname_update.cards){
+						lib.changeLog.push('cards://'+JSON.stringify(window.noname_update.cards));
+					}
                     delete window.noname_update;
                 }
                 var noname_inited=localStorage.getItem('noname_inited');
@@ -6370,374 +6473,12 @@
                     }
                     lib.assetURL=noname_inited;
                 }
-
-                ui.css={menu:lib.init.css(lib.assetURL+'layout/default','menu',function(){
-                    ui.css.default=lib.init.css(lib.assetURL+'layout/default','layout');
-                })};
-
-                if(lib.device){
-                    lib.init.cordovaReady=function(){
-                        if(lib.device=='android'){
-                            document.addEventListener("pause", function(){
-                                if(!_status.paused2&&!_status.event.isMine()){
-                                    ui.click.pause();
-                                }
-                                if(ui.backgroundMusic){
-                                    ui.backgroundMusic.pause();
-                                }
-                            });
-                            document.addEventListener("resume", function(){
-                                if(ui.backgroundMusic){
-                                    ui.backgroundMusic.play();
-                                }
-                            });
-                            document.addEventListener("backbutton", function(){
-                                if(ui.arena&&ui.arena.classList.contains('menupaused')){
-                                    if(window.saveNonameInput){
-                                        window.saveNonameInput();
-                                    }
-                                    else{
-                                        ui.click.configMenu();
-                                    }
-                                }
-                                else if(lib.config.confirm_exit){
-                                    navigator.notification.confirm(
-                                        '是否退出游戏？',
-                                         function(index){
-                                             switch(index){
-                                                 case 2:game.saveConfig('null');game.reload();break;
-                                                 case 3:navigator.app.exitApp();break;
-                                             }
-                                         },
-                                        '确认退出',
-                                        ['取消','重新开始','退出']
-                                    );
-                                }
-                                else{
-                                    navigator.app.exitApp();
-                                }
-                            });
-                        }
-                        game.download=function(url,folder,onsuccess,onerror,dev,onprogress){
-                            if(url.indexOf('http')!=0){
-                                url=get.url(dev)+url;
-                            }
-                            var fileTransfer = new FileTransfer();
-                            folder=lib.assetURL+folder;
-                            if(onprogress){
-                                fileTransfer.onprogress=function(progressEvent){
-                                    onprogress(progressEvent.loaded,progressEvent.total);
-                                };
-                            }
-                            lib.config.brokenFile.add(folder);
-                            game.saveConfigValue('brokenFile');
-                            fileTransfer.download(encodeURI(url),encodeURI(folder),function(){
-                                lib.config.brokenFile.remove(folder);
-                                game.saveConfigValue('brokenFile');
-                                if(onsuccess){
-                                    onsuccess();
-                                }
-                            },onerror);
-                        };
-                        game.readFile=function(filename,callback,onerror){
-                            window.resolveLocalFileSystemURL(lib.assetURL,function(entry){
-                                entry.getFile(filename,{},function(fileEntry){
-                                    fileEntry.file(function(fileToLoad){
-                                        var fileReader = new FileReader();
-                                        fileReader.onload = function(e){
-                                            callback(e.target.result);
-                                        };
-                                        fileReader.readAsArrayBuffer(fileToLoad, "UTF-8");
-                                    },onerror);
-                                },onerror);
-                            },onerror);
-                        };
-                        game.writeFile=function(data,path,name,callback){
-                            if(Object.prototype.toString.call(data)=='[object File]'){
-                                var fileReader = new FileReader();
-                                fileReader.onload = function(e){
-                                    game.writeFile(e.target.result,path,name,callback);
-                                };
-                                fileReader.readAsArrayBuffer(data, "UTF-8");
-                            }
-                            else{
-                                window.resolveLocalFileSystemURL(lib.assetURL+path,function(entry){
-                                    entry.getFile(name,{create:true},function(fileEntry){
-                                        fileEntry.createWriter(function(fileWriter){
-                                            fileWriter.onwriteend=callback;
-                                            fileWriter.write(data);
-                                        });
-                                    });
-                                });
-                            }
-                        };
-                        game.removeFile=function(dir,callback){
-                            window.resolveLocalFileSystemURL(lib.assetURL,function(entry){
-                                entry.getFile(dir,{},function(fileEntry){
-                                    fileEntry.remove();
-                                    if(callback){
-                                        callback();
-                                    }
-                                });
-                            });
-                        };
-                        game.getFileList=function(dir,callback){
-                            var files=[],folders=[];
-                            window.resolveLocalFileSystemURL(lib.assetURL+dir,function(entry){
-                                var dirReader=entry.createReader();
-                                var entries=[];
-                                var readEntries=function(){
-                                    dirReader.readEntries(function(results){
-                                        if(!results.length){
-                                            entries.sort();
-                                            for(var i=0;i<entries.length;i++){
-                                                if(entries[i].isDirectory){
-                                                    folders.push(entries[i].name);
-                                                }
-                                                else{
-                                                    files.push(entries[i].name);
-                                                }
-                                            }
-                                            callback(folders,files);
-                                        }
-                                        else{
-                                            entries=entries.concat(Array.from(results));
-                                            readEntries();
-                                        }
-                                    });
-                                };
-                                readEntries();
-                            });
-                        };
-                        game.ensureDirectory=function(list,callback,file){
-                            var directorylist;
-                            var num=0;
-                            if(file){
-                                num=1;
-                            }
-                            if(typeof list=='string'){
-                                directorylist=[list];
-                            }
-                            else{
-                                var directorylist=list.slice(0);
-                            }
-                            window.resolveLocalFileSystemURL(lib.assetURL,function(rootEntry){
-                                var access=function(entry,dir,callback){
-                                    if(dir.length<=num){
-                                        callback();
-                                    }
-                                    else{
-                                        var str=dir.shift();
-                                        entry.getDirectory(str,{create:false},function(entry){
-                                            access(entry,dir,callback);
-                                        },function(){
-                                            entry.getDirectory(str,{create:true},function(entry){
-                                                access(entry,dir,callback);
-                                            });
-                                        });
-                                    }
-                                }
-                                var createDirectory=function(){
-                                    if(directorylist.length){
-                                        access(rootEntry,directorylist.shift().split('/'),createDirectory);
-                                    }
-                                    else{
-                                        callback();
-                                    }
-                                };
-                                createDirectory();
-                            });
-                        }
-                        if(ui.updateUpdate){
-                            ui.updateUpdate();
-                        }
-                        var showbar=function(){
-                            if(window.StatusBar){
-                                if(lib.device=='android'){
-                                    if(lib.config.show_statusbar_android){
-                                        window.StatusBar.overlaysWebView(false);
-                                        window.StatusBar.backgroundColorByName('black');
-                                        window.StatusBar.show();
-                                    }
-                                }
-                                else if(lib.device=='ios'){
-                                    if(lib.config.show_statusbar_ios!='off'&&lib.config.show_statusbar_ios!='auto'){
-                                        if(lib.config.show_statusbar_ios=='default'){
-                                            window.StatusBar.overlaysWebView(false);
-                                        }
-                                        else{
-                                            window.StatusBar.overlaysWebView(true);
-                                        }
-                                        window.StatusBar.backgroundColorByName('black');
-                                        window.StatusBar.show();
-                                    }
-                                }
-                            }
-                        }
-                        if(lib.arenaReady){
-                            lib.arenaReady.push(showbar);
-                        }
-                        else{
-                            showbar();
-                        }
-                    }
-                }
-                else if(typeof window.require=='function'){
-                    lib.node={
-                        fs:require('fs'),
-                        debug:function(){
-                            require('electron').remote.getCurrentWindow().toggleDevTools();
-                        }
-                    };
-                    game.download=function(url,folder,onsuccess,onerror,dev,onprogress){
-                        if(url.indexOf('http')!=0){
-                            url=get.url(dev)+url;
-                        }
-                        game.ensureDirectory(folder,function(){
-                            try{
-                                var file = lib.node.fs.createWriteStream(__dirname+'/'+folder);
-                            }
-                            catch(e){
-                                onerror();
-                            }
-                            lib.config.brokenFile.add(folder);
-                            game.saveConfigValue('brokenFile');
-                            if(!lib.node.http) lib.node.http=require('http');
-                            if(!lib.node.https) lib.node.https=require('https');
-                            var request = (url.indexOf('https')==0?lib.node.https:lib.node.http).get(encodeURI(url), function(response) {
-                                var stream=response.pipe(file);
-                                stream.on('finish',function(){
-                                    lib.config.brokenFile.remove(folder);
-                                    game.saveConfigValue('brokenFile');
-                                    if(onsuccess){
-                                        onsuccess();
-                                    }
-                                });
-                                stream.on('error',onerror);
-                                if(onprogress){
-                                    var streamInterval=setInterval(function(){
-                                        if(stream.closed){
-                                            clearInterval(streamInterval);
-                                        }
-                                        else{
-                                            onprogress(stream.bytesWritten);
-                                        }
-                                    },200);
-                                }
-                            });
-                        },true);
-                    };
-                    game.readFile=function(filename,callback,onerror){
-                        lib.node.fs.readFile(__dirname+'/'+filename,function(err,data){
-                            if(err){
-                                onerror(err);
-                            }
-                            else{
-                                callback(data);
-                            }
-                        });
-                    };
-                    game.writeFile=function(data,path,name,callback){
-                        if(Object.prototype.toString.call(data)=='[object File]'){
-                            var fileReader = new FileReader();
-                            fileReader.onload = function(e){
-                                game.writeFile(e.target.result,path,name,callback);
-                            };
-                            fileReader.readAsArrayBuffer(data, "UTF-8");
-                        }
-                        else{
-                            get.zip(function(zip){
-                                zip.file('i',data);
-                                lib.node.fs.writeFile(__dirname+'/'+path+'/'+name,zip.files.i.asNodeBuffer(),null,callback);
-                            });
-                        }
-                    };
-                    game.removeFile=function(filename,callback){
-                        lib.node.fs.unlink(__dirname+'/'+filename);
-                    };
-                    game.getFileList=function(dir,callback){
-                        var files=[],folders=[];
-                        dir=__dirname+'/'+dir;
-                        lib.node.fs.readdir(dir,function(err,filelist){
-                            for(var i=0;i<filelist.length;i++){
-                                if(filelist[i][0]!='.'&&filelist[i][0]!='_'){
-                                    if(lib.node.fs.statSync(dir+'/'+filelist[i]).isDirectory()){
-                                        folders.push(filelist[i]);
-                                    }
-                                    else{
-                                        files.push(filelist[i]);
-                                    }
-                                }
-                            }
-                            callback(folders,files);
-                        });
-                    };
-                    game.ensureDirectory=function(list,callback,file){
-                        var directorylist;
-                        var num=0;
-                        if(file){
-                            num=1;
-                        }
-                        if(typeof list=='string'){
-                            directorylist=[list];
-                        }
-                        else{
-                            var directorylist=list.slice(0);
-                        }
-                        var access=function(str,dir,callback){
-                            if(dir.length<=num){
-                                callback();
-                            }
-                            else{
-                                str+='/'+dir.shift();
-                                lib.node.fs.access(__dirname+str,function(e){
-                                    if(e){
-                                        try{
-                                            lib.node.fs.mkdir(__dirname+str,function(){
-                                                access(str,dir,callback);
-                                            });
-                                        }
-                                        catch(e){
-                                            console.log(e);
-                                        }
-                                    }
-                                    else{
-                                        access(str,dir,callback);
-                                    }
-                                });
-                            }
-                        }
-                        var createDirectory=function(){
-                            if(directorylist.length){
-                                access('',directorylist.shift().split('/'),createDirectory);
-                            }
-                            else{
-                                callback();
-                            }
-                        };
-                        createDirectory();
-                    };
-                    if(ui.updateUpdate){
-                        ui.updateUpdate();
-                    }
-                }
-                else{
-                    window.onbeforeunload=function(){
-                        if(lib.config.confirm_exit&&!_status.reloading){
-                            return '是否离开游戏？'
-                        }
-                        else{
-                            return null;
-                        }
-                    }
-                }
-
-                lib.config=window.config;
-                lib.configOL={};
-                delete window.config;
-                var config2;
-
+				var config3=null;
                 var proceed=function(config2){
+					if(config3===null){
+						config3=config2;
+						return;
+					}
                     if(config2.mode) lib.config.mode=config2.mode;
                     if(lib.config.mode_config[lib.config.mode]==undefined) lib.config.mode_config[lib.config.mode]={};
                     for(var i in lib.config.mode_config.global){
@@ -6898,7 +6639,7 @@
 
                     var extensionlist=[];
                     if(!localStorage.getItem(lib.configprefix+'disable_extension')){
-                        if(lib.config.extensions.length){
+                        if(lib.config.extensions&&lib.config.extensions.length){
                             window.resetExtension=function(){
                                 for(var i=0;i<lib.config.extensions.length;i++){
                                     game.saveConfig('extension_'+lib.config.extensions[i]+'_enable',false);
@@ -7106,8 +6847,387 @@
                         document.addEventListener('touchmove',ui.click.windowtouchmove);
                     }
                 };
+				var proceed2=function(){
+					if(config3){
+						proceed(config3);
+					}
+					else{
+						config3=true;
+					}
+				};
 
-                if(window.indexedDB){
+				ui.css={menu:lib.init.css(lib.assetURL+'layout/default','menu',function(){
+					ui.css.default=lib.init.css(lib.assetURL+'layout/default','layout');
+					proceed2();
+				})};
+
+				if(lib.device){
+					lib.init.cordovaReady=function(){
+						if(lib.device=='android'){
+							document.addEventListener("pause", function(){
+								if(!_status.paused2&&!_status.event.isMine()){
+									ui.click.pause();
+								}
+								if(ui.backgroundMusic){
+									ui.backgroundMusic.pause();
+								}
+							});
+							document.addEventListener("resume", function(){
+								if(ui.backgroundMusic){
+									ui.backgroundMusic.play();
+								}
+							});
+							document.addEventListener("backbutton", function(){
+								if(ui.arena&&ui.arena.classList.contains('menupaused')){
+									if(window.saveNonameInput){
+										window.saveNonameInput();
+									}
+									else{
+										ui.click.configMenu();
+									}
+								}
+								else if(lib.config.confirm_exit){
+									navigator.notification.confirm(
+										'是否退出游戏？',
+										function(index){
+											switch(index){
+												case 2:game.saveConfig('null');game.reload();break;
+												case 3:navigator.app.exitApp();break;
+											}
+										},
+										'确认退出',
+										['取消','重新开始','退出']
+									);
+								}
+								else{
+									navigator.app.exitApp();
+								}
+							});
+						}
+						game.download=function(url,folder,onsuccess,onerror,dev,onprogress){
+							if(url.indexOf('http')!=0){
+								url=get.url(dev)+url;
+							}
+							var fileTransfer = new FileTransfer();
+							folder=lib.assetURL+folder;
+							if(onprogress){
+								fileTransfer.onprogress=function(progressEvent){
+									onprogress(progressEvent.loaded,progressEvent.total);
+								};
+							}
+							lib.config.brokenFile.add(folder);
+							game.saveConfigValue('brokenFile');
+							fileTransfer.download(encodeURI(url),encodeURI(folder),function(){
+								lib.config.brokenFile.remove(folder);
+								game.saveConfigValue('brokenFile');
+								if(onsuccess){
+									onsuccess();
+								}
+							},onerror);
+						};
+						game.readFile=function(filename,callback,onerror){
+							window.resolveLocalFileSystemURL(lib.assetURL,function(entry){
+								entry.getFile(filename,{},function(fileEntry){
+									fileEntry.file(function(fileToLoad){
+										var fileReader = new FileReader();
+										fileReader.onload = function(e){
+											callback(e.target.result);
+										};
+										fileReader.readAsArrayBuffer(fileToLoad, "UTF-8");
+									},onerror);
+								},onerror);
+							},onerror);
+						};
+						game.writeFile=function(data,path,name,callback){
+							if(Object.prototype.toString.call(data)=='[object File]'){
+								var fileReader = new FileReader();
+								fileReader.onload = function(e){
+									game.writeFile(e.target.result,path,name,callback);
+								};
+								fileReader.readAsArrayBuffer(data, "UTF-8");
+							}
+							else{
+								window.resolveLocalFileSystemURL(lib.assetURL+path,function(entry){
+									entry.getFile(name,{create:true},function(fileEntry){
+										fileEntry.createWriter(function(fileWriter){
+											fileWriter.onwriteend=callback;
+											fileWriter.write(data);
+										});
+									});
+								});
+							}
+						};
+						game.removeFile=function(dir,callback){
+							window.resolveLocalFileSystemURL(lib.assetURL,function(entry){
+								entry.getFile(dir,{},function(fileEntry){
+									fileEntry.remove();
+									if(callback){
+										callback();
+									}
+								});
+							});
+						};
+						game.getFileList=function(dir,callback){
+							var files=[],folders=[];
+							window.resolveLocalFileSystemURL(lib.assetURL+dir,function(entry){
+								var dirReader=entry.createReader();
+								var entries=[];
+								var readEntries=function(){
+									dirReader.readEntries(function(results){
+										if(!results.length){
+											entries.sort();
+											for(var i=0;i<entries.length;i++){
+												if(entries[i].isDirectory){
+													folders.push(entries[i].name);
+												}
+												else{
+													files.push(entries[i].name);
+												}
+											}
+											callback(folders,files);
+										}
+										else{
+											entries=entries.concat(Array.from(results));
+											readEntries();
+										}
+									});
+								};
+								readEntries();
+							});
+						};
+						game.ensureDirectory=function(list,callback,file){
+							var directorylist;
+							var num=0;
+							if(file){
+								num=1;
+							}
+							if(typeof list=='string'){
+								directorylist=[list];
+							}
+							else{
+								var directorylist=list.slice(0);
+							}
+							window.resolveLocalFileSystemURL(lib.assetURL,function(rootEntry){
+								var access=function(entry,dir,callback){
+									if(dir.length<=num){
+										callback();
+									}
+									else{
+										var str=dir.shift();
+										entry.getDirectory(str,{create:false},function(entry){
+											access(entry,dir,callback);
+										},function(){
+											entry.getDirectory(str,{create:true},function(entry){
+												access(entry,dir,callback);
+											});
+										});
+									}
+								}
+								var createDirectory=function(){
+									if(directorylist.length){
+										access(rootEntry,directorylist.shift().split('/'),createDirectory);
+									}
+									else{
+										callback();
+									}
+								};
+								createDirectory();
+							});
+						}
+						if(ui.updateUpdate){
+							ui.updateUpdate();
+						}
+						var showbar=function(){
+							if(window.StatusBar){
+								if(lib.device=='android'){
+									if(lib.config.show_statusbar_android){
+										window.StatusBar.overlaysWebView(false);
+										window.StatusBar.backgroundColorByName('black');
+										window.StatusBar.show();
+									}
+								}
+								else if(lib.device=='ios'){
+									if(lib.config.show_statusbar_ios!='off'&&lib.config.show_statusbar_ios!='auto'){
+										if(lib.config.show_statusbar_ios=='default'){
+											window.StatusBar.overlaysWebView(false);
+										}
+										else{
+											window.StatusBar.overlaysWebView(true);
+										}
+										window.StatusBar.backgroundColorByName('black');
+										window.StatusBar.show();
+									}
+								}
+							}
+						}
+						if(lib.arenaReady){
+							lib.arenaReady.push(showbar);
+						}
+						else{
+							showbar();
+						}
+					}
+				}
+				else if(typeof window.require=='function'){
+					lib.node={
+						fs:require('fs'),
+						debug:function(){
+							require('electron').remote.getCurrentWindow().toggleDevTools();
+						}
+					};
+					game.download=function(url,folder,onsuccess,onerror,dev,onprogress){
+						if(url.indexOf('http')!=0){
+							url=get.url(dev)+url;
+						}
+						game.ensureDirectory(folder,function(){
+							try{
+								var file = lib.node.fs.createWriteStream(__dirname+'/'+folder);
+							}
+							catch(e){
+								onerror();
+							}
+							lib.config.brokenFile.add(folder);
+							game.saveConfigValue('brokenFile');
+							if(!lib.node.http) lib.node.http=require('http');
+							if(!lib.node.https) lib.node.https=require('https');
+							var opts = require('url').parse(encodeURI(url));
+							opts.headers={'User-Agent': 'AppleWebkit'};
+							var request = (url.indexOf('https')==0?lib.node.https:lib.node.http).get(opts, function(response) {
+								var stream=response.pipe(file);
+								stream.on('finish',function(){
+									lib.config.brokenFile.remove(folder);
+									game.saveConfigValue('brokenFile');
+									if(onsuccess){
+										onsuccess();
+									}
+								});
+								stream.on('error',onerror);
+								if(onprogress){
+									var streamInterval=setInterval(function(){
+										if(stream.closed){
+											clearInterval(streamInterval);
+										}
+										else{
+											onprogress(stream.bytesWritten);
+										}
+									},200);
+								}
+							});
+						},true);
+					};
+					game.readFile=function(filename,callback,onerror){
+						lib.node.fs.readFile(__dirname+'/'+filename,function(err,data){
+							if(err){
+								onerror(err);
+							}
+							else{
+								callback(data);
+							}
+						});
+					};
+					game.writeFile=function(data,path,name,callback){
+						if(Object.prototype.toString.call(data)=='[object File]'){
+							var fileReader = new FileReader();
+							fileReader.onload = function(e){
+								game.writeFile(e.target.result,path,name,callback);
+							};
+							fileReader.readAsArrayBuffer(data, "UTF-8");
+						}
+						else{
+							get.zip(function(zip){
+								zip.file('i',data);
+								lib.node.fs.writeFile(__dirname+'/'+path+'/'+name,zip.files.i.asNodeBuffer(),null,callback);
+							});
+						}
+					};
+					game.removeFile=function(filename,callback){
+						lib.node.fs.unlink(__dirname+'/'+filename);
+					};
+					game.getFileList=function(dir,callback){
+						var files=[],folders=[];
+						dir=__dirname+'/'+dir;
+						lib.node.fs.readdir(dir,function(err,filelist){
+							for(var i=0;i<filelist.length;i++){
+								if(filelist[i][0]!='.'&&filelist[i][0]!='_'){
+									if(lib.node.fs.statSync(dir+'/'+filelist[i]).isDirectory()){
+										folders.push(filelist[i]);
+									}
+									else{
+										files.push(filelist[i]);
+									}
+								}
+							}
+							callback(folders,files);
+						});
+					};
+					game.ensureDirectory=function(list,callback,file){
+						var directorylist;
+						var num=0;
+						if(file){
+							num=1;
+						}
+						if(typeof list=='string'){
+							directorylist=[list];
+						}
+						else{
+							var directorylist=list.slice(0);
+						}
+						var access=function(str,dir,callback){
+							if(dir.length<=num){
+								callback();
+							}
+							else{
+								str+='/'+dir.shift();
+								lib.node.fs.access(__dirname+str,function(e){
+									if(e){
+										try{
+											lib.node.fs.mkdir(__dirname+str,function(){
+												access(str,dir,callback);
+											});
+										}
+										catch(e){
+											console.log(e);
+										}
+									}
+									else{
+										access(str,dir,callback);
+									}
+								});
+							}
+						}
+						var createDirectory=function(){
+							if(directorylist.length){
+								access('',directorylist.shift().split('/'),createDirectory);
+							}
+							else{
+								callback();
+							}
+						};
+						createDirectory();
+					};
+					if(ui.updateUpdate){
+						ui.updateUpdate();
+					}
+				}
+				else{
+					window.onbeforeunload=function(){
+						if(lib.config.confirm_exit&&!_status.reloading){
+							return '是否离开游戏？'
+						}
+						else{
+							return null;
+						}
+					}
+				}
+
+				lib.config=window.config;
+				lib.configOL={};
+				delete window.config;
+				var config2;
+				if(localStorage.getItem(lib.configprefix+'nodb')){
+					window.nodb=true;
+				}
+				if(window.indexedDB&&!window.nodb){
                     var request = window.indexedDB.open(lib.configprefix+'data',4);
                     request.onupgradeneeded=function(e){
                         var db=e.target.result;
@@ -7197,9 +7317,13 @@
                                      }
                                      else if(index==3){
                                         var noname_inited=localStorage.getItem('noname_inited');
-                                        localStorage.clear();
-                                        if(noname_inited){
-                                            localStorage.setItem('noname_inited',true);
+										var onlineKey=localStorage.getItem(lib.configprefix+'key');
+										localStorage.clear();
+										if(noname_inited){
+											localStorage.setItem('noname_inited',noname_inited);
+										}
+										if(onlineKey){
+											localStorage.setItem(lib.configprefix+'key',onlineKey);
                                         }
                                         if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
                                         setTimeout(function(){
@@ -7220,7 +7344,11 @@
                     }
                     else{
                         if(confirm('游戏似乎未正常载入，是否重置游戏？')){
-                            localStorage.clear();
+							var onlineKey=localStorage.getItem(lib.configprefix+'key');
+							localStorage.clear();
+							if(onlineKey){
+								localStorage.setItem(lib.configprefix+'key',onlineKey);
+							}
                             if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
                             setTimeout(function(){
                                 window.location.reload();
@@ -7551,6 +7679,10 @@
                                     continue;
                                 }
                             }
+							if(Array.isArray(lib[j])&&Array.isArray(character[i][j])){
+								lib[j].addArray(character[i][j]);
+								continue;
+							}
                             for(k in character[i][j]){
                                 if(j=='character'){
                                     if(!character[i][j][k][4]){
@@ -7560,6 +7692,9 @@
                                         character[i][j][k][4].contains('hiddenboss')){
                                         lib.config.forbidai.add(k);
                                     }
+									if(lib.config.forbidai_user&&lib.config.forbidai_user.contains(k)){
+										lib.config.forbidai.add(k);
+									}
                                     for(var l=0;l<character[i][j][k][3].length;l++){
                                         lib.skilllist.add(character[i][j][k][3][l]);
                                     }
@@ -7590,6 +7725,9 @@
                                             }
                                         }
                                     }
+									else if(Array.isArray(lib[j][k])&&Array.isArray(character[i][j][k])){
+										lib[j][k].addArray(character[i][j][k]);
+									}
                                     else{
                                         console.log('dublicate '+j+' in character '+i+':\n'+k+'\n'+': '+lib[j][k]+'\n'+character[i][j][k]);
                                     }
@@ -7818,6 +7956,7 @@
                     delete lib.imported.character;
                     delete lib.imported.card;
                     delete lib.imported.mode;
+					delete lib.imported.play;
                     for(var i in lib.init){
                         if(i.indexOf('setMode_')==0){
                             delete lib.init[i];
@@ -7865,6 +8004,12 @@
                     }
                     ui.create.arena();
                     game.createEvent('game',false).setContent(lib.init.start);
+					if(lib.mode[lib.config.mode]&&lib.mode[lib.config.mode].fromextension){
+						var startstr=mode[lib.config.mode].start.toString();
+						if(startstr.indexOf('onfree')==-1){
+							setTimeout(lib.init.onfree,500);
+						}
+					}
                     delete lib.init.start;
                     game.loop();
                 }
@@ -8025,6 +8170,9 @@
                 for(var i in lib.element.client){
                     client[i]=lib.element.client[i];
                 }
+				if(window.isNonameServer){
+					document.querySelector('#server_count').innerHTML=lib.node.clients.length;
+				}
                 ws.on('message',function(messagestr){
                     var message;
                     try{
@@ -8414,6 +8562,16 @@
                 window.lib=lib;
                 window._status=_status;
             },
+			dy:function(){
+				var next=game.me.next;
+				for(var i=0;i<10;i++){
+					if(next.identity!='zhu'){
+						break;
+					}
+					next=next.next;
+				}
+				next.die();
+			},
             x:function(){
                 var gl=function(dir,callback){
                     var files=[],folders=[];
@@ -8480,14 +8638,19 @@
                     game.saveConfig(mode[i]+'_banned',banned);
                     game.saveConfig(mode[i]+'_bannedcards',bannedcards);
                 }
+				game.saveConfig('theme','simple');
+				game.saveConfig('cards',lib.config.all.cards);
+				game.saveConfig('characters',lib.config.all.characters);
                 game.saveConfig('change_skin',false);
                 game.saveConfig('show_splash','off');
                 game.saveConfig('show_favourite',false);
+				game.saveConfig('animation', false);
                 // game.saveConfig('characters',lib.config.all.characters);
                 // game.saveConfig('cards',lib.config.all.cards);
                 game.saveConfig('plays',['cardpile']);
                 game.saveConfig('tao_enemy',true);
                 game.saveConfig('layout','long2');
+				game.saveConfig('hp_style','ol');
                 game.saveConfig('background_music','music_off');
                 game.saveConfig('background_audio',false);
                 game.saveConfig('background_speak',false);
@@ -8806,8 +8969,8 @@
                 var list=lib.rank.s.concat(lib.rank.ap).concat(lib.rank.a).concat(lib.rank.am).
                     concat(lib.rank.bp).concat(lib.rank.b).concat(lib.rank.bm).concat(lib.rank.c).concat(lib.rank.d);
                 for(var i in lib.character){
-                    if(i!='zuoci'&&i!='miheng'&&i.indexOf('boss_')!=0&&i.indexOf('tafang_')!=0&&!list.contains(i)) console.log(get.translation(i));
-                }
+                    if(!lib.connectBanned.contains(i)&&i.indexOf('boss_')!=0&&i.indexOf('tafang_')!=0&&!list.contains(i)) console.log(get.translation(i));
+				}
             },
             h:function(player){
                 console.log(get.translation(player.getCards('h')));
@@ -8940,17 +9103,28 @@
                 game.check();
             },
             t:function(num){
-                if(num==undefined){
-                    for(var i=0;i<game.players.length;i++) cheat.t(i);
-                    return;
-                }
-                var player=game.players[num];
-                var cards=player.getCards('hej');
-                for(var i=0;i<cards.length;i++){
-                    cards[i].discard();
-                }
-                player.update();
-            },
+				if(game.players.contains(num)){
+					num=game.players.indexOf(num);
+				}
+				if(num==undefined){
+					for(var i=0;i<game.players.length;i++) cheat.t(i);
+					return;
+				}
+				var player=game.players[num];
+				var cards=player.getCards('hej');
+				for(var i=0;i<cards.length;i++){
+					cards[i].discard();
+				}
+				player.removeEquipTrigger();
+				player.update();
+			},
+			to:function(){
+				for(var i=0;i<game.players.length;i++){
+					if(game.players[i]!=game.me){
+						cheat.t(i);
+					}
+				}
+			},
             k:function(i){
                 if(i==undefined) i=1;
                 game.players[i].hp=1;
@@ -9089,6 +9263,213 @@
         },
         element:{
             content:{
+	phasing:function(){
+					'step 0'
+					while(ui.dialogs.length){
+						ui.dialogs[0].close();
+					}
+					if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
+						player.popup('回合开始');
+					}
+					if(lib.config.glow_phase){
+						if(_status.currentPhase){
+							_status.currentPhase.classList.remove('glow_phase');
+							game.broadcast(function(player){
+								player.classList.remove('glow_phase');
+							},_status.currentPhase);
+						}
+						player.classList.add('glow_phase');
+						game.broadcast(function(player){
+							player.classList.add('glow_phase');
+						},player);
+					}
+					_status.currentPhase=player;
+					_status.discarded=[];
+					game.phaseNumber++;
+					game.syncState();
+					game.addVideo('phaseChange',player);
+					if(game.phaseNumber==1&&lib.configOL.observe){
+						lib.configOL.observeReady=true;
+						game.send('server','config',lib.configOL);
+					}
+					game.log();
+					game.log(player,'的回合开始');
+					player._noVibrate=true;
+					if(get.config('identity_mode')!='zhong'&&!_status.connectMode){
+						var num;
+						switch(get.config('auto_identity')){
+							case 'one':num=1;break;
+							case 'two':num=2;break;
+							case 'three':num=3;break;
+							case 'always':num=-1;break;
+							default:num=0;break;
+						}
+						if(num&&!_status.identityShown&&game.phaseNumber>game.players.length*num&&game.showIdentity){
+							if(!_status.video) player.popup('显示身份');
+							_status.identityShown=true;
+							game.showIdentity(false);
+						}
+					}
+					player.ai.tempIgnore=[];
+					player.stat.push({card:{},skill:{}});
+					'step 1'
+					event.trigger('phaseBeginStart');
+				},
+				toggleSubPlayer:function(){
+					'step 0'
+					var list=event.list||player.storage.subplayer.skills.slice(0);
+					list.remove(player.storage.subplayer.name2);
+					event.list=list;
+					if(!event.directresult){
+						if(list.length>1){
+							var dialog=ui.create.dialog('更换一个随从','hidden');
+							dialog.add([list,'character']);
+							player.chooseButton(dialog,true);
+						}
+						else if(list.length==1){
+							event.directresult=list[0];
+						}
+						else{
+							event.finish();
+						}
+					}
+					else{
+						if(!list.contains(event.directresult)){
+							event.finish();
+						}
+					}
+					'step 1'
+					if(!event.directresult){
+						if(result&&result.bool&&result.links[0]){
+							event.directresult=result.links[0];
+						}
+						else{
+							event.finish();
+							return;
+						}
+					}
+					if(player.storage.subplayer){
+						var current=player.storage.subplayer.name2;
+						if(event.directresult==current){
+							event.finish();
+							return;
+						}
+						player.storage[current].hp=player.hp;
+						player.storage[current].maxHp=player.maxHp;
+						player.storage[current].hs=player.getCards('h');
+						player.storage[current].es=player.getCards('e');
+						player.lose(player.getCards('he'),ui.special)._triggered=null;
+
+						var cfg=player.storage[event.directresult];
+						player.storage.subplayer.name2=event.directresult;
+						player.reinit(current,event.directresult,[
+							cfg.hp,
+							cfg.maxHp
+						]);
+						if(cfg.hs.length) player.directgain(cfg.hs);
+						if(cfg.es.length) player.directequip(cfg.es);
+					}
+				},
+				exitSubPlayer:function(){
+					'step 0'
+					if(player.storage.subplayer){
+						var current=player.storage.subplayer.name2;
+						if(event.remove){
+							player.lose(player.getCards('he'),ui.discardPile)._triggered=null;
+						}
+						else{
+							player.storage[current].hp=player.hp;
+							player.storage[current].maxHp=player.maxHp;
+							player.storage[current].hs=player.getCards('h');
+							player.storage[current].es=player.getCards('e');
+							player.lose(player.getCards('he'),ui.special)._triggered=null;
+						}
+						player.reinit(current,player.storage.subplayer.name,[
+							player.storage.subplayer.hp,
+							player.storage.subplayer.maxHp
+						]);
+						player.update();
+						if(event.remove){
+							if(player.storage[current].onremove){
+								player.storage[current].onremove(player);
+							}
+							delete player.storage[current];
+							player.storage.subplayer.skills.remove(current);
+							game.log(player,'牺牲了随从','#g'+current);
+						}
+						else{
+							game.log(player,'收回了随从','#g'+current);
+						}
+						player.addSkill(player.storage.subplayer.skills);
+					}
+					'step 1'
+					if(player.storage.subplayer){
+						player.directgain(player.storage.subplayer.hs);
+						player.directequip(player.storage.subplayer.es);
+					}
+					player.removeSkill('subplayer');
+					'step 2'
+					if(event.remove){
+						event.trigger('subPlayerDie');
+					}
+				},
+				callSubPlayer:function(){
+					'step 0'
+					var list=player.getSubPlayers(event.tag);
+					event.list=list;
+					if(!event.directresult){
+						if(list.length>1){
+							var dialog=ui.create.dialog('调遣一个随从','hidden');
+							dialog.add([list,'character']);
+							player.chooseButton(dialog,true);
+						}
+						else if(list.length==1){
+							event.directresult=list[0];
+						}
+						else{
+							event.finish();
+						}
+					}
+					else{
+						if(!list.contains(event.directresult)){
+							event.finish();
+						}
+					}
+					'step 1'
+					if(!event.directresult){
+						if(result&&result.bool&&result.links[0]){
+							event.directresult=result.links[0];
+						}
+						else{
+							event.finish();
+							return;
+						}
+					}
+					if(event.directresult){
+						var cfg=player.storage[event.directresult];
+						var source=cfg.source||player.name;
+						var name=event.directresult;
+						game.log(player,'调遣了随从','#g'+name);
+						player.storage.subplayer={
+							name:source,
+							name2:event.directresult,
+							hp:player.hp,
+							maxHp:player.maxHp,
+							skills:event.list.slice(0),
+							hs:player.getCards('h'),
+							es:player.getCards('e'),
+							intro2:cfg.intro2
+						}
+						player.removeSkill(event.list);
+						player.reinit(source,name,[cfg.hp,cfg.maxHp]);
+						player.addSkill('subplayer');
+						player.lose(player.getCards('he'),ui.special)._triggered=null;
+						if(cfg.hs.length) player.directgain(cfg.hs);
+						if(cfg.es.length) player.directequip(cfg.es);
+					}
+					'step 2'
+					game.delay();
+				},
                 reverseOrder:function(){
                     "step 0"
                     game.delay();
@@ -9166,14 +9547,17 @@
                         event.bool=false;
                         return;
                     }
+					_status.imchoosing=true;
                     game.pause();
                     "step 3"
+					_status.imchoosing=false;
                     if(event.bool){
                         if(game.changeCoin){
                             game.changeCoin(-3);
                         }
                         var hs=game.me.getCards('h');
-                        for(var i=0;i<hs.length;i++){
+						game.addVideo('lose',game.me,[get.cardsInfo(hs),[],[]]);
+						for(var i=0;i<hs.length;i++){
                             hs[i].discard(false);
                         }
                         game.me.directgain(get.cards(hs.length));
@@ -9222,6 +9606,11 @@
                         }
                         if(character[i].forbid&&character[i].forbid.contains(lib.config.mode)) continue;
                         if(character[i].mode&&character[i].mode.contains(lib.config.mode)==false) continue;
+
+						if(Array.isArray(lib[j])&&Array.isArray(character[i][j])){
+							lib[j].addArray(character[i][j]);
+							continue;
+						}
                         for(j in character[i]){
                             if(j=='mode'||j=='forbid') continue;
                             for(k in character[i][j]){
@@ -9233,6 +9622,9 @@
                                         character[i][j][k][4].contains('hiddenboss')){
                                         lib.config.forbidai.add(k);
                                     }
+									if(lib.config.forbidai_user&&lib.config.forbidai_user.contains(k)){
+										lib.config.forbidai.add(k);
+									}
                                     for(var l=0;l<character[i][j][k][3].length;l++){
                                         lib.skilllist.add(character[i][j][k][3][l]);
                                     }
@@ -9244,6 +9636,9 @@
                                     if(lib[j][k]==undefined){
                                         lib[j][k]=character[i][j][k];
                                     }
+									else if(Array.isArray(lib[j][k])&&Array.isArray(character[i][j][k])){
+										lib[j][k].addArray(character[i][j][k]);
+									}
                                     else{
                                         console.log('dublicate '+j+' in character '+i+':\n'+k+'\n'+': '+lib[j][k]+'\n'+character[i][j][k]);
                                     }
@@ -9305,23 +9700,76 @@
                         event.callback();
                     }
                 },
-                createTrigger:function(){
-                    "step 0"
-                    var info=get.info(event.skill);
-                    if(info.filter&&!info.filter(trigger,player,event.triggername)){
-                        event.finish();
-                    }
-                    else if(event._trigger._notrigger.contains(player)&&!lib.skill.global.contains(event.skill)){
-                        event.finish();
-                    }
-                    else if(typeof info.usable=='number'&&player.hasSkill('counttrigger')&&
-                        player.storage.counttrigger&&player.storage.counttrigger[event.skill]>=info.usable){
-                        event.finish();
-                    }
-                    else if(info.round&&(info.round-(game.roundNumber-player.storage[event.skill+'_roundcount'])>0)){
-                        event.finish();
-                    }
-                    else{
+                				arrangeTrigger:function(){
+					'step 0'
+					var list=event.list;
+					if(!list.length){
+						event.finish();
+						return;
+					}
+					event.choice=[];
+					event.num=0;
+					var filter=function(i){
+						if(list[i][1]==list[0][1]&&list[i][1].hasSkill(list[i][0],true)){
+							var info=get.info(list[i][0]);
+							if(info.forced||info.popup===false){
+								return false;
+							}
+							return true;
+						}
+						return false;
+					}
+					var filter2=function(info){
+						return lib.filter.filterTrigger(trigger,info[1],event.triggername,info[0]);
+					}
+					if(filter(0)){
+						event.choice.push(list[0]);
+						for(var i=1;i<list.length;i++){
+							if(filter(i)){
+								event.choice.push(list[i]);
+							}
+						}
+					}
+					if(event.choice.length>1){
+						for(var i=0;i<event.choice.length;i++){
+							if(!filter2(event.choice[i])){
+								event.choice.splice(i--,1);
+								if(event.choice.length<=1) break;
+							}
+						}
+					}
+					if(event.choice.length<=1){
+						event.goto(3);
+					}
+					'step 1'
+					var controls=[];
+					event.current=event.choice[0][1]
+					for(var i=0;i<event.choice.length;i++){
+						controls.push(event.choice[i][0]);
+					}
+					event.current.chooseControl(controls).set('prompt','选择下一个触发的技能');
+					'step 2'
+					if(result.control){
+						for(var i=0;i<event.list.length;i++){
+							if(event.list[i][0]==result.control&&event.list[i][1]==event.current){
+								event.num=i;break;
+							}
+						}
+					}
+					'step 3'
+					var info=event.list[event.num];
+					if(info){
+						event.list.splice(event.num,1);
+						game.createTrigger(event.triggername,info[0],info[1],trigger);
+					}
+					event.goto(0);
+				},
+				createTrigger:function(){
+					"step 0"
+					if(lib.filter.filterTrigger(trigger,player,event.triggername,event.skill)){
+						var fullskills=game.expandSkills(player.getSkills().concat(lib.skill.global));
+						if(!fullskills.contains(event.skill)){
+							var info=get.info(event.skill);
                         var hidden=player.hiddenSkills.slice(0);
                         game.expandSkills(hidden);
                         if(hidden.contains(event.skill)){
@@ -9335,23 +9783,33 @@
                                 event.skillHidden=true;
                             }
                         }
-                    }
-                    "step 1"
-                    if(event.cancelled){
-                        event.finish();
-                    }
-                    else{
-                        event.trigger('triggerBefore');
-                    }
-                    "step 2"
-                    var info=get.info(event.skill);
+						else{
+								var keep=false;
+								for(var i in player.additionalSkills){
+									if(i.indexOf('hidden:')==0&&game.expandSkills(player.additionalSkills[i]).contains(event.skill)){
+										keep=true;break;
+									}
+								}
+								if(!keep){
+									event.finish();
+								}
+							}
+						}
+					}
+					else{
+						event.finish();
+					}
+					"step 1"
+
                     if(event.cancelled){
                         event.finish();
                         return;
                     }
+					var info=get.info(event.skill);
                     if(!event.revealed&&!info.forced){
                         var checkFrequent=function(info){
-                            if(typeof info.frequent=='boolean') return info.frequent;
+							if(player.hasSkillTag('nofrequent',false,event.skill)) return false;
+							if(typeof info.frequent=='boolean') return info.frequent;
                             if(typeof info.frequent=='function') return info.frequent(trigger,player);
                             if(info.frequent=='check'&&typeof info.check=='function') return info.check(trigger,player);
                             return false;
@@ -9359,15 +9817,18 @@
                         if(info.direct&&player.isUnderControl()){
                             game.modeSwapPlayer(player);
                             event._result={bool:true};
+							event._direct=true;
                         }
                         else if(checkFrequent(info)&&!lib.config.autoskilllist.contains(event.skill)){
                             event._result={bool:true};
                         }
                         else if(info.direct){
                             event._result={bool:true};
+							event._direct=true;
                         }
                         else if(info.direct&&player.isOnline()){
                             event._result={bool:true};
+							event._direct=true;
                         }
                         else{
                             var str;
@@ -9392,15 +9853,31 @@
                             if(typeof info.prompt2=='function'){
                                 next.prompt2=info.prompt2(trigger,player);
                             }
+							else if(typeof info.prompt2=='string'){
+								next.prompt2=info.prompt2;
+							}
                             else if(info.prompt2!=false&&lib.translate[event.skill+'_info']){
                                 next.prompt2=lib.translate[event.skill+'_info'];
                             }
                         }
                     }
+					"step 2"
+					var info=get.info(event.skill);
+					if(result&&result.bool!=false){
+						if(info.autodelay&&(info.forced||!event.isMine())){
+							if(typeof info.autodelay=='number'){
+								game.delayx(info.autodelay);
+							}
+							else{
+								game.delayx();
+							}
+						}
+					}
                     "step 3"
                     var info=get.info(event.skill);
                     if(result&&result.bool==false){
                         if(info.oncancel) info.oncancel(trigger,player);
+						event.finish();
                         return;
                     }
                     var next=game.createEvent(event.skill);
@@ -9440,6 +9917,18 @@
                             }
                         }
                     }
+					"step 4"
+					if(player._hookTrigger){
+						for(var i=0;i<player._hookTrigger.length;i++){
+							var info=lib.skill[player._hookTrigger[i]].hookTrigger;
+							if(info){
+								if(info.after&&info.after(event,player,event.triggername)){
+									event.trigger('triggerAfter');
+									break;
+								}
+							}
+						}
+					}
                 },
                 playVideoContent:function(){
                     'step 0'
@@ -9594,11 +10083,16 @@
                         game.onlinezhu='1';
                     }
                     _status.waitingForPlayer=true;
-
+					if(window.isNonameServer){
+						document.querySelector('#server_status').innerHTML='等待中';
+					}
                     game.pause();
                     'step 1'
                     _status.waitingForPlayer=false;
                     lib.configOL.gameStarted=true;
+					if(window.isNonameServer){
+						document.querySelector('#server_status').innerHTML='游戏中';
+					}
                     if(game.onlineroom){
                         game.send('server','config',lib.configOL);
                     }
@@ -9746,7 +10240,7 @@
                     var name=event.card.viewAs||event.card.name;
                     if(event.cancelled&&!event.direct){
                         if(lib.card[name].cancel){
-                            var next=game.createEvent(name+'Cancelled');
+                            var next=game.createEvent(name+'Cancel');
                             next.setContent(lib.card[name].cancel);
                             next.card=event.card;
                             next.player=player;
@@ -9772,7 +10266,17 @@
                             event.num--;
                         }
                         if(event.num>0){
-                            player.draw(event.num);
+							var num=event.num;
+							if(event.attachDraw){
+								for(var i=0;i<event.attachDraw.length;i++){
+									ui.cardPile.insertBefore(event.attachDraw[i],ui.cardPile.firstChild);
+								}
+								num+=event.attachDraw.length;
+							}
+							var next=player.draw(num);
+							if(event.attachDraw){
+								next.minnum=event.attachDraw.length;
+							}
                         }
                     }
                     "step 1"
@@ -9801,7 +10305,7 @@
                 },
                 phaseDiscard:function(){
                     "step 0"
-                    event.num=player.countCards('h')-player.getHandcardLimit();
+                   event.num=player.needsToDiscard();
                     if(event.num<=0) event.finish();
                     else{
                         if(lib.config.show_phase_prompt){
@@ -9816,6 +10320,9 @@
                 },
                 chooseToUse:function(){
                     "step 0"
+					if(game.modeSwapPlayer&&!_status.auto&&player.isUnderControl()&&!lib.filter.wuxieSwap(trigger)){
+						game.modeSwapPlayer(player);
+					}
                     var skills=player.getSkills(true);
                     game.expandSkills(skills);
                     for(var i=0;i<skills.length;i++){
@@ -10057,6 +10564,9 @@
                         event.result={bool:false};
                     }
                     else{
+						if(game.modeSwapPlayer&&!_status.auto&&player.isUnderControl()&&!lib.filter.wuxieSwap(trigger)){
+							game.modeSwapPlayer(player);
+						}
                         game.check();
                         if(event.isMine()){
                             game.pause();
@@ -10094,7 +10604,10 @@
                         if(info&&info.onrespond){
                             info.onrespond(event.result,player);
                         }
-                        player.respond(event.result.cards,event.result.card,event.animate,event.result.skill,event.source);
+                       	var next=player.respond(event.result.cards,event.result.card,event.animate,event.result.skill,event.source);
+						if(event.parent.card&&event.parent.type=='card'){
+							next.set('respondTo',[event.parent.player,event.parent.card]);
+						}
                     }
                     if(event.dialog&&event.dialog.close) event.dialog.close();
                 },
@@ -10112,6 +10625,9 @@
                         }
                     }
                     else{
+						if(game.modeSwapPlayer&&!_status.auto&&player.isUnderControl()&&!lib.filter.wuxieSwap(trigger)){
+							game.modeSwapPlayer(player);
+						}
                         event.rangecards=player.getCards(event.position);
                         for(var i=0;i<event.rangecards.length;i++){
                             if(lib.filter.cardDiscardable(event.rangecards[i],player,event)){
@@ -10205,6 +10721,17 @@
                     if(event.promptdiscard){
                         event.promptdiscard.close();
                     }
+					"step 3"
+					if(event.result.bool&&event.result.cards&&event.result.cards.length&&
+						!game.online&&event.autodelay&&!event.isMine()){
+						if(typeof event.autodelay=='number'){
+							game.delayx(event.autodelay);
+						}
+						else{
+							game.delayx();
+						}
+					}
+					"step 4"
                     if(event.logSkill&&event.result.bool&&!game.online){
                         if(typeof event.logSkill=='string'){
                             player.logSkill(event.logSkill);
@@ -10244,8 +10771,8 @@
                     "step 1"
                     event.list=targets.slice(0);
                     event.list.unshift(player);
-                    player.chooseCardOL(event.list,'请选择拼点牌',true).set('ai',event.ai).set('source',player).aiCard=function(target){
-                        var hs=target.getCards('h');
+  					player.chooseCardOL(event.list,'请选择拼点牌',true).set('type','compare').set('ai',event.ai).set('source',player).aiCard=function(target){
+  						var hs=target.getCards('h');
                         var event=_status.event;
                         event.player=target;
                         hs.sort(function(a,b){
@@ -10356,32 +10883,32 @@
                         player.wait(sendback);
                         event.ol=true;
                         player.send(function(ai){
-                            game.me.chooseCard('请选择拼点牌',true).set('glow_result',true).ai=ai;
-                            game.resume();
-                        },event.ai);
-                    }
-                    else{
-                        event.localPlayer=true;
-                        player.chooseCard('请选择拼点牌',true).set('glow_result',true).ai=event.ai;
-                    }
-                    if(target.isOnline()){
-                        target.wait(sendback);
-                        event.ol=true;
-                        target.send(function(ai){
-                            game.me.chooseCard('请选择拼点牌',true).set('glow_result',true).ai=ai;
-                            game.resume();
-                        },event.ai);
-                    }
-                    else{
-                        event.localTarget=true;
-                    }
-                    "step 2"
-                    if(event.localPlayer){
-                        event.card1=result.cards[0];
-                    }
-                    if(event.localTarget){
-                        target.chooseCard('请选择拼点牌',true).set('glow_result',true).ai=event.ai;
-                    }
+						game.me.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=ai;
+							game.resume();
+						},event.ai);
+					}
+					else{
+						event.localPlayer=true;
+						player.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=event.ai;
+					}
+					if(target.isOnline()){
+						target.wait(sendback);
+						event.ol=true;
+						target.send(function(ai){
+							game.me.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=ai;
+							game.resume();
+						},event.ai);
+					}
+					else{
+						event.localTarget=true;
+					}
+					"step 2"
+					if(event.localPlayer){
+						event.card1=result.cards[0];
+					}
+					if(event.localTarget){
+						target.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=event.ai;
+					}
                     "step 3"
                     if(event.localTarget){
                         event.card2=result.cards[0];
@@ -10438,6 +10965,7 @@
                     var str;
                     if(event.num1>event.num2){
                         event.result.bool=true;
+						event.result.winner=player;
                         str=get.translation(player.name)+'拼点成功';
                         player.popup('胜');
                         target.popup('负');
@@ -10451,6 +10979,7 @@
                             target.popup('平');
                         }
                         else{
+							event.result.winner=target;
                             player.popup('负');
                             target.popup('胜');
                         }
@@ -10673,40 +11202,57 @@
                 },
                 chooseCard:function(){
                     "step 0"
-                    game.check();
-                    if(event.isMine()){
-                        game.pause();
-                        if(event.prompt!=false){
-                            var str;
-                            if(typeof event.prompt=='string') str=event.prompt;
-                            else{
-                                str='请选择'
-                                var range=get.select(event.selectCard);
-                                if(range[0]==range[1]) str+=get.cnNumber(range[0]);
-                                else if(range[1]==Infinity) str+='至少'+get.cnNumber(range[0]);
-                                else str+=get.cnNumber(range[0])+'至'+get.cnNumber(range[1]);
-                                str+='张';
-                                if(event.position=='h'||event.position==undefined) str+='手';
-                                if(event.position=='e') str+='装备';
-                                str+='牌';
-                            }
-                            event.dialog=ui.create.dialog(str);
-                            if(event.prompt2){
-                                event.dialog.addText(event.prompt2,event.prompt2.length<=20);
-                            }
-                            event.promptbar=event.dialog.add('0/'+get.numStr(event.selectCard[1],'card'));
-                            event.custom.add.card=function(){
-                                _status.event.promptbar.innerHTML=
-                                ui.selected.cards.length+'/'+get.numStr(_status.event.selectCard[1],'card');
-                            }
-                        }
-                    }
-                    else if(event.isOnline()){
-                        event.send();
-                    }
-                    else{
-                        event.result='ai';
-                    }
+					if(event.directresult){
+						event.result={
+							buttons:[],
+							cards:event.directresult.slice(0),
+							targets:[],
+							confirm:'ok',
+							bool:true,
+							links:[]
+						};
+					}
+					else{
+	                    game.check();
+	                    if(event.isMine()){
+	                        game.pause();
+	                        if(event.prompt!=false){
+	                            var str;
+	                            if(typeof event.prompt=='string') str=event.prompt;
+	                            else{
+	                                str='请选择'
+	                                var range=get.select(event.selectCard);
+	                                if(range[0]==range[1]) str+=get.cnNumber(range[0]);
+	                                else if(range[1]==Infinity) str+='至少'+get.cnNumber(range[0]);
+	                                else str+=get.cnNumber(range[0])+'至'+get.cnNumber(range[1]);
+	                                str+='张';
+	                                if(event.position=='h'||event.position==undefined) str+='手';
+	                                if(event.position=='e') str+='装备';
+	                                str+='牌';
+	                            }
+	                            event.dialog=ui.create.dialog(str);
+	                            if(event.prompt2){
+	                                event.dialog.addText(event.prompt2,event.prompt2.length<=20);
+	                            }
+								if(Array.isArray(event.promptx)){
+									for(var i=0;i<event.promptx.length;i++){
+										event.dialog.add(event.promptx[i]);
+									}
+								}
+	                            event.promptbar=event.dialog.add('0/'+get.numStr(event.selectCard[1],'card'));
+	                            event.custom.add.card=function(){
+	                                _status.event.promptbar.innerHTML=
+	                                ui.selected.cards.length+'/'+get.numStr(_status.event.selectCard[1],'card');
+	                            }
+	                        }
+	                    }
+	                    else if(event.isOnline()){
+	                        event.send();
+	                    }
+	                    else{
+	                        event.result='ai';
+	                    }
+					}
                     "step 1"
                     if(event.result=='ai'){
                         game.check();
@@ -10726,8 +11272,8 @@
                     }
                     "step 2"
                     event.resume();
-                    if(event.glow_result&&event.result.cards){
-                        for(var i=0;i<event.result.cards.length;i++){
+                    if(event.glow_result&&event.result.cards&&!event.directresult){
+					    for(var i=0;i<event.result.cards.length;i++){
                             event.result.cards[i].classList.add('glow');
                         }
                     }
@@ -10790,6 +11336,14 @@
                     if(event.onresult){
                         event.onresult(event.result);
                     }
+					if(event.result.bool&&event.autodelay&&!event.isMine()){
+						if(typeof event.autodelay=='number'){
+							game.delayx(event.autodelay);
+						}
+						else{
+							game.delayx();
+						}
+					}
                 },
                 chooseCardTarget:function(){
                     "step 0"
@@ -10840,7 +11394,16 @@
                 chooseControl:function(){
                     "step 0"
                     if(event.controls.length==0){
-                        if(event.choiceList){
+						if(event.sortcard){
+							var sortnum=2;
+							if(event.sorttop){
+								sortnum=1;
+							}
+							for(var i=0;i<event.sortcard.length+sortnum;i++){
+								event.controls.push(get.cnNumber(i,true));
+							}
+						}
+						else if(event.choiceList){
                             for(var i=0;i<event.choiceList.length;i++){
                                 event.controls.push('选项'+get.cnNumber(i+1,true));
                             }
@@ -10858,15 +11421,60 @@
                         event.controls.push('cancel2');
                     }
                     if(event.isMine()){
-                        if(event.dialogcontrol){
+                        						if(event.sortcard){
+							var prompt=event.prompt||'选择一个位置';
+							if(event.tosort){
+								prompt+='放置'+get.translation(event.tosort);
+							}
+							event.dialog=ui.create.dialog(prompt,'hidden');
+							if(event.sortcard&&event.sortcard.length){
+								event.dialog.addSmall(event.sortcard);
+							}
+							else{
+								event.dialog.buttons=[];
+								event.dialog.add(ui.create.div('.buttons'));
+							}
+							var buttons=event.dialog.content.lastChild;
+							var sortnum=2;
+							if(event.sorttop){
+								sortnum=1;
+							}
+							for(var i=0;i<event.dialog.buttons.length+sortnum;i++){
+								var item=ui.create.div('.button.card.pointerdiv.mebg');
+								item.style.width='50px';
+								buttons.insertBefore(item,event.dialog.buttons[i]);
+								item.innerHTML='<div style="font-family: xinwei;font-size: 25px;height: 75px;line-height: 25px;top: 8px;left: 10px;width: 30px;">第'+get.cnNumber(i+1,true)+'张</div>';
+								if(i==event.dialog.buttons.length+1){
+									item.firstChild.innerHTML='牌堆底';
+								}
+								item.link=get.cnNumber(i,true);
+								item.listen(ui.click.dialogcontrol);
+							}
+
+							event.dialog.forcebutton=true;
+							event.dialog.classList.add('forcebutton');
+							event.dialog.open();
+						}
+						else if(event.dialogcontrol){
                             event.dialog=ui.create.dialog(event.prompt||'选择一项','hidden');
                             for(var i=0;i<event.controls.length;i++){
-                                var item=event.dialog.add('<div class="popup text" style="width:calc(100% - 10px);display:inline-block">'+event.controls[i]+'</div>');
+                                var item=event.dialog.add('<div class="popup text pointerdiv" style="width:calc(100% - 10px);display:inline-block">'+event.controls[i]+'</div>');
                                 item.firstChild.listen(ui.click.dialogcontrol);
                                 item.firstChild.link=event.controls[i];
                             }
                             event.dialog.forcebutton=true;
                             event.dialog.classList.add('forcebutton');
+							if(event.addDialog){
+								for(var i=0;i<event.addDialog.length;i++){
+									if(get.itemtype(event.addDialog[i])=='cards'){
+										event.dialog.addSmall(event.addDialog[i]);
+									}
+									else{
+										event.dialog.add(event.addDialog[i]);
+									}
+								}
+								event.dialog.add(ui.create.div('.placeholder.slim'));
+							}
                             event.dialog.open();
                         }
                         else{
@@ -10896,6 +11504,9 @@
                             }
                             else if(event.prompt){
                                 event.dialog=ui.create.dialog(event.prompt);
+								if(event.prompt2){
+									event.dialog.addText(event.prompt2,event.prompt2.length<=20||event.centerprompt2);
+								}
                             }
                         }
                         game.pause();
@@ -11139,6 +11750,19 @@
                 },
                 discardPlayerCard:function(){
                     "step 0"
+					if(event.directresult){
+						event.result={
+							buttons:[],
+							cards:event.directresult.slice(0),
+							links:event.directresult.slice(0),
+							targets:[],
+							confirm:'ok',
+							bool:true
+						};
+						event.cards=event.directresult.slice(0);
+						event.goto(2);
+						return;
+					}
                     if(!event.dialog) event.dialog=ui.create.dialog('hidden');
                     else if(!event.isMine){
                         event.dialog.style.display='none';
@@ -11160,38 +11784,46 @@
                     }
                     var directh=true;
                     for(var i=0;i<event.position.length;i++){
-                        if(event.position[i]=='h'&&target.countCards('h')){
-                            event.dialog.addText('手牌区');
-                            var hs=target.getCards('h');
-                            hs.randomSort();
-                            if(event.visible||target.isUnderControl(true)){
-                                event.dialog.add(hs);
-                                directh=false;
-                            }
-                            else{
-                                if (target.storage.mingzhi){
-                                    for (var j = 0; j < hs.length; j ++){
-                                        if (target.storage.mingzhi.contains(hs[j])){
-                                            event.dialog.add([hs[j]]);
-                                        } else {
-                                            event.dialog.add([[hs[j]],'blank']);
-                                        }
-                                    }
-                                    directh=false;
-                                } else {
-                                    event.dialog.add([hs,'blank']);
-                                }
-                            }
+                       	if(event.position[i]=='h'){
+							var hs=target.getDiscardableCards(player,'h');
+							if(hs.length){
+	                            event.dialog.addText('手牌区');
+	                            hs.randomSort();
+	                            if(event.visible||target.isUnderControl(true)){
+	                                event.dialog.add(hs);
+	                                directh=false;
+	                            }
+	                            else{
+	                                if (target.storage.mingzhi){
+	                                    for (var j = 0; j < hs.length; j ++){
+	                                        if (target.storage.mingzhi.contains(hs[j])){
+	                                            event.dialog.add([hs[j]]);
+	                                        } else {
+	                                            event.dialog.add([[hs[j]],'blank']);
+	                                        }
+	                                    }
+	                                    directh=false;
+	                                } else {
+	                                    event.dialog.add([hs,'blank']);
+	                                }
+	                            }
+	                     	}
                         }
-                        else if(event.position[i]=='e'&&target.countCards('e')){
-                            event.dialog.addText('装备区');
-                            event.dialog.add(target.getCards('e'));
-                            directh=false;
+                        else if(event.position[i]=='e'){
+							var es=target.getDiscardableCards(player,'e');
+							if(es.length){
+	                            event.dialog.addText('装备区');
+	                            event.dialog.add(es);
+	                            directh=false;
+	                        }
                         }
-                        else if(event.position[i]=='j'&&target.countCards('j')){
-                            event.dialog.addText('判定区');
-                            event.dialog.add(target.getCards('j'));
-                            directh=false;
+ 						else if(event.position[i]=='j'){
+							var js=target.getDiscardableCards(player,'j');
+							if(js.length){
+	                            event.dialog.addText('判定区');
+	                            event.dialog.add(js);
+	                            directh=false;
+	                        }
                         }
                     }
                     if(event.dialog.buttons.length==0){
@@ -11239,7 +11871,7 @@
                     event.dialog.close();
                     "step 2"
                     event.resume();
-                    if(event.result.bool&&event.result.buttons&&!game.online){
+                    if(event.result.bool&&event.result.links&&!game.online){
                         if(event.logSkill){
                             if(typeof event.logSkill=='string'){
                                 player.logSkill(event.logSkill);
@@ -11253,14 +11885,34 @@
                             cards.push(event.result.links[i]);
                         }
                         event.result.cards=event.result.links.slice(0);
-                        var next=target.discard(cards);
-                        if(event.delay===false){
-                            next.delay=event.delay;
+						event.cards=cards;
+					}
+					"step 3"
+					if(event.boolline){
+						player.line(target,'green');
+					}
+					if(!event.chooseonly){
+						var next=target.discard(event.cards);
+						if(event.delay===false){
+							next.set('delay',false);
                         }
                     }
                 },
                 gainPlayerCard:function(){
                     "step 0"
+					if(event.directresult){
+						event.result={
+							buttons:[],
+							cards:event.directresult.slice(0),
+							links:event.directresult.slice(0),
+							targets:[],
+							confirm:'ok',
+							bool:true
+						};
+						event.cards=event.directresult.slice(0);
+						event.goto(2);
+						return;
+					}
                     if(!event.dialog) event.dialog=ui.create.dialog('hidden');
                     else if(!event.isMine){
                         event.dialog.style.display='none';
@@ -11282,38 +11934,46 @@
                     }
                     var directh=true;
                     for(var i=0;i<event.position.length;i++){
-                        if(event.position[i]=='h'&&target.countCards('h')){
-                            event.dialog.addText('手牌区');
-                            var hs=target.getCards('h');
-                            hs.randomSort();
-                            if(event.visible||target.isUnderControl(true)){
-                                event.dialog.add(hs);
-                                directh=false;
-                            }
-                            else{
-                                if (target.storage.mingzhi){
-                                    for (var j = 0; j < hs.length; j ++){
-                                        if (target.storage.mingzhi.contains(hs[j])){
-                                            event.dialog.add([hs[j]]);
-                                        } else {
-                                            event.dialog.add([[hs[j]],'blank']);
-                                        }
-                                    }
-                                    directh=false;
-                                } else {
-                                    event.dialog.add([hs,'blank']);
-                                }
-                            }
+                        if(event.position[i]=='h'){
+							var hs=target.getGainableCards(player,'h');
+							if(hs.length){
+	                            event.dialog.addText('手牌区');
+	                            hs.randomSort();
+	                            if(event.visible||target.isUnderControl(true)){
+	                                event.dialog.add(hs);
+	                                directh=false;
+	                            }
+	                            else{
+	                                if (target.storage.mingzhi){
+	                                    for (var j = 0; j < hs.length; j ++){
+	                                        if (target.storage.mingzhi.contains(hs[j])){
+	                                            event.dialog.add([hs[j]]);
+	                                        } else {
+	                                            event.dialog.add([[hs[j]],'blank']);
+	                                        }
+	                                    }
+	                                    directh=false;
+	                                } else {
+	                                    event.dialog.add([hs,'blank']);
+	                                }
+	                            }
+                        	}
                         }
-                        else if(event.position[i]=='e'&&target.countCards('e')){
-                            event.dialog.addText('装备区');
-                            event.dialog.add(target.getCards('e'));
-                            directh=false;
+                        else if(event.position[i]=='e'){
+							var es=target.getGainableCards(player,'e');
+							if(es.length){
+                            	event.dialog.addText('装备区');
+                            	event.dialog.add(es);
+                            	directh=false;
+                        	}
                         }
-                        else if(event.position[i]=='j'&&target.countCards('j')){
-                            event.dialog.addText('判定区');
-                            event.dialog.add(target.getCards('j'));
-                            directh=false;
+						else if(event.position[i]=='j'){
+							var js=target.getGainableCards(player,'j');
+							if(js.length){
+								event.dialog.addText('判定区');
+								event.dialog.add(js);
+								directh=false;
+							}
                         }
                     }
                     if(event.dialog.buttons.length==0){
@@ -11401,7 +12061,15 @@
                         }
                     }
                     "step 4"
-                    player.gain(event.cards,target);
+					if(event.boolline){
+						player.line(target,'green');
+					}
+					if(!event.chooseonly){
+						var next=player.gain(event.cards,target);
+						if(event.delay===false){
+							next.set('delay',false);
+						}
+					}
                 },
                 showHandcards:function(){
                     "step 0"
@@ -11439,10 +12107,37 @@
                     event.dialog=ui.create.dialog(event.str,cards);
                     event.dialogid=lib.status.videoId++;
                     event.dialog.videoId=event.dialogid;
-                    game.broadcast(function(str,cards,id){
-                        ui.create.dialog(str,cards).videoId=id;
-                    },event.str,cards,event.dialogid);
-                    game.log(player,'展示了',cards);
+                   
+					if(event.hiddencards){
+						for(var i=0;i<event.dialog.buttons.length;i++){
+							if(event.hiddencards.contains(event.dialog.buttons[i].link)){
+								event.dialog.buttons[i].className='button card';
+								event.dialog.buttons[i].innerHTML='';
+							}
+						}
+					}
+					game.broadcast(function(str,cards,cards2,id){
+						var dialog=ui.create.dialog(str,cards);
+						dialog.videoId=id;
+						if(cards2){
+							for(var i=0;i<dialog.buttons.length;i++){
+								if(cards2.contains(dialog.buttons[i].link)){
+									dialog.buttons[i].className='button card';
+									dialog.buttons[i].innerHTML='';
+								}
+							}
+						}
+					},event.str,cards,event.hiddencards,event.dialogid);
+					if(event.hiddencards){
+						var cards2=cards.slice(0);
+						for(var i=0;i<event.hiddencards.length;i++){
+							cards2.remove(event.hiddencards[i]);
+						}
+						game.log(player,'展示了',cards2);
+					}
+					else{
+						game.log(player,'展示了',cards);
+					}
                     game.delayx(2);
                     game.addVideo('showCards',player,[event.str,get.cardsInfo(cards)]);
                     "step 1"
@@ -11525,6 +12220,18 @@
                             }
                             return 0;
                         }
+						if(att>0){
+							var es=ui.selected.targets[0].getCards('e');
+							var i;
+							for(i=0;i<es.length;i++){
+								if(!target.getEquip(get.subtype(es[i]))){
+									break;
+								}
+							}
+							if(i==es.length){
+								return 0;
+							}
+						}
                         return -att*get.attitude(player,ui.selected.targets[0]);
                     });
                     next.set('multitarget',true);
@@ -11630,7 +12337,7 @@
                             if(lib.config.background_audio){
                                 var sex=player.sex=='female'?'female':'male';
                                 var audioinfo=lib.card[card.name].audio;
-                                if(audioinfo||true){
+                                // if(audioinfo||true){
                                     if(card.name=='sha'&&(card.nature=='fire'||card.nature=='thunder')){
                                         game.playAudio('card',sex,card.name+'_'+card.nature);
                                     }
@@ -11642,10 +12349,10 @@
                                             game.playAudio('card',sex,card.name);
                                         }
                                     }
-                                }
-                                else if(get.type(card)!='equip'){
-                                    game.playAudio('card/default');
-                                }
+                               	// }
+								// else if(get.type(card)!='equip'){
+								// 	game.playAudio('card/default');
+								// }
                             }
                         },player,card);
                     }
@@ -11699,6 +12406,7 @@
                     if(event.oncard){
                         event.oncard(event.card,event.player);
                     }
+					event.excluded=[];
                     event.trigger('useCard');
                     event._oncancel=function(){
                         game.broadcastAll(function(id){
@@ -11775,6 +12483,7 @@
                         next.card=card;
                         next.cards=cards;
                         next.player=player;
+						next.type='precard';
                     }
                     else if(info.reverseOrder&&get.is.versus()&&targets.length>1){
                         var next=game.createEvent(card.name+'ContentBefore');
@@ -11783,11 +12492,13 @@
                         next.card=card;
                         next.cards=cards;
                         next.player=player;
+						next.type='precard';
                     }
                     "step 2"
                     if(targets[num]&&targets[num].isDead()) return;
                     if(targets[num]&&targets[num].isOut()) return;
                     if(targets[num]&&targets[num].removed) return;
+					if(targets[num]&&event.excluded.contains(targets[num])) return;
                     var info=get.info(card);
                     if(targets.length==0&&!info.notarget) return;
                     var next=game.createEvent(card.name);
@@ -11864,6 +12575,7 @@
                         next.cards=cards;
                         next.player=player;
                         next.preResult=event.preResult;
+						next.type='postcard';
                     }
                     "step 5"
                     if(event.postAi){
@@ -11887,9 +12599,7 @@
                     var info=get.info(event.skill);
                     event._skill=event.skill;
                     game.trySkillAudio(event.skill,player);
-                    if(player.checkShow){
-                        player.checkShow(event.skill);
-                    }
+    				var checkShow=player.checkShow(event.skill);
                     if(info.discard!=false&&info.lose!=false&&!info.viewAs){
                         player.discard(cards).delay=false;
                         if(lib.config.low_performance){
@@ -11951,9 +12661,18 @@
                     if(!info.direct){
                         game.log(player,str,'【'+get.skillTranslation(skill,player)+'】');
                         if(info.logv!==false) game.logv(player,skill,targets);
-                        if(lib.config.skill_animation!='off'&&lib.skill[skill]&&lib.skill[skill].skillAnimation){
-                            player.$skill(lib.skill[skill].animationStr||lib.translate[skill],lib.skill[skill].skillAnimation,lib.skill[skill].animationColor);
-                        }
+                       if(lib.config.skill_animation_type!='off'&&lib.skill[skill]&&lib.skill[skill].skillAnimation){
+							if(lib.config.skill_animation_type=='default'){
+								checkShow=checkShow||'main';
+							}
+							else{
+								checkShow=false;
+							}
+							if(lib.skill[skill].textAnimation){
+								checkShow=false;
+							}
+							player.$skill(lib.skill[skill].animationStr||lib.translate[skill],lib.skill[skill].skillAnimation,lib.skill[skill].animationColor,checkShow);
+						}
                         else{
                             player.popup(get.skillTranslation(skill,player));
                         }
@@ -12103,6 +12822,9 @@
                     //      game.playAudio('effect','draw');
                     //  }
                     // });
+					if(typeof event.minnum=='number'&&num<event.minnum){
+						num=event.minnum;
+					}
                     if(event.drawDeck){
                         if(event.drawDeck>num){
                             event.drawDeck=num;
@@ -12147,7 +12869,7 @@
                 discard:function(){
                     "step 0"
                     game.log(player,'弃置了',cards);
-                    player.lose(cards);
+                    player.lose(cards,event.position);
                     if(event.animate!=false){
                         event.discardid=lib.status.videoId++;
                         game.broadcastAll(function(player,cards,id){
@@ -12204,9 +12926,10 @@
                             cardaudio=false;
                         }
                         player.logSkill(event.skill);
-                        if(player.checkShow){
-                            player.checkShow(event.skill);
-                        }
+                       player.checkShow(event.skill,true);
+						if(lib.skill[event.skill].onrespond&&!game.online){
+							lib.skill[event.skill].onrespond(event,player);
+						}
                     }
                     else if(lib.config.show_card_prompt&&!lib.config.hide_card_prompt_basic){
                         player.popup(card.name,'wood');
@@ -12216,17 +12939,17 @@
                             if(lib.config.background_audio){
                                 var sex=player.sex=='female'?'female':'male';
                                 var audioinfo=lib.card[card.name].audio;
-                                if(audioinfo||true){
-                                    if(typeof audioinfo=='string'&&audioinfo.indexOf('ext:')==0){
-                                        game.playAudio('..','extension',audioinfo.slice(4),card.name+'_'+sex);
-                                    }
-                                    else{
-                                        game.playAudio('card',sex,card.name);
-                                    }
-                                }
-                                else{
-                                    game.playAudio('card/default');
-                                }
+                                	// if(audioinfo||true){
+									if(typeof audioinfo=='string'&&audioinfo.indexOf('ext:')==0){
+										game.playAudio('..','extension',audioinfo.slice(4),card.name+'_'+sex);
+									}
+									else{
+										game.playAudio('card',sex,card.name);
+									}
+								// }
+								// else{
+								// 	game.playAudio('card/default');
+								// }
                             }
                         },player,card);
                     }
@@ -12294,50 +13017,45 @@
                     event.delayed=false;
                     event.num=0;
                     event.cardlist=[];
-                    'step 1'
-                    var current=targets[num];
-                    var card;
-                    if(cards){
-                        card=cards[num];
-                    }
-                    else{
-                        card=current.getCards(event.position).randomGet();
-                    }
-                    if(card){
-                        if(typeof event.animation=='string'){
-                            current['$'+event.animation](card,player);
-                        }
-                        else{
-                            current.$giveAuto(card,player);
-                        }
-                        current.lose(card,ui.special).set('type','gain');
-                    }
-                    event.cardlist[num]=card||null;
-                    event.num++;
-                    if(event.num<targets.length){
-                        event.redo();
-                    }
-                    else{
-                        event.num=0;
-                    }
-                    'step 2'
-                    var current=targets[num];
-                    var card=event.cardlist[num];
-                    if(card){
-                        if(current==game.me||current.isOnline()||(player==game.me&&!event.delayed)){
-                            player.gain(card,current);
-                            event.delayed=true;
-                        }
-                        else{
-                            player.gain(card,current).set('delay',false);
-                        }
-                    }
-                    event.num++;
-                    if(event.num<targets.length){
-                        event.redo();
-                    }
-                    'step 2'
-                    if(!event.delayed) game.delay();
+					event.cards=[];
+					'step 1'
+					player.gainPlayerCard(targets[num],event.position,true).set('boolline',false).set('chooseonly',true);
+					'step 2'
+					var current=targets[num];
+					var card=null;
+					if(result.bool){
+						card=result.cards[0];
+					}
+					if(card){
+						event.cards.add(card);
+						current.lose(card,ui.special).set('type','gain');
+					}
+					event.cardlist[num]=card||null;
+					event.num++;
+					if(event.num<targets.length){
+						event.goto(1);
+					}
+					else{
+						event.num=0;
+					}
+					'step 3'
+					var current=targets[num];
+					var card=event.cardlist[num];
+					if(card&&event.cards.contains(card)){
+						if(current==game.me||current.isOnline()||(player==game.me&&!event.delayed)){
+							player.gain(card,current);
+							event.delayed=true;
+						}
+						else{
+							player.gain(card,current).set('delay',false);
+						}
+					}
+					event.num++;
+					if(event.num<targets.length){
+						event.redo();
+					}
+					'step 4'
+					if(!event.delayed) game.delay();
                 },
                 // 获得牌
                 gain:function(){
@@ -12354,6 +13072,16 @@
                     }
                     // 如果，没有获得的牌的话，事件结束
                     "step 1"
+					for(var i=0;i<cards.length;i++){
+						if(cards[i].destroyed){
+							if(player.hasSkill(cards[i].destroyed)){
+								delete cards[i].destroyed;
+							}
+							else{
+								cards.splice(i--,1);
+							}
+						}
+					}
                     if(cards.length==0){
                         event.finish();
                         return;
@@ -12397,6 +13125,9 @@
                         if(lib.config.reverse_sort) sort=-sort;
                         cards[num].fix();
                         cards[num].style.transform='';
+						if(_status.discarded){
+							_status.discarded.remove(cards[num]);
+						}
                         // cards[num].vanishtag.length=0;
                         for(var num2=0;num2<cards[num].vanishtag.length;num2++){
                             if(cards[num].vanishtag[num2][0]!='_'){
@@ -12506,10 +13237,23 @@
                         cards[i].style.transform+=' scale(0.2)';
                         cards[i].classList.remove('glow');
                         cards[i].recheck();
-                        if(event.position){
+                        var info=lib.card[cards[i].name];
+                        if(info.destroy||cards[i]._destroy){
+							cards[i].delete();
+							cards[i].destroyed=info.destroy||cards[i]._destroy;
+						}
+                        else if(event.position){
                             if (get.info(cards[i]).type == 'delay'){
                                 cards[i].goto(ui.skillPile);
                             } else {
+                            	if(_status.discarded){
+									if(event.position==ui.discardPile){
+										_status.discarded.add(cards[i]);
+									}
+									else{
+										_status.discarded.remove(cards[i]);
+									}
+								}
                                 cards[i].goto(event.position);
                             }
                         }
@@ -13032,11 +13776,11 @@
                         _status.dying.remove(player);
 
                         for(var i=0;i<cards.length;i++){
-                            cards[i].goto(ui.discardPile);
+                            cards[i].discard();
                         }
                         if(game.online&&player==game.me&&!_status.over&&!game.controlOver&&!ui.exit){
                             if(lib.mode[lib.configOL.mode].config.dierestart){
-                                ui.exit=ui.create.control('退出房间',ui.click.exit);
+                                ui.create.exit();
                             }
                         }
                         // 播放死亡语音
@@ -13120,6 +13864,15 @@
                         event.finish();
                         return;
                     }
+					if(card.destroyed){
+						if(player.hasSkill(card.destroyed)){
+							delete card.destroyed;
+						}
+						else{
+							event.finish();
+							return;
+						}
+					}
                     if(event.draw){
                         game.delay(0,300);
                         player.$draw(card);
@@ -13191,6 +13944,15 @@
                     }
                     // 然后，重置这张牌，这张牌明置，之类的……
                     "step 1"
+					if(cards[0].destroyed){
+						if(player.hasSkill(cards[0].destroyed)){
+							delete cards[0].destroyed;
+						}
+						else{
+							event.finish();
+							return;
+						}
+					}
                     cards[0].fix();
                     cards[0].style.transform='';
                     cards[0].classList.remove('drawinghidden');
@@ -13216,6 +13978,9 @@
                         if (player.num('j',{type:'delay'})>player.maxjudge){
                             player.discardPlayerCard(player,'j',true);
                         }
+                        if(_status.discarded){
+							_status.discarded.remove(cards[0]);
+						}
                         player.update();
                         ui.updatej(player);
                         // 这里是log部分
@@ -13412,6 +14177,12 @@
             },
             player:{
                 init:function(character,character2,skill){
+					if(typeof character=='string'&&!lib.character[character]){
+						lib.character[character]=get.character(character);
+					}
+					if(typeof character2=='string'&&!lib.character[character2]){
+						lib.character[character2]=get.character(character2);
+					}
                     if(!lib.character[character]) return;
                     if(get.is.jun(character2)){
                         var tmp=character;
@@ -13545,6 +14316,11 @@
                             lib.element.player.inits[i](this);
                         }
                     }
+					if(this._inits){
+						for(var i=0;i<this._inits.length;i++){
+							this._inits[i](this);
+						}
+					}
                     this.update();
                     return this;
                 },
@@ -13644,12 +14420,18 @@
                 reinit:function(from,to,maxHp,online){
                     var info1=lib.character[from];
                     var info2=lib.character[to];
+					var smooth=true;
+					if(maxHp=='nosmooth'){
+						smooth=false;
+						maxHp=null;
+					}
                     if(this.name2==from){
                         this.name2=to;
                         if(this.isUnseen(0)&&!this.isUnseen(1)){
                             this.sex=info2[0];
                             this.name=to;
                         }
+						if(smooth) this.smoothAvatar(true);
                         this.node.avatar2.setBackground(to,'character');
                         this.node.name2.innerHTML=get.slimName(to);
                     }
@@ -13661,8 +14443,12 @@
                             this.name=to;
                             this.sex=info2[0];
                         }
+						if(smooth) this.smoothAvatar(false);
                         this.node.avatar.setBackground(to,'character');
                         this.node.name.innerHTML=get.slimName(to);
+						if(this==game.me&&ui.fakeme){
+							ui.fakeme.style.backgroundImage=this.node.avatar.style.backgroundImage;
+						}
                     }
                     else{
                         return this;
@@ -13676,37 +14462,43 @@
                     for(var i=0;i<info2[3].length;i++){
                         this.addSkill(info2[3][i]);
                     }
-                    var num;
-                    if(maxHp===false){
-                        num=0;
-                    }
-                    else{
-                        if(typeof maxHp!='number'){
-                            maxHp=info2[2];
-                        }
-                        num=maxHp-info1[2];
-                    }
-                    if(typeof this.singleHp=='boolean'){
-                        if(num%2!=0){
-                            if(this.singleHp){
-                                this.maxHp+=(num+1)/2;
-                                this.singleHp=false;
-                            }
-                            else{
-                                this.maxHp+=(num-1)/2;
-                                this.singleHp=true;
-                                if(!game.online){
-                                    this.doubleDraw();
-                                }
-                            }
-                        }
-                        else{
-                            this.maxHp+=num/2;
-                        }
-                    }
-                    else{
-                        this.maxHp+=num;
-                    }
+					if(Array.isArray(maxHp)){
+						this.maxHp=maxHp[1];
+						this.hp=maxHp[0];
+					}
+					else{
+	                    var num;
+	                    if(maxHp===false){
+	                        num=0;
+	                    }
+	                    else{
+	                        if(typeof maxHp!='number'){
+	                            maxHp=info2[2];
+	                        }
+	                        num=maxHp-info1[2];
+	                    }
+	                    if(typeof this.singleHp=='boolean'){
+	                        if(num%2!=0){
+	                            if(this.singleHp){
+	                                this.maxHp+=(num+1)/2;
+	                                this.singleHp=false;
+	                            }
+	                            else{
+	                                this.maxHp+=(num-1)/2;
+	                                this.singleHp=true;
+	                                if(!game.online){
+	                                    this.doubleDraw();
+	                                }
+	                            }
+	                        }
+	                        else{
+	                            this.maxHp+=num/2;
+	                        }
+	                    }
+	                    else{
+	                        this.maxHp+=num;
+	                    }
+					}
                     game.broadcast(function(player,from,to,skills){
                         player.reinit(from,to,null,true);
                         player.applySkills(skills);
@@ -13963,15 +14755,85 @@
                     var node;
                     if(this.name2==name){
                         node=this.node.avatar2;
+						this.smoothAvatar(true,video);
                     }
                     else if(this.name==name){
                         node=this.node.avatar;
+						this.smoothAvatar(false,video);
                     }
                     if(node){
                         node.setBackground(name2,'character');
                         if(this==game.me&&ui.fakeme){
                             ui.fakeme.style.backgroundImage=node.style.backgroundImage;
                         }
+if(this==game.me&&ui.fakeme&&fakeme!==false){
+							ui.fakeme.style.backgroundImage=node.style.backgroundImage;
+						}
+						if(video!=false){
+							game.addVideo('setAvatar',this,[name,name2]);
+						}
+					}
+					game.broadcast(function(player,name,name2){
+						player.setAvatar(name,name2,false);
+					},this,name,name2);
+				},
+				setAvatarQueue:function(name, list){
+					var node;
+					var player=this;
+					if(player.name2==name){
+						node=player.node.avatar2;
+					}
+					else{
+						node=player.node.avatar;
+					}
+					if(node._avatarqueue){
+						for(var i=0;i<list.length;i++){
+							node._avatarqueue.push(list[i]);
+						}
+					}
+					else{
+						var func=function(){
+							if(node._avatarqueue.length){
+								player.setAvatar(name,node._avatarqueue.shift(),false,false);
+							}
+							else{
+								clearInterval(node._avatarqueueinterval);
+								delete node._avatarqueue;
+								delete node._avatarqueueinterval;
+								player.setAvatar(name,name,false,false);
+							}
+						};
+						node._avatarqueue=list.slice(0);
+						node._avatarqueueinterval=setInterval(func,1000);
+						func();
+					}
+					game.addVideo('setAvatarQueue',this,[name,list]);
+				},
+				flashAvatar:function(skill,name){
+					if(lib.skill[name]&&!lib.character[name]){
+						var stop=false;
+						var list=lib.config.all.characters.slice(0);
+						for(var i in lib.characterPack){
+							list.add(i);
+						}
+						for(var i=0;i<list.length;i++){
+							for(var j in lib.characterPack[list[i]]){
+								if(lib.characterPack[list[i]][j][3].contains(name)){
+									name=j;
+									stop=true;
+									break;
+								}
+							}
+							if(stop){
+								break;
+							}
+						}
+					}
+					if(lib.character[this.name2]&&lib.character[this.name2][3].contains(skill)){
+						this.setAvatarQueue(this.name2,[name]);
+					}
+					else{
+						this.setAvatarQueue(this.name,[name]);
                     }
                 },
                 update:function(){
@@ -14298,12 +15160,15 @@
                 },
                 getStockSkills:function(unowned,unique){
                     var list=[];
-                    if(lib.character[this.name]&&!this.isUnseen(0)){
-                        list.addArray(lib.character[this.name][3]);
-                    }
-                    if(lib.character[this.name2]&&!this.isUnseen(1)){
-                        list.addArray(lib.character[this.name2][3]);
-                    }
+					if(lib.character[this.name]&&(hidden||!this.isUnseen(0))){
+						list.addArray(lib.character[this.name][3]);
+					}
+					if(lib.character[this.name1]&&(hidden||!this.isUnseen(0))){
+						list.addArray(lib.character[this.name1][3]);
+					}
+					if(lib.character[this.name2]&&(hidden||!this.isUnseen(1))){
+						list.addArray(lib.character[this.name2][3]);
+					}
                     if(!unowned){
                         for(var i=0;i<list.length;i++){
                             if(!this.hasSkill(list[i])){
@@ -14404,9 +15269,43 @@
                     }
                     return cards;
                 },
-                countCards:function(arg1,arg2){
-                    return this.getCards(arg1,arg2).length;
-                },
+getDiscardableCards:function(player,arg1,arg2){
+					var cards=this.getCards(arg1,arg2);
+					for(var i=0;i<cards.length;i++){
+						if(!lib.filter.canBeDiscarded(cards[i],player,this)){
+							cards.splice(i--,1);
+						}
+					}
+					return cards;
+				},
+				getGainableCards:function(player,arg1,arg2){
+					var cards=this.getCards(arg1,arg2);
+					for(var i=0;i<cards.length;i++){
+						if(!lib.filter.canBeGained(cards[i],player,this)){
+							cards.splice(i--,1);
+						}
+					}
+					return cards;
+				},
+				countCards:function(arg1,arg2){
+					return this.getCards(arg1,arg2).length;
+				},
+				countDiscardableCards:function(player,arg1,arg2){
+					return this.getDiscardableCards(player,arg1,arg2).length;
+				},
+				countGainableCards:function(player,arg1,arg2){
+					return this.getGainableCards(player,arg1,arg2).length;
+				},
+				getOriginalSkills:function(){
+					var skills=[];
+					if(lib.character[this.name]&&!this.isUnseen(0)){
+						skills.addArray(lib.character[this.name][3]);
+					}
+					if(this.name2&&lib.character[this.name2]&&!this.isUnseen(1)){
+						skills.addArray(lib.character[this.name2][3]);
+					}
+					return skills;
+				},
                 getSkills:function(arg2,arg3,arg4){
                     var skills=this.skills.slice(0);
                     var es=[];
@@ -14425,8 +15324,8 @@
                         }
                     }
                     for(var i in this.additionalSkills){
-                        if(Array.isArray(this.additionalSkills[i])){
-                            for(j=0;j<this.additionalSkills[i].length;j++){
+                        if(Array.isArray(this.additionalSkills[i])&&(arg2||i.indexOf('hidden:')!==0)){
+						    for(j=0;j<this.additionalSkills[i].length;j++){
                                 if(this.additionalSkills[i][j]){
                                     skills.add(this.additionalSkills[i][j]);
                                 }
@@ -14699,20 +15598,46 @@
                     this.node.identity.dataset.color=identity;
                     return this;
                 },
-                insertPhase:function(skill){
+                insertPhase:function(skill,insert){
                     var evt=_status.event.getParent('phase');
                     var next;
                     if(evt&&evt.parent&&evt.parent.next){
-                        next=game.createEvent('phase',null,evt.parent);
-                    }
-                    else{
-                        next=game.createEvent('phase');
-                    }
-                    next.player=this;
-                    next.skill=skill||_status.event.name;
-                    next.setContent('phase');
-                    return next;
-                },
+						evt=evt.parent;
+						next=game.createEvent('phase',null,evt);
+					}
+					else if(_status.event.parent&&_status.event.parent.next){
+						evt=_status.event.parent;
+						next=game.createEvent('phase',null,evt);
+					}
+					else{
+						evt=null;
+						next=game.createEvent('phase');
+					}
+					if(evt&&insert&&evt.next.contains(next)){
+						evt.next.remove(next);
+						evt.next.unshift(next);
+					}
+					next.player=this;
+					next.skill=skill||_status.event.name;
+					next.setContent('phase');
+					return next;
+				},
+				insertEvent:function(name,content,arg){
+					var evt=_status.event.getParent('phase');
+					var next;
+					if(evt&&evt.parent&&evt.parent.next){
+						next=game.createEvent(name,null,evt.parent);
+					}
+					else{
+						next=game.createEvent(name);
+					}
+					for(var i in arg){
+						next[i]=arg[i];
+					}
+					next.player=this;
+					next.setContent(content);
+					return next;
+				},
                 //强行塞入一个装异变的玩意。
                 addIncident:function(card){
                     this.$gain2(card);
@@ -15117,53 +16042,74 @@
                     next._args=Array.from(arguments);
                     return next;
                 },
-                chooseUseTarget:function(card){
-                    // not online-ready
-                    if(typeof card=='string'){
-                        card={name:card};
-                    }
-                    var name=card.name;
-                    var info=lib.card[name];
-                    var player=this;
-                    if(info.selectTarget==-1){
-                        var targets=game.filterPlayer(function(current){
-                            return lib.filter.filterTarget(card,player,current);
-                        });
-                        if(targets.length){
-                            targets.sort(lib.sort.seat);
-                            player.useCard(card,targets);
-                        }
-                    }
-                    else if(info.notarget){
-                        player.useCard(card);
-                    }
-                    else if(game.hasPlayer(function(current){
-                        return player.canUse(card,current);
-                    })){
-                        if(info.multicheck&&!info.multicheck(card,player)){
-                            return;
-                        }
-                        var next=player.chooseTarget('选择'+get.translation(card)+'的目标');
-                        next._get_card=card;
-                        next.filterTarget=lib.filter.filterTarget;
-                        next.ai=get.effect;
-                        if(typeof info.selectTarget=='function'){
-                            next.selectTarget=info.selectTarget;
-                        }
-                        else{
-                            next.selectTarget=get.select(info.selectTarget);
-                        }
-                        next.forced=true;
-                        next.onresult=function(result){
-                            if(result.bool){
-                                if(info.multitarget&&result.targets.length<get.select(info.selectTarget)[0]){
-                                    return;
-                                }
-                                player.useCard(card,result.targets);
-                            }
-                        }
-                    }
-                },
+     				chooseUseTarget:function(card,prompt,includecard){
+					// not online-ready
+					if(typeof card=='string'){
+						card={name:card};
+					}
+					var discard=function(){
+						if(get.itemtype(card)=='card'&&card.discard){
+							card.discard();
+						}
+					};
+					var name=card.name;
+					var info=lib.card[name];
+					if(!info.enable){
+						discard();
+						return false;
+					}
+					var player=this;
+					if(get.select(info.selectTarget)[1]==-1){
+						var targets=game.filterPlayer(function(current){
+							return lib.filter.filterTarget(card,player,current);
+						});
+						if(targets.length){
+							targets.sort(lib.sort.seat);
+							var next=player.useCard(card,targets);
+							if(includecard===false){
+								next.addCount=false;
+							}
+							return next;
+						}
+					}
+					else if(info.notarget){
+						var next=player.useCard(card);
+						if(includecard===false){
+							next.addCount=false;
+						}
+						return next;
+					}
+					else if(game.hasPlayer(function(current){
+						return player.canUse(card,current);
+					})){
+						var next=player.chooseTarget(prompt||'选择'+get.translation(card)+'的目标');
+						next._get_card=card;
+						next.filterTarget=lib.filter.filterTarget;
+						next.ai=get.effect;
+						if(typeof info.selectTarget=='function'){
+							next.selectTarget=info.selectTarget;
+						}
+						else{
+							next.selectTarget=get.select(info.selectTarget);
+						}
+						next.forced=true;
+						next.onresult=function(result){
+							if(result.bool){
+								if(info.multitarget&&result.targets.length<get.select(info.selectTarget)[0]){
+									discard();
+									return false;
+								}
+								var next=player.useCard(card,result.targets);
+								if(includecard===false){
+									next.addCount=false;
+								}
+								return next;
+							}
+						}
+					}
+					discard();
+					return false;
+				},
                 chooseTarget:function(){
                     var next=game.createEvent('chooseTarget');
                     next.player=this;
@@ -15500,6 +16446,7 @@
                     else _status.event.next.remove(next);
                     next.setContent('showCards');
                     next._args=Array.from(arguments);
+					return next;
                 },
                 viewCards:function(str,cards){
                     var next=game.createEvent('viewCards');
@@ -15511,7 +16458,13 @@
                     return next;
                 },
                 viewHandcards:function(target){
-                    return this.viewCards(get.translation(target)+'的手牌',target.getCards('h'));
+					var cards=target.getCards('h');
+					if(cards.length){
+						return this.viewCards(get.translation(target)+'的手牌',cards);
+					}
+					else{
+						return false;
+					}
                 },
                 canMoveCard:function(withatt){
                     var player=this;
@@ -15597,12 +16550,18 @@
                     }
                     if(result.card||!result.skill){
                         result.used=result.card||result.cards[0];
-                        this.useCard(result.card,result.cards,result.targets,result.skill).oncard=event.oncard;
-                    }
-                    else if(result.skill){
-                        result.used=result.skill;
-                        this.useSkill(result.skill,result.cards,result.targets);
-                    }
+                        var next=this.useCard(result.card,result.cards,result.targets,result.skill);
+						next.oncard=event.oncard;
+						next.respondTo=event.respondTo;
+						if(event.addCount===false){
+							next.addCount=false;
+						}
+						return next;
+					}
+					else if(result.skill){
+						result.used=result.skill;
+						return this.useSkill(result.skill,result.cards,result.targets);
+					}
                 },
                 useCard:function(){
                     var next=game.createEvent('useCard');
@@ -15832,6 +16791,9 @@
                         else if(typeof arguments[i]=='boolean'){
                             next.animate=arguments[i];
                         }
+						else if(get.objtype(arguments[i])=='div'){
+							next.position=arguments[i];
+						}
                     }
                     if(next.cards==undefined) _status.event.next.remove(next);
                     next.setContent('discard');
@@ -15883,6 +16845,14 @@
                     next.setContent('swapHandcards');
                     return next;
                 },
+				directequip:function(cards){
+					for(var i=0;i<cards.length;i++){
+						this.$equip(cards[i]);
+					}
+					if(!_status.video){
+						game.addVideo('directequip',this,get.cardsInfo(cards));
+					}
+				},
                 directgain:function(cards){
                     var hs=this.getCards('h');
                     for(var i=0;i<cards.length;i++){
@@ -15913,18 +16883,12 @@
                     },this,cards);
                     return this;
                 },
-                gainMultiple:function(targets,position,animation){
+                gainMultiple:function(targets,position){
                     var next=game.createEvent('gainMultiple',false);
                     next.setContent('gainMultiple');
                     next.player=this;
                     next.targets=targets;
-                    next.animation=animation;
-                    if(Array.isArray(position)){
-                        next.cards=position;
-                    }
-                    else{
-                        next.position=position||'h';
-                    }
+                    next.position=position||'h';
                     return next;
                 },
                 gain:function(){
@@ -15958,29 +16922,29 @@
                     next.setContent('gain');
                     return next;
                 },
-                give:function(cards,target){
-                    var shown=[],hidden=[];
-                    var hs=this.getCards('h');
-                    if(get.itemtype(cards)=='card'){
-                        cards=[cards];
-                    }
-                    for(var i=0;i<cards.length;i++){
-                        if(hs.contains(cards[i])){
-                            hidden.push(cards[i]);
-                        }
-                        else{
-                            shown.push(cards[i]);
-                        }
-                    }
-                    if(shown.length) this.$give(shown,target);
-                    if(hidden.length) this.$giveAuto(hidden,target);
-                    if(hidden===true){
-                        target.gain(cards,this);
-                    }
-                    else{
-                        target.gain(cards,this);
-                    }
-                },
+            	give:function(cards,target,visible){
+					var shown=[],hidden=[];
+					if(get.itemtype(cards)=='card'){
+						cards=[cards];
+					}
+					if(visible){
+						shown.addArray(cards);
+					}
+					else{
+						var hs=this.getCards('h');
+						for(var i=0;i<cards.length;i++){
+							if(hs.contains(cards[i])){
+								hidden.push(cards[i]);
+							}
+							else{
+								shown.push(cards[i]);
+							}
+						}
+					}
+					if(shown.length) this.$give(shown,target);
+					if(hidden.length) this.$giveAuto(hidden,target);
+					target.gain(cards,this);
+				},
                 lose:function(){
                     var next=game.createEvent('lose');
                     next.player=this;
@@ -16642,10 +17606,20 @@
                         name=name[0];
                         nopop=true;
                     }
-                    if(lib.translate[name]){
-                        if(lib.config.skill_animation!='off'&&lib.skill[name]&&lib.skill[name].skillAnimation){
-                            this.$skill(lib.skill[name].animationStr||lib.translate[name],lib.skill[name].skillAnimation,lib.skill[name].animationColor);
-                        }
+					var checkShow=this.checkShow(name);
+					if(lib.translate[name]){
+						if(lib.config.skill_animation_type!='off'&&lib.skill[name]&&lib.skill[name].skillAnimation){
+							if(lib.config.skill_animation_type=='default'){
+								checkShow=checkShow||'main';
+							}
+							else{
+								checkShow=false;
+							}
+							if(lib.skill[name].textAnimation){
+								checkShow=false;
+							}
+							this.$skill(lib.skill[name].animationStr||lib.translate[name],lib.skill[name].skillAnimation,lib.skill[name].animationColor,checkShow);
+						}
                         else if(!nopop) this.popup(get.skillTranslation(name,this));
                         if(typeof targets=='object'&&targets.length){
                             var str='对<span class="bluetext">'+(targets[0]==this?'自己':get.translation(targets[0]));
@@ -16670,9 +17644,6 @@
                         this.logAi&&(!targets||targets.length!=1||targets[0]!=this)){
                         this.logAi(lib.skill[name].ai.expose);
                     }
-                    if(this.checkShow){
-                        this.checkShow(name);
-                    }
                     if(info&&info.round){
                         var roundname=name+'_roundcount';
                         this.storage[roundname]=game.roundNumber;
@@ -16689,6 +17660,14 @@
                     else if(info&&info.logv!==false){
                         game.logv(this,name,targets);
                     }
+					if(this._hookTrigger){
+						for(var i=0;i<this._hookTrigger.length;i++){
+							var info=lib.skill[this._hookTrigger[i]].hookTrigger;
+							if(info&&info.log){
+								info.log(this,name,targets);
+							}
+						}
+					}
                 },
                 unprompt:function(){
                     if(this.node.prompt){
@@ -16901,7 +17880,8 @@
                             player.marks[id]._name=target;
                             player.marks[id].info={
                                 name:name,
-                                content:content
+								content:content,
+								id:id
                             };
                             player.marks[id].setBackground(target,'character');
                             game.addVideo('changeMarkCharacter',player,{
@@ -16914,7 +17894,8 @@
                         else{
                             player.marks[id]=player.markCharacter(target,{
                                 name:name,
-                                content:content
+                       			content:content,
+								id:id
                             });
                             player.marks[id]._name=target;
                             game.addVideo('markCharacter',player,{
@@ -17062,13 +18043,119 @@
                         this.classList.remove('linked');
                     }
                 },
-                canUse:function(card,player,distance,includecard){
-                    if(typeof card=='string') card={name:card};
-                    if(includecard!=false&&!lib.filter.cardEnabled(card,player)) return false;
-                    if(includecard&&!lib.filter.cardUsable(card,this)) return false;
-                    if(distance==false) return lib.filter.targetEnabled(card,this,player);
-                    return lib.filter.filterTarget(card,this,player);
-                },
+                				canUse:function(card,target,distance,includecard){
+					if(typeof card=='string') card={name:card};
+					var info=get.info(card);
+					if(info.multicheck&&!info.multicheck(card,this)) return false;
+					if(includecard!=false&&!lib.filter.cardEnabled(card,this)) return false;
+					if(includecard&&!lib.filter.cardUsable(card,this)) return false;
+					if(distance==false) return lib.filter.targetEnabled(card,this,target);
+					return lib.filter.filterTarget(card,this,target);
+				},
+				hasUseTarget:function(card,distance,includecard){
+					var player=this;
+					return game.hasPlayer(function(current){
+						return player.canUse(card,current,distance,includecard);
+					});
+				},
+				addSubPlayer:function(cfg){
+					var skill='subplayer_'+cfg.name+'_'+get.id();
+					game.log(this,'获得了随从','#g'+get.translation(cfg.name))
+					cfg.hs=cfg.hs||[];
+					cfg.es=cfg.es||[];
+					cfg.skills=cfg.skills||[];
+					cfg.hp=cfg.hp||1;
+					cfg.maxHp=cfg.maxHp||1;
+					cfg.sex=cfg.sex||'male';
+					cfg.group=cfg.group||'qun';
+					cfg.skill=cfg.skill||_status.event.name;
+					if(!cfg.source){
+						if(this.hasSkill(_status.event.name)&&this.name2&&lib.character[this.name2]&&
+							lib.character[this.name2][3].contains(_status.event.name)){
+							cfg.source=this.name2;
+						}
+						else{
+							cfg.source=this.name;
+						}
+					}
+					game.broadcastAll(function(player,skill,cfg){
+						lib.skill[skill]={
+							intro:{
+								content:cfg.intro||''
+							},
+							mark:'character',
+							subplayer:cfg.skill,
+							ai:{
+								subplayer:true
+							}
+						}
+						lib.character[skill]=[cfg.sex,cfg.group,cfg.maxHp,cfg.skills,['character:'+cfg.name]];
+						lib.translate[skill]=cfg.caption||get.rawName(cfg.name);
+						player.storage[skill]=cfg;
+					},this,skill,cfg);
+					game.addVideo('addSubPlayer',this,[skill,lib.skill[skill],lib.character[skill],lib.translate[skill],{name:cfg.name}]);
+					this.addSkill(skill);
+					return skill;
+				},
+				removeSubPlayer:function(name){
+					if(this.hasSkill('subplayer')&&this.name==name){
+						this.exitSubPlayer(true);
+					}
+					else{
+						if(player.storage[name].onremove){
+							player.storage[name].onremove(player);
+						}
+						this.removeSkill(name);
+						delete this.storage[name];
+						game.log(player,'牺牲了随从','#g'+name);
+						_status.event.trigger('removeSubPlayer');
+					}
+				},
+				callSubPlayer:function(){
+					if(this.hasSkill('subplayer')) return;
+					var next=game.createEvent('callSubPlayer');
+					next.player=this;
+					for(var i=0;i<arguments.length;i++){
+						if(typeof arguments[i]=='string'){
+							next.directresult=arguments[i];
+						}
+					}
+					next.setContent('callSubPlayer');
+					return next;
+				},
+				toggleSubPlayer:function(){
+					if(!this.hasSkill('subplayer')) return;
+					var next=game.createEvent('toggleSubPlayer');
+					next.player=this;
+					for(var i=0;i<arguments.length;i++){
+						if(typeof arguments[i]=='string'){
+							next.directresult=arguments[i];
+						}
+					}
+					next.setContent('toggleSubPlayer');
+					return next;
+				},
+				exitSubPlayer:function(remove){
+					if(!this.hasSkill('subplayer')) return;
+					var next=game.createEvent('exitSubPlayer');
+					next.player=this;
+					next.remove=remove;
+					next.setContent('exitSubPlayer');
+					return next;
+				},
+				getSubPlayers:function(tag){
+					var skills=this.getSkills();
+					var list=[];
+					for(var i=0;i<skills.length;i++){
+						var name=skills[i];
+						var info=lib.skill[name];
+						if(tag&&info.subplayer!=tag) continue;
+						if(info.ai&&info.ai.subplayer&&this.storage[name]&&this.storage[name].name){
+							list.push(name);
+						}
+					}
+					return list;
+				},
                 addSkillTrigger:function(skill,hidden,triggeronly){
                     var info=lib.skill[skill];
                     if(!info) return;
@@ -17129,8 +18216,19 @@
                             }
                         }
                     }
-                    return this;
-                },
+					if(info.hookTrigger){
+						if(!this._hookTrigger){
+							this._hookTrigger=[];
+						}
+						this._hookTrigger.add(skill);
+					}
+					return this;
+				},
+				addSkillLog:function(skill){
+					this.addSkill(skill);
+					this.popup(skill);
+					game.log(this,'获得了技能','【'+get.translation(skill)+'】');
+				},
                 addSkill:function(skill,checkConflict,nobroadcast){
                     if(Array.isArray(skill)){
                         for(var i=0;i<skill.length;i++){
@@ -17177,8 +18275,18 @@
                                     intro=intro.replace(/&/g,get.cnNumber(this.storage[skill]));
                                     intro=intro.replace(/\$/g,get.translation(this.storage[skill]));
                                 }
-                                this.markSkillCharacter(skill,this.storage[skill],get.translation(skill),intro);
-                            }
+								var caption;
+								if(typeof info.intro.name=='function'){
+									caption=info.intro.name(this.storage[skill],this);
+								}
+								else if(typeof info.intro.name=='string'){
+									caption=info.name;
+								}
+								else{
+									caption=get.translation(skill);
+								}
+								this.markSkillCharacter(skill,this.storage[skill],caption,intro);
+							}
                             else{
                                 this.markSkill(skill);
                             }
@@ -17240,8 +18348,16 @@
                     if(!nounmark) this.unmarkSkill(skill);
                     this.disableSkill(skill+'_awake',skill);
                     this.awakenedSkills.add(skill);
-                    return this;
-                },
+					if(this.storage[skill]===false) this.storage[skill]=true;
+					return this;
+				},
+				restoreSkill:function(skill,nomark){
+					if(this.storage[skill]===true) this.storage[skill]=false;
+					this.awakenedSkills.remove(skill);
+					this.enableSkill(skill+'_awake',skill);
+					if(!nomark) this.markSkill(skill);
+					return this;
+				},
                 disableSkill:function(skill,skills){
                     if(typeof skills=='string'){
                         if(!this.disabledSkills[skills]){
@@ -17384,6 +18500,14 @@
                             }
                         }
                     }
+					if(info.hookTrigger){
+						if(this._hookTrigger){
+							this._hookTrigger.remove(skill);
+							if(!this._hookTrigger.length){
+								delete this._hookTrigger;
+							}
+						}
+					}
                     return this;
                 },
                 removeSkill:function(skill){
@@ -17394,6 +18518,8 @@
                         }
                     }
                     else{
+						var info=lib.skill[skill];
+						if(info&&info.fixed&&arguments[1]!==true) return skill;
                         this.unmarkSkill(skill);
                         game.broadcastAll(function(player,skill){
                             player.skills.remove(skill);
@@ -17401,7 +18527,6 @@
                         },this,skill);
                         this.checkConflict(skill);
                         delete this.tempSkills[skill];
-                        var info=lib.skill[skill];
                         if(info){
                             if(info.onremove){
                                 if(typeof info.onremove=='function'){
@@ -17704,6 +18829,11 @@
                     var player=this;
                     var targets;
                     var mode=get.mode();
+					var self=false;
+					if(func===true){
+						func=null;
+						self=true;
+					}
                     if(mode=='identity'){
                         switch(player.identity){
                             case 'zhu':case 'zhong':case 'mingzhong':targets=game.filterPlayer(function(target){
@@ -17735,7 +18865,12 @@
                             return target.side==player.side;
                         });
                     }
-                    targets.remove(player);
+					if(self){
+						targets.add(player);
+					}
+					else{
+						targets.remove(player);
+					}
                     return targets;
                 },
                 isEnemyOf:function(){
@@ -17748,11 +18883,17 @@
                         if(player.identity=='unknown'||player.identity=='ye') return false;
                         return this.identity==player.identity;
                     }
-                    if(typeof this.side=='boolean'&&typeof player.side=='boolean'){
-                        return this.side==player.side;
-                    }
-                    return this==player;
-                },
+					if(this.side!=undefined&&typeof player.side=='boolean'){
+						return this.side==player.side;
+					}
+					return this==player;
+				},
+				isFriendsOf:function(player){
+					return player.getFriends(true).contains(this);
+				},
+				isEnemiesOf:function(player){
+					return player.getEnemies().contains(this);
+				},
                 isAlive:function(){
                     return this.classList.contains('dead')==false;
                 },
@@ -17856,6 +18997,32 @@
                     }
                     return true;
                 },
+				isMaxEquip:function(equal){
+					var nh=this.countCards('e');
+					for(var i=0;i<game.players.length;i++){
+						if(game.players[i].isOut()||game.players[i]==this) continue;
+						if(equal){
+							if(game.players[i].countCards('e')>=nh) return false;
+						}
+						else{
+							if(game.players[i].countCards('e')>nh) return false;
+						}
+					}
+					return true;
+				},
+				isMinEquip:function(equal){
+					var nh=this.countCards('e');
+					for(var i=0;i<game.players.length;i++){
+						if(game.players[i].isOut()||game.players[i]==this) continue;
+						if(equal){
+							if(game.players[i].countCards('e')<=nh) return false;
+						}
+						else{
+							if(game.players[i].countCards('e')<nh) return false;
+						}
+					}
+					return true;
+				},
                 isLinked:function(){
                     if(get.is.linked2(this)){
                         return this.classList.contains('linked2');
@@ -17929,19 +19096,64 @@
                     }
                     return false;
                 },
+				checkShow:function(skill,showonly){
+					var sourceSkill=get.info(skill);
+					var noshow=false;
+					if(sourceSkill&&sourceSkill.sourceSkill){
+						skill=sourceSkill.sourceSkill;
+					}
+					if(lib.skill.global.contains(skill)) return false;
+					if(get.mode()!='guozhan'||game.expandSkills(this.getSkills()).contains(skill)){
+						if(showonly){
+							return false;
+						}
+						else{
+							noshow=true;
+						}
+					}
+					var unseen0=this.isUnseen(0);
+					var name1=this.name1||this.name;
+					if(lib.character[name1]&&(!showonly||unseen0)){
+						var skills=game.expandSkills(lib.character[name1][3].slice(0));
+						if(skills.contains(skill)){
+							if(!noshow&&this.isUnseen(0)) this.showCharacter(0);
+							return 'main';
+						}
+					}
+					var unseen1=this.isUnseen(1);
+					var name2=this.name2;
+					if(lib.character[name2]&&(!showonly||unseen1)){
+						var skills=game.expandSkills(lib.character[name2][3].slice(0));
+						if(skills.contains(skill)){
+							if(!noshow&&this.isUnseen(1)) this.showCharacter(1);
+							return 'vice';
+						}
+					}
+					return false;
+				},
                 needsToDiscard:function(num){
-                    if(typeof num!='number') num=0;
-                    return Math.max(0,num+this.countCards('h')-this.getHandcardLimit());
-                },
-                distanceTo:function(target,method){
-                    return get.distance(this,target,method);
-                },
-                distanceFrom:function(target,method){
-                    return get.distance(target,this,method);
-                },
-                hasSkill:function(skill){
-                    return game.expandSkills(this.getSkills()).contains(skill);
-                },
+					if(typeof num!='number') num=0;
+					var hs=this.getCards('h');
+					num+=hs.length;
+					for(var i=0;i<hs.length;i++){
+						if(game.checkMod(hs[i],this,false,'ignoredHandcard',this)==true){
+							num--;
+						}
+					}
+					return Math.max(0,num-this.getHandcardLimit());
+				},
+				distanceTo:function(target,method){
+					return get.distance(this,target,method);
+				},
+				distanceFrom:function(target,method){
+					return get.distance(target,this,method);
+				},
+				hasSkill:function(skill,arg2,arg3,arg4){
+					return game.expandSkills(this.getSkills(arg2,arg3,arg4)).contains(skill);
+				},
+				hasStockSkill:function(skill,arg1,arg2,arg3){
+					return game.expandSkills(this.getStockSkills(arg1,arg2,arg3)).contains(skill);
+				},
                 hasZhuSkill:function(skill,player){
                     if(!this.hasSkill(skill)) return false;
                     var mode=get.mode();
@@ -18076,6 +19288,10 @@
                     if(this.hasSkillTag('respondShan',true,null,true)) return true;
                     return false;
                 },
+				mayHaveShan:function(){
+					return this.hasShan();
+					// modify: later
+				},
                 hasCard:function(name,position){
                     if(typeof name=='function'){
                         var hs=this.getCards(position);
@@ -18094,6 +19310,13 @@
                     }
                     return false;
                 },
+				canEquip:function(name,replace){
+					if(get.type(name)=='card'){
+						name=get.equiptype(name);
+					}
+					if(!replace&&this.getEquip(name)) return false;
+					return true;
+				},
                 getEquip:function(name){
                     var es=this.getCards('e');
                     if(typeof name=='object'&&get.info(name)){
@@ -18223,6 +19446,13 @@
 
                         dx=this.offsetLeft+this.offsetWidth/2-52-node.offsetLeft;
                         dy=this.offsetTop+this.offsetHeight/2-52-node.offsetTop;
+
+						if(get.is.mobileMe(this)){
+							dx+=get.cardOffset();
+							if(ui.arena.classList.contains('oblongcard')){
+								dy-=16;
+							}
+						}
                     }
                     node.style.transitionDuration='0.8s';
                     ui.refresh(node);
@@ -18626,6 +19856,12 @@
                         else{
                             dx=this.offsetLeft+this.offsetWidth/2-52-nx;
                             dy=this.offsetTop+this.offsetHeight/2-52-ny;
+							if(get.is.mobileMe(this)){
+								dx+=get.cardOffset();
+								if(ui.arena.classList.contains('oblongcard')){
+									dy-=16;
+								}
+							}
                         }
                         if(node.style.transform&&node.style.transform!='none'&&node.style.transform.indexOf('translate')==-1){
                             node.style.transform+=' translate('+dx+'px,'+dy+'px)';
@@ -18664,6 +19900,12 @@
                         else{
                             dx=this.offsetLeft+this.offsetWidth/2-52-nx;
                             dy=this.offsetTop+this.offsetHeight/2-52-ny;
+							if(get.is.mobileMe(this)){
+								dx+=get.cardOffset();
+								if(ui.arena.classList.contains('oblongcard')){
+									dy-=16;
+								}
+							}
                         }
                         if(node.style.transform&&node.style.transform!='none'&&node.style.transform.indexOf('translate')==-1){
                             node.style.transform+=' translate('+dx+'px,'+dy+'px)';
@@ -18790,6 +20032,104 @@
                     lib.listenEnd(node);
                     return node;
                 },
+throwDice:function(num){
+					if(typeof num!='number'){
+						num=get.rand(6)+1;
+						_status.event.num=num;
+					}
+					if(!game.online){
+						game.pause();
+					}
+					game.broadcastAll(function(num){
+						var diceContainer=ui.create.div('.fullsize.dice-container',ui.window);
+						ui.window.classList.add('dicepaused');
+						var dice=ui.create.div('.dice');
+						var side;
+
+						side=ui.create.div('.side.front',dice);
+						ui.create.div('.dot.center',side);
+						ui.create.div('.side.front.inner',dice);
+
+						side=ui.create.div('.side.top',dice);
+						ui.create.div('.dot.dtop.dleft',side);
+						ui.create.div('.dot.dbottom.dright',side);
+						ui.create.div('.side.top.inner',dice);
+
+						side=ui.create.div('.side.right',dice);
+						ui.create.div('.dot.dtop.dleft',side);
+						ui.create.div('.dot.center',side);
+						ui.create.div('.dot.dbottom.dright',side);
+						ui.create.div('.side.right.inner',dice);
+
+						side=ui.create.div('.side.left',dice);
+						ui.create.div('.dot.dtop.dleft',side);
+						ui.create.div('.dot.dtop.dright',side);
+						ui.create.div('.dot.dbottom.dleft',side);
+						ui.create.div('.dot.dbottom.dright',side);
+						ui.create.div('.side.left.inner',dice);
+
+						side=ui.create.div('.side.bottom',dice);
+						ui.create.div('.dot.center',side);
+						ui.create.div('.dot.dtop.dleft',side);
+						ui.create.div('.dot.dtop.dright',side);
+						ui.create.div('.dot.dbottom.dleft',side);
+						ui.create.div('.dot.dbottom.dright',side);
+						ui.create.div('.side.bottom.inner',dice);
+
+						side=ui.create.div('.side.back',dice);
+						ui.create.div('.dot.dtop.dleft',side);
+						ui.create.div('.dot.dtop.dright',side);
+						ui.create.div('.dot.dbottom.dleft',side);
+						ui.create.div('.dot.dbottom.dright',side);
+						ui.create.div('.dot.center dleft',side);
+						ui.create.div('.dot.center dright',side);
+						ui.create.div('.side.back.inner',dice);
+
+						ui.create.div('.side.cover.x',dice);
+						ui.create.div('.side.cover.y',dice);
+						ui.create.div('.side.cover.z',dice);
+
+						var map={
+							1:[75,0,45],
+							2:[-15,45,0],
+							3:[165,-45,90],
+							4:[345,-45,90],
+							5:[345,-45,180],
+							6:[255,0,135]
+						};
+						dice.roll=function(deg){
+							if(typeof deg=='number'){
+								dice.current[0]+=deg;
+								deg=dice.current;
+							}
+							deg=deg.slice(0);
+							dice.current=deg;
+							this.style.transform='rotateX('+deg[0]+'deg) rotateY('+deg[1]+'deg) rotateZ('+deg[2]+'deg)';
+						};
+						dice.roll(map[num]);
+						diceContainer.appendChild(dice);
+						ui.refresh(dice);
+						dice.roll(1025);
+
+						dice.addEventListener('webkitTransitionEnd',function(){
+							if(!dice.over){
+								dice.style.transition='transform 0.8s ease';
+								dice.roll(-20);
+								dice.over=true;
+							}
+							else if(!dice.resumed){
+								setTimeout(function(){
+									diceContainer.delete();
+									ui.window.classList.remove('dicepaused');
+								},300);
+								if(!game.online){
+									setTimeout(game.resume,800);
+								}
+								dice.resumed=true;
+							}
+						});
+					},num);
+				},
                 $giveAuto:function(card,player){
                     if(Array.isArray(card)&&card.length==0) return;
                     var args=Array.from(arguments);
@@ -18929,6 +20269,9 @@
                     }
                     if(!equipped){
                         player.node.equips.appendChild(card);
+						if(_status.discarded){
+							_status.discarded.remove(card);
+						}
                     }
                     var info=get.info(card);
                     if(info.skills){
@@ -19051,48 +20394,37 @@
                         return true;
                     }
                 },
-                $skill:function(name,type,color,avatar){
-                    if(typeof type!='string') type='legend';
-                    game.delay(2);
-                    var that=this;
-                    setTimeout(function(){
-                        game.broadcastAll(function(that,type,name,color,avatar){
-                            if(lib.config.animation&&!lib.config.low_performance){
-                                /*if(game.chess){
-                                    that['$'+type+'2'](1200);
-                                }
-                                else{
-                                    that['$'+type](1200);
-                                }*/
-                                if(name){
-                                    that.$fullscreenpop(name,color,avatar);
-                                }
-                                game.addVideo('skill',that,[name,color]);
-                                var node = ui.create.div(that,'.avatar');
-                                if (type == 'epic'){
-                                    if(!avatar){
-                                        this.playerfocus(1500);
-                                    }
-                                    else{
-                                        game.addVideo('playerfocus2');
-                                        game.broadcastAll(function(){
-                                            ui.arena.classList.add('playerfocus');
-                                            setTimeout(function(){
-                                                ui.arena.classList.remove('playerfocus');
-                                            },1500)
-                                        });
-                                    }
-                                    var node = ui.create.div('.player.avatar', ui.window);
-                                }
-                                node.setBackgroundImage('image/skill/' + name + '.png');
-                                //node.setBackground(name,'skill');
-                                //ui.background.setBackgroundImage('image/skill/' + name + '.png');
-                                ui.refresh(node);
-                                setTimeout(function(){
-                                    node.delete();
-                                },1000);
-                            }
-                        },that,type,name,color);
+                				$skill:function(name,type,color,avatar){
+					if(typeof type!='string') type='legend';
+					if(!avatar){
+						this.playerfocus(1500);
+						game.delay(2);
+					}
+					else{
+						game.addVideo('playerfocus2');
+						game.broadcastAll(function(){
+							ui.arena.classList.add('playerfocus');
+							setTimeout(function(){
+								ui.arena.classList.remove('playerfocus');
+							},1800)
+						});
+						game.delay(3);
+					}
+					var that=this;
+					setTimeout(function(){
+						game.broadcastAll(function(that,type,name,color,avatar){
+							if(lib.config.animation&&!lib.config.low_performance){
+								if(game.chess){
+									that['$'+type+'2'](1200);
+								}
+								else{
+									that['$'+type](1200);
+								}
+							}
+							if(name){
+								that.$fullscreenpop(name,color,avatar);
+							}
+						},that,type,name,color,avatar);
                     },avatar?0:300);
                 },
                 $fire:function(){
@@ -19251,22 +20583,50 @@
                         top+this.offsetHeight-30,700,'recover');
                 },
                 $fullscreenpop:function(str,nature,avatar){
-                    game.broadcast(function(player,str,nature){
-                        player.$fullscreenpop(str,nature);
-                    },this,str,nature);
-                    game.addVideo('fullscreenpop',this,[str,nature,avatar]);
-                    var node=ui.create.div('.damage');
-                    if(avatar&&lib.character[this.name]&&this.node&&this.node.avatar){
-                        node.classList.add('fullscreenavatar');
-                        ui.create.div('',ui.create.div(node));
-                        // if(this.node.name){
-                        //  ui.create.div('.name',node).appendChild(this.node.name.cloneNode(true));
-                        // }
-                        ui.create.div('',str.split('').join('<br>'),ui.create.div(node));
-                        node.firstChild.firstChild.style.backgroundImage=this.node.avatar.style.backgroundImage;
-                        node.dataset.nature=nature||'unknown';
-                    }
-                    else{
+game.broadcast(function(player,str,nature,avatar){
+						player.$fullscreenpop(str,nature,avatar);
+					},this,str,nature,avatar);
+					game.addVideo('fullscreenpop',this,[str,nature,avatar]);
+					var node=ui.create.div('.damage');
+					if(avatar&&this.node){
+						if(avatar=='vice'){
+							if(lib.character[this.name2]){
+								avatar=this.node.avatar2;
+							}
+						}
+						else{
+							if(lib.character[this.name]){
+								avatar=this.node.avatar;
+							}
+						}
+						if(!get.is.div(avatar)){
+							avatar=false;
+						}
+					}
+					else{
+						avatar=false;
+					}
+					if(avatar){
+						node.classList.add('fullscreenavatar');
+						ui.create.div('',ui.create.div(node));
+						// ui.create.div('',str.split('').join('<br>'),ui.create.div('.text.textbg',node));
+						ui.create.div('','<div>'+str.split('').join('</div><br><div>')+'</div>',ui.create.div('.text',node));
+						node.firstChild.firstChild.style.backgroundImage=avatar.style.backgroundImage;
+						node.dataset.nature=nature||'unknown';
+						var num=0;
+						var nodes=node.lastChild.firstChild.querySelectorAll('div');
+						var interval=setInterval(function(){
+							if(num<nodes.length){
+								nodes[num].classList.add('flashtext');
+								num++;
+							}
+							else{
+								clearInterval(interval);
+							}
+						},100);
+					}
+					else{
+						avatar=false;
                         node.innerHTML=str;
                         node.dataset.nature=nature||'soil';
                     }
@@ -19279,7 +20639,6 @@
                     }
                     ui.window.appendChild(node);
                     ui.refresh(node);
-                    node.classList.add('damageadded');
                     if(avatar){
                         node.style.transform='scale(1)';
                         node.style.opacity=1;
@@ -19289,7 +20648,8 @@
                     }
                     setTimeout(function(){
                         node.delete();
-                    },avatar?1300:1000);
+						node.style.transform='scale(1.5)'
+					},avatar?1600:1000);
                 },
                 $damagepop:function(num,nature,font){
                     if(typeof num=='number'||typeof num=='string'){
@@ -19473,6 +20833,9 @@
                             card[3]='thunder';
                         }
                     }
+					else if(typeof card=='object'){
+						card=[card.suit,card.number,card.name,card.nature];
+					}
                     if(!lib.card[card[2]]){
                         lib.card[card[2]]={};
                     }
@@ -19497,7 +20860,9 @@
                     if(this.name){
                         this.classList.remove('epic');
                         this.classList.remove('legend');
-                        this.classList.remove('unique');
+						this.classList.remove('gold');
+						this.classList.remove('unique');
+						this.style.background='';
                         var subtype=get.subtype(this);
                         if(subtype){
                             this.classList.remove(subtype);
@@ -19509,6 +20874,9 @@
                     else if(info.legend){
                         this.classList.add('legend');
                     }
+					else if(info.gold){
+						this.classList.add('gold');
+					}
                     else if(info.unique){
                         this.classList.add('unique');
                     }
@@ -19528,7 +20896,12 @@
                     this.classList.remove('fullskin');
                     this.classList.remove('fullimage');
                     this.classList.remove('fullborder');
-                    this.node.name.dataset.nature='';
+					this.dataset.cardName=card[2];
+					this.dataset.cardType=info.type||'';
+					this.dataset.cardSubype=info.subtype||'';
+					this.dataset.cardMultitarget=info.multitarget?'1':'0';
+					this.node.name.dataset.nature='';
+					this.node.info.classList.remove('red');
                     if(!lib.config.hide_card_image&&lib.card[bg].fullskin){
                         this.classList.add('fullskin');
                         if(img){
@@ -19564,8 +20937,13 @@
                             }
                         }
                         else if(lib.card[bg].image){
-                            this.setBackground(lib.card[bg].image);
-                        }
+							if(lib.card[bg].image.indexOf('character:')==0){
+								this.setBackground(lib.card[bg].image.slice(10),'character');
+							}
+							else{
+								this.setBackground(lib.card[bg].image);
+							}
+						}
                         else{
                             var cardPack=lib.cardPack['mode_'+get.mode()];
                             if(Array.isArray(cardPack)&&cardPack.contains(bg)){
@@ -19639,6 +21017,12 @@
                         if(this.node.background.innerHTML.length>1) this.node.background.classList.add('tight');
                         else this.node.background.classList.remove('tight');
                     }
+					if(!lib.card[bg].fullborder&&this.node.avatar&&this.node.framebg){
+						this.node.avatar.remove();
+						this.node.framebg.remove();
+						delete this.node.avatar;
+						delete this.node.framebg;
+					}
                     if(info.noname&&!this.classList.contains('button')){
                         this.node.name.style.display='none';
                     }
@@ -19656,9 +21040,8 @@
                         this.node.info.innerHTML=info.modinfo;
                     }
                     else{
-                        this.node.info.innerHTML=get.translation(card[0])+'<span></span>'+card[1];
-                        this.node.info.style.letterSpacing='1.5px';
-                    }
+                        this.node.info.innerHTML=get.translation(card[0])+'<span> </span>'+card[1];
+					}
                     if(info.addinfo){
                         if(!this.node.addinfo){
                             this.node.addinfo=ui.create.div('.range',this);
@@ -19698,7 +21081,7 @@
                     this.node.name.style.fontSize = '13px';
                     this.node.name2.innerHTML=get.translation(card[0])+card[1]+' '+name;
                     this.suit=card[0];
-                    this.number=card[1];
+                    this.number=parseInt(card[1])||0;
                     this.name=card[2];
                     this.bonus=card[4];
                     this.classList.add('card');
@@ -19760,6 +21143,33 @@
                     if(!_status.connectMode&&!_status.video){
                         this.cardid=get.id();
                     }
+					var tags=[];
+					if(Array.isArray(card[4])){
+						tags.addArray(card[4]);
+					}
+					if(this.cardid){
+						if(!_status.cardtag){
+							_status.cardtag={};
+						}
+						for(var i in _status.cardtag){
+							if(_status.cardtag[i].contains(this.cardid)){
+								tags.add(i);
+							}
+						}
+						if(tags.length){
+							var tagstr=' <span class="cardtag">';
+							for(var i=0;i<tags.length;i++){
+								var tag=tags[i];
+								if(!_status.cardtag[tag]){
+									_status.cardtag[tag]=[];
+								}
+								_status.cardtag[tag].add(this.cardid);
+								tagstr+=lib.translate[tag+'_tag'];
+							}
+							tagstr+='</span>';
+							this.node.range.innerHTML+=tagstr;
+						}
+					}
                     return this;
                 },
                 updateTransform:function(bool,delay){
@@ -19829,6 +21239,12 @@
                         dx=player.offsetLeft+player.offsetWidth/2-52-this.offsetLeft;
                         dy=player.offsetTop+player.offsetHeight/2-52-this.offsetTop;
                     }
+			if(get.is.mobileMe(player)){
+						dx+=get.cardOffset();
+						if(ui.arena.classList.contains('oblongcard')){
+							dy-=16;
+						}
+					}
 
                     if(this.style.transform&&this.style.transform!='none'&&this.style.transform.indexOf('translate')==-1){
                         this.style.transform+=' translate('+dx+'px,'+dy+'px)';
@@ -19880,12 +21296,34 @@
                     else this._uncheck.length=0;
                     if(this._uncheck.length==0) this.classList.remove('uncheck');
                 },
-                discard:function(){
-                    ui.discardPile.appendChild(this);
-                    this.fix();
-                    this.classList.remove('glow');
-                }
-            },
+               	discard:function(bool){
+					if(!this.destroyed){
+						ui.discardPile.appendChild(this);
+					}
+					this.fix();
+					this.classList.remove('glow');
+					if(bool===false){
+						ui.cardPile.insertBefore(this,ui.cardPile.childNodes[Math.floor(Math.random()*ui.cardPile.childNodes.length)]);
+					}
+					else{
+						if(_status.discarded){
+							_status.discarded.add(this);
+						}
+					}
+				},
+				hasTag:function(tag){
+					if(this.cardid&&_status.cardtag&&_status.cardtag[tag]&&_status.cardtag[tag].contains(this.cardid)){
+						return true;
+					}
+					return false;
+				},
+				hasPosition:function(){
+					return ['h','e','j'].contains(get.position(this));
+				},
+				isInPile:function(){
+					return ['c','d'].contains(get.position(this));
+				}
+			},
             button:{
                 exclude:function(){
                     if(_status.event.excludeButton==undefined){
@@ -19898,13 +21336,14 @@
                 finish:function(){
                     this.finished=true;
                 },
-                goto:function(step){
-                    this.step=step-1;
-                },
+
                 cancel:function(){
                     this.untrigger.call(this,arguments);
                     this.finish();
                     this.trigger(this.name+'Cancelled');
+                },
+                goto:function(step){
+                    this.step=step-1;
                 },
                 redo:function(){
                     this.step--;
@@ -19918,6 +21357,11 @@
                         }
                     }
                     else{
+						if(typeof key!='string'){
+							console.log('warning: using non-string object as event key');
+							console.log(key,value);
+							console.log(_status.event);
+						}
                         this[key]=value;
                         this._set.push([key,value]);
                     }
@@ -19965,40 +21409,56 @@
                     delete this._targetChoice;
                     delete this._skillChoice;
                 },
-                getParent:function(level){
-                    var parent;
-                    if(this._modparent&&game.online){
-                        parent=this._modparent;
-                    }
-                    else{
-                        parent=this.parent;
-                    }
-                    if(!parent) return {};
-                    if(typeof level=='number'){
-                        for(var i=1;i<level;i++){
-                            if(!parent) return {};
-                            parent=parent.parent;
-                        }
-                    }
-                    else if(typeof level=='string'){
-                        for(var i=0;i<20;i++){
-                            if(!parent) return {};
-                            if(parent.name==level) return parent;
-                            parent=parent.parent;
-                        }
-                        if(!parent) return {};
-                    }
-                    return parent;
-                },
-                getTrigger:function(){
-                    return this.getParent()._trigger;
-                },
-                getRand:function(){
-                    if(!this._rand) this._rand=Math.random();
-                    return this._rand;
-                },
-                insert:function(func,map){
-                    var next=game.createEvent(this.name+'Inserted',false);
+               				getParent:function(level,forced){
+					var parent;
+					if(this._modparent&&game.online){
+						parent=this._modparent;
+					}
+					else{
+						parent=this.parent;
+					}
+					var toreturn={};
+					if(typeof level=='string'&&forced==true){
+						toreturn=null;
+					}
+					if(!parent) return toreturn;
+					if(typeof level=='number'){
+						for(var i=1;i<level;i++){
+							if(!parent) return toreturn;
+							parent=parent.parent;
+						}
+					}
+					else if(typeof level=='string'){
+						for(var i=0;i<20;i++){
+							if(!parent) return toreturn;
+							if(parent.name==level) return parent;
+							parent=parent.parent;
+						}
+						if(!parent) return toreturn;
+					}
+					if(toreturn===null){
+						return null;
+					}
+					return parent;
+				},
+				getTrigger:function(){
+					return this.getParent()._trigger;
+				},
+				getRand:function(){
+					if(!this._rand) this._rand=Math.random();
+					return this._rand;
+				},
+				insert:function(func,map){
+					var next=game.createEvent(this.name+'Inserted',false,this);
+					next.setContent(func);
+					for(var i in map){
+						next.set(i,map[i]);
+					}
+					return next;
+				},
+				insertAfter:function(func,map){
+					var next=game.createEvent(this.name+'Inserted',false,{next:[]});
+					this.after.push(next);
                     next.setContent(func);
                     for(var i in map){
                         next.set(i,map[i]);
@@ -20241,11 +21701,13 @@
                     list.sort(function(a,b){
                         return b[2]-a[2];
                     });
-                    if(list.length){
-                        for(var i=0;i<list.length;i++){
-                            game.createTrigger(name,list[i][0],list[i][1],event);
-                        }
-                    }
+                   	if(list.length){
+						var next=game.createEvent('arrangeTrigger',false,event);
+						next.setContent('arrangeTrigger');
+						next.list=list;
+						next._trigger=event;
+						next.triggername=name;
+					}
                 },
                 untrigger:function(all,player){
                     if(all){
@@ -20421,6 +21883,10 @@
                 },
                 replace:function(){
                     // this.animate('controlpressdownx',500);
+					if(this.replaceTransition===false){
+						this.style.transitionProperty='none';
+						ui.refresh(this);
+					}
 
                     while(this.childNodes.length) this.firstChild.remove();
                     var i,controls;
@@ -20442,6 +21908,12 @@
                         this.style.width=width+'px';
                     }
                     ui.updatec();
+					if(this.replaceTransition===false){
+						var that=this;
+						setTimeout(function(){
+							that.style.transitionProperty='';
+						},200);
+					}
                     return this;
                 }
             },
@@ -20491,6 +21963,10 @@
                         },player);
                         player.unwait('ai');
                     }
+
+					if(window.isNonameServer){
+						document.querySelector('#server_count').innerHTML=lib.node.clients.length;
+					}
                     return this;
                 }
             },
@@ -20581,14 +22057,41 @@
             filterButton:function(button){
                 return true;
             },
+			filterTrigger:function(event,player,name,skill){
+				if(player._hookTrigger){
+					for(var i=0;i<player._hookTrigger.length;i++){
+						var info=lib.skill[player._hookTrigger[i]].hookTrigger;
+						if(info){
+							if(info.block&&info.block(event,player,name,skill)){
+								return false;
+							}
+						}
+					}
+				}
+				var info=get.info(skill);
+				if(info.filter&&!info.filter(event,player,name)){
+					return false;
+				}
+				if(event._notrigger.contains(player)&&!lib.skill.global.contains(skill)){
+					return false;
+				}
+				if(typeof info.usable=='number'&&player.hasSkill('counttrigger')&&
+					player.storage.counttrigger&&player.storage.counttrigger[skill]>=info.usable){
+					return false;
+				}
+				if(info.round&&(info.round-(game.roundNumber-player.storage[skill+'_roundcount'])>0)){
+					return false;
+				}
+				return true;
+			},
             characterDisabled:function(i,libCharacter){
                 if(lib.character[i][4]&&lib.character[i][4].contains('forbidai')) return true;
                 if(lib.character[i][4]&&lib.character[i][4].contains('unseen')) return true;
                 if(lib.config.forbidai.contains(i)) return true;
-                if(_status.connectMode){
+				if(lib.characterFilter[i]&&!lib.characterFilter[i](get.mode())) return true;
+				if(_status.connectMode){
                     if(lib.configOL.banned.contains(i)) return true;
-                    if(lib.config.replacecharacter[i]&&libCharacter&&libCharacter[lib.config.replacecharacter[i]]) return true;
-                    var double_character=false;
+                   var double_character=false;
                     if(lib.configOL.mode=='guozhan'){
                         double_character=true;
                     }
@@ -20602,7 +22105,8 @@
                         return true;
                     }
                     if(lib.configOL.ban_weak){
-                        if(lib.config.forbidall.contains(i)) return true;
+						if(lib.config.replacecharacter[i]&&libCharacter&&libCharacter[lib.config.replacecharacter[i]]) return true;
+						 if(lib.config.forbidall.contains(i)) return true;
                         if(!double_character&&get.rank(i,true)<=2){
                             return true;
                         }
@@ -20613,7 +22117,6 @@
                 }
                 else{
                     if(lib.config.banned.contains(i)) return true;
-                    if(lib.config.replacecharacter[i]&&lib.character[lib.config.replacecharacter[i]]) return true;
                     var double_character=false;
                     if(get.mode()=='guozhan'){
                         double_character=true;
@@ -20628,6 +22131,7 @@
                         return true;
                     }
                     if(get.config('ban_weak')){
+						if(lib.config.replacecharacter[i]&&lib.character[lib.config.replacecharacter[i]]) return true;
                         if(lib.config.forbidall.contains(i)) return true;
                         if(!double_character&&get.rank(i,true)<=2){
                             return true;
@@ -20646,9 +22150,18 @@
                     if(info[4].contains('minskin')) return true;
                     if(info[4].contains('unseen')) return true;
                     if(info[4].contains('forbidai')&&!_status.event.isMine()) return true;
-                }
+					if(lib.characterFilter[i]&&!lib.characterFilter[i](get.mode())) return true;
+				}
                 return false;
             },
+			skillDisabled:function(skill){
+				if(!lib.translate[skill]||!lib.translate[skill+'_info']) return true;
+				var info=lib.skill[skill];
+				if(info&&!info.unique&&!info.temp&&!info.sub&&!info.fixed&&!info.vanish){
+					return false;
+				}
+				return true;
+			},
             cardEnabled:function(card,player,event){
                 card=get.autoViewAs(card,null,player);
                 if(player==undefined) player=_status.event.player;
@@ -20666,14 +22179,15 @@
                     if(typeof filter=='function') return filter(card,player,event);
                 }
             },
-            cardRespondable:function(card,player){
-                if(_status.event.name!='chooseToRespond') return true;
-                var source=_status.event.getParent().player;
-                if(source!=player){
-                    if(source.hasSkillTag('norespond',false,[card,player],true)){
-                        return false;
-                    }
-                }
+           cardRespondable:function(card,player,event){
+				event=event||_status.event;
+				if(event.name!='chooseToRespond') return true;
+				var source=event.getParent().player;
+				if(source!=player){
+					if(source.hasSkillTag('norespond',false,[card,player,event],true)){
+						return false;
+					}
+				}
                 if(player==undefined) player=_status.event.player;
                 var mod=game.checkMod(card,player,'unchanged','cardRespondable',player);
                 if(mod!='unchanged') return mod;
@@ -20697,6 +22211,18 @@
                 if(mod!='unchanged') return mod;
                 return true;
             },
+			canBeDiscarded:function(card,player,target,event){
+				event=event||_status.event;
+				var mod=game.checkMod(card,player,target,event.getParent().name,'unchanged','canBeDiscarded',target);
+				if(mod!='unchanged') return mod;
+				return true;
+			},
+			canBeGained:function(card,player,target,event){
+				event=event||_status.event;
+				var mod=game.checkMod(card,player,target,event.getParent().name,'unchanged','canBeGained',target);
+				if(mod!='unchanged') return mod;
+				return true;
+			},
             cardAiIncluded:function(card){
                 if(_status.event.isMine()) return true;
                 return (_status.event._aiexclude.contains(card)==false);
@@ -20707,7 +22233,7 @@
                     lib.filter.cardUsable(card,player,event));
             },
             targetEnabled:function(card,player,target){
-                if(card==undefined) return false;
+                if(!card) return false;
                 var info=get.info(card);
                 var filter=info.filterTarget;
                 var mod=game.checkMod(card,player,target,'unchanged','playerEnabled',player);
@@ -20721,7 +22247,7 @@
             },
             targetEnabled2:function(card,player,target){
                 if(lib.filter.targetEnabled(card,player,target)) return true;
-                if(card==undefined) return false;
+                	if(!card) return false;
 
                 if(game.checkMod(card,player,target,'unchanged','playerEnabled',player)==false) return false;
                 if(game.checkMod(card,player,target,'unchanged','targetEnabled',target)==false) return false;
@@ -20731,6 +22257,17 @@
                 if(typeof filter=='function') return filter(card,player,target);
                 return false;
             },
+			targetEnabled3:function(card,player,target){
+				if(!card) return false;
+				var info=get.info(card);
+
+				if(info.filterTarget==true) return true;
+				if(typeof info.filterTarget=='function'&&info.filterTarget(card,player,target)) return true;
+
+				if(info.modTarget==true) return true;
+				if(typeof info.modTarget=='function'&&info.modTarget(card,player,target)) return true;
+				return false;
+			},
             targetInRange:function(card,player,target){
                 var mod=game.checkMod(card,player,target,'unchanged','targetInRange',player);
                 var extra=0;
@@ -20749,6 +22286,10 @@
                 return (lib.filter.targetEnabled(card,player,target)&&
                     lib.filter.targetInRange(card,player,target));
             },
+			filterTarget2:function(card,player,target){
+				return (lib.filter.targetEnabled2(card,player,target)&&
+					lib.filter.targetInRange(card,player,target));
+			},
             notMe:function(card,player,target){
                 return player!=target;
             },
@@ -20931,9 +22472,37 @@
                 },
                 ai:{unequip:true}
             },
+            subplayer:{
+				trigger:{player:'dieBefore'},
+				forced:true,
+				priority:-9,
+				onremove:true,
+				mark:'character',
+				intro:{
+					content:function(storage,player){
+						if(typeof storage.intro2=='string') return storage.intro2;
+						if(typeof storage.intro2=='function') return storage.intro2(storage,player);
+						return '死亡前切换回主武将'
+					},
+					name:function(storage){
+						return get.rawName(storage.name);
+					}
+				},
+				content:function(){
+					trigger.cancel();
+					var evt=trigger.getParent('damage');
+					if(evt.player==player){
+						evt.untrigger(false,player);
+					}
+					player.exitSubPlayer(true);
+				},
+				ai:{
+					nosave:true
+				}
+			},
             autoswap:{
-                trigger:{player:['chooseToUseBegin','chooseToRespondBegin','chooseToDiscardBegin','chooseToCompareBegin',
-                'chooseButtonBegin','chooseCardBegin','chooseTargetBegin','chooseCardTargetBegin','chooseControlBegin',
+                trigger:{player:['playercontrol','chooseToUseBegin','chooseToRespondBegin','chooseToDiscardBegin','chooseToCompareBegin',
+				'chooseButtonBegin','chooseCardBegin','chooseTargetBegin','chooseCardTargetBegin','chooseControlBegin',
                 'chooseBoolBegin','choosePlayerCardBegin','discardPlayerCardBegin','gainPlayerCardBegin']},
                 forced:true,
                 priority:100,
@@ -20948,6 +22517,81 @@
                     game.modeSwapPlayer(player);
                 },
             },
+dualside:{
+				subSkill:{
+					turn:{
+						trigger:{player:['turnOverAfter','dieBefore']},
+						silent:true,
+						filter:function(event,player){
+							if(player.storage.dualside_over) return false;
+							return Array.isArray(player.storage.dualside);
+						},
+						content:function(){
+							var cfg=player.storage.dualside;
+							var bool=player.isTurnedOver();
+							if(trigger.name=='die'){
+								bool=!bool;
+							}
+							if(bool){
+								cfg[1]=player.hp;
+								cfg[2]=player.maxHp;
+								player.reinit(cfg[0],cfg[3],[cfg[4],cfg[5]]);
+								player.unmarkSkill('dualside');
+								player.markSkillCharacter('dualside',{name:cfg[0]},'正面','当前体力：'+cfg[1]+'/'+cfg[2]);
+							}
+							else{
+								cfg[4]=player.hp;
+								cfg[5]=player.maxHp;
+								player.reinit(cfg[3],cfg[0],[cfg[1],cfg[2]]);
+								player.unmarkSkill('dualside');
+								player.markSkillCharacter('dualside',{name:cfg[3]},'背面','当前体力：'+cfg[4]+'/'+cfg[5]);
+							}
+
+							if(trigger.name=='die'){
+								trigger.cancel();
+								delete player.storage.dualside;
+								player.storage.dualside_over=true;
+								player.unmarkSkill('dualside');
+							}
+						}
+					},
+					init:{
+						trigger:{global:'gameStart',player:'enterGame'},
+						silent:true,
+						content:function(){
+							var list=[player.name,player.name1,player.name2];
+							for(var i=0;i<list.length;i++){
+								if(list[i]&&lib.character[list[i]]){
+									var info=lib.character[list[i]];
+									if(info[3].contains('dualside')&&info[4]){
+										player.storage.dualside=[list[i],player.hp,player.maxHp];
+										for(var j=0;j<info[4].length;j++){
+											if(info[4][j].indexOf('dualside:')==0){
+												var name2=info[4][j].slice(9);
+												var info2=lib.character[name2];
+												player.storage.dualside.push(name2);
+												player.storage.dualside.push(info2[2]);
+												player.storage.dualside.push(info2[2]);
+											}
+										}
+									}
+								}
+							}
+							var cfg=player.storage.dualside;
+							if(get.mode()=='guozhan'){
+								if(player.name1==cfg[0]){
+									player.showCharacter(0);
+								}
+								else{
+									player.showCharacter(1);
+								}
+							}
+							player.markSkillCharacter('dualside',{name:cfg[3]},'背面','当前体力：'+cfg[4]+'/'+cfg[5]);
+						}
+					}
+				},
+				group:['dualside_init','dualside_turn']
+			},
             fengyin:{
                 init:function(player,skill){
                     var skills=player.getSkills(true,false);
@@ -21006,8 +22650,7 @@
                     game.log(player,'获得了','【免疫】');
                 },
                 content:function(){
-                    trigger.untrigger();
-                    trigger.finish();
+					trigger.cancel();
                 },
                 ai:{
                     nofire:true,
@@ -21055,6 +22698,7 @@
             },
             mad:{
                 mark:true,
+				locked:true,
                 intro:{
                     content:'已进入混乱状态',
                     name:'混乱',
@@ -21088,8 +22732,7 @@
                     return player.hp>=player.maxHp;
                 },
                 content:function(){
-                    trigger.untrigger();
-                    trigger.finish();
+					trigger.cancel();
                 },
             },
             _turnover:{
@@ -21180,50 +22823,6 @@
                 priority:20,
                 popup:false,
                 content:function(){
-                    while(ui.dialogs.length){
-                        ui.dialogs[0].close();
-                    }
-                    if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
-                        player.popup('回合开始');
-                    }
-                    if(lib.config.glow_phase){
-                        if(_status.currentPhase){
-                            _status.currentPhase.classList.remove('glow_phase');
-                            game.broadcast(function(player){
-                                player.classList.remove('glow_phase');
-                            },_status.currentPhase);
-                        }
-                        player.classList.add('glow_phase');
-                        game.broadcast(function(player){
-                            player.classList.add('glow_phase');
-                        },player);
-                    }
-                    _status.currentPhase=player;
-                    game.phaseNumber++;
-                    game.syncState();
-                    game.addVideo('phaseChange',player);
-                    if(game.phaseNumber==1&&lib.configOL.observe){
-                        lib.configOL.observeReady=true;
-                        game.send('server','config',lib.configOL);
-                    }
-                    game.log();
-                    game.log(player,'的回合开始');
-                    player._noVibrate=true;
-                    if(get.config('identity_mode')!='zhong'&&!_status.connectMode){
-                        var num;
-                        switch(get.config('auto_identity')){
-                            case 'one':num=1;break;
-                            case 'two':num=2;break;
-                            case 'three':num=3;break;
-                            case 'always':num=-1;break;
-                            default:num=0;break;
-                        }
-                        if(num&&!_status.identityShown&&game.phaseNumber>game.players.length*num&&game.showIdentity){
-                            if(!_status.video) player.popup('显示身份');
-                            _status.identityShown=true;
-                            game.showIdentity(false);
-                        }
-                    }
                     // 回合开始时如果有不是极意的符卡就翻回去。
                     if (player.isTurnedOver()){
                         var info = ""
@@ -21239,7 +22838,6 @@
                             }
                         }
                     }
-                    player.ai.tempIgnore=[];
                     player.stat.push({card:{},skill:{}});
                 },
             },
@@ -21411,7 +23009,7 @@
                     event.acted.push(player);
                     var str=get.translation(trigger.player.name)+'决死，是否帮助？';
                     var str2='当前体力：'+trigger.player.hp;
-                    if(lib.config.tao_enemy&&event.dying.side!=player.side&&lib.config.mode!='guozhan'&&!event.dying.hasSkillTag('revertsave')){
+                    if(lib.config.tao_enemy&&event.dying.side!=player.side&&lib.config.mode!='identity'&&lib.config.mode!='guozhan'&&!event.dying.hasSkillTag('revertsave')){
                         event._result={bool:false}
                     }
                     else if(player.isOnline()||(_status.connectMode&&player==game.me)||player.hasSkillTag('save',true,null,true)||player.hasCard(function(card){
@@ -21651,8 +23249,8 @@
                     if(lib.node.banned.contains(banned_info)){
                         this.send('denied','banned');
                     }
-                    else if(config.id&&lib.playerOL&&lib.playerOL[config.id]&&lib.playerOL[config.id].isOffline()){
-                        var player=lib.playerOL[config.id];
+                    else if(config.id&&lib.playerOL&&lib.playerOL[config.id]){
+					    var player=lib.playerOL[config.id];
                         player.setNickname();
                         player.ws=this;
                         player.isAuto=false;
@@ -21852,6 +23450,9 @@
                         avatar:lib.config.connect_avatar,
                         nickname:lib.config.connect_nickname
                     },lib.config.banned_info);
+					if(ui.connecting&&!ui.connecting.splashtimeout){
+						ui.connecting.firstChild.innerHTML='重连成功';
+					}
                 },
                 onconnection:function(id){
                     var ws={wsid:id};
@@ -21871,6 +23472,17 @@
                         lib.wsOL[id].onclose();
                     }
                 },
+				selfclose:function(){
+					if(game.online||game.onlineroom){
+						if((game.servermode||game.onlinehall)&&_status.over){
+							// later
+						}
+						else{
+							game.saveConfig('tmp_user_roomId');
+						}
+					}
+					game.ws.close();
+				},
                 reloadroom:function(forced){
                     if(window.isNonameServer&&(forced||!_status.protectingroom)){
                         game.reload();
@@ -21890,18 +23502,23 @@
                     else{
                         game.switchMode(lib.configOL.mode);
                     }
-                },
-                enterroomfailed:function(){
-                    alert('请稍后再试');
-                    _status.enteringroom=false;
-                },
-                roomlist:function(list,events,clients,wsid){
-                    game.online=true;
-                    game.onlinehall=true;
-                    lib.config.recentIP.remove(_status.ip);
-                    lib.config.recentIP.unshift(_status.ip);
-                    lib.config.recentIP.splice(5);
-                    game.saveConfig('reconnect_info',[_status.ip,null]);
+					ui.create.connecting(true);
+				},
+				enterroomfailed:function(){
+					alert('请稍后再试');
+					_status.enteringroom=false;
+					ui.create.connecting(true);
+				},
+				roomlist:function(list,events,clients,wsid){
+					game.send('server','key',game.onlineKey);
+					game.online=true;
+					game.onlinehall=true;
+					lib.config.recentIP.remove(_status.ip);
+					lib.config.recentIP.unshift(_status.ip);
+					lib.config.recentIP.splice(5);
+					if(!lib.config.reconnect_info||lib.config.reconnect_info[0]!=_status.ip){
+						game.saveConfig('reconnect_info',[_status.ip,null]);
+					}
                     game.saveConfig('recentIP',lib.config.recentIP);
                     _status.connectMode=true;
 
@@ -21925,6 +23542,15 @@
                             ui.rooms.push(player);
                         }
                         if(events){
+							ui.connectRoom=ui.create.div('.forceopaque.menubutton.large.connectevents.server.pointerdiv','创建服务器',ui.window,function(){
+								if(confirm('通过此选项可创建一个新房间但不加入游戏。是否继续？')){
+									localStorage.setItem(lib.configprefix+'asserver','hall');
+									game.reload();
+								}
+							});
+							if(!get.config('room_button')){
+								ui.connectRoom.style.display='none';
+							}
                             ui.connectEvents=ui.create.div('.forceopaque.menubutton.large.connectevents.pointerdiv','约战',ui.window,ui.click.connectEvents);
                             ui.connectEventsCount=ui.create.div('.forceopaque.menubutton.icon.connectevents.highlight.hidden','',ui.window);
                             ui.connectClients=ui.create.div('.forceopaque.menubutton.large.connectevents.pointerdiv.left','在线',ui.window,ui.click.connectClients);
@@ -21938,6 +23564,8 @@
                         lib.message.client.updaterooms(list,clients);
                         lib.message.client.updateevents(events);
                         ui.exitroom=ui.create.system('退出房间',function(){
+							game.saveConfig('tmp_owner_roomId');
+							game.saveConfig('tmp_user_roomId');
                             if(ui.rooms){
                                 game.saveConfig('reconnect_info');
                             }
@@ -21950,6 +23578,41 @@
                             game.reload();
                         },true);
 
+						if(typeof lib.config.tmp_owner_roomId=='number'){
+							if(typeof game.roomId!='number'&&ui.rooms[lib.config.tmp_owner_roomId].roomempty){
+								lib.configOL.mode=lib.config.connect_mode;
+								game.roomId=lib.config.tmp_owner_roomId;
+							}
+							game.saveConfig('tmp_owner_roomId');
+						}
+						if(typeof lib.config.tmp_user_roomId=='number'){
+							if(typeof game.roomId!='number'){
+								if(!ui.rooms[lib.config.tmp_user_roomId].roomempty){
+									game.roomId=lib.config.tmp_user_roomId;
+								}
+								else{
+									ui.create.connecting();
+									(function(){
+										var n=10;
+										var id=lib.config.tmp_user_roomId;
+										var interval=setInterval(function(){
+											if(n>0){
+												n--;
+												if(!ui.rooms[id].roomempty){
+													clearInterval(interval);
+													game.send('server','enter',game.roomId,lib.config.connect_nickname,lib.config.connect_avatar);
+												}
+											}
+											else{
+												ui.create.connecting(true);
+												clearInterval(interval);
+											}
+										},500);
+									}());
+								}
+							}
+							game.saveConfig('tmp_user_roomId');
+						}
                         if(window.isNonameServer){
                             var cfg='pagecfg'+window.isNonameServer;
                             if(lib.config[cfg]){
@@ -21969,8 +23632,19 @@
                             }
                         }
                         else if(typeof game.roomId=='number'){
-                            game.send('server','enter',game.roomId,lib.config.connect_nickname,lib.config.connect_avatar);
-                        }
+							var room=ui.rooms[game.roomId];
+							if(game.roomIdServer&&(room.serving||!room.version)){
+								console.log();
+								if(lib.config.reconnect_info){
+									lib.config.reconnect_info[2]=null;
+									game.saveConfig('reconnect_info',lib.config.reconnect_info);
+								}
+							}
+							else{
+								ui.create.connecting();
+								game.send('server','enter',game.roomId,lib.config.connect_nickname,lib.config.connect_avatar);
+							}
+						}
                         lib.init.onfree();
                     }
                     if(_status.event.parent){
@@ -22035,6 +23709,7 @@
                     }
                     else{
                         game.saveConfig('reconnect_info',[_status.ip,id]);
+						game.saveConfig('tmp_user_roomId',roomId);
                     }
                     lib.config.recentIP.remove(_status.ip);
                     lib.config.recentIP.unshift(_status.ip);
@@ -22106,11 +23781,14 @@
                             _status.event={
                                 finished:true,
                                 next:[],
+								after:[]
                             };
                             _status.paused=false;
                             game.createEvent('game',false).setContent(lib.init.startOnline);
                             game.loop();
                             game.send('inited');
+
+							ui.create.connecting(true);
                         });
                     }
                     if(_status.event.parent){
@@ -22134,6 +23812,9 @@
                     game.ip=ip;
                     game.servermode=state.servermode;
                     game.roomId=state.roomId;
+				if(state.over){
+						_status.over=true;
+					}
                     if(observe){
                         game.onlineID=null;
                         game.roomId=null;
@@ -22143,6 +23824,9 @@
                     }
                     else{
                         game.saveConfig('reconnect_info',[_status.ip,game.onlineID]);
+						if(!observe){
+							game.saveConfig('tmp_user_roomId',game.roomId);
+						}
                     }
                     _status.connectMode=true;
                     lib.configOL=config;
@@ -22313,6 +23997,7 @@
                         _status.event={
                             finished:true,
                             next:[],
+							after:[]
                         };
                         _status.paused=false;
                         _status.dying=get.parsedResult(state.dying)||[];
@@ -22351,10 +24036,11 @@
                         if(lib.config.show_cardpile){
                             ui.cardPileButton.style.display='';
                         }
-                        if(!observe&&game.me&&game.me.isDead()){
-                            ui.exit=ui.create.control('退出房间',ui.click.exit);
-                        }
+      					if(!observe&&game.me&&(game.me.isDead()||_status.over)){
+							ui.create.exit();
+						}
                         ui.updatehl();
+						ui.create.connecting(true);
                     });
                 },
                 exec:function(func){
@@ -22370,6 +24056,12 @@
                         case 'gaming':alert('加入失败：游戏已开始');break;
                         case 'number':alert('加入失败：房间已满');break;
                         case 'banned':alert('加入失败：房间拒绝你加入');break;
+						case 'key':
+							alert('您的游戏版本过低，请升级到最新版');
+							game.saveConfig('tmp_owner_roomId');
+							game.saveConfig('tmp_user_roomId');
+							game.saveConfig('reconnect_info');
+							break;
                         case 'offline':
                         if(_status.paused&&_status.event.name=='game'){
                             setTimeout(game.resume,500);
@@ -22894,6 +24586,21 @@
                 game.ws.send(JSON.stringify(get.stringifiedResult(args)));
             }
         },
+		sendTo:function(id,message){
+			var ws={wsid:id};
+			for(var i in lib.element.nodews){
+				ws[i]=lib.element.nodews[i];
+			}
+			var client={
+				ws:ws,
+				id:ws.wsid,
+				closed:false
+			};
+			for(var i in lib.element.client){
+				client[i]=lib.element.client[i];
+			}
+			client.send(message);
+		},
         createServer:function(){
             lib.node.clients=[];
             lib.node.banned=[];
@@ -23129,20 +24836,37 @@
                     init:true
                 }
             };
-            for(var i in obj.config){
-                lib.extensionMenu['extension_'+obj.name][i]=obj.config[i];
-            }
-            for(var i in obj.help){
-                lib.help[i]=obj.help[i];
-            }
-            if(obj.editable!==false&&lib.config.show_extensionmaker){
-                lib.extensionMenu['extension_'+obj.name].edit={
-                    name:'编辑此扩展',
-                    clear:true,
-                    onclick:function(){
-                        if(game.editExtension){
-                            game.editExtension(obj.name);
-                        }
+			if(obj.package&&obj.package.author){
+				lib.extensionMenu['extension_'+obj.name].author={
+					name:'作者：'+obj.package.author,
+					clear:true,
+					nopointer:true,
+				}
+			}
+			if(obj.package&&obj.package.intro){
+				lib.extensionMenu['extension_'+obj.name].intro={
+					name:obj.package.intro,
+					clear:true,
+					nopointer:true,
+				}
+			}
+			for(var i in obj.config){
+				lib.extensionMenu['extension_'+obj.name][i]=obj.config[i];
+			}
+			for(var i in obj.help){
+				lib.help[i]=obj.help[i];
+			}
+			if(obj.editable!==false&&lib.config.show_extensionmaker){
+				lib.extensionMenu['extension_'+obj.name].edit={
+					name:'编辑此扩展',
+					clear:true,
+					onclick:function(){
+						if(game.editExtension&&lib.extensionPack&&lib.extensionPack[obj.name]){
+							game.editExtension(obj.name);
+						}
+						else{
+							alert('无法编辑未启用的扩展，请启用此扩展并重启后重试')
+						}
                     }
                 }
             }
@@ -23237,18 +24961,64 @@
                 game.importedPack=obj;
             }
         },
-        importExtension:function(data,finishLoad,exportext){
-            if(!window.JSZip){
-                lib.init.js(lib.assetURL+'game','jszip',function(){
-                    game.importExtension(data,finishLoad,exportext);
-                });
-            }
-            else if(get.objtype(data)=='object'){
-                var zip=new JSZip();
-                for(var i in data){
-                    zip.file(i,data[i]);
-                }
-                if(exportext){
+importExtension:function(data,finishLoad,exportext,pkg){
+			if(!window.JSZip){
+				lib.init.js(lib.assetURL+'game','jszip',function(){
+					game.importExtension(data,finishLoad,exportext,pkg);
+				});
+			}
+			else if(get.objtype(data)=='object'){
+				var zip=new JSZip();
+				var filelist=[];
+				var filelist2=[];
+				if(data._filelist){
+					filelist2=data._filelist;
+					delete data._filelist;
+				}
+				for(var i in data){
+					zip.file(i,data[i]);
+					filelist.push(i);
+				}
+				if(exportext){
+					if(pkg){
+						filelist.remove('extension.js');
+						pkg.files=filelist.slice(0);
+						pkg.files.addArray(filelist2);
+						pkg.size=zip.generate({type:"arraybuffer"}).byteLength;
+						if(pkg.size<1000){
+							pkg.size=pkg.size+'B';
+						}
+						else if(pkg.size<1000000){
+							pkg.size=Math.round(pkg.size/1000)+'KB';
+						}
+						else{
+							pkg.size=Math.round(pkg.size/100000)/10+'MB';
+						}
+						var pkgstr='extension["'+exportext+'"]={\n';
+						for(var i in pkg){
+							var pkgfrag;
+							if(i=='files'){
+								var pkgjs=JSON.stringify(pkg[i]);
+								var pkgfrag='';
+								var pkgbuffer=0;
+								for(var j=0;j<pkgjs.length;j++){
+									pkgfrag+=pkgjs[j];
+									pkgbuffer++;
+									if(pkgbuffer>=80&&pkgjs[j]==','&&pkgjs[j-1]=='"'){
+										pkgfrag+='\n\t\t';
+										pkgbuffer=0;
+									}
+								}
+							}
+							else{
+								pkgfrag=JSON.stringify(pkg[i]);
+							}
+							pkgstr+='\t'+i+':'+pkgfrag+',\n'
+						}
+						pkgstr=pkgstr.slice(0,pkgstr.length-2);
+						pkgstr+='\n};';
+						zip.file('package.js',pkgstr);
+					}
                     var blob = zip.generate({type:"blob"});
                     var fileNameToSaveAs = exportext;
                     fileNameToSaveAs=fileNameToSaveAs.replace(/\\|\/|\:|\?|\"|\*|<|>|\|/g,'.');
@@ -23742,13 +25512,20 @@
                 if(pos){
                     game.addObstacle(pos[0],pos[1]);
                 }
-                else{
-                    console.log(pos)
-                }
-            },
-            removeObstacle:function(pos){
-                game.removeObstacle(pos);
-            },
+			},
+			removeObstacle:function(pos){
+				game.removeObstacle(pos);
+			},
+			moveObstacle:function(pos){
+				if(pos){
+					game.moveObstacle(pos[0],pos[1],pos[2]);
+				}
+			},
+			colorObstacle:function(pos){
+				if(pos){
+					game.colorObstacle(pos[0],pos[1]);
+				}
+			},
             moveTox:function(player,pos){
                 if(player&&player.dataset){
                     delete lib.posmap[player.dataset.position];
@@ -23865,11 +25642,43 @@
                     console.log(player);
                 }
             },
-            smoothAvatar:function(player){
-                if(player&&player.node&&player.node.avatar){
-                    player.smoothAvatar();
-                }
-            },
+smoothAvatar:function(player,vice){
+				if(player&&player.node){
+					if(vice){
+						if(player.node.avatar2){
+							player.smoothAvatar(vice);
+						}
+					}
+					else{
+						if(player.node.avatar){
+							player.smoothAvatar(vice);
+						}
+					}
+				}
+			},
+			setAvatar:function(player,content){
+				if(player&&content&&content.length==2){
+					player.setAvatar(content[0],content[1])
+				}
+			},
+			setAvatarQueue:function(player,content){
+				if(player&&content&&content.length==2){
+					player.setAvatarQueue(content[0],content[1])
+				}
+			},
+			addSubPlayer:function(player,content){
+				if(player&&content&&content[0]&&content[1]&&
+					content[2]&&content[3]&&content[4]){
+					var skill=content[0];
+					lib.skill[skill]=content[1];
+					lib.character[skill]=content[2];
+					lib.translate[skill]=content[3];
+					player.storage[skill]=content[4];
+				}
+			},
+			arenaNumber:function(content){
+				ui.arena.dataset.number=content;
+			},
             reinit:function(source,content){
                 if(source&&content){
                     source.uninit();
@@ -23993,6 +25802,12 @@
                     player.hide();
                 }
             },
+			deleteHandcards:function(player){
+				if(player){
+					player.node.handcards1.delete();
+					player.node.handcards2.delete();
+				}
+			},
             hideCharacter:function(player,num){
                 if(player&&player.classList){
                     switch(num){
@@ -24257,7 +26072,7 @@
                 }
                 var cards=player.getCards('hej');
                 for(var i=0;i<cards.length;i++){
-                    cards[i].goto(ui.discardPile);
+                    cards[i].discard();
                 }
                 while(player.node.marks.childNodes.length>1){
                     player.node.marks.lastChild.remove();
@@ -24371,6 +26186,14 @@
                     console.log(player);
                 }
             },
+			directequip:function(player,cards){
+				if(player&&cards){
+					player.directequip(get.infoCards(cards));
+				}
+				else{
+					console.log(player);
+				}
+			},
             gain12:function(player,cards12){
                 if(player&&cards12){
                     var cards1=get.infoCards(cards12[0]);
@@ -24845,9 +26668,14 @@
             }
         },
         prompt:function(){
-            var str,forced,callback;
-            for(var i=0;i<arguments.length;i++){
-                if(typeof arguments[i]=='string'){
+            			var str,forced,callback,noinput=false;
+			for(var i=0;i<arguments.length;i++){
+				if(arguments[i]=='alert'){
+					forced=true;
+					callback=function(){};
+					noinput=true;
+				}
+				else if(typeof arguments[i]=='string'){
                     str=arguments[i];
                 }
                 else if(typeof arguments[i]=='boolean'){
@@ -24861,6 +26689,9 @@
                 return;
             }
             try{
+				if(noinput){
+					throw('e');
+				}
                 var result=prompt(str);
                 callback(result);
             }
@@ -24879,9 +26710,15 @@
                 });
                 var strnode=ui.create.div('',str||'',dialog);
                 var input=ui.create.node('input',ui.create.div(dialog));
-                var controls=ui.create.div(dialog);
-                var clickConfirm=function(){
-                    if(input.value){
+				if(noinput){
+					input.style.display='none';
+				}
+				var controls=ui.create.div(dialog);
+				var clickConfirm=function(){
+					if(noinput){
+						promptContainer.remove();
+					}
+					else if(input.value){
                         callback(input.value);
                         promptContainer.remove();
                     }
@@ -24896,6 +26733,10 @@
                 if(!forced){
                     ui.create.div('.menubutton.large','取消',controls,clickCancel);
                 }
+				if(noinput){
+					confirmNode.classList.remove('disabled');
+				}
+				else{
                 input.onkeydown=function(e){
                     if(e.keyCode==13){
                         clickConfirm();
@@ -24914,6 +26755,10 @@
                 }
                 input.focus();
             }
+			}
+		},
+		alert:function(str){
+			game.prompt(str,'alert');
         },
         print:function(){
             if(!_status.toprint){
@@ -25350,7 +27195,7 @@
         },
         createTrigger:function(name,skill,player,event){
             if(player.isOut()||player.isDead()||player.removed) return;
-            var next=game.createEvent('trigger',false,event);
+            var next=game.createEvent('trigger',false);
             next.skill=skill;
             next.player=player;
             next.triggername=name;
@@ -25363,6 +27208,7 @@
                 step:0,
                 finished:false,
                 next:[],
+				after:[],
                 custom:{
                     add:{},
                     replace:{}
@@ -25423,6 +27269,9 @@
                             pack[i][j][4].contains('hiddenboss')){
                             lib.config.forbidai.add(j);
                         }
+						if(lib.config.forbidai_user&&lib.config.forbidai_user.contains(j)){
+							lib.config.forbidai.add(j);
+						}
                         for(var l=0;l<pack[i][j][3].length;l++){
                             lib.skilllist.add(pack[i][j][3][l]);
                         }
@@ -25556,10 +27405,14 @@
             lib.mode[name]={
                 name:info2.translate,
                 config:info2.config,
-                splash:imgsrc
+				splash:imgsrc,
+				fromextension:true
             }
             lib.init['setMode_'+name]=function(){
-                mode[name]=info;
+				game.import('mode',function(lib,game,ui,get,ai,_status){
+					info.name=name;
+					return info;
+				});
             }
             if(!lib.config.extensionInfo[extname]){
                 lib.config.extensionInfo[extname]={};
@@ -25767,6 +27620,9 @@
             ui.control.show();
             ui.clear();
             game.stopCountChoose();
+			if(ui.time3){
+				clearInterval(ui.time3.interval);
+			}
             lib.config.background_music = lib.backgroundmusicURL;
             if(game.layout=='long2'&&!game.chess){
                 ui.arena.classList.add('choose-character');
@@ -25810,7 +27666,7 @@
                     }
                 }
                 if(!ui.exit){
-                    ui.exit=ui.create.control('退出房间',ui.click.exit);
+                   ui.create.exit();
                 }
                 if(ui.giveup){
                     ui.giveup.remove();
@@ -25985,7 +27841,7 @@
                     ui.ladder.innerHTML=game.getLadderName(lib.storage.ladder.current);
                 }
             }
-            if(true){
+            //if(true){
                 if(game.players.length){
                     table=document.createElement('table');
                     tr=document.createElement('tr');
@@ -26173,7 +28029,7 @@
                     dialog.add(ui.create.div('.placeholder'));
                     dialog.content.appendChild(table);
                 }
-            }
+            //}
             dialog.add(ui.create.div('.placeholder'));
 
             var clients=game.players.concat(game.dead);
@@ -26254,6 +28110,12 @@
                         }
                     }
                 }
+				if(newvid.name1&&newvid.name1.indexOf('subplayer_')==0){
+					newvid.name1=newvid.name1.slice(10,newvid.name1.lastIndexOf('_'));
+				}
+				if(newvid.name2&&newvid.name2.indexOf('subplayer_')==0){
+					newvid.name1=newvid.name2.slice(10,newvid.name1.lastIndexOf('_'));
+				}
                 lib.videos.unshift(newvid);
                 store.put(newvid);
                 ui.create.videoNode(newvid,true);
@@ -26324,8 +28186,22 @@
                 }
             }
             if(!ui.restart){
-                ui.restart=ui.create.control('restart',game.reload);
-            }
+				if(game.onlineroom&&typeof game.roomId=='number'){
+					ui.restart=ui.create.control('restart',function(){
+						game.broadcastAll(function(){
+							if(ui.exit){
+								ui.exit.stay=true;
+								ui.exit.firstChild.innerHTML='返回房间';
+							}
+						});
+						game.saveConfig('tmp_owner_roomId',game.roomId);
+						setTimeout(game.reload,100);
+					});
+				}
+				else{
+                	ui.restart=ui.create.control('restart',game.reload);
+            	}
+			}
             if(ui.tempnowuxie){
                 ui.tempnowuxie.close();
                 delete ui.tempnowuxie;
@@ -26390,8 +28266,8 @@
             }
             else if(event.finished){
                 if(event._triggered==1){
-                    if(event.type=='card') event.trigger('useCardToCancelled');
-                    event.trigger(event.name+'Cancelled');
+					if(event.type=='card') event.trigger('useCardToOmitted');
+					event.trigger(event.name+'Omitted');
                     event._triggered=4;
                 }
                 else if(event._triggered==2){
@@ -26404,6 +28280,17 @@
                     event.trigger(event.name+'After');
                     event._triggered++;
                 }
+				else if(event.after&&event.after.length){
+					var next=event.after.shift();
+					if(next.player&&next.player.skipList.contains(next.name)){
+						event.trigger(next.name+'Skipped');
+						next.player.skipList.remove(next.name);
+					}
+					else{
+						next.parent=event;
+						_status.event=next;
+					}
+				}
                 else{
                     if(event.parent){
                         if(event.result){
@@ -26424,8 +28311,16 @@
                 }
                 else if(event._triggered==1){
                     if(event.type=='card') event.trigger('useCardToBegin');
-                    event.trigger(event.name+'Begin');
-                    event._triggered++;
+					if(event.name=='phase'&&!event._begun){
+						var next=game.createEvent('phasing',false,event);
+						next.player=event.player;
+						next.setContent('phasing');
+						event._begun=true;
+					}
+					else{
+                    	event.trigger(event.name+'Begin');
+                    	event._triggered++;
+                	}
                 }
                 else{
                     if(player&&player.classList.contains('dead')&&!event.forceDie&&event.name!='phaseLoop'){
@@ -26523,12 +28418,14 @@
             var custom=event.custom||{};
             var ok=true,auto=true;
             var player=event.player;
+			var auto_confirm=lib.config.auto_confirm;
             if(!event.filterButton&&!event.filterCard&&!event.filterTarget&&(!event.skill||!event._backup)){
                 if(event.choosing){
                     _status.imchoosing=true;
                 }
                 return;
             }
+			player.node.equips.classList.remove('popequip');
             if(event.filterButton){
                 var dialog=event.dialog;
                 range=get.select(event.selectButton);
@@ -26657,6 +28554,12 @@
                             ok=false;
                         }
                     }
+					if(lib.config.popequip&&get.is.phoneLayout()&&
+						typeof event.position=='string'&&event.position.indexOf('e')!=-1&&
+						player.node.equips.querySelector('.card.selectable')){
+						player.node.equips.classList.add('popequip');
+						auto_confirm=false;
+					}
                 }
                 if(custom.add.card){
                     custom.add.card();
@@ -26873,8 +28776,8 @@
                         }
                     }
                 }
-                if(ok&&auto&&(lib.config.auto_confirm||(skillinfo&&skillinfo.direct))&&(!_status.mousedragging||!_status.mouseleft)&&
-                !_status.mousedown&&!_status.touchnocheck){
+                if(ok&&auto&&(auto_confirm||(skillinfo&&skillinfo.direct))&&(!_status.mousedragging||!_status.mouseleft)&&
+				!_status.mousedown&&!_status.touchnocheck){
                     if(ui.confirm){
                         if(!skillinfo||!skillinfo.preservecancel){
                             ui.confirm.close();
@@ -26934,7 +28837,8 @@
                     cards[j].updateTransform();
                 }
                 ui.selected.cards.length=0;
-            }
+				_status.event.player.node.equips.classList.remove('popequip');
+			}
             if((args.length==0||args.contains('target'))){
                 for(j=0;j<game.players.length;j++){
                     game.players[j].classList.remove('selected');
@@ -27158,6 +29062,9 @@
                 script.remove();
                 var content=lib.imported.mode[name];
                 delete lib.imported.mode[name];
+				if(get.is.empty(lib.imported.mode)){
+					delete lib.imported.mode;
+				}
                 callback(content);
             });
         },
@@ -27256,6 +29163,7 @@
                 _status.event={
                     finished:true,
                     next:[],
+					after:[]
                 };
                 _status.paused=false;
 
@@ -27283,8 +29191,9 @@
                         }
                         lib.configOL.banned=lib.config['connect_'+name+'_banned'];
                         lib.configOL.bannedcards=lib.config['connect_'+name+'_bannedcards'];
-                        lib.configOL.version=lib.versionOL;
+
                     }
+                        lib.configOL.version=lib.versionOL;
                     for(var i in lib.cardPackList){
                         if(lib.configOL.cardPack.contains(i)){
                             lib.card.list=lib.card.list.concat(lib.cardPackList[i]);
@@ -27319,6 +29228,12 @@
                 }
 
                 game.createEvent('game',false).setContent(mode[lib.config.mode].start);
+				if(lib.mode[lib.config.mode]&&lib.mode[lib.config.mode].fromextension){
+					var startstr=mode[lib.config.mode].start.toString();
+					if(startstr.indexOf('onfree')==-1){
+						setTimeout(lib.init.onfree,500);
+					}
+				}
                 delete lib.imported.mode[name];
 
                 if(!lib.db){
@@ -27914,7 +29829,7 @@
             var info=lib.skill[i];
             if(info.alter){
                 lib.translate[i+'_info_origin']=lib.translate[i+'_info'];
-                if(lib.config.alteredSkills.contains(i)){
+				if(!lib.config.vintageSkills.contains(i)){
                     lib.translate[i+'_info']=lib.translate[i+'_info_alter'];
                 }
             }
@@ -27941,6 +29856,13 @@
                 }
                 return;
             }
+			if(info.available&&info.available(mode)==false){
+				lib.skill[i]={};
+				if(lib.translate[i+'_info']){
+					lib.translate[i+'_info']='此模式下不可用';
+				}
+				return;
+			}
             if(info.viewAs){
                 if(typeof info.viewAs=='string'){
                     info.viewAs={name:info.viewAs};
@@ -27981,6 +29903,16 @@
                     lib.translate[i+'_info']=lib.translate[info.inherit+'_info'];
                 }
             }
+            // 限定技在这里似乎有什么奇怪的东西，注意一下
+			if(info.limited){
+				if(info.mark===undefined) info.mark=true;
+				if(!info.intro) info.intro={};
+				if(info.intro.content===undefined) info.intro.content='limited';
+				if(info.skillAnimation===undefined) info.skillAnimation=true;
+				if(info.init===undefined) info.init=function(player){
+					player.storage[i]=false;
+				}
+			}
             if(info.subSkill&&!sub){
                 for(var j in info.subSkill){
                     lib.skill[i+'_'+j]=info.subSkill[j];
@@ -28018,11 +29950,19 @@
                         },
                         intro:{
                             content:function(storage,player){
-                                var num=round-(game.roundNumber-storage);
-                                if(num>0){
-                                    return get.cnNumber(num)+'轮后技能重置';
-                                }
-                                return '技能可发动';
+								var str='';
+								var info=get.info(name.slice(0,name.indexOf('_roundcount')));
+								if(info&&info.addintro){
+									str+=info.addintro(storage,player);
+								}
+								var num=round-(game.roundNumber-storage);
+								if(num>0){
+									str+=get.cnNumber(num)+'轮后'+(info.roundtext||'技能重置');
+								}
+								else{
+									str+='技能可发动';
+								}
+								return str;
                             },
                             markcount:function(storage,player){
                                 var num=round-(game.roundNumber-storage);
@@ -28239,10 +30179,12 @@
                 delete ui.rooms;
             }
             if(ui.connectEvents){
-                ui.connectEvents.remove();
-                ui.connectEventsCount.remove();
-                ui.connectClients.remove();
-                ui.connectClientsCount.remove();
+				ui.connectRoom.remove();
+				ui.connectEvents.remove();
+				ui.connectEventsCount.remove();
+				ui.connectClients.remove();
+				ui.connectClientsCount.remove();
+				delete ui.connectRoom;
                 delete ui.connectEvents;
                 delete ui.connectEventsCount;
                 delete ui.connectClients;
@@ -28529,8 +30471,8 @@
             }
             else{
                 // node.addEventListener('mouseenter',ui.click.intro);
-                node.addEventListener('mousemove',ui.click.logv);
-                node.addEventListener('mouseleave',ui.click.logvleave);
+                node.addEventListener(lib.config.pop_logv?'mousemove':'click',ui.click.logv);
+				node.addEventListener('mouseleave',ui.click.logvleave);
             }
             node.logvid=logvid;
             node.added=[];
@@ -28686,17 +30628,79 @@
             }
         },
         showChangeLog:function(){
-            if(lib.version!=lib.config.version){
-                game.saveConfig('version',lib.version);
-                var ul=document.createElement('ul');
-                ul.style.textAlign='left';
-                for(var i=0;i<lib.changeLog.length;i++){
-                    var li=document.createElement('li');
-                    li.innerHTML=lib.changeLog[i];
-                    ul.appendChild(li);
-                }
-                var dialog=ui.create.dialog(lib.version+'更新内容','hidden');
-                dialog.content.appendChild(ul);
+			if(lib.version!=lib.config.version||_status.extensionChangeLog){
+				var ul=document.createElement('ul');
+				ul.style.textAlign='left';
+				var caption;
+				var players=null,cards=null;
+				if(lib.version!=lib.config.version){
+					for(var i=0;i<lib.changeLog.length;i++){
+						if(lib.changeLog[i].indexOf('players://')==0){
+							try{
+								players=JSON.parse(lib.changeLog[i].slice(10));
+							}
+							catch(e){
+								players=null;
+							}
+						}
+						else if(lib.changeLog[i].indexOf('cards://')==0){
+							try{
+								cards=JSON.parse(lib.changeLog[i].slice(8));
+							}
+							catch(e){
+								cards=null;
+							}
+						}
+						else{
+							var li=document.createElement('li');
+							li.innerHTML=lib.changeLog[i];
+							ul.appendChild(li);
+						}
+					}
+					caption=lib.version+'更新内容';
+				}
+				else{
+					caption='扩展更新';
+				}
+				game.saveConfig('version',lib.version);
+				for(var i in _status.extensionChangeLog){
+					var li=document.createElement('li');
+					li.innerHTML=i+'：'+_status.extensionChangeLog[i];
+					ul.appendChild(li);
+				}
+				var dialog=ui.create.dialog(caption,'hidden');
+				var lic=ui.create.div(dialog.content);
+				lic.style.display='block';
+				ul.style.display='inline-block';
+				ul.style.marginLeft='-40px';
+				lic.appendChild(ul);
+				if(players){
+					for(var i=0;i<players.length;i++){
+						if(!lib.character[players[i]]){
+							players.splice(i--,1);
+						}
+					}
+					if(players.length){
+						dialog.addSmall([players,'character']);
+						dialog.classList.add('forcebutton');
+						dialog.classList.add('withbg');
+					}
+				}
+				if(cards){
+					for(var i=0;i<cards.length;i++){
+						if(!lib.card[cards[i]]){
+							cards.splice(i--,1);
+						}
+					}
+					if(cards.length){
+						for(var i=0;i<cards.length;i++){
+							cards[i]=[get.translation(get.type(cards[i])),'',cards[i]]
+						}
+						dialog.addSmall([cards,'vcard']);
+						dialog.classList.add('forcebutton');
+						dialog.classList.add('withbg');
+					}
+				}
                 dialog.open();
                 var hidden=false;
                 if(!ui.auto.classList.contains('hidden')){
@@ -28713,6 +30717,17 @@
                 lib.init.onfree();
             }
         },
+		showExtensionChangeLog:function(str,extname){
+			extname=extname||_status.extension;
+			var cfg='extension_'+extname+'_changelog';
+			if(lib.extensionPack[extname]&&lib.extensionPack[extname].version!=lib.config[cfg]){
+				game.saveConfig(cfg,lib.extensionPack[extname].version);
+				if(!_status.extensionChangeLog){
+					_status.extensionChangeLog={};
+					_status.extensionChangeLog[extname]=str;
+				}
+			}
+		},
         saveConfig:function(key,value,local,callback){
             if(_status.reloading) return;
             if(local){
@@ -28758,6 +30773,9 @@
                     config[key]=value;
                 }
                 localStorage.setItem(lib.configprefix+'config',JSON.stringify(config));
+				if(callback){
+					callback();
+				}
             }
             else{
                 if(value==undefined){
@@ -28833,6 +30851,13 @@
             game.players.push(player);game.arrangePlayers();
             return player;
         },
+		triggerEnter:function(player){
+			var next=game.createEvent('enterGame',false);
+			next.player=player;
+			next.setContent(function(){
+				event.trigger('enterGame');
+			});
+		},
         restorePlayer:function(player){
             if(game.players.contains(player)||game.dead.contains(player)) return;
             var position=parseInt(player.dataset.position);
@@ -29095,6 +31120,15 @@
             }
             return cards;
         },
+		countGroup:function(){
+			var list=lib.group.slice(0);
+			return game.countPlayer(function(current){
+				if(list.contains(current.group)){
+					list.remove(current.group);
+					return true;
+				}
+			});
+		},
         players:[],
         dead:[],
         imported:[],
@@ -29287,11 +31321,62 @@
 
                 ui.window.appendChild(layer);
             },
+			identitycircle:function(list,target){
+				var container=ui.create.div('.identitycircle.menubg',target);
+				var circle=ui.create.div(container);
+				container.dataset.num=list.length;
+				for(var i=0;i<list.length;i++){
+					var sec1=ui.create.div(circle);
+					sec1.dataset.color=list[i];
+					var sec2=ui.create.div(circle);
+					sec2.dataset.color=list[i];
+					var deg1=360/list.length*i;
+					var deg2=0;
+					if(list.length==2){
+						deg2=90;
+					}
+					else if(list.length==3){
+						deg2=30;
+					}
+					sec1.style.transform='rotate('+deg1+'deg)';
+					sec2.style.transform='rotate('+(deg1+deg2)+'deg)';
+				}
+			},
             chat:function(){
                 var chat=ui.create.system('聊天',null,true);
                 ui.chatButton=chat;
                 lib.setPopped(chat,ui.click.chat,220);
             },
+	exit:function(){
+				if(!ui.exit){
+					ui.exit=ui.create.control('退出房间',ui.click.exit);
+				}
+			},
+			connecting:function(bool){
+				if(bool){
+					ui.window.classList.remove('connecting');
+					if(ui.connecting){
+						ui.connecting.delete();
+						delete ui.connecting;
+					}
+				}
+				else{
+					ui.window.classList.add('connecting');
+					ui.connecting=ui.create.div('.fullsize.connectlayer');
+					document.body.appendChild(ui.connecting);
+					ui.create.div('','正在重连...',ui.connecting);
+					ui.connecting.splashtimeout=setTimeout(function(){
+						if(ui.connecting){
+							delete ui.connecting.splashtimeout;
+						}
+					},300);
+					// setTimeout(function(){
+					// 	if(ui.connecting){
+					// 		ui.connecting.firstChild.show();
+					// 	}
+					// },1000);
+				}
+			},
             roomInfo:function(){
                 var chat=ui.create.system(game.online?'房间信息':'房间设置',function(){
                     if(!game.online||game.onlinezhu){
@@ -29586,8 +31671,8 @@
                                     else{
                                         node._link.menu.appendChild(visualMenu);
                                     }
-                                    //ui.create.div('.name',get.verticalStr(config.item[i]),visualMenu);
-                                    ui.create.div('.name',config.item[i],visualMenu);
+                                    	ui.create.div('.name',get.verticalStr(config.item[i]),visualMenu);
+
                                     visualMenu._link=i;
                                     if(config.visualMenu(visualMenu,i,config.item[i],config)!==false){
                                         visualMenu.listen(clickMenuItem);
@@ -30466,10 +32551,14 @@
                                                 alert('导入成功');
                                                 if(!lib.db){
                                                     var noname_inited=localStorage.getItem('noname_inited');
+													var onlineKey=localStorage.getItem(lib.configprefix+'key');													
                                                     localStorage.clear();
                                                     if(noname_inited){
                                                         localStorage.setItem('noname_inited',noname_inited);
                                                     }
+													if(onlineKey){
+														localStorage.setItem(lib.configprefix+'key',onlineKey);
+													}
                                                     for(var i in data){
                                                         localStorage.setItem(i,data[i]);
                                                     }
@@ -30548,15 +32637,7 @@
                         node.link=page;
                         node.mode='create';
                         var pageboard=ui.create.div(page);
-                        // var inputExtLine=ui.create.div(pageboard);
-                        // inputExtLine.style.padding='10px';
-                        // inputExtLine.style.height='22px';
-                        // inputExtLine.style.lineHeight='22px';
-                        // inputExtLine.style.whiteSpace='nowrap';
-                        // inputExtLine.style.overflow='visible';
-                        // var inputExtSpan=document.createElement('span');
-                        // inputExtSpan.innerHTML='扩展名：';
-                        // inputExtLine.appendChild(inputExtSpan);
+
 
                         var importextensionexpanded=false;
                         var importExtension;
@@ -31202,7 +33283,8 @@
                         var charactersToAlter=[];
                         for(var i in info){
                             if(info[i][4]&&info[i][4].contains('unseen')) continue;
-                            list.push(i);
+							if(connectMenu&&lib.connectBanned.contains(i)) continue;
+							list.push(i);
                             for(var j=0;j<info[i][3].length;j++){
                                 if(!lib.skill[info[i][3][j]]){
                                     continue;
@@ -31210,9 +33292,9 @@
                                 if(lib.skill[info[i][3][j]].alter){
                                     alterableSkills.add(info[i][3][j]);
                                     alterableCharacters.add(i);
-                                    if(!lib.config.alteredSkills.contains(info[i][3][j])){
-                                        charactersToAlter.add(i);
-                                    }
+                                    	if(lib.config.vintageSkills.contains(info[i][3][j])){
+										charactersToAlter.add(i);
+									}
                                 }
                             }
                         }
@@ -31250,26 +33332,26 @@
                             page.appendChild(cfgnode);
                             if(alterableCharacters.length){
                                 var cfgnode2=createConfig({
-                                    name:'平衡强度',
-                                    _name:mode,
-                                    init:charactersToAlter.length==0,
-                                    intro:'以下角色将被削弱：'+get.translation(alterableCharacters),
-                                    onclick:function(bool){
-                                        if(bool){
-                                            for(var i=0;i<alterableSkills.length;i++){
-                                                lib.config.alteredSkills.add(alterableSkills[i]);
-                                                lib.translate[alterableSkills[i]+'_info']=lib.translate[alterableSkills[i]+'_info_alter'];
-                                            }
-                                        }
-                                        else{
-                                            for(var i=0;i<alterableSkills.length;i++){
-                                                lib.config.alteredSkills.remove(alterableSkills[i]);
-                                                lib.translate[alterableSkills[i]+'_info']=lib.translate[alterableSkills[i]+'_info_origin'];
-                                            }
-                                        }
-                                        game.saveConfig('alteredSkills',lib.config.alteredSkills);
-                                    }
-                                });
+                                    name:'新版替换',
+									_name:mode,
+									init:charactersToAlter.length==0,
+									intro:'以下武将将被修改：'+get.translation(alterableCharacters),
+									onclick:function(bool){
+										if(bool){
+											for(var i=0;i<alterableSkills.length;i++){
+												lib.config.vintageSkills.remove(alterableSkills[i]);
+												lib.translate[alterableSkills[i]+'_info']=lib.translate[alterableSkills[i]+'_info_alter'];
+											}
+										}
+										else{
+											for(var i=0;i<alterableSkills.length;i++){
+												lib.config.vintageSkills.add(alterableSkills[i]);
+												lib.translate[alterableSkills[i]+'_info']=lib.translate[alterableSkills[i]+'_info_origin'];
+											}
+										}
+										game.saveConfig('vintageSkills',lib.config.vintageSkills);
+									}
+								});
                                 cfgnode2.style.marginTop='0px';
                                 page.appendChild(cfgnode2);
                             }
@@ -31567,7 +33649,6 @@
                                         case 'equip5':return 4.5;
                                         default:return 4;
                                     }
-                                    break;
                                 }
                                 case 'zhenfa':return 5;
                                 default:return 6;
@@ -32063,6 +34144,9 @@
                             }
                             game.saveConfig('plays',lib.config.plays);
                         }
+						if(this.onswitch){
+							this.onswitch(bool);
+						}
                         updateNodes();
                     };
 
@@ -32109,6 +34193,9 @@
                                 };
                             }
                             var cfgnode=createConfig(cfg);
+					if(cfg.onswitch){
+								cfgnode.onswitch=cfg.onswitch;
+							}
                             page.appendChild(cfgnode);
                         }
                         return node;
@@ -32127,6 +34214,7 @@
                         node.mode='create';
                         var pageboard=ui.create.div(page);
                         var inputExtLine=ui.create.div(pageboard);
+						inputExtLine.style.transition='all 0s';
                         inputExtLine.style.padding='10px';
                         inputExtLine.style.height='22px';
                         inputExtLine.style.lineHeight='22px';
@@ -32141,9 +34229,77 @@
                         inputExtName.style.width='80px';
                         inputExtName.style.textAlign='center';
                         inputExtLine.appendChild(inputExtName);
-                        game.editExtension=function(name){
-                            page.currentExtension=name||'无名扩展';
-                            inputExtName.value=page.currentExtension;
+
+						var buttonConfirmOnclick=function(){
+							buttonConfirm.style.display='none';
+							inputExtSpan.style.display='none';
+							inputExtName.style.display='none';
+							authorExtLine.style.display='none';
+							introExtLine.style.display='none';
+							forumExtLine.style.display='none';
+							diskExtLine.style.display='none';
+							versionExtLine.style.display='none';
+							okExtLine.style.display='none';
+							inputExtLine.style.padding='10px';
+							buttonRename.style.display='';
+							buttonSave.style.display='';
+							buttonReset.style.display='';
+							buttonExport.style.display='';
+							inputExtSpan.innerHTML='扩展名称：';
+							inputExtName.style.width='100px';
+							inputExtName.style.textAlign='';
+
+							dashboard.style.display='';
+						};
+						var createExtLine=function(str,str2){
+							var infoExtLine=ui.create.div(pageboard);
+							infoExtLine.style.display='none';
+							infoExtLine.style.padding='0 10px 10px 10px';
+							infoExtLine.style.height='22px';
+							infoExtLine.style.lineHeight='22px';
+							infoExtLine.style.whiteSpace='nowrap';
+							infoExtLine.style.overflow='visible';
+							if(typeof str=='boolean'){
+								var inputConfirm=document.createElement('button');
+								inputConfirm.innerHTML='确定';
+								inputConfirm.onclick=buttonConfirmOnclick;
+								infoExtLine.appendChild(inputConfirm);
+								return infoExtLine;
+							}
+							var infoExtSpan=document.createElement('span');
+							infoExtSpan.innerHTML=str+'：';
+							infoExtLine.appendChild(infoExtSpan);
+							var infoExtName=document.createElement('input');
+							infoExtName.type='text';
+							infoExtName.style.width='100px';
+							infoExtName.value=str2||'';
+							infoExtLine.appendChild(infoExtName);
+							return infoExtLine;
+						};
+						var authorExtLine=createExtLine('扩展作者',lib.config.connect_nickname);
+						var introExtLine=createExtLine('扩展描述');
+						var versionExtLine=createExtLine('扩展版本','1.0');
+						var diskExtLine=createExtLine('网盘地址');
+						var forumExtLine=createExtLine('讨论地址');
+						var okExtLine=createExtLine(true);
+
+						game.editExtension=function(name){
+							page.currentExtension=name||'无名扩展';
+							inputExtName.value=page.currentExtension;
+							if(name&&lib.extensionPack[name]){
+								authorExtLine.querySelector('input').value=lib.extensionPack[name].author||'';
+								introExtLine.querySelector('input').value=lib.extensionPack[name].intro||'';
+								diskExtLine.querySelector('input').value=lib.extensionPack[name].diskURL||'';
+								forumExtLine.querySelector('input').value=lib.extensionPack[name].forumURL||'';
+								versionExtLine.querySelector('input').value=lib.extensionPack[name].version||'';
+							}
+							else{
+								authorExtLine.querySelector('input').value=lib.config.connect_nickname||'';
+								introExtLine.querySelector('input').value='';
+								diskExtLine.querySelector('input').value='';
+								forumExtLine.querySelector('input').value='';
+								versionExtLine.querySelector('input').value='1.0';
+							}
                             if(name){
                                 inputExtName.disabled=true;
                                 buttonConfirm.style.display='none';
@@ -32157,15 +34313,28 @@
                             else{
                                 inputExtName.disabled=false;
                                 buttonConfirm.style.display='';
-                                inputExtSpan.style.display='';
-                                inputExtName.style.display='';
-                                buttonRename.style.display='none';
-                                buttonSave.style.display='none';
-                                buttonReset.style.display='none';
-                                buttonExport.style.display='none';
-                            }
-                            exportExtLine.style.display='none';
-                            shareExtLine.style.display='none';
+								inputExtSpan.innerHTML='扩展名：';
+								inputExtName.style.width='80px';
+								inputExtName.style.textAlign='center';
+								inputExtSpan.style.display='';
+								inputExtName.style.display='';
+								buttonRename.style.display='none';
+								buttonSave.style.display='none';
+								buttonReset.style.display='none';
+								buttonExport.style.display='none';
+							}
+
+							dashboard.style.display='';
+
+							exportExtLine.style.display='none';
+							shareExtLine.style.display='none';
+							authorExtLine.style.display='none';
+							introExtLine.style.display='none';
+							forumExtLine.style.display='none';
+							diskExtLine.style.display='none';
+							versionExtLine.style.display='none';
+							okExtLine.style.display='none';
+							inputExtLine.style.padding='10px';
                             dash1.reset(name);
                             dash2.reset(name);
                             dash3.reset(name);
@@ -32232,8 +34401,13 @@
                                 str+=',package:'+get.stringify({
                                     character:dash1.content.pack,
                                     card:dash2.content.pack,
-                                    skill:dash3.content.pack
-                                });
+                                   skill:dash3.content.pack,
+									intro:introExtLine.querySelector('input').value||'',
+									author:authorExtLine.querySelector('input').value||'',
+									diskURL:diskExtLine.querySelector('input').value||'',
+									forumURL:forumExtLine.querySelector('input').value||'',
+									version:versionExtLine.querySelector('input').value||'',
+								});
                                 var files={character:[],card:[],skill:[]};
                                 for(var i in dash1.content.image){
                                     files.character.push(i);
@@ -32254,7 +34428,24 @@
                                     extension[i]=dash2.content.image[i];
                                 }
                                 if(exportext){
-                                    game.importExtension(extension,null,page.currentExtension);
+                                   var proexport=function(){
+										game.importExtension(extension,null,page.currentExtension,{
+											intro:introExtLine.querySelector('input').value||'',
+											author:authorExtLine.querySelector('input').value||'',
+											netdisk:diskExtLine.querySelector('input').value||'',
+											forum:forumExtLine.querySelector('input').value||'',
+											version:versionExtLine.querySelector('input').value||'',
+										});
+									};
+									if(game.getFileList){
+										game.getFileList('extension/'+page.currentExtension,function(folders,files){
+											extension._filelist=files;
+											proexport();
+										});
+									}
+									else{
+										proexport();
+									}
                                 }
                                 else{
                                     game.importExtension(extension,function(){
@@ -32266,32 +34457,46 @@
                         var buttonConfirm=document.createElement('button');
                         buttonConfirm.innerHTML='确定';
                         buttonConfirm.style.marginLeft='5px';
-                        buttonConfirm.onclick=function(){
-                            buttonConfirm.style.display='none';
-                            inputExtSpan.style.display='none';
-                            inputExtName.style.display='none';
-                            buttonRename.style.display='';
-                            buttonSave.style.display='';
-                            buttonReset.style.display='';
-                            buttonExport.style.display='';
-                        };
+						buttonConfirm.onclick=buttonConfirmOnclick;
                         inputExtLine.appendChild(buttonConfirm);
                         var buttonRename=document.createElement('button');
-                        buttonRename.innerHTML='改名';
+						buttonRename.innerHTML='选项';
                         buttonRename.style.marginLeft='2px';
                         buttonRename.style.marginRight='2px';
                         buttonRename.style.display='none';
                         buttonRename.onclick=function(){
-                            buttonConfirm.style.display='';
                             inputExtSpan.style.display='';
                             inputExtName.style.display='';
-                            inputExtName.disabled=false;
-                            buttonRename.style.display='none';
-                            buttonSave.style.display='none';
-                            buttonReset.style.display='none';
-                            buttonExport.style.display='none';
-                        };
-                        inputExtLine.appendChild(buttonRename);
+						authorExtLine.style.display='';
+							introExtLine.style.display='';
+							forumExtLine.style.display='';
+							diskExtLine.style.display='';
+							versionExtLine.style.display='';
+							okExtLine.style.display='block';
+							inputExtLine.style.padding='20px 10px 10px 10px';
+							inputExtName.disabled=false;
+							buttonRename.style.display='none';
+							buttonSave.style.display='none';
+							buttonReset.style.display='none';
+							buttonExport.style.display='none';
+							inputExtSpan.innerHTML='扩展名称：';
+							inputExtName.style.width='100px';
+							inputExtName.style.textAlign='';
+
+							dashboard.style.display='none';
+						};
+						inputExtLine.appendChild(buttonRename);
+						var buttonReset=document.createElement('button');
+						buttonReset.innerHTML='重置';
+						buttonReset.style.marginLeft='2px';
+						buttonReset.style.marginRight='2px';
+						buttonReset.style.display='none';
+						buttonReset.onclick=function(){
+							if(confirm('当前扩展将被清除，是否确定？')){
+								game.editExtension();
+							}
+						};
+						inputExtLine.appendChild(buttonReset);
                         var buttonSave=document.createElement('button');
                         buttonSave.innerHTML='保存';
                         buttonSave.style.marginLeft='2px';
@@ -32305,15 +34510,6 @@
                             processExtension();
                         };
                         inputExtLine.appendChild(buttonSave);
-                        var buttonReset=document.createElement('button');
-                        buttonReset.innerHTML='重置';
-                        buttonReset.style.marginLeft='2px';
-                        buttonReset.style.marginRight='2px';
-                        buttonReset.style.display='none';
-                        buttonReset.onclick=function(){
-                            game.editExtension();
-                        };
-                        inputExtLine.appendChild(buttonReset);
                         var buttonExport=document.createElement('button');
                         buttonExport.innerHTML='导出';
                         buttonExport.style.marginLeft='2px';
@@ -34704,9 +36900,11 @@
                                             else{
                                                 str2=update.changeLog[0];
                                                 for(var i=1;i<update.changeLog.length;i++){
-                                                    str2+='；'+update.changeLog[i];
-                                                }
-                                            }
+													if(update.changeLog[i].indexOf('://')==-1){
+														str2+='；'+update.changeLog[i];
+													}
+												}
+											}
                                             navigator.notification.confirm(
                                                 str2,
                                                 function(index){
@@ -35426,73 +37624,6 @@
                         });
                     }());
                     (function(){
-                        if(true) return;
-                        var page=ui.create.div('');
-                        var node=ui.create.div('.menubutton.large','换人',start.firstChild,clickMode);
-                        node.link=page;
-                        page.classList.add('menu-sym');
-                        var caption=ui.create.div('','选择一个换人目标',page);
-                        caption.style.margin='5px';
-                        caption.style.marginTop='6px';
-                        var row3=ui.create.div('.menu-buttons.leftbutton',page);
-                        row3.style.marginTop='3px';
-
-                        var currentrow3=null;
-                        var clickrow3=function(){
-                            if(game.changeCoin){
-                                game.changeCoin(-10);
-                            }
-                            game.swapPlayer(this.link);
-                        };
-                        menuUpdates.push(function(){
-                            if(_status.connectMode||(lib.config.mode!='identity'&&lib.config.mode!='guozhan')){
-                                node.classList.add('off');
-                                var active=start.firstChild.querySelector('.active');
-                                if(active==node){
-                                    node.classList.remove('active');
-                                    node.link.remove();
-                                    active=start.firstChild.firstChild;
-                                    if(!_status.connectMode){
-                                        cheatButton.style.display='';
-                                    }
-                                    active.classList.add('active');
-                                    rightPane.appendChild(active.link);
-                                }
-                                return;
-                            }
-                            var list=[];
-                            for(var i=0;i<game.players.length;i++){
-                                if(lib.character[game.players[i].name]&&
-                                    game.players[i].isAlive()&&game.players[i]!=game.me){
-                                    list.push(game.players[i]);
-                                }
-                            }
-                            if(_status.video){
-                                node.remove();
-                            }
-                            if(!_status.video&&list.length&&game.phaseNumber&&!_status.event.isMine()){
-                                node.classList.remove('off');
-                                row3.innerHTML='';
-                                var buttons=ui.create.buttons(list,'player',row3,true);
-                                for(var i=0;i<buttons.length;i++){
-                                    buttons[i].listen(clickrow3);
-                                }
-                            }
-                            else{
-                                node.classList.add('off');
-                                var active=start.firstChild.querySelector('.active');
-                                if(active==node){
-                                    node.classList.remove('active');
-                                    node.link.remove();
-                                    active=start.firstChild.firstChild;
-                                    active.classList.add('active');
-                                    rightPane.appendChild(active.link);
-                                    cheatButton.style.display='';
-                                }
-                            }
-                        });
-                    }());
-                    (function(){
                         var page=ui.create.div('');
                         var node=ui.create.div('.menubutton.large','命令',start.firstChild,clickMode);
                         ui.commandnode=node;
@@ -35684,7 +37815,7 @@
                         }
                     }());
                     (function(){
-                        if(!window.indexedDB) return;
+                        if(!window.indexedDB||window.nodb) return;
                         var page=ui.create.div('');
                         var node=ui.create.div('.menubutton.large','录像',start.firstChild,clickMode);
                         node.type='video';
@@ -36248,7 +38379,9 @@
                         }
 
                         if(lib.character[i][4].contains('stonehidden')) continue;
-                        if(lib.config.banned.contains(i)) continue;
+						if(lib.character[i][4].contains('unseen')) continue;
+						if(lib.config.banned.contains(i)) continue;
+						if(lib.characterFilter[i]&&!lib.characterFilter[i](get.mode())) continue;
                         if(filter&&filter(i)) continue;
                         list.push(i);
                         if(namecapt.indexOf(getCapt(i))==-1){
@@ -37130,6 +39263,26 @@
                     },1000);
                 }
                 lib.setPressure(ui.window,ui.click.pressurepause);
+				if(window.isNonameServer){
+					ui.window.classList.add('server');
+					var serverinfo=ui.create.div('.serverinfo',ui.window);
+					ui.create.div('','服务器正在运行',serverinfo);
+					var serverinfotable=ui.create.table(2,2,ui.create.div(serverinfo));
+					serverinfotable.style.display='inline-block';
+					serverinfotable.firstChild.firstChild.innerHTML='房间人数：';
+					serverinfotable.firstChild.lastChild.id='server_count';
+					serverinfotable.firstChild.lastChild.innerHTML='0';
+					serverinfotable.lastChild.firstChild.innerHTML='房间状态：';
+					serverinfotable.lastChild.lastChild.id='server_status';
+					serverinfotable.lastChild.lastChild.innerHTML='空闲';
+					ui.create.div('.menubutton.large','关闭服务器',function(){
+						if(_status.gameStarted&&!confirm('关闭服务器当前进行的游戏将终止且不可恢复，是否确定关闭？')){
+							return;
+						}
+						localStorage.removeItem(lib.configprefix+'asserver');
+						game.reload();
+					},ui.create.div('',serverinfo));
+				}
 
                 ui.window.addEventListener(lib.config.touchscreen?'touchend':'click',ui.click.window);
                 ui.system=ui.create.div("#system.",ui.window);
@@ -37182,6 +39335,9 @@
                 if(lib.config.blur_ui){
                     ui.window.classList.add('blur_ui');
                 }
+				if(lib.config.glass_ui){
+					ui.window.classList.add('glass_ui');
+				}
                 if(lib.config.custom_button){
                     lib.configMenu.appearence.config.custom_button.onclick('skip');
                 }
@@ -38014,6 +40170,8 @@
                             game.send('startGame');
                         }
                         else{
+							game.saveConfig('tmp_owner_roomId');
+							game.saveConfig('tmp_user_roomId');
                             game.saveConfig('reconnect_info');
                             game.reload();
                         }
@@ -38198,16 +40356,33 @@
             },
         },
         click:{
-            connectEvents:function(){
-                if(this.info){
-                    if(!game.onlineKey){
-                        game.onlineKey=localStorage.getItem(lib.configprefix+'key');
-                        if(!game.onlineKey){
-                            game.onlineKey=get.id();
-                            localStorage.setItem(lib.configprefix+'key',game.onlineKey);
-                        }
-                    }
-
+         	identitycircle:function(){
+				var list=[];
+				this.classList.toggle('transparent');
+				for(var i=0;i<this.parentNode.childNodes.length;i++){
+					if(!this.parentNode.childNodes[i].classList.contains('transparent')){
+						list.add(this.parentNode.childNodes[i].link[2]);
+					}
+				}
+				var info=this.link;
+				if(list.length==1){
+					for(var i=0;i<this.parentNode.childNodes.length;i++){
+						if(!this.parentNode.childNodes[i].classList.contains('transparent')){
+							var info2=this.parentNode.childNodes[i].link;
+							info[0].firstChild.innerHTML=info2[1];
+							info[0].dataset.color=info2[2];
+						}
+					}
+				}
+				else{
+					info[0].firstChild.innerHTML='';
+					info[0].dataset.color='';
+					ui.create.identitycircle(list,info[0].firstChild);
+				}
+				this._source._guozhanguess=list;
+			},
+			connectEvents:function(){
+				if(this.info){
                     var button=this;
                     var layer=ui.create.div('.poplayer',ui.window);
                     var uiintro=ui.create.dialog('hidden','notouchscroll');
@@ -38502,7 +40677,8 @@
                                 ui.create.div('.name','<span style="opacity:0.6">'+(button.info[i][0]||'无名玩家'),node);
                             }
                             if(button.info[i][3]){
-                                ui.create.div('.menubutton.videotext',uiintro.content,button.info[i][3]);
+                            	ui.create.div('.videostatus',node,button.info[i][3].slice(0,80));
+								node.classList.add('videonodestatus')
                             }
                         }
                     };
@@ -38629,13 +40805,26 @@
                         lib.config.reconnect_info[2]=game.roomId;
                         game.saveConfig('reconnect_info',lib.config.reconnect_info);
                     }
+					game.reload();
+					return;
                 }
                 else{
                     if(typeof game.roomId!='number'){
                         game.saveConfig('reconnect_info');
                     }
                 }
-                game.reload();
+				if(!ui.exit||!ui.exit.stay){
+					if(lib.config.reconnect_info){
+						lib.config.reconnect_info.length=1;
+						game.saveConfig('reconnect_info',lib.config.reconnect_info);
+					}
+					game.saveConfig('tmp_user_roomId',undefined,false,function(){
+						game.reload();
+					});
+				}
+				else{
+					game.reload();
+				}
             },
             shortcut:function(show){
                 if(show===false){
@@ -38779,7 +40968,7 @@
                     e.stopPropagation();
                 }
             },
-            identity:function(){
+            identity:function(e){
                 if(_status.dragged) return;
                 _status.clicked=true;
                 if(!game.getIdentityList) return;
@@ -38812,31 +41001,92 @@
                     }
                 }
                 else{
-                    var nodes=[];
-                    _status.clickingidentity=[this.parentNode,nodes];
-                    var num=1;
-                    var dy=30;
-                    if(get.is.phoneLayout()){
-                        dy=40;
-                    }
-                    for(var i in list){
-                        if(this.firstChild.innerHTML!=list[i]){
-                            var node=ui.create.div('.identity.hidden.pointerdiv',this.parentNode,ui.click.identity2);
-                            ui.create.div(node).innerHTML=list[i];
-                            node.dataset.color=i;
-                            ui.refresh(node);
-                            node.show();
-                            var transstr='translateY('+((num++)*dy)+'px)';
-                            if(get.is.phoneLayout()){
-                                transstr+=' scale(1.3)';
-                            }
-                            if(get.is.newLayout()&&this.parentNode.classList.contains('linked')){
-                                transstr+=' rotate(90deg)';
-                            }
-                            node.style.transform=transstr;
-                            nodes.push(node);
-                        }
-                    }
+                    				if(get.mode()=='guozhan'){
+						list={wei:'魏',shu:'蜀',wu:'吴',qun:'群'};
+					}
+					var list2=get.copy(list);
+					if(game.getIdentityList2){
+						game.getIdentityList2(list2);
+					}
+					var rect=this.parentNode.getBoundingClientRect();
+					this._customintro=function(uiintro){
+						if(get.mode()=='guozhan'){
+							uiintro.clickintro=true;
+						}
+						else{
+							uiintro.touchclose=true;
+						}
+						// if(lib.config.theme!='woodden'){
+						uiintro.classList.add('woodbg');
+						// }
+						if(get.is.phoneLayout()){
+							uiintro.style.width='100px';
+						}
+						else{
+							uiintro.style.width='85px';
+						}
+						var source=this.parentNode;
+						for(var i in list){
+							var node=ui.create.div();
+							node.classList.add('guessidentity');
+							node.classList.add('pointerdiv');
+							ui.create.div('.menubutton.large',list2[i],node);
+							if(!get.is.phoneLayout()){
+								node.firstChild.style.fontSize='24px';
+								node.firstChild.style.lineHeight='24px';
+							}
+							if(get.mode()=='guozhan'){
+								if(source._guozhanguess){
+									if(!source._guozhanguess.contains(i)){
+										node.classList.add('transparent');
+									}
+								}
+								node._source=source;
+								node.listen(ui.click.identitycircle);
+							}
+							else{
+								node.listen(function(){
+									var info=this.link;
+									info[0].firstChild.innerHTML=info[1];
+									info[0].dataset.color=info[2];
+									_status.clicked=false;
+								});
+							}
+
+							node.link=[this,list[i],i];
+							uiintro.add(node);
+						}
+					};
+					ui.click.touchpop();
+					ui.click.intro.call(this,{
+						clientX:(rect.left+rect.width)*game.documentZoom,
+						clientY:(rect.top)*game.documentZoom
+					});
+					// var nodes=[];
+					// _status.clickingidentity=[this.parentNode,nodes];
+					// var num=1;
+					// var dy=30;
+					// if(get.is.phoneLayout()){
+					// 	dy=45;
+					// }
+					// for(var i in list){
+					// 	if(this.firstChild.innerHTML!=list[i]){
+					// 		var node=ui.create.div('.identity.hidden.pointerdiv',this.parentNode,ui.click.identity2);
+					// 		ui.create.div(node).innerHTML=list[i];
+					// 		node.dataset.color=i;
+					// 		ui.refresh(node);
+					// 		node.show();
+					// 		var transstr='translateY('+((num++)*dy)+'px)';
+					// 		if(get.is.phoneLayout()){
+					// 			transstr+=' scale(1.3)';
+					// 		}
+					// 		if(get.is.newLayout()&&this.parentNode.classList.contains('linked')){
+					// 			transstr+=' rotate(90deg)';
+					// 		}
+					// 		node.style.transform=transstr;
+					// 		nodes.push(node);
+					// 	}
+					// }
                 }
             },
             identity2:function(){
@@ -38943,7 +41193,7 @@
                 if(ui.discardPile.childNodes.length){
                     var list=[];
                     for(var i=0;i<ui.discardPile.childNodes.length;i++){
-                        list.push(ui.discardPile.childNodes[i]);
+                        list.unshift(ui.discardPile.childNodes[i]);
                     }
                     uiintro.addSmall([list,'card']);
                 }
@@ -40328,6 +42578,15 @@
                 }
                 game.check();
             },
+			touchintro:function(){
+				var rect=this.getBoundingClientRect();
+				ui.click.touchpop();
+				ui.click.intro.call(this,{
+					clientX:rect.left+18,
+					clientY:rect.top+12
+				});
+				_status.clicked=false;
+			},
             card:function(){
                 delete this._waitingfordrag;
                 if(_status.dragged) return;
@@ -40383,6 +42642,16 @@
                     custom.add.card();
                 }
                 game.check();
+				if(lib.config.popequip&&get.is.phoneLayout()&&
+					arguments[0]!='popequip'&&ui.arena&&ui.arena.classList.contains('selecting')&&
+					this.parentNode.classList.contains('popequip')){
+					var rect=this.getBoundingClientRect();
+					ui.click.touchpop();
+					ui.click.intro.call(this.parentNode,{
+						clientX:rect.left+18,
+						clientY:rect.top+12
+					});
+				}
             },
             avatar:function(){
                 if(!lib.config.doubleclick_intro) return;
@@ -41124,8 +43393,11 @@
                     this.remove();
                     ui.historybar.style.zIndex='';
                     delete _status.currentlogv;
-                    if(!ui.arena.classList.contains('menupaused')) game.resume2();
-                    e.stopPropagation();
+					if(!ui.arena.classList.contains('menupaused')&&!uiintro.noresume) game.resume2();
+					if(e&&e.stopPropagation) e.stopPropagation();
+					if(uiintro._onclose){
+						uiintro._onclose();
+					}
                     return false;
                 }
                 layer.addEventListener(lib.config.touchscreen?'touchend':'click',clicklayer);
@@ -41151,7 +43423,10 @@
                     this.delete();
                     ui.historybar.style.zIndex='';
                     delete _status.currentlogv;
-                    if(!ui.arena.classList.contains('menupaused')) game.resume2();
+                    if(!ui.arena.classList.contains('menupaused')&&!uiintro.noresume) game.resume2();
+					if(uiintro._onclose){
+						uiintro._onclose();
+					}
                 };
                 var currentpop=this;
                 _status.removePop=function(node){
@@ -41161,10 +43436,20 @@
                     delete _status.removePop;
                     return true;
                 };
-                if(!lib.config.touchscreen){
-                    uiintro.addEventListener('mouseleave',clickintro);
-                    uiintro.addEventListener('click',clickintro);
-                }
+				if(uiintro.clickintro){
+					uiintro.listen(function(){
+						_status.clicked=true;
+					});
+					uiintro._clickintro=clicklayer;
+				}
+				else if(!lib.config.touchscreen){
+					uiintro.addEventListener('mouseleave',clickintro);
+					uiintro.addEventListener('click',clickintro);
+				}
+				else if(uiintro.touchclose){
+					uiintro.listen(clickintro);
+				}
+				uiintro._close=clicklayer;
 
                 game.pause2();
                 return uiintro;
@@ -41384,13 +43669,27 @@
                 }
                 game.saveConfig('autoskilllist',list);
             },
-            autoskill2:function(e){
-                this.classList.toggle('on');
-                if(this.classList.contains('on')){
-                    lib.config.autoskilllist.remove(this.link);
-                }
-                else{
-                    lib.config.autoskilllist.add(this.link);
+			skillbutton:function(){
+				this.func(this.link);
+			},
+			autoskill2:function(e){
+				this.classList.toggle('on');
+				var list=[];
+				if(lib.skill[this.link].frequent){
+					list.push(this.link);
+				}
+				if(lib.skill[this.link].subfrequent){
+					for(var i=0;i<lib.skill[this.link].subfrequent.length;i++){
+						list.push(this.link+'_'+lib.skill[this.link].subfrequent[i]);
+					}
+				}
+				for(var i=0;i<list.length;i++){
+					if(this.classList.contains('on')){
+						lib.config.autoskilllist.remove(list[i]);
+					}
+					else{
+						lib.config.autoskilllist.add(list[i]);
+					}
                 }
                 game.saveConfig('autoskilllist',lib.config.autoskilllist);
                 ui.click.touchpop();
@@ -41742,12 +44041,19 @@
                 if(offset12>40){
                     offset12=90-hs1[i].node.info.offsetWidth;
                     hs1[i].node.info.querySelector('span').style.display='none';
-                    hs1[i].node.name.style.transform='translateY(16px)';
-                    hs1[i].node.info.style.transform='translateX(-'+offset12+'px) translateY(-3px)';
-                }
-                else{
-                    hs1[i].node.info.querySelector('span').style.display='';
-                    hs1[i].node.name.style.transform='';
+					if(hs1[i].node.name.classList.contains('long')){
+						hs1[i].node.name.style.transform='translateY(16px)  scale(0.85)';
+						hs1[i].node.name.style.transformOrigin='top left';
+					}
+					else{
+						hs1[i].node.name.style.transform='translateY(16px)';
+					}
+					hs1[i].node.info.style.transform='translateX(-'+offset12+'px) translateY(-3px)';
+				}
+				else{
+					hs1[i].node.info.querySelector('span').style.display='';
+					hs1[i].node.name.style.transform='';
+					hs1[i].node.name.style.transformOrigin='';
                     hs1[i].node.info.style.transform='translateX(-'+offset12+'px)';
                 }
             }
@@ -41779,12 +44085,19 @@
                 if(offset22>40){
                     offset22=90-hs2[i].node.info.offsetWidth;
                     hs2[i].node.info.querySelector('span').style.display='none';
-                    hs2[i].node.name.style.transform='translateY(16px)';
-                    hs2[i].node.info.style.transform='translateX(-'+offset22+'px) translateY(-3px)';
-                }
-                else{
-                    hs2[i].node.info.querySelector('span').style.display='';
-                    hs2[i].node.name.style.transform='';
+					if(hs2[i].node.name.classList.contains('long')){
+						hs2[i].node.name.style.transform='translateY(16px)  scale(0.85)';
+						hs2[i].node.name.style.transformOrigin='top left';
+					}
+					else{
+						hs2[i].node.name.style.transform='translateY(16px)';
+					}
+					hs2[i].node.info.style.transform='translateX(-'+offset22+'px) translateY(-3px)';
+				}
+				else{
+					hs2[i].node.info.querySelector('span').style.display='';
+					hs2[i].node.name.style.transform='';
+					hs2[i].node.name.style.transformOrigin='';
                     hs2[i].node.info.style.transform='translateX(-'+offset22+'px)';
                 }
             }
@@ -41922,6 +44235,20 @@
     };
     var get={
         is:{
+			converted:function(event){
+				return !(event.cards&&event.card&&event.cards.length==1&&event.cards[0]==event.card);
+			},
+			safari:function(){
+				var ua=navigator.userAgent.toLowerCase();
+				return ua.indexOf('safari'!=-1)&&ua.indexOf('chrome')==-1;
+			},
+			freePosition:function(cards){
+				for(var i=0;i<cards.length;i++){
+					if(!cards[i].hasPosition) return false;
+					if(cards[i].hasPosition()) return false;
+				}
+				return true;
+			},
             nomenu:function(name,item){
                 var menus=['system','menu'];
                 var configs={
@@ -41957,7 +44284,8 @@
                 return true;
             },
             altered:function(skill){
-                return lib.config.alteredSkills.contains(skill);
+				if(_status.connectMode) return true;
+				return !lib.config.vintageSkills.contains(skill);
             },
             node:function(obj){
                 var str=Object.prototype.toString.call(obj);
@@ -41984,6 +44312,7 @@
             jun:function(name){
                 if(get.mode()=='guozhan'){
                     if(name&&typeof name=='object'){
+						if(name.isUnseen&&name.isUnseen(0)) return false;
                         name=name.name1;
                     }
                     if(typeof name=='string'&&name.indexOf('gz_jun_')==0){
@@ -42037,6 +44366,34 @@
                 return false;
             },
         },
+		discarded:function(){
+			var list=_status.discarded.slice(0);
+			for(var i=0;i<list.length;i++){
+				if(list[i].parentNode!=ui.discardPile){
+					list.splice(i--,1);
+				}
+			}
+			return list;
+		},
+		cardOffset:function(){
+			var x=ui.arena.getBoundingClientRect();
+			var y=ui.window.getBoundingClientRect();
+			return -y.width/2+(x.left+x.width/2);
+		},
+		colorspan:function(str){
+			if(str[0]=='#'){
+				var color;
+				switch(str[1]){
+					case 'r':color='fire';break;
+					case 'p':color='legend';break;
+					case 'b':color='blue';break;
+					case 'g':color='green';break;
+					default:return str.slice(2);
+				}
+				return '<span class="'+color+'text '+color+'auto">'+str.slice(2)+'</span>';
+			}
+			return str;
+		},
         evtprompt:function(next,str){
             if(next.prompt){
                 next.prompt2=str;
@@ -42412,6 +44769,23 @@
                 return obj;
             }
         },
+		inpilefull:function(type){
+			var list=[];
+			for(var i in lib.cardPile){
+				for(var j=0;j<lib.cardPile[i].length;j++){
+					var info=lib.cardPile[i][j];
+					if(lib.inpile.contains(info[2])&&get.type(info[2])==type){
+						list.push({
+							name:info[2],
+							suit:info[0],
+							number:info[1],
+							nature:info[3]
+						});
+					}
+				}
+			}
+			return list;
+		},
         inpile:function(type,filter){
             var list=[];
             if(filter=='trick'){
@@ -42439,9 +44813,15 @@
             }
             return list;
         },
+		inpile2:function(type){
+			return get.inpile(type,'trick');
+		},
         typeCard:function(type,filter){
             var list=[];
             for(var i in lib.card){
+				if(lib.card[i].mode&&lib.card[i].mode.contains(get.mode())==false) continue;
+				// if(lib.card[i].vanish||lib.card[i].destroy) continue;
+				if(lib.card[i].destroy) continue;
                 if(typeof filter=='function'&&!filter(i)) continue;
                 if(lib.config.bannedcards.contains(i)) continue;
                 if(!lib.translate[i+'_info']) continue;
@@ -42459,6 +44839,9 @@
         libCard:function(filter){
             var list=[];
             for(var i in lib.card){
+			if(lib.card[i].mode&&lib.card[i].mode.contains(get.mode())==false) continue;
+				// if(lib.card[i].vanish||lib.card[i].destroy) continue;
+				if(lib.card[i].destroy) continue;
                 if(lib.config.bannedcards.contains(i)) continue;
                 if(!lib.translate[i+'_info']) continue;
                 if(filter(lib.card[i],i)){
@@ -42508,7 +44891,7 @@
                 var pack=lib.characterPack[lib.configOL.characterPack[i]];
                 for(var j in pack){
                     if(typeof func=='function'&&func(j)) continue;
-                    if(j=='zuoci'||j=='miheng') continue;
+                    if(lib.connectBanned.contains(j)) continue;
                     if(lib.character[j]) libCharacter[j]=pack[j];
                 }
             }
@@ -42548,7 +44931,8 @@
                 mode:_status.mode,
                 dying:_status.dying,
                 servermode:window.isNonameServer,
-                roomId:game.roomId
+				roomId:game.roomId,
+				over:_status.over
             };
             for(var i in lib.playerOL){
                 state.players[i]=lib.playerOL[i].getState();
@@ -42653,9 +45037,21 @@
             if(typeof num!='number') num=false;
             if(name==_status.lord) return num?Math.round(7*(num-1)/8+1):'ap';
             var rank=lib.rank;
-            var skills=lib.character[name][3];
-            for(var i=0;i<skills.length;i++){
-                if(lib.config.alteredSkills.contains(skills[i])){
+			var skills;
+			if(lib.character[name]){
+				skills=lib.character[name][3];
+			}
+			else{
+				var tmpinfo=get.character(name);
+				if(tmpinfo){
+					skills=tmpinfo[3];
+				}
+				else{
+					skills=[];
+				}
+			}
+			for(var i=0;i<skills.length;i++){
+				if(!lib.config.vintageSkills.contains(skills[i])){
                     name=lib.rank.a[0];break;
                 }
             }
@@ -42677,14 +45073,72 @@
             }
             return num?Math.round(9*(num-1)/8+1):'x';
         },
-        skillRank:function(skill){
-            var info=lib.skill[skill];
-            if(!info) return 0;
-            if(info.ai){
-                if(info.ai.halfneg) return 0;
-                if(info.ai.neg) return -1;
-            }
-            return 1;
+       		skillRank:function(skill,type,grouped){
+			var info=lib.skill[skill];
+			var player=_status.event.skillRankPlayer||_status.event.player;
+			if(!info) return 0;
+			if(info.ai){
+				if(info.ai.halfneg) return 0;
+				if(typeof info.ai.combo=='string'&&player&&!player.hasSkill(info.ai.combo)){
+					return 0;
+				}
+				if(info.ai.neg) return -1;
+			}
+			var num=1;
+			var threaten=1;
+			if(info.ai&&info.ai.threaten){
+				if(typeof info.ai.threaten=='number'){
+					threaten=info.ai.threaten;
+				}
+				else if(typeof info.ai.threaten=='function'&&player){
+					threaten=info.ai.threaten(player,player);
+				}
+			}
+			if(type=='in'){
+				if(info.enable=='phaseUse') num+=0.5;
+				if(info.trigger&&['phaseBegin','phaseDrawBegin','phaseUseBegin','phaseEnd'].contains(info.trigger.player)){
+					num+=0.5;
+				}
+				if(info.trigger&&((typeof info.trigger.player=='string'&&info.trigger.player.indexOf('use')==0)||info.trigger.source)){
+					num+=0.3;
+				}
+				if(num>1&&threaten>1){
+					num+=Math.sqrt(threaten)-1;
+				}
+			}
+			else if(type=='out'){
+				if(threaten<1){
+					num=1/Math.sqrt(threaten);
+				}
+				if(info.trigger&&(info.trigger.global||info.trigger.target||(typeof info.trigger.player=='string'&&
+				(info.trigger.player.indexOf('damage')==0||info.trigger.player.indexOf('lose')==0)))) num+=0.1;
+				if(info.ai){
+					if(info.ai.maixie||info.ai.maixie_hp||info.ai.maixie_defend){
+						num+=0.5;
+					}
+					if(info.ai.nolose||info.ai.noh||info.ai.noe||info.ai.nodiscard){
+						num+=0.3;
+					}
+				}
+			}
+			if(!grouped){
+				var groups=game.expandSkills([skill]);
+				groups.remove(skill);
+				var ggt=[];
+				for(var i=0;i<groups.length;i++){
+					var gi=get.skillRank(groups[i],type,true);
+					if(gi<0){
+						num-=0.5;
+					}
+					else if(gi>1){
+						ggt.push(gi);
+					}
+				}
+				if(ggt.length){
+					num+=Math.max.apply(this,ggt)-1+ggt.length/20;
+				}
+			}
+			return num;
         },
         targetsInfo:function(targets){
             var info=[];
@@ -42923,6 +45377,37 @@
             }
             return num.toString();
         },
+		rawName:function(str){
+			var str2=lib.translate[str];
+			if(!str2) return '';
+			if(str2.indexOf('sp')==0){
+				str2=str2.slice(2);
+			}
+			else if(str2.indexOf('界sp')==0){
+				str2=str2.slice(3);
+			}
+			else if(str2.indexOf('界')==0&&lib.characterPack.refresh&&lib.characterPack.refresh[str]){
+				str2=str2.slice(1);
+			}
+			else if(str2.indexOf('旧')==0&&lib.characterPack.old&&lib.characterPack.old[str]){
+				str2=str2.slice(1);
+			}
+			else if(str2.indexOf('新')==0&&str.indexOf('re_')==0){
+				str2=str2.slice(1);
+			}
+			return str2;
+		},
+		rawName2:function(str){
+			var str2=lib.translate[str];
+			if(!str2) return '';
+			if(str2.indexOf('sp')==0){
+				str2=str2.slice(2);
+			}
+			else if(str2.indexOf('界sp')==0){
+				str2=str2.slice(3);
+			}
+			return str2;
+		},
         slimName:function(str){
             var str2=lib.translate[str];
             if(!str2) return '';
@@ -43020,12 +45505,20 @@
             if(method=='trick'&&lib.card[obj.name].type=='delay') return 'trick';
             return lib.card[obj.name].type;
         },
-        subtype:function(obj){
-            if(typeof obj=='string') obj={name:obj};
-            if(typeof obj!='object') return;
-            if(!lib.card[obj.name]) return;
-            return lib.card[obj.name].subtype;
-        },
+		type2:function(card){
+			return get.type(card,'trick');
+		},
+		subtype:function(obj){
+			if(typeof obj=='string') obj={name:obj};
+			if(typeof obj!='object') return;
+			if(!lib.card[obj.name]) return;
+			return lib.card[obj.name].subtype;
+		},
+		equiptype:function(card){
+			var subtype=get.subtype(card);
+			if(subtype.indexOf('equip')==0) return parseInt(subtype[5]);
+			return 0;
+		},
         suit:function(card){
             if(get.itemtype(card)=='cards'){
                 var suit=get.suit(card[0])
@@ -43100,7 +45593,12 @@
                     game.shuffleNumber++;
                     var cards=[],i;
                     for(var i=0;i<lib.onwash.length;i++){
-                        lib.onwash[i]();
+                        					if(lib.onwash[i]()=='remove'){
+							lib.onwash.splice(i--,1);
+						}
+					}
+					if(_status.discarded){
+						_status.discarded.length=0;
                     }
                     for(i=0;i<ui.discardPile.childNodes.length;i++){
                         var currentcard=ui.discardPile.childNodes[i];
@@ -43144,7 +45642,7 @@
                 if(method=='raw'||method=='pure'||method=='absolute') return n;
             }
             else if(to.isMin(true)||from.isMin(true)){
-                if(method=='raw'||method=='pure'||method=='absolute') return 1;
+                if(method=='raw'||method=='pure'||method=='absolute') return n;
             }
             else{
                 var length=game.players.length;
@@ -43331,12 +45829,27 @@
                         str2='雷'+str2;
                     }
                 }
-                if(get.itemtype(str)=='card'&&str.suit&&str.number){
-                    if(arg=='viewAs'&&str.viewAs!=str.name&&str.viewAs){
-                        str2+='（'+get.translation(str)+'）';
-                    }
-                    else{
-                        str2+='【'+get.translation(str.suit)+str.number+'】'
+               	if(get.itemtype(str)=='card'){
+					if(_status.cardtag&&str.cardid){
+						var tagstr='';
+						for(var i in _status.cardtag){
+							if(_status.cardtag[i].contains(str.cardid)){
+								tagstr+=lib.translate[i+'_tag'];
+							}
+						}
+						if(tagstr){
+							str2+='·'+tagstr;
+						}
+					}
+					if(str.suit&&str.number){
+						if(arg=='viewAs'&&str.viewAs!=str.name&&str.viewAs){
+							str2+='（'+get.translation(str)+'）';
+						}
+						else{
+							str2+='【'+get.translation(str.suit)+str.number+'】';
+							// var len=str2.length-1;
+							// str2=str2.slice(0,len)+'<span style="letter-spacing: -2px">'+str2[len]+'·</span>'+get.translation(str.suit)+str.number;
+						}
                     }
                 }
                 return str2;
@@ -43448,24 +45961,24 @@
             }
             return skills;
         },
-        gainableSkills:function(func){
-            var list=[];
-            for(var i in lib.character){
-                if(lib.character[i][4]){
-                    if(lib.character[i][4].contains('boss')) continue;
-                    if(lib.character[i][4].contains('hiddenboss')) continue;
-                    if(lib.character[i][4].contains('minskin')) return true;
-                    if(lib.character[i][4].contains('unseen')) return true;
-                }
-                for(var j=0;j<lib.character[i][3].length;j++){
-                    var skill=lib.character[i][3][j];
-                    var info=lib.skill[skill];
-                    if(info&&!info.unique&&!info.temp&&!info.sub){
-                        if(func&&!func(info,skill)) continue;
-                        list.add(skill);
-                    }
-                }
-            }
+		gainableSkills:function(func,player){
+			var list=[];
+			for(var i in lib.character){
+				if(lib.character[i][4]){
+					if(lib.character[i][4].contains('boss')) continue;
+					if(lib.character[i][4].contains('hiddenboss')) continue;
+					if(lib.character[i][4].contains('minskin')) continue;
+					if(lib.character[i][4].contains('unseen')) continue;
+				}
+				for(var j=0;j<lib.character[i][3].length;j++){
+					var skill=lib.character[i][3][j];
+					var info=lib.skill[skill];
+					if(lib.filter.skillDisabled(skill)) continue;
+					if(func&&!func(info,skill,i)) continue;
+					if(player&&player.hasSkill&&info.ai&&info.ai.combo&&!player.hasSkill(info.ai.combo)) continue;
+					list.add(skill);
+				}
+			}
             return list;
         },
         gainableCharacters:function(func){
@@ -43790,6 +46303,9 @@
                     }
                     return '已发动';
                 }
+                case 'info':{
+					return lib.translate[skill+'_info'];
+				}
                 case 'cardCount':{
                     if(typeof content=='object'&&typeof content.length=='number'){
                         return '共有'+get.cnNumber(content.length)+'张牌';
@@ -43808,6 +46324,10 @@
                             return get.translation(content);
                         }
                     }
+
+					if(Array.isArray(content)&&!content.length){
+						return '没有卡牌';
+					}
                     return false;
                 }
                 case 'player':case 'players':{
@@ -43863,6 +46383,7 @@
                 return uiintro;
             }
             var i,translation,intro,str;
+			if(node._nointro) return;
             if(typeof node._customintro=='function'){
                 if(node._customintro(uiintro)===false) return;
             }
@@ -43891,6 +46412,9 @@
                 */
                 uiintro.add(capt);
 
+			if(lib.characterTitle[node.name]){
+					uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
+				}
                 if(node.isUnderControl()){
                     var hs=node.getCards('h');
                     if(hs.length){
@@ -43900,6 +46424,9 @@
                 }
 
                 var skills=node.getSkills(false,false);
+				for(var i in node.forbiddenSkills){
+					skills.add(i);
+				}
                 skills=skills.slice(0);
                 var skills2=game.filterSkills(skills,node);
                 if(node==game.me&&node.hiddenSkills.length){
@@ -43930,18 +46457,43 @@
                         else if(!skills2.contains(skills[i])){
                             uiintro.add('<div style="opacity:0.5"><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i])+'</div></div>');
                         }
-                        else if(lib.skill[skills[i]].temp||!node.skills.contains(skills[i])){
+                        else if(lib.skill[skills[i]].temp||!node.skills.contains(skills[i])||lib.skill[skills[i]].thundertext){
                             uiintro.add('<div><div class="skill thundertext thunderauto">【'+translation+'】</div><div class="thundertext thunderauto">'+get.skillInfoTranslation(skills[i])+'</div></div>');
                         }
-                        else if(lib.skill[skills[i]].frequent){
+                        else if(lib.skill[skills[i]].frequent||lib.skill[skills[i]].subfrequent){
                             uiintro.add('<div><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i])+'<br><div class="underlinenode on gray" style="position:relative;padding-left:0;padding-top:7px">自动发动</div></div></div>');
                             var underlinenode=uiintro.content.lastChild.querySelector('.underlinenode');
-                            if(lib.config.autoskilllist.contains(skills[i])){
-                                underlinenode.classList.remove('on');
-                            }
-                            underlinenode.link=skills[i];
-                            underlinenode.listen(ui.click.autoskill2);
-                        }
+                           							if(lib.skill[skills[i]].frequent){
+								if(lib.config.autoskilllist.contains(skills[i])){
+									underlinenode.classList.remove('on');
+								}
+							}
+							if(lib.skill[skills[i]].subfrequent){
+								for(var j=0;j<lib.skill[skills[i]].subfrequent.length;j++){
+									if(lib.config.autoskilllist.contains(skills[i]+'_'+lib.skill[skills[i]].subfrequent[j])){
+										underlinenode.classList.remove('on');
+									}
+								}
+							}
+							if(lib.config.autoskilllist.contains(skills[i])){
+								underlinenode.classList.remove('on');
+							}
+							underlinenode.link=skills[i];
+							underlinenode.listen(ui.click.autoskill2);
+						}
+						else if(lib.skill[skills[i]].clickable&&node.isIn()&&node.isUnderControl(true)){
+							var intronode=uiintro.add('<div><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i])+'<br><div class="menubutton skillbutton" style="position:relative;margin-top:5px">点击发动</div></div></div>').querySelector('.skillbutton');
+							if(!_status.gameStarted||(lib.skill[skills[i]].clickableFilter&&!lib.skill[skills[i]].clickableFilter(node))){
+								intronode.classList.add('disabled');
+								intronode.style.opacity=0.5;
+							}
+							else{
+								intronode.link=node;
+								intronode.func=lib.skill[skills[i]].clickable;
+								intronode.classList.add('pointerdiv');
+								intronode.listen(ui.click.skillbutton);
+							}
+						}
                         else if(lib.skill[skills[i]].nobracket){
                             uiintro.add('<div><div class="skill">'+get.translation(skills[i])+'</div><div>'+lib.translate[skills[i]+'_info']+'</div></div>');
                         }
@@ -43953,25 +46505,26 @@
                         }
                     }
                 }
-                if(get.is.phoneLayout()){
-                    var storage=node.storage;
-                    for(i in storage){
-                        if(get.info(i)&&get.info(i).intro){
-                            intro=get.info(i).intro;
-                            if(node.getSkills().concat(lib.skill.global).contains(i)==false&&!intro.show) continue;
-                            var name=intro.name?intro.name:get.translation(i);
-                            if(typeof name=='function'){
-                                name=name(storage[i],node);
-                            }
-                            translation='<div><div class="skill">『'+name.slice(0,15)+'』</div><div>';
-                            var stint=get.storageintro(intro.content,storage[i],node,null,i);
-                            if(stint){
-                                translation+=stint+'</div></div>';
-                                uiintro.add(translation);
-                            }
-                        }
-                    }
-                }
+				// if(get.is.phoneLayout()){
+				//     var storage=node.storage;
+				//     for(i in storage){
+				//         if(get.info(i)&&get.info(i).intro){
+				//             intro=get.info(i).intro;
+				//             if(node.getSkills().concat(lib.skill.global).contains(i)==false&&!intro.show) continue;
+				//             var name=intro.name?intro.name:get.translation(i);
+				//             if(typeof name=='function'){
+				//                 name=name(storage[i],node);
+				//             }
+				//             translation='<div><div class="skill">『'+name.slice(0,2)+'』</div><div>';
+				//             var stint=get.storageintro(intro.content,storage[i],node,null,i);
+				//             if(stint){
+				//                 translation+=stint+'</div></div>';
+				//                 uiintro.add(translation);
+				//             }
+				//         }
+				//     }
+				// }
+
 
                 if(lib.config.right_range&&_status.gameStarted){
                     uiintro.add(ui.create.div('.placeholder'));
@@ -44049,6 +46602,31 @@
                         }
                         uiintro.content.lastChild.querySelector('.skill>.card').style.transform='';
                     }
+					if(get.is.phoneLayout()){
+						var markCoutainer=ui.create.div('.mark-container.marks');
+						for(var i in node.marks){
+							var nodemark=node.marks[i].cloneNode(true);
+							nodemark.classList.add('pointerdiv');
+							nodemark.link=node.marks[i];
+							nodemark.style.transform='';
+							markCoutainer.appendChild(nodemark);
+							nodemark.listen(function(){
+								uiintro.noresume=true;
+								var rect=this.link.getBoundingClientRect();
+								ui.click.intro.call(this.link,{
+									clientX:rect.left+rect.width,
+									clientY:rect.top+rect.height/2,
+								});
+								if(lib.config.touchscreen){
+									uiintro._close();
+								}
+							});
+						}
+						if(markCoutainer.childElementCount){
+							uiintro.addText('标记');
+							uiintro.add(markCoutainer);
+						}
+					}
                 }
                 var modepack=lib.characterPack['mode_'+get.mode()];
                 if(lib.config.show_favourite&&lib.character[node.name]&&game.players.contains(node)&&
@@ -44186,10 +46764,26 @@
                 else if(info.name!==false){
                     uiintro.add(get.translation(node.skill));
                 }
+				if(typeof info.id=='string'&&info.id.indexOf('subplayer')==0&&
+					player.isUnderControl(true)&&player.storage[info.id]&&!_status.video){
+					var storage=player.storage[info.id];
+					uiintro.addText('当前体力：'+storage.hp+'/'+storage.maxHp);
+					if(storage.hs.length){
+						uiintro.addText('手牌区');
+						uiintro.addSmall(storage.hs);
+					}
+					if(storage.es.length){
+						uiintro.addText('装备区');
+						uiintro.addSmall(storage.es);
+					}
+				}
                 if(typeof info.mark=='function'){
                     var stint=info.mark(uiintro,player.storage[node.skill],player);
                     if(stint){
-                        uiintro._place_text=uiintro.add('<div class="text" style="display:inline">'+stint+'</div>');
+                        var placetext=uiintro.add('<div class="text" style="display:inline">'+stint+'</div>');
+						if(stint.indexOf('<div class="skill"')!=0){
+							uiintro._place_text=placetext;
+						}
                         // if(stint.length<=100){
                         //  uiintro.add('<div class="text center">'+stint+'</div>');
                         // }
@@ -44205,7 +46799,10 @@
                             uiintro.add('<div class="caption">'+stint.slice(1)+'</div>');
                         }
                         else{
-                            uiintro._place_text=uiintro.add('<div class="text" style="display:inline">'+stint+'</div>');
+                          	var placetext=uiintro.add('<div class="text" style="display:inline">'+stint+'</div>');
+							if(stint.indexOf('<div class="skill"')!=0){
+								uiintro._place_text=placetext;
+							}
                         }
                         // else if(stint.length<=100){
                         //  uiintro.add('<div class="text center">'+stint+'</div>');
@@ -44222,6 +46819,18 @@
                     return;
                 }
                 var name=node.name;
+					if(node.parentNode.cardMod){
+					var moded=false;
+					for(var i in node.parentNode.cardMod){
+						var item=node.parentNode.cardMod[i](node);
+						if(Array.isArray(item)){
+							moded=true;
+							uiintro.add(item[0]);
+							uiintro._place_text=uiintro.add('<div class="text" style="display:inline">'+item[1]+'</div>');
+						}
+					}
+					if(moded) return uiintro;
+				}
                 if(node.link&&node.link.name&&lib.card[node.link.name]){
                     name=node.link.name;
                 }
@@ -44370,6 +46979,9 @@
                                 uiintro._place_text=placetext;
                             }
                         }
+						if(lib.translate[name+'_append']){
+							uiintro.add('<div class="text" style="display:inline">'+lib.translate[name+'_append']+'</div>');
+						}
                     }
                     uiintro.add(ui.create.div('.placeholder.slim'));
                 }
@@ -44383,6 +46995,9 @@
                 else{
                     uiintro.add(get.translation(character));
                 }
+				if(lib.characterTitle[node.link]){
+					uiintro.addText(get.colorspan(lib.characterTitle[node.link]));
+				}
                 if(node._banning){
                     var clickBanned=function(){
                         var banned=lib.config[this.bannedname]||[];
@@ -44440,6 +47055,24 @@
                             banall=true;
                         }
                     }
+					if(node._banning=='offline'){
+						var cfg=ui.create.div('.config','AI可选',page);
+						cfg.classList.add('toggle');
+						cfg.listen(function(){
+							this.classList.toggle('on');
+							if(this.classList.contains('on')){
+								lib.config.forbidai_user.remove(character);
+							}
+							else{
+								lib.config.forbidai_user.add(character);
+							}
+							game.saveConfig('forbidai_user',lib.config.forbidai_user);
+						});
+						ui.create.div(ui.create.div(cfg));
+						if(!lib.config.forbidai_user.contains(character)){
+							cfg.classList.add('on');
+						}
+					}
                     ui.create.div('.menubutton.pointerdiv',banall?'全部禁用':'全部启用',uiintro.content,function(){
                         if(this.innerHTML=='全部禁用'){
                             for(var i=0;i<page.childElementCount;i++){
@@ -44570,6 +47203,58 @@
                     }
                 }
             }
+	else if(node.classList.contains('equips')&&ui.arena.classList.contains('selecting')){
+				(function(){
+					uiintro.add('选择装备');
+					uiintro.addSmall(Array.from(node.childNodes),true);
+					uiintro.clickintro=true;
+					ui.control.hide();
+					uiintro._onclose=function(){
+						ui.control.show();
+					}
+					var confirmbutton;
+					for(var i=0;i<uiintro.buttons.length;i++){
+						var button=uiintro.buttons[i];
+						button.classList.add('pointerdiv');
+						if(button.link.classList.contains('selected')){
+							button.classList.add('selected');
+						}
+						button.listen(function(e){
+							ui.click.card.call(this.link,'popequip');
+							ui.click.window.call(ui.window,e);
+							if(this.link.classList.contains('selected')){
+								this.classList.add('selected');
+							}
+							else{
+								this.classList.remove('selected');
+							}
+							if(ui.confirm&&ui.confirm.str&&ui.confirm.str.indexOf('o')!=-1){
+								confirmbutton.classList.remove('disabled');
+							}
+							else{
+								confirmbutton.classList.add('disabled');
+							}
+						});
+					}
+					var buttoncontainer=uiintro.add(ui.create.div());
+					buttoncontainer.style.display='block';
+					confirmbutton=ui.create.div('.menubutton.large.pointerdiv','确定',function(){
+						if(ui.confirm&&ui.confirm.str&&ui.confirm.str.indexOf('o')!=-1){
+							uiintro._clickintro();
+							ui.click.ok(ui.confirm.firstChild);
+						}
+					},buttoncontainer);
+					confirmbutton.style.position='relative';
+					setTimeout(function(){
+						if(ui.confirm&&ui.confirm.str&&ui.confirm.str.indexOf('o')!=-1){
+							confirmbutton.classList.remove('disabled');
+						}
+						else{
+							confirmbutton.classList.add('disabled');
+						}
+					},300);
+				}());
+			}
             else if(node.classList.contains('identity')&&node.dataset.career){
                 var career=node.dataset.career;
                 uiintro.add(get.translation(career));
@@ -44779,8 +47464,15 @@
             return 10-get.useful(card);
         },
         value:function(card,player,method){
-            var aii=get.info(card).ai;
             var value;
+			if(Array.isArray(card)){
+				value=0;
+				for(var i=0;i<card.length;i++){
+					value+=get.value(card[i],player,method);
+				}
+				return value/Math.sqrt(card.length);
+			}
+			var aii=get.info(card).ai;
             if(aii&&aii.value) value=aii.value;
             else if(aii&&aii.basic) value=aii.basic.value;
             if(value==undefined) return 0;
