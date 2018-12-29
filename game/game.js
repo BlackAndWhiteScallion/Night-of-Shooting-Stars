@@ -9263,7 +9263,7 @@ update:function(config,map){
         },
         element:{
             content:{
-	phasing:function(){
+	           phasing:function(){
 					'step 0'
 					while(ui.dialogs.length){
 						ui.dialogs[0].close();
@@ -22818,9 +22818,10 @@ dualside:{
                 },
             },
             _phasebegin:{
-                trigger:{player:'phaseBegin'},
+                trigger:{player:'phaseBeginStart'},
                 forced:true,
-                priority:20,
+                // 一定要在符卡启动前使用
+                priority:20000000,
                 popup:false,
                 content:function(){
                     // 回合开始时如果有不是极意的符卡就翻回去。

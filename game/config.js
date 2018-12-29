@@ -1,5 +1,6 @@
 window.config={
 	forbidai:['zuoci','miheng'],
+	forbidai_user:[],
 	forbidall:['xiahouyuan','huangzhong','weiyan','dianwei','zhangjiao',
 	'caocao','simayi','guanyu','zhangfei','zhaoyun','ganning','lvmeng','lvbu'],
 	forbidversus:['swd_kangnalishi'],
@@ -115,7 +116,7 @@ window.config={
 	vertical_scroll:false,
 	handcard_scroll:0,
 	animation:true,
-	skill_animation:'default',
+	skill_animation_type:'default',
 	paused:false,
 	title:false,
 	button_press:true,
@@ -150,7 +151,7 @@ window.config={
 	mode:'identity',
 	mode_config:{
 		global:{
-			player_number:8,
+			player_number:7,
 			auto_identity:'off',
 			double_character:false,
 			save_progress:true,

@@ -160,7 +160,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          audio:2,
                          cost:3,
                          spell:['richuguo1','richuguo2'],
-                         trigger:{player:'phaseBegin'},
+                         trigger:{player:'phaseBeginStart'},
                          init:function(player){
                               player.storage.richuguo=true;
                           },
@@ -168,7 +168,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          intro:{
                               content:'limited'
                          },
-                       filter:function(event,player){
+                        filter:function(event,player){
                          if (!player.storage.richuguo) return false;
                           var num = 0;
                           if (player.countCards('h',{type:'basic'}) > 0) num ++;
@@ -179,39 +179,55 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                        },
                        content:function(){
                          'step 0'
-                         player.chooseCard(3,'he',function(card){
-                               for (var i = 0; i < ui.selected.cards.length; i ++){
-                                     if (get.type(card) == get.type(ui.selected.cards[i])) return false;
-                               }
-                               return true;
-                         },'弃置3张不同种类的牌，或消耗3点灵力。');
+                         event.list = [];
+                         player.storage.qipai = [];
                          'step 1'
-                         if (result.cards){
-                               //player.$throw(result.cards);
-                               player.discard(result.cards);
+                         player.chooseCard('he',function(card){
+                            return !player.storage.qipai.contains(get.type(card));
+                         },'弃置3张不同种类的牌，或消耗3点灵力。');
+                         'step 2'
+                         console.log(player.storage.qipai.length);
+                         if (result.bool){
+                            event.list.push(result.cards[0]);
+                            player.storage.qipai.push(get.type(result.cards[0]));
+                            if (player.storage.qipai.length < 3){
+                                event.goto(1);
+                            } else {
+                                player.discard(event.list);
+                                event.bool = true;
+                                delete player.storage.qipai;
+                            }
                          } else {
-                           player.loselili(lib.skill.richuguo.cost);
+                            if (player.lili > lib.skill.richuguo.cost){
+                                player.loselili(lib.skill.richuguo.cost);
+                                event.bool = true;   
+                            }
                          }
-                         player.turnOver();
-                         player.storage.richuguo=false;
+                         'step 3'
+                         if (event.bool){
+                            player.turnOver();
+                            console.log('d');
+                            player.storage.richuguo=false;
+                          }
                        },
                        check:function(event, player){
                          return player.hp < 2;
-                       }
-                  },
+                       },
+                     },
                   richuguo1:{
                         trigger:{player:['phaseBegin']},
                         frequent:true,
                         content:function(){
                               'step 0'
-                              player.chooseTarget(get.prompt('richuguo'),true,function(card,player,target){
+                              player.chooseTarget([1,1],get.prompt('richuguo'),true,function(card,player,target){
+                                return true;
                               }).ai=function(target){
                                     return 1;
                               }
                               'step 1'
                               if (result.targets){
-                                    result.targets[0].hp = result.targets[0].maxhp;
-                                    result.targets[0].lili = parseInt(lib.character[result.targets[0]][1])
+                                    result.targets[0].hp = result.targets[0].maxHp;
+                                    result.targets[0].lili = parseInt(lib.character[result.targets[0].name][1])
                                     result.targets[0].draw(4-result.targets[0].getCards('h').length);
                               }
                         }
