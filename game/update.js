@@ -6,8 +6,12 @@ window.noname_update={
     ],
     files:[
         //'game/game.js',
+<<<<<<< HEAD
         'game/package.js',
         // 'game/*',
+=======
+        'game/*',
+>>>>>>> parent of ead79d5... d
         // 'game/package.js',
         // 'game/config.js',
         // 'game/source.js',
