@@ -2794,7 +2794,7 @@
             view:{
                 name:'显示',
                 config:{
-update:function(config,map){
+                    update:function(config,map){
                         if(lib.config.mode=='versus'||lib.config.mode=='chess'||lib.config.mode=='tafang'||lib.config.mode=='boss'){
                             map.show_handcardbutton.show();
                         }
@@ -24962,7 +24962,7 @@ dualside:{
                 game.importedPack=obj;
             }
         },
-importExtension:function(data,finishLoad,exportext,pkg){
+        importExtension:function(data,finishLoad,exportext,pkg){
 			if(!window.JSZip){
 				lib.init.js(lib.assetURL+'game','jszip',function(){
 					game.importExtension(data,finishLoad,exportext,pkg);
@@ -36741,7 +36741,7 @@ smoothAvatar:function(player,vice){
                             else if(dev&&button3.disabled){
                                 return;
                             }
-                            else if(!game.download){
+                            else if(game.download){
                                 alert('此版本不支持游戏内更新，请手动更新');
                                 return;
                             }
@@ -36755,6 +36755,7 @@ smoothAvatar:function(player,vice){
                                 button3.disabled=true;
                                 button1.disabled=true;
 
+                                // 这个是goupdate 函数。 应该直接就在下面用的*
                                 var goupdate=function(files,update){
                                     lib.version=update.version;
                                     if(update.dev&&!lib.config.debug){
@@ -36834,8 +36835,16 @@ smoothAvatar:function(player,vice){
                                         alert('更新地址有误');
                                     },true);
                                 };
-
-                                lib.init.req('game/update.js',function(){
+                                var updateURL;
+                                // 似乎是在这里进行更新的
+                                if (!lib.config.updateURL || lib.config.updateURL.includes("github")){
+                                    updateURL = lib.updateURL+'/master/';
+                                } else if (lib.config.updateURL.includes('coding')){
+                                    updateURL = lib.mirrorURL+'/master/';
+                                } else {
+                                    updateURL = lib.config.updateURL;
+                                }
+                                lib.init.req(updateURL+'game/update.js',function(){
                                     try{
                                         eval(this.responseText);
                                         if(!window.noname_update){
@@ -36848,14 +36857,22 @@ smoothAvatar:function(player,vice){
                                         return;
                                     }
 
+                                    // update = update.js文件
                                     var update=window.noname_update;
                                     delete window.noname_update;
+                                    // lib.config.check_version并没有在config文件里找到……
+                                    // 神他喵check_version这个数值只在这两个地方用。
+                                    // forcecheck是游戏开始时自动检查更新的设置
                                     if(forcecheck===false){
+                                        // 如果已经是当前版本，直接结束
                                         if(update.version==lib.config.check_version){
                                             return;
                                         }
                                     }
+                                    // lib.config.check_version = 目前游戏内的version数值
                                     game.saveConfig('check_version',update.version);
+                                    // goon是检查是否需要更新的设定：
+                                    // 如果是开发版，或者update的版本和系统内版本一样的话，就不更新了。
                                     var goon=true;
                                     if(!dev){
                                         if(update.version.indexOf('beta')!=-1||update.version==lib.version){
