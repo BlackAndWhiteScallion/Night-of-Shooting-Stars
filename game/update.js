@@ -1,12 +1,12 @@
 window.noname_update={
     version:'0.71',
-    update:'0.68',
+    update:'0.70',
     changeLog:[
         '更新角色啊啥的',
     ],
     files:[
         //'game/game.js',
-        'game/*',
+        //'game/*',
         // 'game/package.js',
         // 'game/config.js',
         // 'game/source.js',
@@ -17,7 +17,8 @@ window.noname_update={
         // 'card/gwent.js',
         // 'card/gujian.js',
          'character/*',
-        // 'mode/*',
+         'mode/*',
+         'image/card/baka.png',
         // 'mode/identity.js',
         // 'mode/guozhan.js',
         // 'mode/versus.js',
