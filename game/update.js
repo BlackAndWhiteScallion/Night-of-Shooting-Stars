@@ -1,5 +1,5 @@
 window.noname_update={
-    version:'0.70',
+    version:'0.71',
     update:'0.68',
     changeLog:[
         '更新角色啊啥的',
