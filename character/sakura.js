@@ -1201,7 +1201,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseUseBegin', target:'useCardToBegin'},
                 audio:2,
                 filter:function(event,player){
-                    if (event.name=='useCard') return get.subtype(event.card) == 'attack';
+                    if (event.card) return get.subtype(event.card) == 'attack';
                     else return true;
                 },
                 content:function(event,player){
@@ -1359,7 +1359,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 
                     if(event.isMine()){
                         chooseButton();
-                        event.finish();
                     }
                     else if(event.isOnline()){
                         event.player.send(chooseButton,true,event.player,event.cards);
@@ -1368,7 +1367,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     else{
                         event.switchToAuto();
-                        event.finish();
                     }
                     "step 1"
                     if(event.result=='ai'||!event.result){
@@ -1390,21 +1388,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                         player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(event.cards.length-top.length)+'下');
                         game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
-                        if (player!=_status.currentPhase){
-                            player.chooseBool(get.prompt('mengjie')).set('choice',true);
-                        }
                     }
-                    'step 2'
+                    "step 2"
+                    if (player!=_status.currentPhase){
+                        player.chooseBool(get.prompt('mengjie')).set('choice',true);
+                    }
+                    'step 3'
                     if (result.bool){
                         player.draw();
                     }
-                }
-            },  
+                },
+            },
             mengjing:{
                 audio:2,
                 cost:4,
                 spell:['mengjing2'],
-                trigger:{player:['phaseBegin']},
+                trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.mengjing.cost;
                 },
@@ -1516,7 +1515,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             yukari:'紫',
             huanjing:'幻境',
             huanjing_info:'一名角色的准备阶段，你可以弃置一张牌，然后展示牌堆底的牌；若为攻击牌或法术牌，将之对其使用；若为装备牌，将之置于其装备区内；否则，弃置之。',
+            pileTop:'牌堆顶',
+            pileBottom:'牌堆底',
             mengjie:'梦界',
+            mengjie2:'梦界1',
+            mengjie2_info:'weqwe23',
             mengjie_info:'出牌阶段开始时，或你成为攻击牌的目标后，你可以观看牌堆底的三张牌，并可以将其中任意张置于牌堆顶；若此时为回合外，你可以摸一张牌。',
             mengjing:'梦境与现实的诅咒',
             mengjing_info:'符卡技（4）<永续>准备阶段，你指定一名其他角色；你与其以外的所有角色视为不在游戏内；所有角色的胜利条件无效。',

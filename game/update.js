@@ -18,7 +18,6 @@ window.noname_update={
         // 'card/gujian.js',
          'character/*',
          'mode/*',
-         'image/card/baka.png',
         // 'mode/identity.js',
         // 'mode/guozhan.js',
         // 'mode/versus.js',

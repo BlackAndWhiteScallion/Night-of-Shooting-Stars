@@ -434,6 +434,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.loselili(lib.skill.businiao.cost);
                           player.turnOver();
                       },
+                      check:false,
                   },
                   businiao_die:{
                     audio:'businiao',
@@ -449,6 +450,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.loselili(lib.skill.businiao.cost);
                           player.turnOver();
                       },
+                      check:true,
                   },
                   businiao2:{
                     init:function(){
