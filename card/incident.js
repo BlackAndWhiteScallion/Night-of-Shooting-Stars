@@ -348,7 +348,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			sakura:'散樱',
 			sakura_info:'<u>胜利条件：</u>准备阶段，你的体力值和手牌数均为场上最低（没有之一）。<br/><u>异变效果：</u>一名角色进入决死状态时，你获得1点灵力。',
 			sakura_normal:'',
-			sakura_normal_info:'<u>与你同阵营的角色的攻击范围+1。</u>',
+			sakura_normal_info:'<u>一名角色进入决死状态时，你获得1点灵力。</u>',
 			imperishable:'永夜',
 			imperishable_info:'<u>胜利条件：</u>明置此牌后的第7个回合开始时。<br/><u>异变效果：</u>一名角色失去牌后，若没有技能牌，摸一张技能牌。',
 			imperishable_normal:'【永夜】异变效果',

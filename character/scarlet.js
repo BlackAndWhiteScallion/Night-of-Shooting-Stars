@@ -318,7 +318,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'damageEnd'},
                 forced:true,
                 filter:function(event,player){
-                    return event.cards[0].name == 'sha';
+                    return (event.card&&event.card.name=='sha');
                 },
                 content:function(){
                     player.gainlili();
@@ -646,7 +646,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 trigger:{player:'phaseBegin'},
                 usable:1,
-                popup:false,
                 filter:function(event,player){
                     return player.lili > 0;
                 },
@@ -654,25 +653,33 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 0"
                     var list = ['phaseDraw', 'phaseUse', 'phaseDiscard'];
                     for (var i in list){
-                        if (player.skipList.contains(i)) list.remove(i);
+                        if (player.skipList.contains(i)) list.remove(i);    
+                    }
+                    event.list = list;
+                    event.list2 = list;
+                    for (var i in list){
+                        i = get.translation(i);
                     }
                     player.chooseControl(list, function(event,player){
-                        if (player.getCards('h').length < 2) return 'phaseDiscard';
-                        if (player.getCards('h').length > player.hp) return 'phaseDraw';
-                        return 'phaseUse';
+                        if (player.getCards('h').length < 2) return '弃牌阶段';
+                        if (player.getCards('h').length > player.hp) return '摸牌阶段';
+                        return '出牌阶段';
                     });
                     "step 1"
-                    if (result.control) player.storage.qishu = result.control;
-                    player.chooseTarget(1,"选择一名角色，令其获得1点灵力并执行一个额外的"+get.translation(result.control),function(card,player,target){
-                        return target != player;
-                    }).set('ai',function(target){
-                        if (player.storage.qishu == 'phaseDiscard'){
-                            if (get.attitude(player,target)<0 && target.getCards('h') > target.hp) return target;
-                            return get.attitude(player,target)<0;
-                        } else {
-                            return get.attitude(player,target)>0;
-                        }
-                    });
+                    if (result.control){
+                        result.control = event.list[event.list2.indexOf(result.control)];
+                        player.storage.qishu = result.control;
+                        player.chooseTarget(1,"选择一名角色，令其获得1点灵力并执行一个额外的"+get.translation(result.control),function(card,player,target){
+                            return target != player;
+                        }).set('ai',function(target){
+                            if (player.storage.qishu == 'phaseDiscard'){
+                                if (get.attitude(player,target)<0 && target.getCards('h') > target.hp) return target;
+                                return get.attitude(player,target)<0;
+                            } else {
+                                return get.attitude(player,target)>0;
+                            }
+                        });
+                    }
                     "step 2"
                     if(result.bool){
                         player.loselili();

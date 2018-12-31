@@ -9184,6 +9184,9 @@
             start:"开始",
             random:"随机",
             _phasebegin:'回合开始',
+            phaseDraw:'摸牌阶段',
+            phaseUse:'出牌阶段',
+            phaseDiscard:'弃牌阶段',
             _out:'无效',
             agree:'同意',
             refuse:'拒绝',
@@ -13689,7 +13692,7 @@
                         _status.dying=list;
                     },_status.dying);
                     event.trigger('dying');
-                    game.log(player,'濒死')
+                    game.log(player,'进入决死状态')
                     "step 1"
                     _status.dying.remove(player);
                     game.broadcast(function(list){
@@ -15650,12 +15653,12 @@ getDiscardableCards:function(player,arg1,arg2){
                         if ((this.identity == 'zhu' && lib.config.musicchange != 'off') 
                             || (this.identity == 'nei' && lib.config.musicchange == 'luren')){
                             lib.backgroundmusicURL = ui.backgroundMusic.src;
-                            ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
+                            ui.backgroundMusic.src = 'audio/background/'+card.name+'.mp3';
                             lib.config.background_music = card.name;
                         }
                         if ((this.identity == 'zhu' && lib.config.backgroundchange != 'off') 
                             || (this.identity == 'nei' && lib.config.backgroundchange == 'luren')){
-                            var str = lib.assetURL+'image/background/'+card.name+'.jpg';
+                            var str = 'image/background/'+card.name+'.jpg';
                             ui.background.setBackgroundImage(str);
                         }
                     }

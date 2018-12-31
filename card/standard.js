@@ -206,11 +206,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			type:'basic',
 			subtype:'defense',
 			content:function(){
-				/*
-				event.trigger('shaMiss');
-					event.responded=result;
-				event.result='wuxied';	// 效果无效（抵消）
-				*/
 			},
 			ai:{
 				basic:{
@@ -678,7 +673,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			ai:{
-				order:9.5,
+				order:7.5,
 				wuxie:function(){
 					return 0;
 				},
@@ -779,6 +774,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.chooseToDiscard(true,'hej');
 				// 洗牌堆放到技能那边吧
 			},
+			ai:{
+				basic:{
+					order:1,
+					useful:[2,0],
+					value:[2,0],
+				},
+				result:{player:0},
+			},
 		},
 		// 幻想之门
 		huanxiang:{
@@ -859,7 +862,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:true,
 			fullskin:true,
 			type:'jinji',
-			enable:true,
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
 				return true;
@@ -868,11 +870,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.addSkill('bingyu1');
 				if (target == player) target.addSkill('bingyu2');
 			},
+			contentAfter:function(){
+				player.markSkill('bingyu1');
+			},
 			ai:{
 				basic:{
 					order:1,
 					useful:[3,1],
-					value:0
+					value:[3,1],
 				},
 				result:{
 					target:function(player,target){
@@ -939,7 +944,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:true,
 			fullskin:true,
 			type:'jinji',
-			enable:true,
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
 				return true;
@@ -947,6 +951,22 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				target.addSkill('lingbi1');
 			},
+			ai:{
+				basic:{
+					order:1,
+					useful:[6,4],
+					value:[6,4],
+				},
+				result:{
+					target:function(player,target){
+						return (target.hp<2)?2:0;
+					}
+				},
+				tag:{
+					recover:0.5,
+					multitarget:1
+				}
+			}
 		},
 		// 花之祝福
 		huazhi:{
@@ -1154,6 +1174,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return true;
 			},
 			content:function(){
+				if (target.countCards('e') > 0){
+					player.discardPlayerCard(target,'e');
+				}
 				target.damage(1,'thunder');
 				target.equip(event.card);
 			},
@@ -1166,8 +1189,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					},
 					result:{
 						target:function(player,target){
-							if (target == player) return false;
-							return (target.lili>2)?-2:0;
+							return target != player && -get.attitude(_status.event.player,target) && (target.lili>2)?-2:0;
 						}
 					},
 					tag:{
@@ -1383,48 +1405,21 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		laevatein_skill:{
-			mod:{
-				cardUsable:function(card,player,num){
-					if(card.name=='sha'){
-						return num+20;
-					}
-				},
-			},
 			trigger:{player:'shaBefore'},
 			forced:true,
 			popup:false,
-			check:function(event,player){
-				return player.num('h','sha')>0;
-			},
 			filter:function(event,player){
 				return _status.currentPhase==player;
 			},
 			content:function(){
 				var target=trigger.target;
-				if(target.hasSkill('laevatein3')){
-					target.storage.laevatein++;
-				}
-				else{
-					target.storage.laevatein=1;
+				if(!target.hasSkill('laevatein3')){
+					player.getStat().card.sha--;
 					target.addTempSkill('laevatein3','phaseUseEnd');
 				}
 			}
 		},
 		laevatein3:{
-			mod:{
-				targetEnabled:function(card,player,target){
-					if(card.name!='sha') return;
-					if(player==_status.currentPhase&&player.get('s').contains('laevatein')){
-						var num=game.checkMod(card,player,1,'cardUsable',player.get('s'))-20;
-						for(var i=0;i<game.players.length;i++){
-							if(game.players[i].hasSkill('laevatein3')){
-								num+=1-game.players[i].storage.laevatein;
-							}
-						}
-						return num>1;
-					}
-				}
-			}
 		},
 		windfan_skill:{
 			audio:true,
@@ -1818,7 +1813,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					for (var i in lib.card){
     						if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
 							if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
-							if(lib.card[i].type == 'trick'){
+							if(lib.card[i].type == 'trick' && event.filterCard({name:i},player,event)){
 								list.add(i);
 							}
     					}
@@ -1827,9 +1822,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					}
     					return ui.create.dialog([list,'vcard']);
     				},
+    				/*
     				filter:function(button,player){
     					return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent());
     				},
+    				*/
     				check:function(button){
     					var player=_status.event.player;
     					var recover=0,lose=1,players=game.filterPlayer();
@@ -1902,13 +1899,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		bingyu1:{
 			trigger:{source:'damageBefore'},
     		forced:true,
-    		/*
-    		mark:true,
-    		intro:{
-    			content:'防止造成和受到的一切伤害'
-    		},
-    		*/
     		priority:15,
+    		intro:'防止所有角色造成的所有伤害',
     		content:function(){
     			trigger.untrigger();
     			trigger.finish();
@@ -2444,6 +2436,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		lingbi2:{
 			trigger:{player:'phaseBegin'},
 			forced:true,
+			filter:function(){
+				if (!player.storage._lingbi2) return false;
+				return player.storage._lingbi2.length > 0;
+			},
 			content:function(){
 				var players=game.filterPlayer();
 				for(var i=0;i<players.length;i++){
@@ -2527,33 +2523,22 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		danmaku_skill:{
-			/* trigger:{player:'shaBegin'},
-			forced:true,
-			init:function(player){
-				player.getStat().card.sha = 0;
-			},
-			filter:function(event,player){
-				var num;
-				if (player.getStat().card.sha){
-					num = 
-				}
-				if(get.mode()=='identity'){
-					num=get.population('fan');
-				}
-				else{
-					num=1;
-				}
-				if(player.getStat().skill.danmaku_skill>=num) return false;
-				return true;
-			},
-			content:function(){
-				player.getStat().card.sha--;
-			},
-			*/
 			mod:{
 				cardUsable:function(card,player,num){
 					if(card.name=='sha') return num + 2;
 				}
+			},
+		},
+		_zhunbei:{
+			popup:false,
+			trigger:{player:'phaseBegin'},
+			filter:function(event,player){
+				return player.countCards('h',{name:'bingyu'}) > 0|| player.countCards('h',{name:'lingbi'}) > 0;
+			},
+			content:function(){
+				player.chooseToUse(function(card){
+						return card.name == 'lingbi' || card.name == 'bingyu';
+					},'可以使用一张牌');
 			},
 		},
 	},
@@ -2672,7 +2657,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		_tianguo2_info:'展示天国之阶，令所有角色回复1点体力',
 		tianguo_info:'出牌阶段，对所有角色使用：将弃牌堆洗入牌堆，然后目标各摸一张牌。</br> <u>追加效果：你摸到此牌时，可以展示之，所有角色回复1点体力。</u>',
 		lingbi:'令避之间',
-		lingbi_info:'出牌阶段，对所有角色使用：你声明一张牌，目标角色不能使用该牌，直到你的回合开始。</br> <u>追加效果：此牌可以当作【请你住口！】使用。</u>',
+		lingbi_info:'准备阶段，对所有角色使用：你声明一张牌，目标角色不能使用该牌，直到你的回合开始。</br> <u>追加效果：此牌可以当作【请你住口！】使用。</u>',
 		lingbi2:'令避之间2',
 		lingbi2_info:'',
 		lingbi1:'令避之间',
@@ -2690,7 +2675,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		huazhi_skill:'花之祝福',
 		huazhi_skill_info:'结束阶段，你摸X张牌（X为其本回合造成的伤害点数）。',
 		bingyu:'冰域之宴',
-		bingyu_info:'出牌阶段，对所有角色使用：目标不能造成伤害，手牌上限视为无限，直到你的回合开始。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
+		bingyu1:'冰域之宴',
+		bingyu1_bg:'冰',
+		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，手牌上限视为无限，直到你的回合开始。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
 		jingxia:'惊吓派对',
 		_jingxia:'惊吓派对',
 		jingxia_bg:'潜',

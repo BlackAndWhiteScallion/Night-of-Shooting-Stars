@@ -2149,17 +2149,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					player.chooseButton(['选择异变',[libincident,'vcard']],true).set('filterButton',function(button){
     						return true;
     					}).set('ai',function(button){
-    						/*
-    						if (Math.random()-0.8<0){
-    							for (i in libincident){
-									if (player.pack == i.name){
-										return i;
-									}
-								}
-							} else {
-							*/
 								libincident.randomSort();
-								return libincident[0];
+								if (libincident[0] == 'death'){
+									return libincident[1];
+								} else {
+									return libincident[0];
+								}
 							//}
     					});
     				// 异变：令一名角色抽牌	
