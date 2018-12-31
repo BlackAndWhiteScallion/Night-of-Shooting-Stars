@@ -1,12 +1,12 @@
 window.noname_update={
     version:'0.72',
-    update:'0.70',
+    update:'0.71',
     changeLog:[
         '更新角色啊啥的',
     ],
     files:[
         //'game/game.js',
-        //'game/*',
+        'game/*',
         // 'game/package.js',
         // 'game/config.js',
         // 'game/source.js',

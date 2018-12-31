@@ -20767,6 +20767,8 @@ game.broadcast(function(player,str,nature,avatar){
                     if(lib.config.die_move!='off'){
                         this.$dieflip(lib.config.die_move);
                     }
+                    this.node.turnedover.setBackgroundImage('');
+                    this.node.turnedover.style.opacity=0;
                     if(lib.element.player.$dieAfter){
                         lib.element.player.$dieAfter.call(this);
                     }

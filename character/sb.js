@@ -4,7 +4,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'sb',
 		connect:true,
 		character:{
-			aya:['female','2',4,[]],
+			aya:['female','2',4,['kuanglan','fengmi']],
          hetate:['female','2',3,['nianxie','jilan','lianxu']],
 		},
 		characterIntro:{
@@ -208,7 +208,122 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               player.syncStorage('lianxu3');
                         },
          },
-         
+         kuanglan:{
+            trigger:{global:'phaseEnd'},
+            audio:2,
+            group:['kuanglan_1','kuanglan_2','kuanglan_3'],
+            filter:function(event,player){
+               var players = game.filterPlayer();
+               for (var i = 0; i < players.length; i ++){
+                  if (players[i].storage.kuanglan && player != target) return true;
+               }
+               return false;
+            },
+            content:function(){
+               'step 0'
+               player.chooseTarget(get.prompt('kuanglan'),function(card,player,target){
+                  return player!=target && player.canUse('caifang', target) && target.storage.kuanglan;
+               }).set('ai',function(target){
+                  return -get.attitude(_status.event.player,target);
+               });
+               'step 1'
+               if (result.bool && result.targets){
+                  player.useCard({name:'caifang'},result.targets[0],false);
+               }
+            },
+         },
+         kuanglan_1:{
+            trigger:{global:'useSkillAfter'},
+            direct:true,
+            filter:function(event,player){
+               if (!event.player) return false;
+               return (event.skill == '_tanpai' && event.player.identity == 'zhu') ||
+                        (event.skill == '_tanyibian') || (get.info(event.skill).spell);
+            },
+            content:function(){
+               trigger.player.storage.kuanglan = true; 
+            },
+         },
+         kuanglan_2:{
+            trigger:{global:'useCardAfter'},
+            direct:true,
+            filter:function(event,player){
+               return (event.card && get.type(event.card)=='jinji'&&event.player);
+            },
+            content:function(){
+               trigger.player.storage.kuanglan = true;
+            },
+         },
+         kuanglan_3:{
+            trigger:{global:'dieBegin'},
+            direct:true,
+            filter:function(event,player){
+               return event.source && event.source.isIn();
+            },
+            content:function(){
+               trigger.player.storage.kuanglan = true;
+            },
+         },
+         kuanglan_4:{
+            trigger:{global:'phaseEnd'},
+            direct:true,
+            priority:-100,
+            filter:function(event,player){
+               var players = game.filterPlayer();
+               for (var i = 0; i < players.length; i ++){
+                  if (players[i].storage.kuanglan) return true;
+               }
+               return false;
+            },
+            content:function(){
+               var players = game.filterPlayer();
+               for (var i = 0; i < players.length; i ++){
+                  if (players[i].storage.kuanglan) delete players[i].storage.kuanglan;
+               }
+            },
+         },
+         fengmi:{
+            spell:['fengmi_1'],
+            cost:0,
+            audio:2,
+            trigger:{player:'phaseBegin'},
+             filter:function(event,player){
+                 return player.lili > lib.skill.fengmi.cost;
+             },
+             check:function(event,player){
+               var att = 0;
+               att += player.lili;
+               att += (4 - player.hp);
+               att += (player.hp - player.getCards('h').length);
+               return att > 3;
+             },
+             content:function(){
+                 player.loselili(lib.skill.fengmi.cost);
+                 player.turnOver();
+             },
+         },
+         fengmi_1:{
+            audio:2,
+            trigger:{player:['phaseUseBefore','phaseDrawBefore','phaseDiscardBefore']},
+            filter:function(event,player){
+               return player.lili > 0;
+            },
+            content:function(){
+               'step 0'
+               player.chooseTarget(get.prompt('fengmi'),function(card,player,target){
+                  if(player==target) return false;
+                  return player.canUse({name:'guohe'},target,false);
+               }).set('ai',function(target){
+                  return get.effect(target,{name:'guohe'},_status.event.player);
+               });
+               'step 1'
+               if (result.bool && result.targets){
+                  player.loselili();
+                  player.useCard({name:'guohe'},result.targets[0],false);
+                  trigger.cancel();
+               }
+            },
+         },
       },
       translate:{
                   hetate:'果果',
@@ -226,10 +341,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   lianxu2_info:'出牌阶段，你可以消耗1点灵力，并弃置一张与本回合进入弃牌堆的一张牌花色或点数相同的牌：摸两张牌。',
                   lianxu3:'连续拍摄 花色&点数',
                   lianxu3_bg:'连',
-                  //aya:'文文',
+                  aya:'文文',
                   kuanglan:'狂岚',
                   kuanglan_info:'一名角色的结束阶段，你可以指定一名本回合内满足以下一项的角色：1. 发动过符卡；2. 明置过异变牌；3. 击坠过角色; 4. 使用过禁忌牌；视为你对其使用一张【突击采访】。',
-
+                  fengmi:'幻想风靡',
+                  fengmi_1:'幻想风靡',
+                  fengmi_info:'符卡技（0）你可以消耗1点灵力并跳过一个阶段，然后视为使用一张无距离限制的【疾风骤雨】。',
             },
       };
 });

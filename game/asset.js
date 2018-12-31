@@ -219,7 +219,7 @@ window.noname_asset_list=[
     'theme/style/player/silver_d2.png',
 ];
 window.noname_skin_list={
-    rumia:2,
+    rumia:3,
     meiling:2,
     patchouli:2,
     sakuya:2,

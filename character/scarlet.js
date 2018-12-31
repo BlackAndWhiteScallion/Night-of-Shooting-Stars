@@ -668,7 +668,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 1"
                     if (result.control){
                         result.control = event.list[event.list2.indexOf(result.control)];
-                        player.storage.qishu = result.control;
+                        player.storage.qishu = [result.control];
                         player.chooseTarget(1,"选择一名角色，令其获得1点灵力并执行一个额外的"+get.translation(result.control),function(card,player,target){
                             return target != player;
                         }).set('ai',function(target){
@@ -681,9 +681,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         });
                     }
                     "step 2"
-                    if(result.bool){
+                    if(result.bool && result.targets){
                         player.loselili();
-                        result.targets[0].addTempSkill('qishu2');
+                        result.targets[0].addSkill('qishu2');
                         result.targets[0].storage.qishu = player.storage.qishu;
                         player.skip(player.storage.qishu[0]);
                         player.storage.qishu = null;
@@ -699,11 +699,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.gainlili();
-                    if (player.storage.qishu == "phaseDraw"){
+                    if (player.storage.qishu[0] == "phaseDraw"){
                         player.phaseDraw();
-                    } else if (player.storage.qishu == "phaseUse") {
+                    } else if (player.storage.qishu[0] == "phaseUse") {
                         player.phaseUse();
-                    } else if (player.storage.qishu == "phaseDiscard"){
+                    } else if (player.storage.qishu[0] == "phaseDiscard"){
                         player.phaseDiscard();
                     }
                     player.storage.qishu = null;
@@ -831,17 +831,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return val;
                     }
                     'step 1'
-                    player.loselili();
+                    player.loselili(); 
                     player.gain(result.links)._triggered=null;
                     for(var i=0;i<result.links.length;i++){
                         ui.discardPile.remove(result.links[i]);
                     }
                 },
+                check:function(event,player){
+                    return player.lili > 1;
+                },
             },
             shijing_mark:{
                 trigger:{global:'loseEnd'},
-                popup:false,
-                forced:true,
+                direct:true,
                 filter:function(event,player){
                     if (_status.currentPhase!=player) return false;
                     for(var i=0;i<event.cards.length;i++){
@@ -862,8 +864,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             shijing_mark2:{
                 trigger:{player:'phaseEnd'},
-                popup:false,
-                forced:true,
+                direct:true,
                 priority:-100,
                 filter:function(event,player){
                     return _status.currentPhase == player && player.storage.shijing;
@@ -916,6 +917,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.cards && result.cards[0].type != 'delay'){
                         if (trigger.player.canUse(result.cards[0],trigger.target)) trigger.player.useCard(result.cards[0],trigger.target);
                     }
+                },
+                check:function(event,player){
+                    return -get.attitude(player, event.player) && get.attitude(player, event.target);
                 },
             },
             kuangyan:{

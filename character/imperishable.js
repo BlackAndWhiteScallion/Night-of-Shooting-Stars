@@ -153,7 +153,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                         check:function(event,player){
-                              return get.value(event.card) >= 5;
+                              //return get.value(event.card) >= 5;
+                            return player.lili > 1;
                         },
                   },
                   richuguo:{

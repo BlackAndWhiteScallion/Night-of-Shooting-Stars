@@ -159,14 +159,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 intro:{
                     content:function(storage,player){
-                        return lib.translate[player.storage.mingdong];
+                        return '可以将法术牌当作'+lib.translate[player.storage.mingdong];
                     }
                 },
                 hiddenCard:function(player,name){
                     return name == "shan" || name == 'tao';
-                },
-                init:function(player){
-                    player.storage.mingdong=[];
                 },
                 content:function(){
                     'step 0'
@@ -189,8 +186,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.bool){
                         var name=result.links[0][2];
-                        player.storage.mingdong.push(name);
+                        player.storage.mingdong = name;
                         player.addTempSkill('mingdong2');
+                        player.markSkill('mingdong');
                         lib.skill.mingdong2.viewAs = {name:name};
                         game.log(player,'选择了',lib.translate[name]);
                     }
@@ -210,6 +208,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 position:'h',
                 check:function(card){return 4-get.value(card)},
+                onremove:function(player){
+                    delete player.storage.mingdong;
+                    player.unmarkSkill('mingdong');
+                },
                 ai:{
                     respondSha:true,
                     respondShan:true,
@@ -745,6 +747,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 forced:true,
                 trigger:{global:'discardAfter'},
                 filter:function(event,player){
+                    if (_status.currentPhase != event.player) return false;
                     for(var i=0;i<event.cards.length;i++){
                         if(get.position(event.cards[i])=='d'){
                             return true;

@@ -1189,7 +1189,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					},
 					result:{
 						target:function(player,target){
-							return target != player && -get.attitude(_status.event.player,target) && (target.lili>2)?-2:0;
+							return target != player && -get.attitude(_status.event.player,target);
 						}
 					},
 					tag:{
@@ -2531,6 +2531,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		_zhunbei:{
 			popup:false,
+			direct:true,
 			trigger:{player:'phaseBegin'},
 			filter:function(event,player){
 				return player.countCards('h',{name:'bingyu'}) > 0|| player.countCards('h',{name:'lingbi'}) > 0;
