@@ -801,12 +801,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		boss:{
+			boss_reimu:{
+				loopType:2,
+				gameDraw:function(player){
+					return player==game.boss?8:4;
+				},
+			},
 			boss_reimu2:{
 				loopType:1,
 			},
 			global:{
 				loopType:2,
-				chongzheng:6,
+				chongzheng:5,
 			},
 		},
 		skill:{
@@ -843,6 +849,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.init('boss_reimu2');
 					player.lili=lili;
 					player.update();
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+					}
     			}
     		},
     		mengxiangtiansheng:{

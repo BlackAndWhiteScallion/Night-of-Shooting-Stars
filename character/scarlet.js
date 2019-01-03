@@ -750,7 +750,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
-                    player.chooseToDiscard(get.prompt('huanzang'),function(card){
+                    player.chooseToDiscard(get.prompt('huanzang'), true ,function(card){
                         return (get.type(card) == get.type(trigger.card) || get.number(card) == get.number(trigger.card));
                     }).set('ai',function(card){
                         if(_status.event.eff>0){
@@ -760,8 +760,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }).set('eff',eff);
                     'step 1'
                     if (result.bool){
-                        //trigger.cancel();
-                        trigger.untrigger();
+                        trigger.cancel();
+                        //trigger.untrigger();
                     }
                 },
             },

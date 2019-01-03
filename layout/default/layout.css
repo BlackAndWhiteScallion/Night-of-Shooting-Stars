@@ -2126,6 +2126,8 @@ div:not(.handcards)>.card>.info>span,
 #window>.damage.damageadded {
 	opacity: 1;
 	transform: scale(1);
+	background-size: 75% 75%;
+	background-image: '';
 }
 .player.linked>.damage {
 	transform: scale(0.7) rotate(90deg);

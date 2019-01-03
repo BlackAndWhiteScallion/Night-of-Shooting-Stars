@@ -82,6 +82,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         frequent:true,
                         content:function(){
                               'step 0'
+                              if(lib.config.background_audio){
+                                 game.playAudio('effect','shutter');
+                              }
                               player.judge(function(card){
                                  if (!player.storage.nianxie_storage.contains(get.suit(card))) return -1; 
                                  return 1;   
@@ -149,6 +152,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                return player.storage.lianxu3.contains(get.number(card)) || player.storage.lianxu3.contains(get.suit(card));
             },
             content:function(){
+                   if(lib.config.background_audio){
+                     game.playAudio('effect','shutter');
+                  }
                player.loselili();
                player.draw(2);
             },
@@ -211,11 +217,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
          kuanglan:{
             trigger:{global:'phaseEnd'},
             audio:2,
-            group:['kuanglan_1','kuanglan_2','kuanglan_3'],
+            group:['kuanglan_1','kuanglan_2','kuanglan_3','kuanglan_4'],
             filter:function(event,player){
                var players = game.filterPlayer();
                for (var i = 0; i < players.length; i ++){
-                  if (players[i].storage.kuanglan && player != target) return true;
+                  if (players[i].storage.kuanglan && player != players[i]) return true;
                }
                return false;
             },
@@ -228,8 +234,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                });
                'step 1'
                if (result.bool && result.targets){
+                  if(lib.config.background_audio){
+                     game.playAudio('effect','shutter');
+                  }
                   player.useCard({name:'caifang'},result.targets[0],false);
                }
+            },
+            check:function(event,player){
+               return true;
             },
          },
          kuanglan_1:{
@@ -265,7 +277,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
          },
          kuanglan_4:{
-            trigger:{global:'phaseEnd'},
+            trigger:{global:'phaseAfter'},
             direct:true,
             priority:-100,
             filter:function(event,player){

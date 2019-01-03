@@ -304,6 +304,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     if(_status.event.skill=='guihang') return true;
                               }
                         },
+                        filter:function(event,player){
+                          return !player.hasSkill('guihang_flag');
+                        },
                         filterCard:function(card,player){
                               return true;
                         },
@@ -312,6 +315,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         viewAsFilter:function(player){
                               if (!player.countCards('he')) return false;
                               return player.lili > 0;
+                        },
+                        onuse:function(result,player){
+                            player.loselili();
+                            player.getStat().card.sha--;
                         },
                         prompt:'消耗1点灵力，将一张牌当【轰！】使用',
                         check:function(card){return 4-get.value(card)},
@@ -323,16 +330,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                   },
                   guihang_cost:{
-                        trigger:{player:['useCard']},
+                       trigger:{source:'damageAfter'},
                         forced:true,
-                        popup:false,
                         filter:function(event,player){
-                              return event.skill=='guihang';
+                          return event.getParent().skill=='guihang';
                         },
                         content:function(){
-                              player.loselili();
-                              player.getStat().card.sha--;
-                        },
+                          player.addTempSkill('guihang_flag');
+                        }
+                  },
+                  guihang_flag:{
                   },
                   wujian:{
                       audio:2,
@@ -349,7 +356,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               list.push(i);
                         }
                           player.chooseControl(list,function(){
-                                    return get.cnNumber(_status.event.goon,true);
+                                    return 1;
                               }).set('prompt','消耗任意点灵力');
                           'step 1'
                           if (result.control){

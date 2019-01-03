@@ -13531,12 +13531,22 @@
                     }
                 },
                 gainlili:function(){
+                    var str = 'power';
+                    for(var i=0;i<player.skills.length;i++){
+                            if (lib.skill[player.skills[i]].spell){
+                                var info = lib.skill[player.skills[i]];
+                                if (player.lili <= info.cost && player.lili + num > info.cost){ 
+                                    str = 'bonus';
+                                    break;
+                                }
+                            }
+                        }
                     if(lib.config.background_audio){
-                        game.playAudio('effect','recover');
+                        game.playAudio('effect',str);
                     }
                     game.broadcast(function(){
                         if(lib.config.background_audio){
-                            game.playAudio('effect','recover');
+                            game.playAudio('effect',str);
                         }
                     });
                     if(num>player.maxlili-player.lili) num=player.maxlili-player.lili;
@@ -13789,17 +13799,20 @@
                         // 播放死亡语音
                         if(lib.config.background_speak){
                             if(lib.character[player.name]&&lib.character[player.name][4].contains('die_audio')){
-                                game.playAudio('die',player.name);
+                                //game.playAudio('die',player.name);
                                 var translation = get.translation(player.name+ '_die');
                                 if (translation != player.name + '_die'){
                                     player.say(translation);
                                 } 
                             }
                             else if(true){
+                                /*
                                 game.playAudio('die',player.name,function(){
                                     game.playAudio('die',player.name.slice(player.name.indexOf('_')+1));
                                 });
+                                */
                             }
+                            game.playAudio('effect','die_female');
                         }
                     },player,event.cards);
 
@@ -14113,6 +14126,9 @@
                     player.classList.toggle('turnedover');
                     // 这里开始是翻面时扔出符卡动画
                     if (player.isTurnedOver()){
+                        if(lib.config.background_audio){
+                            game.playAudio('effect','spell');
+                        }
                         player.node.turnedover.setBackgroundImage('theme/spell.gif');
                         player.node.turnedover.style.backgroundSize='123px 123px';
                         player.node.turnedover.style.opacity=0.4;
@@ -20397,7 +20413,7 @@ throwDice:function(num){
                         return true;
                     }
                 },
-                				$skill:function(name,type,color,avatar){
+                $skill:function(name,type,color,avatar){
 					if(typeof type!='string') type='legend';
 					if(!avatar){
 						this.playerfocus(1500);
@@ -20668,8 +20684,13 @@ game.broadcast(function(player,str,nature,avatar){
                             num='+'+num;
                         }
                         node.innerHTML=num;
-                        this.damagepopups.push(node);
                         node.dataset.nature=nature||'soil';
+                        if (node.dataset.nature == 'soil'){
+                            node.setBackgroundImage('theme/effect/damage.gif');
+                            node.style.backgroundRepeat = 'no-repeat';
+                            node.style.backgroundPosition = "center";
+                        }
+                        this.damagepopups.push(node);
                         if(this.damagepopups.length==1){
                             this.$damagepop();
                         }

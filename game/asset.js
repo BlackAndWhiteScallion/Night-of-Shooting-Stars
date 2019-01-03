@@ -226,5 +226,7 @@ window.noname_skin_list={
     remilia:2,
     flandre:2,
     reimu:2,
-
+    wriggle:2,
+    keine:2,
+    marisa:7,
 };

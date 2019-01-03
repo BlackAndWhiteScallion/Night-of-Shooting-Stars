@@ -36,7 +36,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         frequent:true,
                         filter:function(event, player){
                               if (player.hasSkill('yechong1')) return true;
-                              //if (player.getStat().skill.yingguang>=1) return false;
+                              if (player.getStat().skill.yingguang>=1) return false;
                               //if (player.getStat('skill')['yingguang'] >= 1) return false;
                               //if (get.skillCount('yingguang') >= 1) return false;
                               return true;
@@ -76,7 +76,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               game.addVideo('thrownhighlight2');
                               ui.arena.classList.remove('thrownhighlight');
-                              if (!player.hasSkill('yechong1')) player.addTempSkill('fengyin');
                         },
                         ai:{
                               threaten:1.4,
@@ -367,7 +366,129 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if (result.control != 'discard'){
                         trigger.target.damage('thunder');
                       }
+                    },
+                    check:function(event,player){
+                      return -get.attitude(player,event.target);
+                    },
+                  },
+                  liuxing:{
+                    audio:2,
+                    trigger:{player:'phaseDrawBefore'},
+                    filter:function(event,player){
+                        return event.num > 0;
+                    },
+                    content:function(){
+                        'step 0'
+                        var list = [];
+                        for (var i = 0; i < trigger.num; i ++){
+                            list.push(i+1);
+                        }
+                        player.chooseControl(list,function(){
+                            return 1;
+                        }).set('prompt','少摸任意张牌，增加等量攻击范围');
+                        'step 1'
+                        if (result.control){
+                            game.log(result.control);
+                            trigger.num -= result.control;
+                            player.storage.liuxing = result.control;
+                            player.addTempSkill('liuxing_shun','phaseAfter');
+                        }
+                    },
+                    mod:{
+                        attackFrom:function(from,to,distance){
+                            return distance-from.storage.liuxing;
+                        }
                     }
+                  },
+                  liuxing_shun:{
+                    audio:2,
+                    trigger:{player:'phaseEnd'},
+                    forced:true,
+                    filter:function(event,player){
+                        return true;
+                    },
+                    content:function(){
+                        'step 0'
+                        player.chooseTarget('今天要去偷谁的东西呢？',function(card,player,target){
+                            return player!=target && player.canUse('shunshou', target);
+                         }).set('ai',function(target){
+                            return -get.attitude(_status.event.player,target);
+                         });
+                         'step 1'
+                         if (result.bool && result.targets){
+                            player.useCard({name:'shunshou'},result.targets[0],false);
+                         }
+                    },
+                  },
+                  xingchen:{
+                    audio:2,
+                    group:'xingchen_2',
+                    enable:['chooseToUse','chooseToRespond'],
+                    filter:function(event,player){
+                      return player.countCards('h') == player.hp;
+                    },
+                    position:'h',
+                    viewAs:{name:'sha'},
+                    prompt:'将一张牌当【轰！】使用或打出',
+                    check:function(card){return 4-get.value(card)},
+                    ai:{
+                      skillTagFilter:function(player){
+                        return player.countCards('h') == player.hp;
+                      },
+                      respondSha:true,
+                    }
+                  },
+                  xingchen_2:{
+                    cardUsable:function(card,player,num){
+                      if(card.name=='sha' && player.hp == player.countCards('h')) return Infinity;
+                    }
+                  },
+                  stardust:{
+                    audio:2,
+                    trigger:{player:'phaseBegin'},
+                    cost:0,
+                    spell:['stardust1'],
+                    filter:function(event,player){
+                      return player.lili > lib.skill.stardust.cost;
+                    },
+                    content:function(){
+                      'step 0'
+                        var list = [];
+                        for (var i = 1; i <= player.lili; i ++){
+                              list.push(i);
+                        }
+                          player.chooseControl(list,function(){
+                                    return 1;
+                              }).set('prompt','消耗任意点灵力');
+                          'step 1'
+                          if (result.control){
+                              player.loselili(result.control);
+                              ui.backgroundMusic.src = 'audio/effect/marisa.mp3'
+                              lib.config.musicchange = 'off';
+                              player.storage.stardust = result.control;
+                              if (!player.storage._enhance) player.storage._enhance = result.control;
+                              else player.storage._enhance += result.control;
+                              player.turnOver();
+                          }
+                    },
+                  },
+                  stardust1:{
+                    audio:2,
+                    trigger:{player:'useCardAfter'},
+                    filter:function(event,player){
+                      return player.storage.stardust;
+                    },
+                    content:function(){
+                      delete player.storage.stardust;
+                    },
+                    mod:{
+                      targetInRange:function(card,player,target,now){
+                        if(player.storage.stardust && card.type != 'equip') return true;
+                      },
+                      selectTarget:function(card,player,range){
+                        if(player.storage.stardust && card.type != 'equip'&&range[1]!=-1) range[1]+=player.storage.stardust;
+                      },
+                    },
                   },
                   yuhuo:{
                     audio:2,
@@ -528,6 +649,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mengxiang_audio1:'灵符「梦想封印」！',
                   mengxiang_audio2:'以博丽巫女之名，我会退治你这个异变！',
                   reimu_die:'啊啊，肚子饿了，回去了回去了。',
+                  marisa:'魔理沙',
+                  liuxing:'流星',
+                  liuxing_info:'摸牌阶段，你可以少摸至少一张牌，令你的攻击范围+X（X为以此法少摸的牌数），直到结束阶段；若如此做，结束阶段，你视为使用一张强化的【顺手牵羊】。',
+                  liuxing_shun:'流星（顺手牵羊）',
+                  xingchen:'星尘',
+                  xingchen_info:'若你的手牌数等于体力值：你使用的【轰！】不计次数，且你可以将一张手牌当作【轰！】使用/打出。',
+                  stardust:'星屑幻想',
+                  stardust_info:'符卡技（X）（X为任意值）你本回合使用下一张牌时：若有强化效果，执行强化效果X次；若不是装备牌，可以无视距离限制指定X名额外目标。',
                   mokou:'妹红',
                   yuhuo:'狱火',
                   yuhuo_2:'狱火',

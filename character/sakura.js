@@ -451,8 +451,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     }
                     'step 2'
-                    if (result.bool && result.target.length){
-                        event.player.useCard(event.card,result.target);
+                    if (result.bool && result.targets.length){
+                        event.player.useCard(event.card,result.targets);
                     }
                 }
             },
@@ -714,7 +714,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 return player.storage.mingzhi.contains(card) || get.position(card) == 'e' || get.position(card) == 'j';
                             },
                             filterTarget:function(card,player,target){
-                                return player!=target;
+                                return player!=target && target == _status.currentPhase;
                             },
                             forced:true,
                             position:'hej',
@@ -806,9 +806,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     player.loselili(lib.skill.hezou.cost);
                     player.turnOver();
+                    trigger.trigger('useCardToBegin');
                 },
                 check:function(){
-                    return false;
+                    return true;
                 }
             },
             hezou_skill:{
@@ -961,6 +962,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(result.bool){
                         player.logSkill('yishan',result.targets);
                         result.targets[0].draw();
+                        if(lib.config.background_audio){
+                            game.playAudio('effect','slash');
+                        }
                         player.useCard({name:'sha'},result.targets[0],false);
                     }
                 },
@@ -1039,7 +1043,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    player.chooseToDiscard('hej');
+                    player.chooseToDiscard('hej', true);
                     "step 1"
                     if(result.bool){
                         var nh=_status.currentPhase.hp;
@@ -1063,6 +1067,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     }
                 },
+                check:function(event,player){
+                    var attitude = 0;
+                    var nh=_status.currentPhase.hp;
+                        var nmax=nh;
+                        var targets=[];
+                        var players=game.filterPlayer();
+                        players.remove(player);
+                        for(var i=0;i<players.length;i++){
+                            var nh2=players[i].hp;
+                            if(nh2<nmax){
+                                nmax=nh2;
+                                targets.length=0;
+                                targets.push(players[i]);
+                            }
+                            else if(nh2==nmax){
+                                targets.push(players[i]);
+                            }
+                        }
+                        for (var j=0;j<targets.length;j++){
+                            attitude += get.attitude(player,targets[j]);
+                        }
+                        return -attitude;
+                },
             },
             moyin:{
                 trigger:{global:'dying'},
@@ -1077,7 +1104,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.chooseTarget(get.prompt('moyin'),[1,max],function(card,player,target){
                         return true;
                     },function(target){
-                        return -get.attitude(_status.event.player,target);
+                        if (get.attitude(_status.event.player, trigger.player) > 0){
+                            if (player.countCards('h','tao') == 0) return player;
+                            else return get.attitude(_status.event.player,target);
+                        }
+                        else if (target.countCards('h') > 3 && -get.attitude(_status.event.player,target)){
+                            return target;
+                        }
+                        return get.attitude(_status.event.player,target);
                     });
                     "step 1"
                     if(result.bool){
@@ -1104,13 +1138,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             moyin2:{
                 trigger:{global:'recover'},
+                mark:true,
                 intro:{
                     content:'不能令决死角色回复体力',
                 },
                 filter:function(event,player){
-                    return event.player.hp <= 0 && event.source.hasSkill('moyin2');
+                    return event.source.hasSkill('moyin2');
                 },
                 content:function(){
+                    trigger.num = 0;
                     trigger.cancel();
                     trigger.finish();
                 },
@@ -1725,6 +1761,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mocai:'魔彩',
             mocai_info:'你攻击范围内的一名角色成为攻击牌的目标后，你可以选择一项：将一张“手办”置于其区域内；或弃置一张“手办”，观看技能牌堆顶的三张牌，并将其中一张交给目标。',
             hanghourai:'上吊的蓬莱人形',
+            hanghourai1:'上吊的蓬莱人形',
             hanghourai_info:'符卡技（2）<永续> 符卡发动时，你可以将任意张手牌扣置为“手办”，并摸等量牌；一名角色的结束阶段，你可以交给其一张“手办”；若其可以使用该牌，你令其使用之，目标由你指定。',
             lilywhite:'莉莉白',
             chunxiao:'春晓',
@@ -1741,7 +1778,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shenxuan_info:'一回合一次，出牌阶段，你可以明置一张手牌；每名角色一回合一次，其可以将一张【轰！】当作与你一张非装备明置手牌同名的牌使用/打出。',
             shenxuan_viewAs:'神弦（转化）',
             zhenhun:'镇魂',
-            zhenhun_info:'一名角色的结束阶段，你可以选择一至两项：1. 获得本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其他角色一张明置牌。',
+            zhenhun_info:'一名角色的结束阶段，你可以选择一至两项：1. 获得其本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其一张明置牌。',
             hezou:'棱镜协奏曲',
             hezou_2:'棱镜协奏曲',
             hezou_skill:'棱镜协奏曲',

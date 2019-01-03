@@ -652,7 +652,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (player.storage.enhance){
 					controls.push('被'+get.translation(player)+'观看手牌并明置身份');
 				} else {
-					if(target.identityShown != true) controls.push('明置身份');	
+					if(target.identityShown != true && get.mode()=='identity') controls.push('明置身份');	
 					controls.push('被'+get.translation(player)+'观看手牌');				
 				}
 				target.chooseControl(controls,function(event,player){
@@ -668,7 +668,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						player.draw();
 					}
 					if(result.control!='被'+get.translation(player)+'观看手牌') {
-						if (target.identityShown != true) target.useSkill('_tanpai');
+						if (target.identityShown != true && get.mode()=='identity') target.useSkill('_tanpai');
 					}
 				}
 			},
@@ -1765,16 +1765,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				"step 0"
 				var eff=ai.get.effect(player,trigger.card,trigger.player,trigger.player);
-				trigger.player.chooseToDiscard(1,'人魂灯：弃置一张牌，或【轰！】无效。').set('ai',function(card){
-					if(_status.event.eff>0){
-						return 10-ai.get.value(card);
-					}
-					return 0;
-				}).set('eff',eff);
+				player.chooseToCompare(trigger.player);
 				"step 1"
-				if(result.bool==false){
-					trigger.finish();
-					trigger.untrigger();
+				if(result.bool){
+					trigger.cancel();
 				}
 			},
 		},
@@ -1808,7 +1802,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		audio:2,
     		usable:1,
 			chooseButton:{
-  				dialog:function(){
+  				dialog:function(event,player){
     					var list = [];
     					for (var i in lib.card){
     						if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
@@ -2645,7 +2639,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		hakkero_skill:'八卦炉',
 		hakkero_info:'出牌阶段，你可以消耗1点灵力，视为使用一张【轰！】',
 		lantern:'人魂灯',
-		lantern_info:'锁定技，你成为【轰！】的目标后，若来源在你攻击范围内，其选择一项：弃置一张牌，或令该【轰！】对你无效。',
+		lantern_info:'锁定技，你成为【轰！】的目标后，若来源在你攻击范围内，与其拼点；若你赢，令该【轰！】对你无效。',
 		stone:'贤者之石',
 		stone_info:'你可以将两张牌(包括此牌)当作一种法术牌使用。',
 		stone_skill:'贤者之石',
