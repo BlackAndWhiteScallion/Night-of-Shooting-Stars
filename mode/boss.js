@@ -397,7 +397,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		characterPack:{
 			mode_boss:{
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss']],
-				boss_reimu2:['female','',4,['lingji','mengxiangtiansheng'],['hiddenboss']],
+				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss']],
 			}
 		},
 		cardPack:{
@@ -841,6 +841,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			audio:1,
     			trigger:{player:['damageAfter','gainliliAfter']},
     			forced:true,
+    			init:function(player){
+					player.lili = 0;
+				},
     			filter:function(event,player){
     				return (player.lili == 5) || (player.hp <= 4);
     			},
@@ -849,8 +852,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.init('boss_reimu2');
 					player.lili=lili;
 					player.update();
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.resetSkills();
+					if (lib.config.background_music != 'marisa'){
+						ui.backgroundMusic.src = 'audio/background/reimu.mp3'
+                    	lib.config.background_music = 'reimu';
+                	}
+					_status.paused=false;
+					_status.event.player=player;
+					_status.event.step=0;
 					if(game.bossinfo){
 						game.bossinfo.loopType=1;
+						_status.roundStart=game.boss;
 					}
     			}
     		},
@@ -872,12 +887,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			zhu:'魔王',
 			cai:'盟',
 			zhong:'从',
-
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',
 			lingji:'灵击',
 			lingji_info:'锁定技，你造成或受到弹幕伤害后，须判定；若为红色，你获得1点灵力；否则，你获得判定牌。',
-			bianshen_reimu:'阶段转换',
+			bianshen_reimu:'二阶段转换',
 			bianshen_reimu_info:'体力值变为4，或灵力值变为5。',
 			mengxiangtiansheng:'梦想天生',
 			mengxiangtiansheng_info:'准备阶段，或结束阶段，你可以消耗1点灵力，视为对所有其他角色使用了一张【轰！】。',

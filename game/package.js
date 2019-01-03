@@ -30,6 +30,11 @@ window.noname_package={
     },
     background:{
         shengshi_bg:'盛世',
+        tianjie:'天界',
+        shenshe:'神社',
+        tiangou:'山水',
+        yongyuan:'永远',
+        yuji:'雨季',
     },
     music:{
         music_diaochan:'貂蝉',

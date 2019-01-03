@@ -428,7 +428,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       return player.countCards('h') == player.hp;
                     },
                     position:'h',
+                    selectCard:1,
                     viewAs:{name:'sha'},
+                    filterCard:true,
                     prompt:'将一张牌当【轰！】使用或打出',
                     check:function(card){return 4-get.value(card)},
                     ai:{
@@ -439,9 +441,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                   },
                   xingchen_2:{
-                    cardUsable:function(card,player,num){
-                      if(card.name=='sha' && player.hp == player.countCards('h')) return Infinity;
-                    }
+                    trigger:{player:'shaBegin'},
+                    direct:true,
+                    filter:function(event,player){
+                      return event.skill=='xingchen';
+                    },
+                    content:function(){
+                      player.getStat().card.sha--;
+                    },
                   },
                   stardust:{
                     audio:2,
@@ -453,7 +460,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       'step 0'
-                        var list = [];
+                        var list = [0];
                         for (var i = 1; i <= player.lili; i ++){
                               list.push(i);
                         }
@@ -463,7 +470,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           'step 1'
                           if (result.control){
                               player.loselili(result.control);
-                              ui.backgroundMusic.src = 'audio/effect/marisa.mp3'
+                              ui.backgroundMusic.src = 'audio/background/marisa.mp3'
+                              lib.config.background_music = 'marisa';
                               lib.config.musicchange = 'off';
                               player.storage.stardust = result.control;
                               if (!player.storage._enhance) player.storage._enhance = result.control;
@@ -474,6 +482,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   stardust1:{
                     audio:2,
+                    direct:true,
                     trigger:{player:'useCardAfter'},
                     filter:function(event,player){
                       return player.storage.stardust;
@@ -654,7 +663,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   liuxing_info:'摸牌阶段，你可以少摸至少一张牌，令你的攻击范围+X（X为以此法少摸的牌数），直到结束阶段；若如此做，结束阶段，你视为使用一张强化的【顺手牵羊】。',
                   liuxing_shun:'流星（顺手牵羊）',
                   xingchen:'星尘',
-                  xingchen_info:'若你的手牌数等于体力值：你使用的【轰！】不计次数，且你可以将一张手牌当作【轰！】使用/打出。',
+                  xingchen_info:'若你的手牌数等于体力值：你可以将一张手牌当作【轰！】使用/打出；以此法使用的【轰！】不计次数。',
                   stardust:'星屑幻想',
                   stardust_info:'符卡技（X）（X为任意值）你本回合使用下一张牌时：若有强化效果，执行强化效果X次；若不是装备牌，可以无视距离限制指定X名额外目标。',
                   mokou:'妹红',

@@ -17549,6 +17549,7 @@ getDiscardableCards:function(player,arg1,arg2){
                 },
                 skip:function(name){
                     this.skipList.add(name);
+                    game.log(get.translation(this)+'跳过了'+get.translation(name));
                 },
                 wait:function(callback){
                     if(lib.node){

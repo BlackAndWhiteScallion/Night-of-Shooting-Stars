@@ -246,7 +246,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			trigger:{player:'damageBefore'},
     			forced:true,
     			filter:function(event,player){
-    				return event.num>0 && event.num>=player.hp;
+    				return event.num>0 && event.num>=player.hp && event.nature != 'thunder';
     			},
     			content:function(){
     				"step 0"
@@ -286,10 +286,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			trigger:{player:'damageEnd'},
     			direct:true,
     			frequent:true,
+    			filter:function(event,player){
+    				return event.source.countCards('ej');
+    			},
     			content:function(){
-    				if(result.bool){
-    					player.discardPlayerCard('ej',trigger.source,true);
-    				}
+    				player.discardPlayerCard('ej',trigger.source,true);
     			},
     			
 			},

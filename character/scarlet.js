@@ -77,6 +77,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     					event.goto(2);
     				} 
     				else {
+                        game.log(get.translation(player)+'跳过了出牌阶段');
     					trigger.finish();
     					trigger.untrigger();
     					event.finish();
@@ -694,6 +695,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             qishu2:{
                 trigger:{global:'phaseAfter'},
+                direct:true,
                 filter:function(event,player){
                     return true;
                 },

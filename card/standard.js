@@ -1780,10 +1780,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return event.card.name == 'sha';
 			},
 			content:function(){
-				for (var i = 0; i <= player.num('e'); i ++){
-					var card = player.get('e',i);
-					if ((card) && (card.name == 'hourai')){
-						player.gain(card,'gain2');
+				var cards = player.getCards('e');
+				for (var i = 0; i <= cards.length; i ++){
+					if(cards[i]&&cards[i].name == 'hourai'){
+						player.gain(cards[i],'gain2');
 						break;
 					}
 				}

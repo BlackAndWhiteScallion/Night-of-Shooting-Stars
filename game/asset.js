@@ -1,5 +1,5 @@
 window.noname_asset_list=[
-    '1.9.36',
+    '0.72',
     'image/background/baka.jpg',
     'image/background/death.jpg',
     'image/background/immaterial.jpg',
@@ -124,6 +124,8 @@ window.noname_asset_list=[
     'audio/background/scarlet.mp3',
     'audio/background/sb.mp3',
     'audio/background/signature.mp3',
+    'audio/background/reimu.mp3',
+    'audio/background/marisa.mp3',
     'audio/card/female/bingyu.mp3',
     'audio/card/female/caifang.mp3',
     'audio/card/female/danmakucraze.mp3',
@@ -163,7 +165,6 @@ window.noname_asset_list=[
     'audio/effect/tie.mp3',
     'audio/effect/win.mp3',
     'audio/effect/shutter.mp3',
-    'audio/effect/marisa.mp3',
     'audio/effect/bonus.mp3',
     'audio/effect/spell.mp3',
     'font/xiaozhuan.ttf',
