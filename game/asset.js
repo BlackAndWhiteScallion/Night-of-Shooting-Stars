@@ -222,6 +222,7 @@ window.noname_asset_list=[
     'theme/style/player/silver3.png',
     'theme/style/player/silver_d1.png',
     'theme/style/player/silver_d2.png',
+    'theme/effect/damage.gif',
 ];
 window.noname_skin_list={
     rumia:3,
