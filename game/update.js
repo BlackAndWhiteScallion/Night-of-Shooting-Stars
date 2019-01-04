@@ -38,5 +38,5 @@ window.noname_update={
         // 'layout/newlayout/global.css',
         // 'layout/mode/chess.css',
         // 'extension/boss/extension.js',
-    ]
+    ],
 }

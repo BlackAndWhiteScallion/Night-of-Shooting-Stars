@@ -2430,7 +2430,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		lingbi2:{
 			trigger:{player:'phaseBegin'},
 			forced:true,
-			filter:function(){
+			filter:function(event,player){
 				if (!player.storage._lingbi2) return false;
 				return player.storage._lingbi2.length > 0;
 			},

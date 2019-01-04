@@ -202,7 +202,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			qusan_skill:{
     			filter:function(event,player){
-    				return event.player==player&&event.card&&(get.type(event.card)=='trick');
+    				return event.card&&(get.type(event.card)=='trick');
     			},
     			logTarget:'player',
     			check:function(event,player){
@@ -284,10 +284,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			jinu_skill:{
     			audio:2,
     			trigger:{player:'damageEnd'},
-    			direct:true,
-    			frequent:true,
     			filter:function(event,player){
-    				return event.source.countCards('ej');
+    				return event.source.countCards('ej') && event.nature != 'thunder';
     			},
     			content:function(){
     				player.discardPlayerCard('ej',trigger.source,true);

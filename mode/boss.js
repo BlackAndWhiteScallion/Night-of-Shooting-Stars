@@ -398,6 +398,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			mode_boss:{
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss']],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss']],
+				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
 			}
 		},
 		cardPack:{
@@ -810,6 +811,49 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_reimu2:{
 				loopType:1,
 			},
+			boss_nianshou:{
+				loopType:1,
+				chongzheng:0,
+				init:function(){
+					game.boss.node.action.classList.add('freecolor');
+					game.boss.node.action.style.opacity=1;
+					game.boss.node.action.style.letterSpacing='4px';
+					game.boss.node.action.style.marginRight=0;
+					game.boss.node.action.style.fontFamily='huangcao';
+					game.boss.node.action.innerHTML='';
+					_status.additionalReward=function(){
+						return Math.round(Math.pow(_status.damageCount,2.4))*2;
+					}
+					var time=360;
+					var interval=setInterval(function(){
+						if(_status.over){
+							clearInterval(interval);
+							return;
+						}
+						var sec=time%60;
+						if(sec<10){
+							sec='0'+sec;
+						}
+						game.boss.node.action.innerHTML=Math.floor(time/60)+':'+sec;
+						if(time<=0){
+							delete _status.additionalReward;
+							if(typeof _status.coin=='number'){
+								if(game.me==game.boss){
+									_status.coin+=Math.round(Math.pow(_status.damageCount,2.4));
+								}
+								else{
+									_status.coin+=Math.round(Math.pow(_status.damageCount,1.8));
+								}
+							}
+							game.forceOver(true);
+							clearInterval(interval);
+						}
+						time--;
+					},1000);
+					_status.damageCount=0;
+					ui.damageCount=ui.create.system('伤害: 0',null,true);
+				}
+			},
 			global:{
 				loopType:2,
 				chongzheng:5,
@@ -857,8 +901,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					game.resetSkills();
 					if (lib.config.background_music != 'marisa'){
+						setTimeout(function(){
 						ui.backgroundMusic.src = 'audio/background/reimu.mp3'
                     	lib.config.background_music = 'reimu';
+                    	},500);
                 	}
 					_status.paused=false;
 					_status.event.player=player;
@@ -879,9 +925,95 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				var players=get.players(player);
 					players.remove(player);
+					player.loselili();
     				player.useCard({name:'sha'},players);
     			}
     		},
+    		boss_damagecount:{
+				mode:['boss'],
+				global:'boss_damagecount2'
+			},
+			boss_damagecount2:{
+				trigger:{source:'damageEnd'},
+				silent:true,
+				filter:function(event,player){
+					if(!ui.damageCount) return false;
+					return event.num>0&&player.isFriendOf(game.me)&&event.player.isEnemyOf(game.me);
+				},
+				content:function(){
+					_status.damageCount+=trigger.num;
+					ui.damageCount.innerHTML='伤害: '+_status.damageCount;
+				}
+			},
+    		boss_nianrui:{
+				trigger:{player:'phaseDrawBegin'},
+				forced:true,
+				content:function(){
+					trigger.num+=2;
+					player.skip('phaseUse');
+				},
+				ai:{
+					threaten:1.6
+				}
+			},
+			boss_qixiang:{
+				group:['boss_qixiang1','boss_qixiang2'],
+				ai:{
+					effect:{
+						target:function(card,player,target,current){
+							if(card.name=='lebu'&&card.name=='bingliang') return 0.8;
+						}
+					}
+				}
+			},
+			boss_qixiang1:{
+				trigger:{player:'judge'},
+				forced:true,
+				filter:function(event,player){
+					if(event.card){
+						if(event.card.viewAs){
+							return event.card.viewAs=='lebu';
+						}
+						else{
+							return event.card.name=='lebu';
+						}
+					}
+				},
+				content:function(){
+					player.addTempSkill('boss_qixiang3','judgeAfter');
+				}
+			},
+			boss_qixiang2:{
+				trigger:{player:'judge'},
+				forced:true,
+				filter:function(event,player){
+					if(event.card){
+						if(event.card.viewAs){
+							return event.card.viewAs=='bingliang';
+						}
+						else{
+							return event.card.name=='bingliang';
+						}
+					}
+				},
+				content:function(){
+					player.addTempSkill('boss_qixiang4','judgeAfter');
+				}
+			},
+			boss_qixiang3:{
+				mod:{
+					suit:function(card,suit){
+						if(suit=='diamond') return 'heart';
+					}
+				}
+			},
+			boss_qixiang4:{
+				mod:{
+					suit:function(card,suit){
+						if(suit=='spade') return 'club';
+					}
+				}
+			},
 		},
 		translate:{
 			zhu:'魔王',
@@ -895,6 +1027,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			bianshen_reimu_info:'体力值变为4，或灵力值变为5。',
 			mengxiangtiansheng:'梦想天生',
 			mengxiangtiansheng_info:'准备阶段，或结束阶段，你可以消耗1点灵力，视为对所有其他角色使用了一张【轰！】。',
+			boss_nianshou:'年兽',
+			boss_nianrui:'年瑞',
+			boss_nianrui_info:'锁定技，摸牌阶段，你额外摸两张牌；跳过你的出牌阶段',
+			boss_qixiang:'祺祥',
+			boss_qixiang1:'祺祥',
+			boss_qixiang2:'祺祥',
+			boss_qixiang_info:'乐不思蜀判定时，你的方块判定牌视为红桃；兵粮寸断判定时，你的黑桃判定牌视为草花',
+			boss_damagecount:'沙袋武将',
+			boss_damagecount_info:'你在6分钟之内可以对我造成多少伤害呢？',
 			mode_boss_character_config:'挑战武将',
 		},
 		get:{

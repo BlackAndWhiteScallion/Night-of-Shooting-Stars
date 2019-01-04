@@ -343,8 +343,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                   },
                   mengxiang1:{
-                    trigger:{player:'useCardtoBegin'},
-                    filter:true,
+                    audio:2,
+                    trigger:{player:'useCardToBegin'},
+                    filter:function(){return true},
                     content:function(){
                       'step 0'
                       var list = [];
@@ -356,11 +357,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                         list.push('lilidamage');
                       }
-                      player.chooseControl(list).set('prompt',get.prompt('mengxiang'));
+                      player.chooseControl(list).set('prompt',get.translation(player)+'对你发动了【梦想封印】!');
                       'step 1'
                       if (result.control != 'lilidamage'){
                         if (trigger.target.countCards('hej')){
-                          player.chooseToDiscard(true,'hej');
+                          trigger.target.chooseToDiscard(true,'hej');
                         }
                       }
                       if (result.control != 'discard'){
@@ -448,6 +449,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       player.getStat().card.sha--;
+                    },
+                    mod:{
+                      cardUsable:function(card,player,num){
+                        if(card.name=='sha' && player.countCards('h') == player.hp) return Infinity;
+                      }
                     },
                   },
                   stardust:{
@@ -654,18 +660,31 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   huanjing_reimu_audio1:'哼，别忘了我可会这招！',
                   huanjing_reimu_audio2:'嗯……这里附近应该有张【葱】来着？',
                   mengxiang:'梦想封印',
+                  mengxiang1:'梦想封印',
                   mengxiang_info:'符卡技（2）<永续>你使用牌指定目标后，可以选择一项：令目标角色：受到1点灵击伤害；或弃置一张牌；若其有明置异变牌，改为选择两项。',
                   mengxiang_audio1:'灵符「梦想封印」！',
                   mengxiang_audio2:'以博丽巫女之名，我会退治你这个异变！',
+                  mengxiang1_audio1:'走你！',
+                  mengxiang2_audio2:'下次异变之前，可要问问我的意见啊？',
+                  lilidamage:'受到1点灵击伤害',
                   reimu_die:'啊啊，肚子饿了，回去了回去了。',
                   marisa:'魔理沙',
                   liuxing:'流星',
                   liuxing_info:'摸牌阶段，你可以少摸至少一张牌，令你的攻击范围+X（X为以此法少摸的牌数），直到结束阶段；若如此做，结束阶段，你视为使用一张强化的【顺手牵羊】。',
+                  liuxing_audio1:'无论你有没有准备好！',
+                  liuxing_audio2:'让开，流星雨要来了！',
                   liuxing_shun:'流星（顺手牵羊）',
+                  liuxing_shun_audio1:'这就稍微借我一下吧？',
+                  liuxing_shun_audio2:'等到我死了我就还给你！',
                   xingchen:'星尘',
                   xingchen_info:'若你的手牌数等于体力值：你可以将一张手牌当作【轰！】使用/打出；以此法使用的【轰！】不计次数。',
+                  xingchen_audio1:'先打再说！',
+                  xingchen_audio2:'接下我的爱之魔炮ze！',
                   stardust:'星屑幻想',
+                  stardust_audio1:'魔符「星屑幻想」！',
+                  stardust_audio2:'现在开始，这就是我的舞台了！',
                   stardust_info:'符卡技（X）（X为任意值）你本回合使用下一张牌时：若有强化效果，执行强化效果X次；若不是装备牌，可以无视距离限制指定X名额外目标。',
+                  marisa_die:'没事，这夜晚还很长呢！',
                   mokou:'妹红',
                   yuhuo:'狱火',
                   yuhuo_2:'狱火',

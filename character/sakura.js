@@ -479,7 +479,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.redo();
                     }
                     "step 2"
-                    event.current.chooseTarget([1,1],true,get.prompt('chunxiao'),function(card,player,target){
+                    event.current.chooseTarget([1,1],true,'春晓：弃置你上家或下家一张牌',function(card,player,target){
                         if(player==target) return false;
                         if(get.distance(player,target)<=1) return true;
                         if(game.hasPlayer(function(current){
@@ -494,7 +494,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 3"
                     if(result.bool){
                         event.current.line(result.targets,'green');
-                        //player.logSkill('chunxiao',result.targets);
                         event.targets=result.targets;
                         event.current.discardPlayerCard(event.targets[0],'hej',[1,1],true);
                     }
@@ -522,13 +521,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 0'
                     player.chooseControl(choice).set('ai',function(){
-                        if (player.num('h') > player.hp){
-                            if (player.getStat().skill.mengya>0) return 'gain_lili';
-                            if (player.lili < 3) return 'gain_lili';
-                            return 'lose_lili'; 
-                        } else {
-                            return 'lose_lili';
-                        }
+                        if (player.num('h') > player.hp && player.lili < 3) return 'gain_lili';
+                        if (player.num('h') > player.hp) return 0;
                         return 'lose_lili';
                     });
                     'step 1'
@@ -541,11 +535,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 ai:{
-                    order:8,
+                    basic:{
+                        order:8
+                    },
                     result:{
                         player:function(player,target){
                             return 1;
-                        }
+                        },
                     }
                 }
             },

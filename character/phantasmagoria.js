@@ -123,7 +123,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                            player.chooseTarget(get.prompt('zaidu'),function(card,player,target){
                               return target.lili <= player.lili;
                               }).set('ai',function(target){
-                                    return 0;
+                                    if (player.storage.zaidu != 'heal') return -get.attitude(player,target);
+                                    else return get.attitude(player,target);
                               });
                               "step 1"
                               if(result.bool){
@@ -145,6 +146,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     if (storage == 'heal') return '【灾毒】：回复1点体力';
                                     if (storage == 'damage') return '【灾毒】：造成1点弹幕伤害';
                               }
+                        },
+                        check:function(){
+                          return true;
                         },
                   },
                   zaidu2:{

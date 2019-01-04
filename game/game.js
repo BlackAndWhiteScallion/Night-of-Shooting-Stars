@@ -22819,6 +22819,7 @@ dualside:{
                     }
                 },
                 check:function(event,player){
+                    if (player.hasSkill('bamiao')) return true;
                     if (player.lili > 2) return false;
                     var card = event.card;
                     if(card.name == 'guohe'){
