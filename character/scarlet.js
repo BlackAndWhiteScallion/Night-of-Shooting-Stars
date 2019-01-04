@@ -656,20 +656,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     for (var i in list){
                         if (player.skipList.contains(i)) list.remove(i);    
                     }
-                    event.list = list;
-                    event.list2 = list;
-                    for (var i in list){
-                        i = get.translation(i);
-                    }
                     player.chooseControl(list, function(event,player){
-                        if (player.getCards('h').length < 2) return '弃牌阶段';
-                        if (player.getCards('h').length > player.hp) return '摸牌阶段';
-                        return '出牌阶段';
+                        if (player.getCards('h').length < 2 && player.getCards('h').length + 2 > player.hp) return 'phaseDiscard';
+                        if (player.getCards('h').length > player.hp) return 'phaseDraw';
+                        return 'phaseUse';
                     });
                     "step 1"
                     if (result.control){
-                        result.control = event.list[event.list2.indexOf(result.control)];
-                        player.storage.qishu = [result.control];
+                        player.storage.qishu = result.control;
                         player.chooseTarget(1,"选择一名角色，令其获得1点灵力并执行一个额外的"+get.translation(result.control),function(card,player,target){
                             return target != player;
                         }).set('ai',function(target){
@@ -686,11 +680,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.loselili();
                         result.targets[0].addSkill('qishu2');
                         result.targets[0].storage.qishu = player.storage.qishu;
-                        player.skip(player.storage.qishu[0]);
-                        player.storage.qishu = null;
+                        player.skip(player.storage.qishu);
+                        delete player.storage.qishu;
                     } else {
                         event.finish();
                     }
+                },
+                check:function(event,player){
+                    return player.lili > 1;
                 },
             },
             qishu2:{
@@ -701,11 +698,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.gainlili();
-                    if (player.storage.qishu[0] == "phaseDraw"){
+                    if (player.storage.qishu == "phaseDraw"){
                         player.phaseDraw();
-                    } else if (player.storage.qishu[0] == "phaseUse") {
+                    } else if (player.storage.qishu == "phaseUse") {
                         player.phaseUse();
-                    } else if (player.storage.qishu[0] == "phaseDiscard"){
+                    } else if (player.storage.qishu == "phaseDiscard"){
                         player.phaseDiscard();
                     }
                     player.storage.qishu = null;
@@ -763,7 +760,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.bool){
                         trigger.cancel();
-                        //trigger.untrigger();
                     }
                 },
             },
