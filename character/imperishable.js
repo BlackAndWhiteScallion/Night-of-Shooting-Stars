@@ -16,7 +16,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mokou:['female','1',4,['yuhuo','businiao']],
 		},
 		characterIntro:{
-			wriggle:'全名莉格露·奈特巴格。萤火虫妖怪，并且是虫王，可以操纵大量的各种虫子（和听起来一样恶心）。但是惧怕虫子的人越来越少，妖力下降到只是个萝莉，还是个笨蛋。<br> <b>画师：羽々斩</b>',
+			   wriggle:'全名莉格露·奈特巴格。萤火虫妖怪，并且是虫王，可以操纵大量的各种虫子（和听起来一样恶心）。但是惧怕虫子的人越来越少，妖力下降到只是个萝莉，还是个笨蛋。<br> <b>画师：羽々斩</b>',
                 mystia:'全名米斯蒂娅·萝蕾拉。夜雀妖怪，可以通过歌声让人疯狂或是变成夜盲。以前以吃人为生，现在因种种原因在开烧烤店。<br> <b>画师：鶖（かしどり）</b>',
                 keine:'全名上白泽慧音。虽然是妖怪，平时与人类住在一起，并给人类孩子们教书。在月圆之夜会变身成兽人，然后做些……不可描述的事情。<br> <b>画师：にしもん</b>',
                 reimu:'全名博丽灵梦。东方project的主角，博丽神社的巫女，符卡规则的创建人。因为是巫女，在幻想乡是绝对权威势力。但是平常懒到连异变都不去解决……<br> <b>画师：萩原</b>',
@@ -389,7 +389,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }).set('prompt','少摸任意张牌，增加等量攻击范围');
                         'step 1'
                         if (result.control){
-                            game.log(result.control);
                             trigger.num -= result.control;
                             player.storage.liuxing = result.control;
                             player.addTempSkill('liuxing_shun','phaseAfter');
@@ -503,6 +502,310 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       selectTarget:function(card,player,range){
                         if(player.storage.stardust && card.type != 'equip'&&range[1]!=-1) range[1]+=player.storage.stardust;
                       },
+                    },
+                  },
+                  zhaixing:{
+                    audio:2,
+                    trigger:{player:'phaseEnd'},
+                    group:['zhaixing_mark','zhaixing_remove'],
+                    filter:function(event,player){
+                      return player.storage.zhaixing.length;
+                    },
+                    content:function(){
+                      'step 0'
+                      player.chooseControl(['观看牌堆顶','观看技能牌堆顶'], true);
+                      'step 1'
+                      if (result.control){
+                        var cards = [];
+                        if (result.control == '观看牌堆顶'){
+                          cards = get.cards(player.storage.zhaixing.length);
+                        } else if (result.control == '观看技能牌堆顶'){
+                            for(var i=0;i<3;i++){
+                                cards.push(ui.skillPile.childNodes[i]);
+                            }
+                        }
+                        event.cards = cards;
+                        player.chooseCardButton(cards,'可以选择一张牌交给一名角色',1);
+                      }
+                      'step 2'
+                      if (result.bool){
+                        event.card = result.card;
+                        player.chooseTarget('将'+get.translation(result.links)+'交给一名角色').set('ai',function(target){
+                              return get.attitude(_status.event.player,target);
+                          });;
+                      }
+                      'step 3'
+                      if (result.bool && result.targets.length){
+                        result.targets[0].gain(event.card);
+                        event.cards.remove(event.card);
+                      }
+                      'step 4'
+                      if (event.cards.length){
+                        if(player.isUnderControl()){
+                          game.modeSwapPlayer(player);
+                        }
+                        var cards=event.cards;
+                        var switchToAuto=function(){
+                          _status.imchoosing=false;
+                          if(event.dialog) event.dialog.close();
+                          if(event.control) event.control.close();
+                          var top=[];
+                          var judges=player.node.judges.childNodes;
+                          var stopped=false;
+                          if(!player.countCards('h','wuxie')){
+                            for(var i=0;i<judges.length;i++){
+                              var judge=get.judge(judges[i]);
+                              cards.sort(function(a,b){
+                                return judge(b)-judge(a);
+                              });
+                              if(judge(cards[0])<0){
+                                stopped=true;break;
+                              }
+                              else{
+                                top.unshift(cards.shift());
+                              }
+                            }
+                          }
+                          var bottom;
+                          if(!stopped){
+                            cards.sort(function(a,b){
+                              return get.value(b,player)-get.value(a,player);
+                            });
+                            while(cards.length){
+                              if(get.value(cards[0],player)<=5) break;
+                              top.unshift(cards.shift());
+                            }
+                          }
+                          bottom=cards;
+                          for(var i=0;i<top.length;i++){
+                            ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
+                          }
+                          for(i=0;i<bottom.length;i++){
+                            ui.cardPile.appendChild(bottom[i]);
+                          }
+                          player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(bottom.length)+'下');
+                          game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
+                          game.delay(2);
+                        };
+                        var chooseButton=function(online,player,cards){
+                          var event=_status.event;
+                          player=player||event.player;
+                          cards=cards||event.cards;
+                          event.top=[];
+                          event.bottom=[];
+                          event.status=true;
+                          event.dialog=ui.create.dialog('按顺序选择置于牌堆顶的牌（先选择的在上）',cards);
+                          for(var i=0;i<event.dialog.buttons.length;i++){
+                            event.dialog.buttons[i].classList.add('pointerdiv');
+                          }
+                          event.switchToAuto=function(){
+                            event._result='ai';
+                            event.dialog.close();
+                            event.control.close();
+                            _status.imchoosing=false;
+                          },
+                          event.control=ui.create.control('ok','pileTop','pileBottom',function(link){
+                            var event=_status.event;
+                            if(link=='ok'){
+                              if(online){
+                                event._result={
+                                  top:[],
+                                  bottom:[]
+                                }
+                                for(var i=0;i<event.top.length;i++){
+                                  event._result.top.push(event.top[i].link);
+                                }
+                                for(var i=0;i<event.bottom.length;i++){
+                                  event._result.bottom.push(event.bottom[i].link);
+                                }
+                              }
+                              else{
+                                var i;
+                                for(i=0;i<event.top.length;i++){
+                                  ui.cardPile.insertBefore(event.top[i].link,ui.cardPile.firstChild);
+                                }
+                                for(i=0;i<event.bottom.length;i++){
+                                  ui.cardPile.appendChild(event.bottom[i].link);
+                                }
+                                for(i=0;i<event.dialog.buttons.length;i++){
+                                  if(event.dialog.buttons[i].classList.contains('glow')==false&&
+                                    event.dialog.buttons[i].classList.contains('target')==false)
+                                  ui.cardPile.appendChild(event.dialog.buttons[i].link);
+                                }
+                                player.popup(get.cnNumber(event.top.length)+'上'+get.cnNumber(event.cards.length-event.top.length)+'下');
+                                game.log(player,'将'+get.cnNumber(event.top.length)+'张牌置于牌堆顶');
+                              }
+                              event.dialog.close();
+                              event.control.close();
+                              game.resume();
+                              _status.imchoosing=false;
+                            }
+                            else if(link=='pileTop'){
+                              event.status=true;
+                              event.dialog.content.childNodes[0].innerHTML='按顺序选择置于牌堆顶的牌';
+                            }
+                            else{
+                              event.status=false;
+                              event.dialog.content.childNodes[0].innerHTML='按顺序选择置于牌堆底的牌';
+                            }
+                          })
+                          for(var i=0;i<event.dialog.buttons.length;i++){
+                            event.dialog.buttons[i].classList.add('selectable');
+                          }
+                          event.custom.replace.button=function(link){
+                            var event=_status.event;
+                            if(link.classList.contains('target')){
+                              link.classList.remove('target');
+                              event.top.remove(link);
+                            }
+                            else if(link.classList.contains('glow')){
+                              link.classList.remove('glow');
+                              event.bottom.remove(link);
+                            }
+                            else if(event.status){
+                              link.classList.add('target');
+                              event.top.unshift(link);
+                            }
+                            else{
+                              link.classList.add('glow');
+                              event.bottom.push(link);
+                            }
+                          }
+                          event.custom.replace.window=function(){
+                            for(var i=0;i<_status.event.dialog.buttons.length;i++){
+                              _status.event.dialog.buttons[i].classList.remove('target');
+                              _status.event.dialog.buttons[i].classList.remove('glow');
+                              _status.event.top.length=0;
+                              _status.event.bottom.length=0;
+                            }
+                          }
+                          game.pause();
+                          game.countChoose();
+                        };
+                        event.switchToAuto=switchToAuto;
+
+                        if(event.isMine()){
+                          chooseButton();
+                          event.finish();
+                        }
+                        else if(event.isOnline()){
+                          event.player.send(chooseButton,true,event.player,event.cards);
+                          event.player.wait();
+                          game.pause();
+                        }
+                        else{
+                          event.switchToAuto();
+                          event.finish();
+                        }
+                      }
+                      'step 5'
+                      if (!event.cards.length) event.finish();
+                      if(event.result=='ai'||!event.result){
+                          event.switchToAuto();
+                        }
+                        else{
+                          var top=event.result.top||[];
+                          var bottom=event.result.bottom||[];
+                          for(var i=0;i<top.length;i++){
+                            if (get.type(top[i]) == 'delay'){
+                              ui.skillPile.insertBefore(top[i],ui.skillPile.firstChild);
+                            } else {
+                              ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
+                            }
+                          }
+                          for(i=0;i<bottom.length;i++){
+                            if (get.type(top[i]) == 'delay'){
+                              ui.skillPile.appendChild(bottom[i]);
+                            } else {
+                              ui.cardPile.appendChild(bottom[i]);
+                            }
+                          }
+                          for(i=0;i<event.cards.length;i++){
+                            if(!top.contains(event.cards[i])&&!bottom.contains(event.cards[i])){
+                              if (get.type(event.cards[i]) == 'delay'){
+                                ui.skillPile.appendChild(event.cards[i]);
+                              } else {
+                                ui.cardPile.appendChild(event.cards[i]);
+                              }
+                            }
+                          }
+                          player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(event.cards.length-top.length)+'下');
+                          game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
+                          game.delay(2);
+                        }
+                    }
+                  },
+                  zhaixing_mark:{
+                    direct:true,
+                    trigger:{player:'useCard'},
+                    init:function(player){
+                      player.storage.zhaixing=[];
+                    },
+                    intro:{
+                          content:function(storage,player){
+                                var str = '';
+                                for (var i = 0; i < player.storage.zhaixing; i ++){
+                                      str += get.translation(player.storage.zhaixing[i]) + ',';
+                                }
+                                return str;
+                          }
+                    }, 
+                    filter:function(event,player){
+                      return _status.currentPhase == player;
+                    },
+                    content:function(){
+                      if (!player.storage.zhaixing.contains(get.suit(trigger.card))){
+                        player.storage.zhaixing.push(get.suit(trigger.card));
+                      }
+                      player.markSkill('zhaixing');
+                    },
+                    zhaixing_remove:{
+                      direct:true,
+                      trigger:{player:'phaseAfter'},
+                      content:function(){
+                        player.storage.zhaixing=[];
+                        player.unmarkSkill('zhaixing');
+                      },
+                    },
+                  },
+                  lanyue:{
+                    audio:2,
+                    enable:'chooseToUse',
+                    usable:1,
+                    /*
+                    filter:function(event,player){
+                      if(player.countCards('h')==0) return false;
+                      return game.hasPlayer(function(current){
+                        return current.hp>player.hp&&current.countCards('h');
+                      });
+                    },
+                    */
+                    filterTarget:function(card,player,target){
+                      var players = game.filterPlayer();
+                      var length = 0;
+                      for (var i = 0; i < players.length; i ++){
+                        if (get.distance(player,players[i],'attack') > 1) players.remove(players[i]);
+                        else if (get.distance(player,players[i]) > length) length = get.distance(player,players[i]);
+                      }
+                      return players.contains(target) && get.distance(player,target) == length;
+                    },
+                    content:function(){
+                      "step 0"
+                      var list = [];
+                      if (target.hp != player.hp) list.push('hp');
+                      if (target.lili != player.lili) list.push('lili');
+                      if (list.length == 0) event.finish();
+                      else target.chooseControl(list, true);
+                      "step 1"
+                      if(result.bool){
+                        if (result.control == 'hp'){
+                          target.hp = player.hp;
+                          target.update();
+                        } else if (result.control == 'lili'){
+                          target.lili = player.lili;
+                          target.update();
+                        }
+                      }
                     },
                   },
                   yuhuo:{
@@ -685,6 +988,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   stardust_audio2:'现在开始，这就是我的舞台了！',
                   stardust_info:'符卡技（X）（X为任意值）你本回合使用下一张牌时：若有强化效果，执行强化效果X次；若不是装备牌，可以无视距离限制指定X名额外目标。',
                   marisa_die:'没事，这夜晚还很长呢！',
+                  eirin:'永琳',
+                  zhaixing:'摘星',
+                  zhaixing_info:'结束阶段，你可以观看牌堆顶，或技能牌堆顶的X张牌（X为你本回合使用的牌花色数）；你将其中一张交给一名角色，其余按任意顺序置于该牌堆顶或底。',
+                  lanyue:'揽月',
+                  lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同',
+                  tianwen:'天文秘葬法',
+                  tianwen_info:'符卡技（ X ）（X为任意值）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
                   mokou:'妹红',
                   yuhuo:'狱火',
                   yuhuo_2:'狱火',

@@ -944,7 +944,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     "step 2"
                     for (var i = 0; i < event.players.length; i ++){
-                        if (!event.players[i].getCards('h')) event.players[i].damage();
+                        if (event.players[i].countCards('h') == 0) event.players[i].damage();
                     }
                     'step 3'
                     lib.skill['kuangyan'].forced = true;

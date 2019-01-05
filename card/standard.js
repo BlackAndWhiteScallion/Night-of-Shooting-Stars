@@ -680,7 +680,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				result:{
 					target:function(player,target){
 						if (!target.identityShown) return 2;
-						if(ai.get.attitude(player,target)<=0) return (target.num('h'))?-1.5:1.5;
+						if(ai.get.attitude(player,target)<=0) return (target.num('h'))?1.5:-1.5;
 						return 1;
 					}
 				},
@@ -777,10 +777,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			ai:{
 				basic:{
 					order:1,
-					useful:[2,0],
-					value:[2,0],
+					useful:[3,1],
+					value:[3,1],
 				},
-				result:{player:0},
+				result:{player:0.5},
 			},
 		},
 		// 幻想之门
@@ -913,7 +913,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				result:{
 					target:function(player,target){
-						if (target.maxHp - target.hp) return -10;
+						if (target.maxHp == target.hp) return -10;
 						var es=target.get('e');
 						var nh=target.num('h');
 						var noe=(es.length==0||target.hasSkillTag('noe'));

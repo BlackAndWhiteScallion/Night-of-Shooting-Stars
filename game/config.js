@@ -44,7 +44,7 @@ window.config={
 	volumn_audio:8,
 
 	connect_avatar:'reimu',
-	connect_nickname:'无名玩家',
+	connect_nickname:'黑白葱fans',
 	config_menu:true,
 	directstartmode:false,
 	auto_popped_config:true,

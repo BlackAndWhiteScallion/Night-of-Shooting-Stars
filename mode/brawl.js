@@ -370,7 +370,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    brawl:{
 	        weiwoduzun:{
 	            name:'唯我独尊',
-	            mode:'identity',
+	            mode:'old_identity',
 	            intro:[
 	                '牌堆中杀的数量增加30%',
 	                '游戏开始时，主公获得一枚战神标记',
@@ -519,136 +519,138 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            }
 	        },
-	        tongxingzhizheng:{
-	            name:'同姓之争',
-	            mode:'versus',
-	            submode:'2v2',
-	            intro:'姓氏相同的武将组合一队',
-	            showcase:function(init){
-	                var node=this;
-	                var getList=function(){
-	                    var list=[['guanyu','guanping','guansuo','guanyinping'],
-	                    ['caocao','caopi','caozhi','caorui'],['liubei','liushan','liuchen'],
-	                    ['xiahouyuan','xiahouba','xiahoushi'],['sunjian','sunquan','sunce'],
-	                    ['sp_zhangjiao','zhangliang','zhangbao'],['zhugeliang','zhugeguo','zhugejin','zhugeke'],
-	                    ['mateng','machao','madai','mayunlu']];
-	                    list.randomSort();
-	                    var list2=[];
-	                    for(var i=0;i<list.length;i++){
-	                        list2=list2.concat(list[i]);
-	                    }
-	                    node.list=list2;
-	                };
-	                var func=function(){
-	                    if(!node.list.length){
-	                        getList();
-	                    }
-	                    var card=ui.create.player(null,true);
-	                    card.init(node.list.shift());
-	                    card.node.marks.remove();
-	                    card.node.count.remove();
-	                    card.node.hp.remove();
-	                    node.nodes.push(card);
-	                    card.style.position='absolute';
-	                    var rand1=Math.round(Math.random()*100);
-	                    var rand2=Math.round(Math.random()*100);
-	                    var rand3=Math.round(Math.random()*40)-20;
-	                    card.style.left='calc('+rand1+'% - '+(rand1*1.5)+'px)';
-	                    card.style.top='calc('+rand2+'% - '+(rand2*1.8)+'px)';
-	                    card.style.transform='scale(1.2) rotate('+rand3+'deg)';
-	                    card.style.opacity=0;
-	                    ui.refresh(card);
-	                    node.appendChild(card);
-	                    ui.refresh(card);
-	                    card.style.transform='scale(0.9) rotate('+rand3+'deg)';
-	                    card.style.opacity=1;
-	                    if(node.nodes.length>4){
-	                        setTimeout(function(){
-	                            while(node.nodes.length>3){
-	                                node.nodes.shift().delete();
-	                            }
-	                        },500);
-	                    }
-	                };
-	                node.list=[];
-	                if(init){
-	                    node.nodes=[];
-	                    for(var i=0;i<3;i++){
-	                        func();
-	                    }
-	                }
-	                node.showcaseinterval=setInterval(func,1000);
-	            },
-	            init:function(){
-	                var map={};
-	                var map3=[];
-	                var list1=['司','夏','诸'];
-	                var list2=['马','侯','葛'];
-	                var exclude=['界','新','大'];
-	                for(var i in lib.character){
-	                    if(lib.filter.characterDisabled(i)) continue;
-	                    var surname=lib.translate[i];
-	                    for(var j=0;j<surname.length;j++){
-	                        if(exclude.contains(surname[j])) continue;
-	                        if(!/[a-z]/i.test(surname[j])){
-	                            var index=list1.indexOf(surname[j]);
-	                            if(index!=-1&&surname[j+1]==list2[index]){
-	                                surname=surname[j]+surname[j+1];
-	                            }
-	                            else{
-	                                surname=surname[j];
-	                            }
-	                            break;
-	                        }
-	                    }
-	                    if(!map[surname]){
-	                        map[surname]=[];
-	                    }
-	                    map[surname].push(i);
-	                }
-	                for(var i in map){
-	                    if(map[i].length<4){
-	                        delete map[i];
-	                    }
-	                    else{
-	                        map3.push(i);
-	                    }
-	                }
-	                _status.brawl.map=map;
-	                _status.brawl.map3=map3;
-	            },
-	            content:{
-	                submode:'two',
-	                chooseCharacterFixed:true,
-	                chooseCharacter:function(list,player){
-	                    if(player.side==game.me.side){
-	                        if(_status.brawl.mylist){
-	                            return _status.brawl.mylist.randomGets(2);
-	                        }
-	                    }
-	                    else{
-	                        if(_status.brawl.enemylist){
-	                            return _status.brawl.enemylist.randomGets(2);
-	                        }
-	                    }
-	                    var surname=_status.brawl.map3.randomRemove();
-	                    var list=_status.brawl.map[surname];
-	                    if(player==game.me){
-	                        _status.brawl.mylist=list;
-	                    }
-	                    else{
-	                        _status.brawl.enemylist=list;
-	                    }
-	                    return list.randomRemove(2);
-	                }
-	            }
-	        },
 	        // shenrudihou:{
 	        //     name:'深入敌后',
 	        //     mode:'versus',
 	        //     submode:'1v1',
 	        //     intro:'选将阶段选择武将和对战阶段选择上场的武将都由对手替你选择，而且你不知道对手为你选择了什么武将'
 	        // },
+	        /* 能改造成CP之争吗（笑） 
+	        tongxingzhizheng:{
+				name:'同姓之争',
+				mode:'versus',
+				submode:'2v2',
+				intro:'姓氏相同的武将组合一队',
+				showcase:function(init){
+					var node=this;
+					var getList=function(){
+						var list=[['guanyu','guanping','guansuo','guanyinping'],
+						['caocao','caopi','caozhi','caorui'],['liubei','liushan','liuchen'],
+						['xiahouyuan','xiahouba','xiahoushi'],['sunjian','sunquan','sunce'],
+						['sp_zhangjiao','zhangliang','zhangbao'],['zhugeliang','zhugeguo','zhugejin','zhugeke'],
+						['mateng','machao','madai','mayunlu']];
+						list.randomSort();
+						var list2=[];
+						for(var i=0;i<list.length;i++){
+							list2=list2.concat(list[i]);
+						}
+						node.list=list2;
+					};
+					var func=function(){
+						if(!node.list.length){
+							getList();
+						}
+						var card=ui.create.player(null,true);
+						card.init(node.list.shift());
+						card.node.marks.remove();
+						card.node.count.remove();
+						card.node.hp.remove();
+						node.nodes.push(card);
+						card.style.position='absolute';
+						var rand1=Math.round(Math.random()*100);
+						var rand2=Math.round(Math.random()*100);
+						var rand3=Math.round(Math.random()*40)-20;
+						card.style.left='calc('+rand1+'% - '+(rand1*1.5)+'px)';
+						card.style.top='calc('+rand2+'% - '+(rand2*1.8)+'px)';
+						card.style.transform='scale(1.2) rotate('+rand3+'deg)';
+						card.style.opacity=0;
+						ui.refresh(card);
+						node.appendChild(card);
+						ui.refresh(card);
+						card.style.transform='scale(0.9) rotate('+rand3+'deg)';
+						card.style.opacity=1;
+						if(node.nodes.length>4){
+							setTimeout(function(){
+								while(node.nodes.length>3){
+									node.nodes.shift().delete();
+								}
+							},500);
+						}
+					};
+					node.list=[];
+					if(init){
+						node.nodes=[];
+						for(var i=0;i<3;i++){
+							func();
+						}
+					}
+					node.showcaseinterval=setInterval(func,1000);
+				},
+				init:function(){
+					var map={};
+					var map3=[];
+					var list1=['司','夏','诸'];
+					var list2=['马','侯','葛'];
+					var exclude=['界','新','大'];
+					for(var i in lib.character){
+						if(lib.filter.characterDisabled(i)) continue;
+						var surname=lib.translate[i];
+						for(var j=0;j<surname.length;j++){
+							if(exclude.contains(surname[j])) continue;
+							if(!/[a-z]/i.test(surname[j])){
+								var index=list1.indexOf(surname[j]);
+								if(index!=-1&&surname[j+1]==list2[index]){
+									surname=surname[j]+surname[j+1];
+								}
+								else{
+									surname=surname[j];
+								}
+								break;
+							}
+						}
+						if(!map[surname]){
+							map[surname]=[];
+						}
+						map[surname].push(i);
+					}
+					for(var i in map){
+						if(map[i].length<4){
+							delete map[i];
+						}
+						else{
+							map3.push(i);
+						}
+					}
+					_status.brawl.map=map;
+					_status.brawl.map3=map3;
+				},
+				content:{
+					submode:'two',
+					chooseCharacterFixed:true,
+					chooseCharacter:function(list,player){
+						if(player.side==game.me.side){
+							if(_status.brawl.mylist){
+								return _status.brawl.mylist.randomGets(2);
+							}
+						}
+						else{
+							if(_status.brawl.enemylist){
+								return _status.brawl.enemylist.randomGets(2);
+							}
+						}
+						var surname=_status.brawl.map3.randomRemove();
+						var list=_status.brawl.map[surname];
+						if(player==game.me){
+							_status.brawl.mylist=list;
+						}
+						else{
+							_status.brawl.enemylist=list;
+						}
+						return list.randomRemove(2);
+					}
+				}
+			},
+			*/
 	        tongjiangmoshi:{
 	            name:'同将模式',
 	            mode:'identity',
@@ -755,6 +757,57 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        //         }
 	        //     }
 	        // }
+	        practise:{
+	        	name:'对战练习',
+	        	mode:'old_identity',
+	        	submode:'1v1',
+	        	intro:[
+	        		'不会用角色？不熟悉牌堆？不熟悉游戏操作？',
+	        		'来和5血<s>稻草人</s>子规老师练习一下吧？',
+	        	],
+	        	init:function(){
+					//game.saveConfig('player_number','2','old_identity');
+					lib.config.mode_config['old_identity']['player_number'] = '2';
+					//game.saveConfig('double_character',false,'old_identity');
+					//lib.config.mode_config['old_identity']['double_character'] = false;
+				},
+	        	content:{
+					chooseCharacterFixed:true,
+					chooseCharacterAi:function(player){
+						player.init('zigui');
+					},
+	        	},
+	        	showcase:function(init){
+					var node=this;
+					var player;
+					if(init){
+						player=ui.create.player(null,true);
+						player.node.avatar.style.backgroundSize='cover';
+						player.node.avatar.setBackgroundImage('image/character/zigui.jpg');
+						player.node.avatar.show();
+						player.style.left='calc(50% - 75px)';
+						player.style.top='20px';
+						player.node.count.remove();
+						player.node.hp.remove();
+						player.style.transition='all 0.5s';
+						node.appendChild(player);
+						node.playernode=player;
+					}
+					else{
+						player=node.playernode;
+					}
+				},
+	        },
+	        /*
+	        pubg:{
+	        	name:'吃鸡',
+	        	mode:'old_identity',
+	        	intro:[
+	        		'所有角色各自为营，所有其他角色坠机为胜利。',
+	        		'击坠角色摸两张牌并获得1点灵力',
+	        	],
+	        },
+	        */
 	        scene:{
 	            name:'创建场景',
 	            content:{

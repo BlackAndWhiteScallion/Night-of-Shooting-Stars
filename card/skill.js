@@ -161,7 +161,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			shengdun_skill:{
     			filter:function(event,player){
-    				return event.player==player&&event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack');
+    				return event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack');
     			},
     			logTarget:'player',
     			check:function(event,player){

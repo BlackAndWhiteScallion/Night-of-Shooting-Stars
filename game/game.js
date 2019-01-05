@@ -5731,6 +5731,11 @@
                         init:true,
                         frequent:true
                     },
+                    practise:{
+                        name:'对战练习',
+                        init:true,
+                        frequent:true
+                    },
                     scene:{
                         name:'创建场景',
                         init:true,

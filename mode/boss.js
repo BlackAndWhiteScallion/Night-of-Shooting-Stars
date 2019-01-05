@@ -399,44 +399,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss']],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss']],
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
+				//boss_lvbu1:['male','shen',8,['mashu','wushuang','boss_baonu'],['qun','boss','bossallowed'],'wei'],
+				//boss_lvbu2:['male','shen',4,['mashu','wushuang','xiuluo','shenwei','shenji'],['qun','hiddenboss','bossallowed'],'qun'],
+				boss_zhaoyun:['male','shen',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'qun'],
 			}
 		},
 		cardPack:{
-			mode_boss:{
-				honghuangzhili:{
-					type:'trick',
-					enable:true,
-					fullskin:true,
-					filterTarget:true,
-					content:function(){
-						if(target.group=='shen'){
-							target.addSkill('honghuangzhili');
-							if(target.countCards('he')){
-								player.gainPlayerCard(target,'he',true);
-							}
-						}
-						else{
-							target.turnOver();
-						}
-					},
-					ai:{
-						order:4,
-						value:10,
-						result:{
-							target:function(player,target){
-								if(target.group=='shen'){
-									if(target.countCards('he')) return -2;
-									return 0;
-								}
-								else{
-									if(target.isTurnedOver()) return 4;
-									return -3;
-								}
-							}
-						}
-					}
-				}
-			}
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_boss){
@@ -854,6 +822,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.damageCount=ui.create.system('伤害: 0',null,true);
 				}
 			},
+			boss_lvbu1:{
+				loopType:2,
+				gameDraw:function(player){
+					return player==game.boss?8:4;
+				},
+			},
+			boss_lvbu2:{
+				loopType:1,
+			},
+			boss_zhaoyun:{
+				loopType:1,
+				chongzheng:4,
+			},
 			global:{
 				loopType:2,
 				chongzheng:5,
@@ -1014,6 +995,148 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			boss_juejing:{
+				trigger:{player:'phaseDrawBefore'},
+				forced:true,
+				content:function(){
+					trigger.cancel();
+				},
+				ai:{
+					noh:true,
+				},
+				group:'boss_juejing2'
+			},
+			boss_juejing2:{
+				trigger:{player:'loseEnd'},
+				forced:true,
+				filter:function(event,player){
+					return player.countCards('h')<4;
+				},
+				content:function(){
+					player.draw(4-player.countCards('h'));
+				}
+			},
+			longhun:{
+			group:['longhun1','longhun2','longhun3','longhun4'],
+				ai:{
+					skillTagFilter:function(player,tag){
+						switch(tag){
+							case 'respondSha':{
+								if(player.countCards('he',{suit:'diamond'})<Math.max(1,player.hp)) return false;
+								break;
+							}
+							case 'respondShan':{
+								if(player.countCards('he',{suit:'club'})<Math.max(1,player.hp)) return false;
+								break;
+							}
+							case 'save':{
+								if(player.countCards('he',{suit:'heart'})<Math.max(1,player.hp)) return false;
+								break;
+							}
+						}
+					},
+					maixie:true,
+					save:true,
+					respondSha:true,
+					respondShan:true,
+					effect:{
+						target:function(card,player,target){
+							if(get.tag(card,'recover')&&target.hp>=1) return [0,0];
+							if(!target.hasFriend()) return;
+							if((get.tag(card,'damage')==1||get.tag(card,'loseHp'))&&target.hp>1) return [0,1];
+						}
+					},
+					threaten:function(player,target){
+						if(target.hp==1) return 2;
+						return 0.5;
+					},
+				}
+			},
+			longhun1:{
+				audio:true,
+				enable:['chooseToUse','chooseToRespond'],
+				prompt:function(){
+					return '将'+get.cnNumber(Math.max(1,_status.event.player.hp))+'张红桃牌当作桃使用';
+				},
+				position:'he',
+				check:function(card,event){
+					if(_status.event.player.hp>1) return 0;
+					return 10-get.value(card);
+				},
+				selectCard:function(){
+					return Math.max(1,_status.event.player.hp);
+				},
+				viewAs:{name:'tao'},
+				filter:function(event,player){
+					return player.countCards('he',{suit:'heart'})>=player.hp;
+				},
+				filterCard:function(card){
+					return get.suit(card)=='heart';
+				}
+			},
+			longhun2:{
+				audio:true,
+				enable:['chooseToUse','chooseToRespond'],
+				prompt:function(){
+					return '将'+get.cnNumber(Math.max(1,_status.event.player.hp))+'张方片当作火杀使用或打出';
+				},
+				position:'he',
+				check:function(card,event){
+					if(_status.event.player.hp>1) return 0;
+					return 10-get.value(card);
+				},
+				selectCard:function(){
+					return Math.max(1,_status.event.player.hp);
+				},
+				viewAs:{name:'sha',nature:'fire'},
+				filter:function(event,player){
+					return player.countCards('he',{suit:'diamond'})>=player.hp;
+				},
+				filterCard:function(card){
+					return get.suit(card)=='diamond';
+				}
+			},
+			longhun3:{
+				audio:true,
+				enable:['chooseToUse','chooseToRespond'],
+				prompt:function(){
+					return '将'+get.cnNumber(Math.max(1,_status.event.player.hp))+'张黑桃牌当作无懈可击使用';
+				},
+				position:'he',
+				check:function(card,event){
+					if(_status.event.player.hp>1) return 0;
+					return 7-get.value(card);
+				},
+				selectCard:function(){
+					return Math.max(1,_status.event.player.hp);
+				},
+				viewAs:{name:'wuxie'},
+				viewAsFilter:function(player){
+					return player.countCards('he',{suit:'spade'})>=player.hp;
+				},
+				filterCard:function(card){
+					return get.suit(card)=='spade';
+				}
+			},
+			longhun4:{
+				audio:true,
+				enable:['chooseToUse','chooseToRespond'],
+				prompt:function(){
+					return '将'+get.cnNumber(Math.max(1,_status.event.player.hp))+'张梅花牌当作闪打出';
+				},
+				position:'he',
+				check:function(card,event){
+					if(_status.event.player.hp>1) return 0;
+					return 10-get.value(card);
+				},
+				selectCard:function(){
+					return Math.max(1,_status.event.player.hp);
+				},
+				viewAs:{name:'shan'},
+				filterCard:function(card){
+					return get.suit(card)=='club';
+				}
+			},
 		},
 		translate:{
 			zhu:'魔王',
@@ -1037,6 +1160,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_damagecount:'沙袋武将',
 			boss_damagecount_info:'你在6分钟之内可以对我造成多少伤害呢？',
 			mode_boss_character_config:'挑战武将',
+			boss_zhaoyun:'高达一号',
+			boss_juejing:'绝境',
+			boss_juejing2:'绝境',
+			boss_juejing_info:'锁定技，摸牌阶段开始时，你不摸牌；锁定技，你失去牌时，若你的手牌数小于4，你将手牌补至四张',
+			longhun:'龙魂',
+			longhun1:'龙魂♥︎',
+			longhun2:'龙魂♦︎',
+			longhun3:'龙魂♠︎',
+			longhun4:'龙魂♣︎',
+			longhun_info:'你可以将同花色的X张牌按下列规则使用或打出：红桃当【葱】，方块当具火焰伤害的【轰！】，梅花当【没中】，黑桃当【请你住口！】（X为你的体力且至少为1）',
 		},
 		get:{
 			rawAttitude:function(from,to){

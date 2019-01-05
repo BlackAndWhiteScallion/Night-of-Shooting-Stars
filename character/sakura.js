@@ -402,6 +402,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 spell:['hanghuorai1'],
                 cost:2,
+                roundi:true,
                 trigger:{player:['phaseBegin']},
                 filter:function(event,player){
                     return player.lili > lib.skill.hanghourai.cost;
@@ -724,6 +725,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (result.links.length){
                             //player.$gain(result.links);
                             player.gain(result.links,'log');
+                            player.storage.mingzhi.push(result.links);
                         }
                     }
                     if (result.bool && event.control == '交出去明置牌'){
@@ -1754,9 +1756,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             alice:'爱丽丝',
             huanfa:'幻法',
             huanfa_info:'弃牌阶段开始时，若“手办”数小于场上角色数，你可以将一至两张手牌扣置于角色牌上，称为“手办”：然后，摸一张牌。',
+            huanfa_audio1:'',
+            huanfa_audio2:'',
             mocai:'魔彩',
+            mocai_audio1:'帮她一把吧，上海。',
+            mocai_audio2:'别让她倒了，蓬莱。',
             mocai_info:'你攻击范围内的一名角色成为攻击牌的目标后，你可以选择一项：将一张“手办”置于其区域内；或弃置一张“手办”，观看技能牌堆顶的三张牌，并将其中一张交给目标。',
             hanghourai:'上吊的蓬莱人形',
+            hanghourai_audio1:'诅咒「上吊的蓬莱人偶」!',
+            hanghourai_audio2:'',
             hanghourai1:'上吊的蓬莱人形',
             hanghourai_info:'符卡技（2）<永续> 符卡发动时，你可以将任意张手牌扣置为“手办”，并摸等量牌；一名角色的结束阶段，你可以交给其一张“手办”；若其可以使用该牌，你令其使用之，目标由你指定。',
             lilywhite:'莉莉白',
