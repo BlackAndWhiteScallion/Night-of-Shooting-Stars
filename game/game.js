@@ -15674,12 +15674,12 @@ getDiscardableCards:function(player,arg1,arg2){
                         if ((this.identity == 'zhu' && lib.config.musicchange != 'off') 
                             || (this.identity == 'nei' && lib.config.musicchange == 'luren')){
                             lib.backgroundmusicURL = ui.backgroundMusic.src;
-                            ui.backgroundMusic.src = 'audio/background/'+card.name+'.mp3';
+                            ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
                             lib.config.background_music = card.name;
                         }
                         if ((this.identity == 'zhu' && lib.config.backgroundchange != 'off') 
                             || (this.identity == 'nei' && lib.config.backgroundchange == 'luren')){
-                            var str = 'image/background/'+card.name+'.jpg';
+                            var str = lib.assetURL+'image/background/'+card.name+'.jpg';
                             ui.background.setBackgroundImage(str);
                         }
                     }

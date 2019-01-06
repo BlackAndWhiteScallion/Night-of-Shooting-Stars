@@ -475,8 +475,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           'step 1'
                           if (result.control){
                               player.loselili(result.control);
-                              ui.backgroundMusic.src = 'audio/background/marisa.mp3'
+                              ui.backgroundMusic.src = lib.assetURL+'audio/background/marisa.mp3'
                               lib.config.background_music = 'marisa';
+                              //lib.config.volumn_background = 100;
                               lib.config.musicchange = 'off';
                               player.storage.stardust = result.control;
                               if (!player.storage._enhance) player.storage._enhance = result.control;

@@ -867,7 +867,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return true;
 			},
 			content:function(){
-				target.addSkill('bingyu1');
 				if (target == player) target.addSkill('bingyu2');
 			},
 			contentAfter:function(){
@@ -949,7 +948,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return true;
 			},
 			content:function(){
-				target.addSkill('lingbi1');
+				
 			},
 			ai:{
 				basic:{
@@ -1925,6 +1924,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		}
 		},
 		bingyu2:{
+			global:'bingyu1',
 			trigger:{player:'phaseBegin'},
 			forced:true,
 			content:function(){
@@ -2428,6 +2428,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		// 准备阶段扔掉
 		lingbi2:{
+			global:'lingbi1',
 			trigger:{player:'phaseBegin'},
 			forced:true,
 			filter:function(event,player){
