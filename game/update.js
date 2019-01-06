@@ -1,6 +1,6 @@
 window.noname_update={
     version:'0.72',
-    update:'0.71',
+    update:'0.70',
     changeLog:[
         '更新成功！',
     ],
