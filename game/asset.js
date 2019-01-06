@@ -109,6 +109,7 @@ window.noname_asset_list=[
     'image/mode/boss/character/boss_reimu.jpg',
     'image/mode/boss/character/boss_reimu2.jpg',
     'image/mode/boss/character/boss_nianshou.jpg',
+    'image/mode/boss/character/boss_zhaoyun.jpg',
     'image/splash/boss.jpg',
     'image/splash/chess.jpg',
     'image/splash/old_identity.jpg',
