@@ -680,8 +680,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				result:{
 					target:function(player,target){
 						if (!target.identityShown) return 2;
-						if(ai.get.attitude(player,target)<=0) return (target.num('h'))?1.5:-1.5;
-						return 1;
+						//if(ai.get.attitude(player,target)<=0) return (target.num('h'))?1.5:-1.5;
+						return -get.attitude(player,target);
 					}
 				},
 				tag:{

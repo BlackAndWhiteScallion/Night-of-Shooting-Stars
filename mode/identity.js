@@ -395,28 +395,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(player.fanfixed) return;
 					if(game.zhu&&game.zhu.isZhu){
 						return {
-							fan:'反',
-							zhong:'忠',
-							nei:'内',
+							fan:'自',
+							zhong:'异',
+							nei:'路',
 							cai:'猜',
 						}
 					}
 					else{
 						return {
-							fan:'反',
-							zhong:'忠',
-							nei:'内',
-							zhu:'主',
+							fan:'自',
+							zhong:'异',
+							nei:'路',
+							zhu:'黑',
 							cai:'猜',
 						}
 					}
 				}
 				else{
 					return {
-						fan:'反',
-						zhong:'忠',
-						nei:'内',
-						cai:'猜',
+						fan:'自',
+							zhong:'异',
+							nei:'路',
+							cai:'猜',
 					}
 				}
 			},

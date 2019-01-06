@@ -10942,14 +10942,9 @@
                             event.addToAI=true;
                         }
                     }
-                    // 这里是丢牌！
-                    // 这里也应该想个办法加个设置。
                     player.lose(event.card1);
                     target.lose(event.card2);
-                    if (lib.config.compare_discard){
-                        player.draw();
-                        target.draw();    
-                    }
+
                     "step 5"
                     game.broadcast(function(){
                         ui.arena.classList.add('thrownhighlight');
@@ -11000,6 +10995,11 @@
                         },1000);
                     },str);
                     game.delay(2);
+                    // 这里是拼点完摸牌。
+                    if (lib.config.compare_discard){
+                        player.draw();
+                        target.draw();    
+                    }
                     "step 7"
                     if(typeof event.target.ai.shown=='number'&&event.target.ai.shown<=0.85&&event.addToAI){
                         event.target.ai.shown+=0.1;
@@ -27657,7 +27657,7 @@ smoothAvatar:function(player,vice){
 			if(ui.time3){
 				clearInterval(ui.time3.interval);
 			}
-            lib.config.background_music = lib.backgroundmusicURL;
+            if (lib.backgroundmusicURL) lib.config.background_music = lib.backgroundmusicURL;
             if(game.layout=='long2'&&!game.chess){
                 ui.arena.classList.add('choose-character');
                 ui.me.hide();
@@ -41052,6 +41052,67 @@ smoothAvatar:function(player,vice){
                     }
                 }
                 else{
+                    var nodes=[];
+                    _status.clickingidentity=[this.parentNode,nodes];
+                    var num=1;
+                    var dy=30;
+                    if(get.is.phoneLayout()){
+                        dy=40;
+                    }
+                    for(var i in list){
+                        if(this.firstChild.innerHTML!=list[i]){
+                            var node=ui.create.div('.identity.hidden.pointerdiv',this.parentNode,ui.click.identity2);
+                            ui.create.div(node).innerHTML=list[i];
+                            node.dataset.color=i;
+                            ui.refresh(node);
+                            node.show();
+                            var transstr='translateY('+((num++)*dy)+'px)';
+                            if(get.is.phoneLayout()){
+                                transstr+=' scale(1.3)';
+                            }
+                            if(get.is.newLayout()&&this.parentNode.classList.contains('linked')){
+                                transstr+=' rotate(90deg)';
+                            }
+                            node.style.transform=transstr;
+                            nodes.push(node);
+                        }
+                    }
+                }
+            },
+            /*
+            identity:function(e){
+                if(_status.dragged) return;
+                _status.clicked=true;
+                if(!game.getIdentityList) return;
+                if(_status.video) return;
+                if(this.parentNode.forceShown) return;
+                if(_status.clickingidentity){
+                    for(var i=0;i<_status.clickingidentity[1].length;i++){
+                        _status.clickingidentity[1][i].delete();
+                        _status.clickingidentity[1][i].style.transform='';
+                    }
+                    if(_status.clickingidentity[0]==this.parentNode){
+                        delete _status.clickingidentity;
+                        return;
+                    }
+                }
+                var list=game.getIdentityList(this.parentNode);
+                if(!list) return;
+                if(lib.config.mark_identity_style=='click'){
+                    var list2=[];
+                    for(var i in list){
+                        list2.push(i);
+                    }
+                    list2.push(list2[0]);
+                    for(var i=0;i<list2.length;i++){
+                        if(this.firstChild.innerHTML==list[list2[i]]){
+                            this.firstChild.innerHTML=list[list2[i+1]];
+                            this.dataset.color=list2[i+1];
+                            break;
+                        }
+                    }
+                }
+                else{
                     				if(get.mode()=='guozhan'){
 						list={wei:'魏',shu:'蜀',wu:'吴',qun:'群'};
 					}
@@ -41140,6 +41201,7 @@ smoothAvatar:function(player,vice){
 					// }
                 }
             },
+            */
             identity2:function(){
                 if(_status.clickingidentity){
                     _status.clicked=true;

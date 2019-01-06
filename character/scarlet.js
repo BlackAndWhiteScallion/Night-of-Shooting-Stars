@@ -405,13 +405,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (event.list[result.index] == '跳过摸牌阶段，视为使用一种法术牌'){
                             player.skip('phaseDraw');
                             game.trySkillAudio('qiyao',player,true,1);
-                            game.log(get.translation(player)+'跳过了摸牌阶段');
                             player.useSkill('qiyao2');
                         } else if (event.list[result.index] == '跳过出牌阶段，将一张牌当作一种法术牌使用'){
                             player.skip('phaseUse');
                             game.trySkillAudio('qiyao',player,true,2);
                             player.addTempSkill('qiyao3');
-                            game.log(get.translation(player)+'跳过了出牌阶段');
                             player.chooseToUse(function(card){
                                 if(!lib.filter.cardEnabled(card,_status.event.player,_status.event)){
                                     return false;
@@ -424,7 +422,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             player.loselili();
                             game.trySkillAudio('qiyao',player,true,3);
                             player.addTempSkill('qiyao4');
-                            game.log(get.translation(player)+'跳过了弃牌阶段');
                         } else {
                             event.finish();
                         }
@@ -969,7 +966,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.loselili(player.hp);
-                    player.addIncident('death');
+                    player.addIncident({name:'death'});
                     player.turnOver();
                 },
             },

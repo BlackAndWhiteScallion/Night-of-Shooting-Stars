@@ -511,6 +511,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     filter:function(event,player){
                       return player.storage.zhaixing.length;
                     },
+                    intro:{
+                          content:function(storage,player){
+                                var str = '';
+                                for (var i = 0; i < player.storage.zhaixing.length; i ++){
+                                      str += get.translation(player.storage.zhaixing[i]) + ',';
+                                }
+                                return str;
+                          }
+                    }, 
                     content:function(){
                       'step 0'
                       player.chooseControl(['观看牌堆顶','观看技能牌堆顶'], true);
@@ -528,18 +537,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.chooseCardButton(cards,'可以选择一张牌交给一名角色',1);
                       }
                       'step 2'
-                      if (result.bool){
-                        event.card = result.card;
+                      if (result.links.length){
+                        event.card = result.links;
                         player.chooseTarget('将'+get.translation(result.links)+'交给一名角色').set('ai',function(target){
                               return get.attitude(_status.event.player,target);
                           });;
                       }
                       'step 3'
-                      if (result.bool && result.targets.length){
+                      if (result.targets.length){
                         result.targets[0].gain(event.card);
                         event.cards.remove(event.card);
                       }
                       'step 4'
+                      if (!event.cards.length) event.finish();
                       if (event.cards.length){
                         if(player.isUnderControl()){
                           game.modeSwapPlayer(player);
@@ -733,7 +743,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
                           game.delay(2);
                         }
-                    }
+                    },
                   },
                   zhaixing_mark:{
                     direct:true,
@@ -741,36 +751,28 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     init:function(player){
                       player.storage.zhaixing=[];
                     },
-                    intro:{
-                          content:function(storage,player){
-                                var str = '';
-                                for (var i = 0; i < player.storage.zhaixing; i ++){
-                                      str += get.translation(player.storage.zhaixing[i]) + ',';
-                                }
-                                return str;
-                          }
-                    }, 
                     filter:function(event,player){
-                      return _status.currentPhase == player;
+                        return _status.currentPhase == player;
                     },
                     content:function(){
                       if (!player.storage.zhaixing.contains(get.suit(trigger.card))){
                         player.storage.zhaixing.push(get.suit(trigger.card));
                       }
                       player.markSkill('zhaixing');
+                      player.syncStorage('zhaixing');
                     },
-                    zhaixing_remove:{
+                  },
+                  zhaixing_remove:{
                       direct:true,
                       trigger:{player:'phaseAfter'},
                       content:function(){
                         player.storage.zhaixing=[];
                         player.unmarkSkill('zhaixing');
                       },
-                    },
                   },
                   lanyue:{
                     audio:2,
-                    enable:'chooseToUse',
+                    enable:'phaseUse',
                     usable:1,
                     /*
                     filter:function(event,player){
@@ -794,19 +796,45 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       var list = [];
                       if (target.hp != player.hp) list.push('hp');
                       if (target.lili != player.lili) list.push('lili');
+                      // 选择枝AI
+                      var choice;
+                      if (target.hp < player.hp){
+                        if ((player.lili - target.lili)/2 > (player.hp - target.hp)) choice = 'hp';
+                        else choice = 'lili';
+                      } else if (target.hp > player.hp){
+                        if ((player.lili - target.lili)/2 > (player.hp - target.hp)) choice = 'lili';
+                        else choice = 'hp';
+                      } else choice = 'lili';
                       if (list.length == 0) event.finish();
-                      else target.chooseControl(list, true);
+                      else target.chooseControl(function(){
+                              return _status.event.choice;
+                            },true).set('choiceList',list).set('choice',choice);
                       "step 1"
-                      if(result.bool){
+                      if(result.control){
                         if (result.control == 'hp'){
+                          game.log(get.translation(target)+'的体力调整为'+player.hp);
                           target.hp = player.hp;
                           target.update();
                         } else if (result.control == 'lili'){
+                          game.log(get.translation(target)+'的灵力调整为'+player.lili);
                           target.lili = player.lili;
                           target.update();
                         }
                       }
                     },
+                    ai:{
+                      order:8.5,
+                      result:{
+                          target:function(player,target){
+                            if (player.hp > target.hp || player.lili > target.hp) return get.attitude(player,target);
+                            return -get.attitude(player,target);
+                          }
+                        },
+                      threaten:2
+                    },
+                  },
+                  tianwen:{
+
                   },
                   yuhuo:{
                     audio:2,
@@ -994,7 +1022,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   lanyue:'揽月',
                   lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同',
                   tianwen:'天文秘葬法',
-                  tianwen_info:'符卡技（ X ）（X为任意值）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
+                  tianwen_info:'符卡技（X）（X为任意值）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
                   mokou:'妹红',
                   yuhuo:'狱火',
                   yuhuo_2:'狱火',

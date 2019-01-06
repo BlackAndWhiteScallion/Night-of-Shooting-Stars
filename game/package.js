@@ -38,7 +38,15 @@ window.noname_package={
         yuji:'雨季',
     },
     music:{
-        music_diaochan:'貂蝉',
+        music_default:'默认',
+        scarlet:'红月异变',
+        sakura:'散樱异变',
+        imperishable:'永夜异变',
+        immaterial:'萃梦异变',
+        phantasmagoria:'花映异变',
+        sb:'文花异变',
+        baka:'笨蛋异变',
+        reimu:'灵梦战',
     },
     font:{
         xiaozhuan:'小篆',

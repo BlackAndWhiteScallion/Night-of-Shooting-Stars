@@ -82,7 +82,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:2,
                 spell:['baofengxue2'],
-                roundi:true,
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.baofengxue.cost;
@@ -581,7 +580,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shenxuan_viewAs:{
                 enable:'phaseUse',
                 usable:1,
-                audio:2,
+                audio:1,
                 filter:function(event,player){
                     if (player.countCards('h','sha')== 0) return false;
                     return game.hasPlayer(function(target){
@@ -725,7 +724,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (result.links.length){
                             //player.$gain(result.links);
                             player.gain(result.links,'log');
-                            player.storage.mingzhi.push(result.links);
+                            if (!player.storage.mingzhi) player.storage.mingzhi = [result.links];
+                            else player.storage.mingzhi.push(result.links);
                         }
                     }
                     if (result.bool && event.control == '交出去明置牌'){
@@ -794,6 +794,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
             },
             hezou_2:{
+                audio:'hezou_skill',
                 trigger:{target:'useCardToBegin'},
                 cost:2,
                 spell:['henzou_skill'],
@@ -802,9 +803,37 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.lili > lib.skill.hezou.cost;
                 },
                 content:function(){
+                    'step 0'
                     player.loselili(lib.skill.hezou.cost);
                     player.turnOver();
-                    trigger.trigger('useCardToBegin');
+                    var players = game.filterPlayer();
+                    for (var i = 0; i < players.length; i ++){
+                        if (!trigger.player.canUse('sha',players[i])) players.remove(players[i]);
+                        if (players[i] == player) players.remove(player);
+                    }
+                    var list = ['该【轰！】无效'];
+                    if (players.length != 0) list.push('追加目标');
+                    player.chooseControl(list,function(event,player){
+                        return '该【轰！】无效';
+                    });
+                    'step 1'
+                    if (result.control){
+                        if (result.control == '该【轰！】无效'){
+                            trigger.cancel();
+                            event.finish();
+                        } else if (result.control == '追加目标'){
+                            player.chooseTarget(get.prompt('hezou'),[1,2],function(card,player,target){
+                                return trigger.player.canUse('sha',target);
+                            }).set('ai',function(target){
+                                var att=get.attitude(_status.event.player,target);
+                                return -att;
+                            });
+                        }
+                    }
+                    'step 2'
+                    if (result.bool && result.targets){
+                        for (var j = 0; j < result.targets.length; j ++) trigger.targets.push(result.targets[j]);
+                    }
                 },
                 check:function(){
                     return true;
@@ -1098,8 +1127,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    var max = Math.max(1, player.maxHp-player.hp);
-                    player.chooseTarget(get.prompt('moyin'),[1,max],function(card,player,target){
+                    player.chooseTarget(get.prompt('moyin'),[1,player.maxHp-player.hp+1],function(card,player,target){
                         return true;
                     },function(target){
                         if (get.attitude(_status.event.player, trigger.player) > 0){
@@ -1135,10 +1163,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
             },
             moyin2:{
-                trigger:{global:'recover'},
+                trigger:{global:'recoverBegin'},
                 mark:true,
                 intro:{
-                    content:'不能令决死角色回复体力',
+                    content:'防止所有回复',
                 },
                 filter:function(event,player){
                     return event.source.hasSkill('moyin2');
@@ -1779,25 +1807,41 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             lilywhite_die:'哎，原来立春是明天吗？',
             lunasa:'露娜萨',
             shenxuan:'神弦',
+            shenxuan_audio1:'',
+            shenxuan_audio2:'',
             shenxuan_info:'一回合一次，出牌阶段，你可以明置一张手牌；每名角色一回合一次，其可以将一张【轰！】当作与你一张非装备明置手牌同名的牌使用/打出。',
             shenxuan_viewAs:'神弦（转化）',
             zhenhun:'镇魂',
             zhenhun_info:'一名角色的结束阶段，你可以选择一至两项：1. 获得其本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其一张明置牌。',
-            hezou:'棱镜协奏曲',
-            hezou_2:'棱镜协奏曲',
-            hezou_skill:'棱镜协奏曲',
-            hezou_info:'符卡技（2）<瞬发>你成为一张【轰！】的目标时，可以选择一项：令之对你无效；或为之额外指定两名目标。',
+            zhenhun_audio1:'',
+            zhenhun_audio2:'',
+            lunasa_die:'',
             merlin:'梅露兰',
             mingguan:'冥管',
-            mingguan_viewAs:'冥管（转化）',
+            mingguan_audio1:'',
+            mingguan_audio2:'♪(´ε｀ )',
+            mingguan_viewAs:'冥管（转化）', 
             mingguan_info:'一回合一次，出牌阶段，你可以明置一张手牌；你攻击范围内的角色的与你的明置手牌同名的手牌均视为【轰！】。',
             kuangxiang:'狂想',
+            kuangxiang_audio1:'',
+            kuangxiang_audio2:'ヽ(ﾟ∀ﾟ*)ﾉ━━━ｩ♪',
             kuangxiang_info:'一回合一次，灵力值不大于你的一名角色成为【轰！】的目标时，你可以重铸你与其各一张牌；然后，若目标不包括你，将目标转移给你。',
+            merlin_die:'°(°ˊДˋ°) °',
             //lyrica:'莉莉卡',
             mingjian:'冥键',
             mingjian_info:'一回合各一次，出牌阶段，你可以明置一张手牌，或将一张牌交给一名其他角色并明置；你视为拥有所有有明置手牌的其他角色的装备技能；有明置手牌的其他角色视为拥有你的装备技能。',
             huanzou:'幻奏',
             huanzou_info:'一名角色因使用，打出，替换，或自己弃置而失去一张明置牌后，你可以令其摸一张牌。',
+            hezou:'棱镜协奏曲',
+            hezou_2:'棱镜协奏曲',
+            hezou_skill:'棱镜协奏曲',
+            hezou_skill_audio1:'',
+            hezou_skill_audio2:'',
+            hezou_skill_merlin_audio1:'',
+            hezou_skill_merlin_audio2:'',
+            hezou_skill_lyrica_audio1:'',
+            hezou_skill_lyrica_audio2:'',
+            hezou_info:'符卡技（2）<瞬发>你成为一张【轰！】的目标时，可以选择一项：令之对你无效；或为之额外指定两名目标。',
             youmu:'妖梦',
             yishan:'一闪',
             yishan_info:'一回合一次，你使用【轰！】结算完毕后，你可以令一名角色摸一张牌，视为对其使用一张无视装备的【轰！】。',
@@ -1825,7 +1869,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             youdie_audio1:'走远了呢~',
             youdie_audio2:'很快就要再见哟~',
             moyin:'墨樱',
-            moyin_info:'一名角色进入决死状态时，你可以令至多X名角色各摸一张牌；若如此做，这些角色于此次决死结算中不能令其回复体力（X为你已受伤值+1）。',
+            moyin2:'墨樱',
+            moyin_info:'一名角色进入决死状态时，你可以令至多X名角色各摸一张牌；若如此做，防止这些角色于此次决死结算中令其回复的体力（X为你已受伤值+1）。',
             moyin_audio1:'biu~',
             moyin_audio2:'死神小姐，快来收尸了哟~',
             fanhundie:'反魂蝶',
