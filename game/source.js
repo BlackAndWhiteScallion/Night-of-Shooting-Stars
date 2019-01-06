@@ -54,7 +54,6 @@ window.noname_source_list=[
     'extension/coin/extension.js',
     'extension/wuxing/extension.js',
     'theme/music/grid.png',
-    'theme/spell.gif',
     'theme/music/style.css',
     'theme/music/wood.png',
     'theme/music/wood3.png',

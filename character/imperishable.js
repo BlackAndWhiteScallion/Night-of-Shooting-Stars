@@ -922,16 +922,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.turnOver();
                       },
                       check:true,
+                      ai:{
+                        save:true,
+                      },
                   },
                   businiao2:{
-                    init:function(){
+                    init:function(player){
                       player.nodying=true;
                       player.hp=0;
                       player.update();
                     },
-                    onremove:function(){
+                    onremove:function(player){
                       delete player.nodying;
-                      if (player.hp <= 0) player.hp=-1;
+                      if (player.hp <= 0) {
+                        player.hp=0;
+                        player.dying({});
+                      }
                       player.update();
                     },
                     audio:2,
@@ -951,7 +957,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                         'step 2'
                         player.loselili(player.lili);
-                        if (player.hp < 1) player.recover(1-player.hp);
+                        if (player.hp < 1){
+                            player.hp = 1;
+                            player.update();
+                        }
                         player.draw(3 - player.countCards('h'));
                     },
                   },
@@ -1033,12 +1042,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yuhuo2_audio2:'我的怨念可不止这点程度！',
                   yuhuo_info:'你可以将一张牌当作【轰！】使用，每回合每种类型限一次；你使用【轰！】指定目标后，可以失去1点体力，令之不算次数。',
                   businiao:'不死鸟之羽',
+                  businiao_die:'不死鸟之羽',
                   businiao_audio1:'凤凰涅槃！欲火焚身！',
                   businiao_audio2:'炎符「不死鸟之羽」！',
                   businiao2:'不死鸟之羽',
                   businiao2_audio1:'……浴火重生*',
                   businiao2_audio2:'无论是多少次，无论是多少次！',
                   businiao_info:'符卡技（1）<终语>你不坠机；当前回合的结束阶段，你可以消耗1点灵力值，并使用一张攻击牌；你可以重复此流程任意次；然后，你须消耗所有灵力，将体力回复至1，并将手牌补至3张。',
+                  mokou_die:'啊——。有点太硌牙了呢。',
             },
       };
 });

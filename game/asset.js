@@ -13,6 +13,7 @@ window.noname_asset_list=[
     'image/background/shenshe.jpg',
     'image/background/yongyuan.jpg',
     'image/background/tianjie.jpg',
+    'image/background/tiangou.jpg',
     'image/background/yuji.jpg',
     'image/card/baka.png',
     'image/card/bailou.png',
@@ -229,6 +230,7 @@ window.noname_asset_list=[
     'theme/style/player/silver_d1.png',
     'theme/style/player/silver_d2.png',
     'theme/effect/damage.gif',
+    'theme/spell.gif',
 ];
 window.noname_skin_list={
     rumia:3,
@@ -242,4 +244,5 @@ window.noname_skin_list={
     wriggle:2,
     keine:2,
     marisa:7,
+    mokou:2
 };

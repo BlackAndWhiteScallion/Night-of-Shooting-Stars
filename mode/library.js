@@ -217,7 +217,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'覆盖完毕后，记得重启流星夜app！',
 	    				'',
 	    				'<u>更新注释：</u>',
-	    				'追加魔理沙，追加BOSS灵梦',
+	    				'追加永琳，追加BOSS高达一号',
 	    				'',
 	    				'<u>特殊事项：</u>',
 	    				'没有名字的角色没有技能',
@@ -227,7 +227,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'妹红的符卡没有效果',
 	    				'',
 	    				'<u>已知bug列表：</u>',
-	    				'【棱镜合奏曲】的<瞬发>标签没有效果',
 	    				'强化牌时使用住口会导致强化效果不生效',
 	    				],
 	    		showcase:function(init){

@@ -371,7 +371,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				game.addRecentCharacter(game.me.name);
 			}
 			event.trigger('gameStart');
-			game.gameDraw(game.boss);
+			game.gameDraw(game.boss,game.bossinfo.gameDraw||4);
 			game.bossPhaseLoop();
 			setTimeout(function(){
 				ui.updatehl();
@@ -834,6 +834,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_zhaoyun:{
 				loopType:1,
 				chongzheng:4,
+				init:function(){
+					lib.backgroundmusicURL = ui.backgroundMusic.src;
+                    ui.backgroundMusic.src = lib.assetURL+'audio/background/boss.mp3';
+                    lib.config.background_music = 'boss';
+				},
 			},
 			global:{
 				loopType:2,
@@ -899,7 +904,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		mengxiangtiansheng:{
     			audio:2,
     			trigger:{player:['phaseBegin','phaseEnd']},
-    			frequent:true,
     			filter:function(event,player){
     				return player.lili > 0;
     			},
@@ -908,7 +912,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					players.remove(player);
 					player.loselili();
     				player.useCard({name:'sha'},players);
-    			}
+    			},
+    			check:function(event,player){
+    				return player.lili != 1; 
+    			},
     		},
     		boss_damagecount:{
 				mode:['boss'],

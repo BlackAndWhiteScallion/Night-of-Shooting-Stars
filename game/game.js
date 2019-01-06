@@ -15679,7 +15679,7 @@ getDiscardableCards:function(player,arg1,arg2){
                         }
                         if ((this.identity == 'zhu' && lib.config.backgroundchange != 'off') 
                             || (this.identity == 'nei' && lib.config.backgroundchange == 'luren')){
-                            var str = lib.assetURL+'image/background/'+card.name+'.jpg';
+                            var str = 'image/background/'+card.name+'.jpg';
                             ui.background.setBackgroundImage(str);
                         }
                     }
@@ -22549,7 +22549,7 @@ game.broadcast(function(player,str,nature,avatar){
                     game.modeSwapPlayer(player);
                 },
             },
-dualside:{
+            dualside:{
 				subSkill:{
 					turn:{
 						trigger:{player:['turnOverAfter','dieBefore']},
@@ -22725,7 +22725,7 @@ dualside:{
             },
             mingzhi:{
                 intro:{
-                    content:'cards'
+                    content:'cards',
                 },
             },
             mad:{

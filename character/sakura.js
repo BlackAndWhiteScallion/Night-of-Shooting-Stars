@@ -592,12 +592,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         var players = game.filterPlayer();
                         var list = [];
                         for (var i = 0; i < players.length; i ++){
-                            if (players[i].hasSkill('shenxuan') && players[i].storage.mingzhi && get.distance(players[i],player,'attack')<=1){
+                            if (players[i].hasSkill('shenxuan') && players[i].storage.mingzhi.length && get.distance(players[i],player,'attack')<=1){
                                 for (var j = 0; j < players[i].storage.mingzhi.length; j ++){
-                                    game.log(players[i].storage.mingzhi[j].type);
-                                    if (players[i].storage.mingzhi[j].type != 'equip') list.push(players[i].storage.mingzhi[j].name);
+                                    if (get.type(players[i].storage.mingzhi[j]) != 'equip') list.push(players[i].storage.mingzhi[j].name);
                                 }
                             }
+                        }
+                        for(var i=0;i<list.length;i++){
+                            list[i]=[get.type(list[i]),'',list[i]];
                         }
                         return ui.create.dialog([list,'vcard']);
                     },
@@ -683,15 +685,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 intro:{content:'cards'},
                 filter:function(event,player){
-                    return (player.storage.zhenhun) || (player.storage.mingzhi);
+                    return (player.storage.zhenhun && player.storage.zhenhun.length) || (player.storage.mingzhi && player.storage.mingzhi.length);
                 },
                 content:function(){
                     'step 0'
                     var list = ['cancel2'];
                     if (player.storage.zhenhun && player.storage.zhenhun.length) list.push('获得牌');
-                    if (player.storage.mingzhi && player.storage.mingzhi.length) list.push('交出去明置牌');
+                    if (player.storage.mingzhi && player.storage.mingzhi.length && _status.currentPhase != player) list.push('交出去明置牌');
                     event.list = list;
                     'step 1'
+                    if (event.list.length == 1) event.finish();
                     player.chooseControl(event.list,function(event,player){
                         if (event.list.contains('获得牌')) return '获得牌';
                         return 'cancel2';
@@ -723,9 +726,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.bool && event.control == '获得牌'){
                         if (result.links.length){
                             //player.$gain(result.links);
-                            player.gain(result.links,'log');
-                            if (!player.storage.mingzhi) player.storage.mingzhi = [result.links];
-                            else player.storage.mingzhi.push(result.links);
+                            player.gain(result.links[0],'log');
+                            if (!player.storage.mingzhi){
+                                player.storage.mingzhi = [result.links[0]];
+                                player.markSkill('mingzhi');
+                            } else {
+                                player.storage.mingzhi.push(result.links[0]);
+                                player.syncStorage('mingzhi');
+                            }
                         }
                     }
                     if (result.bool && event.control == '交出去明置牌'){
@@ -819,6 +827,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.control){
                         if (result.control == '该【轰！】无效'){
+                            game.log('棱镜协奏曲：【轰！】对'+get.translation(player)+'无效');
                             trigger.cancel();
                             event.finish();
                         } else if (result.control == '追加目标'){
@@ -861,6 +870,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.control){
                         if (result.control == '该【轰！】无效'){
+                            game.log('棱镜协奏曲：【轰！】对'+get.translation(player)+'无效');
                             trigger.cancel();
                             event.finish();
                         } else if (result.control == '追加目标'){

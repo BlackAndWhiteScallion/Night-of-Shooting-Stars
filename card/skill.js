@@ -161,7 +161,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			shengdun_skill:{
     			filter:function(event,player){
-    				return event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack');
+    				return event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack')&&event.player.countCards('h')&&player.countCards('h');
     			},
     			logTarget:'player',
     			check:function(event,player){
@@ -191,7 +191,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				"step 0"
     				player.chooseToCompare(trigger.player);
     				"step 1"
-    				if(result.bool&&trigger.player.countCards('he')){
+    				if(result.bool){
+    					var cards = player.getCards('j');
+						for (var i = 0; i <= cards.length; i ++){
+							if(cards[i]&&cards[i].name == 'shengdun'){
+								player.discard(cards[i]);
+								break;
+							}
+						}
     					trigger.cancel();
     					trigger.finish();
     				}
@@ -202,7 +209,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			qusan_skill:{
     			filter:function(event,player){
-    				return event.card&&(get.type(event.card)=='trick');
+    				return event.card&&(get.type(event.card)=='trick')&&event.player.countCards('h')&&player.countCards('h');
     			},
     			logTarget:'player',
     			check:function(event,player){
@@ -232,7 +239,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				"step 0"
     				player.chooseToCompare(trigger.player);
     				"step 1"
-    				if(result.bool&&trigger.player.countCards('he')){
+    				if(result.bool){
+    					var cards = player.getCards('j');
+						for (var i = 0; i <= cards.length; i ++){
+							if(cards[i]&&cards[i].name == 'qusan'){
+								player.discard(cards[i]);
+								break;
+							}
+						}
     					trigger.cancel();
     					trigger.finish();
     				}

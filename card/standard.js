@@ -635,7 +635,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			}
 		},
-		// 还没弄完的突击采访
 		caifang:{
 			audio:true,
 			fullskin:true,
@@ -1184,11 +1183,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					basic:{
 						order:1,
 						useful:[3,1],
-						value:0
+						value:0,
+						equipValue:0
 					},
 					result:{
 						target:function(player,target){
-							return target != player && -get.attitude(_status.event.player,target);
+							return -get.attitude(_status.event.player,target);
 						}
 					},
 					tag:{
