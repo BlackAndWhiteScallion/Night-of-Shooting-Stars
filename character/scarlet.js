@@ -773,7 +773,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 0'
                     player.chooseToDiscard(get.prompt('huanzang'),function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
-                    }).set('ai',function(card){
+                    }, true).set('ai',function(card){
                         return 0;
                     });
                     'step 1'
@@ -796,7 +796,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 0"
                     var next=player.chooseToDiscard(get.prompt('huanzang'),'he',function(card){
                         return (get.suit(card) == get.suit(trigger.responded.cards[0]) || get.number(card) == get.number(trigger.responded.cards[0]));
-                    });
+                    }, true);
                     next.set('ai',function(card){
                         return -1;
                     });
@@ -945,6 +945,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 3'
                     lib.skill['kuangyan'].forced = true;
+                },
+                check:function(){
+
                 },
             },
             kuangyan2:{

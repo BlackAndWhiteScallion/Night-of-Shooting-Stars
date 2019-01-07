@@ -13680,6 +13680,7 @@
                 changelili:function(){
                     player.lili+=num;
                     if(player.lili>player.maxlili) player.lili=player.maxlili;
+                    if(player.lili<0) player.lili = 0;
                     player.update();    // 看来所有变更的地方都要update啊，这……但愿不要每个update都要改参数。
                     if(event.popup!==false){
                         player.$damagepop(num,'water'); // 这里改变的是颜色
@@ -13816,6 +13817,10 @@
                                     game.playAudio('die',player.name.slice(player.name.indexOf('_')+1));
                                 });
                                 */
+                                var translation = get.translation(player.name+ '_die');
+                                if (translation != player.name + '_die'){
+                                    player.say(translation);
+                                }             
                             }
                             game.playAudio('effect','die_female');
                         }
@@ -21072,7 +21077,15 @@ game.broadcast(function(player,str,nature,avatar){
                         this.node.info.innerHTML=info.modinfo;
                     }
                     else{
-                        this.node.info.innerHTML=get.translation(card[0])+'<span> </span>'+card[1];
+                        var num;
+                        switch(card[1]){
+                            case 1:num='A';break;
+                            case 11:num='J';break;
+                            case 12:num='Q';break;
+                            case 13:num='K';break;
+                            default:num = card[1];
+                        }
+                        this.node.info.innerHTML=get.translation(card[0])+'<span> </span>'+num;
 					}
                     if(info.addinfo){
                         if(!this.node.addinfo){
@@ -21111,7 +21124,15 @@ game.broadcast(function(player,str,nature,avatar){
                         }
                     }
                     this.node.name.style.fontSize = '13px';
-                    this.node.name2.innerHTML=get.translation(card[0])+card[1]+' '+name;
+                    var num;
+                        switch(card[1]){
+                            case 1:num='A';break;
+                            case 11:num='J';break;
+                            case 12:num='Q';break;
+                            case 13:num='K';break;
+                            default:num = card[1];
+                        }
+                    this.node.name2.innerHTML=get.translation(card[0])+num+' '+name;
                     this.suit=card[0];
                     this.number=parseInt(card[1])||0;
                     this.name=card[2];
@@ -22825,7 +22846,7 @@ game.broadcast(function(player,str,nature,avatar){
                 },
                 check:function(event,player){
                     if (player.hasSkill('bamiao')) return true;
-                    if (player.lili > 2) return false;
+                    if (player.lili <= 2) return false;
                     var card = event.card;
                     if(card.name == 'guohe'){
                         if (!event.targets[0].getCards('ej').length) return false;
@@ -22837,7 +22858,22 @@ game.broadcast(function(player,str,nature,avatar){
                     } else if (card.name == 'danmakucraze'){
                         return player.countCards('h') < player.hp;
                     } else if (card.name == 'caifang'){
+                        if (get.mode()!='identity') return false;
                         return (event.targets[0].identityShown != true);
+                    }
+                },
+                ai:{
+                    effect:{
+                        target:function(card,player,target,current){
+                            if(player.lili == 0 &&get.tag(card,'damage')){
+                                return 'zeroplayertarget';
+                            }
+                        },
+                        player:function(card,player,target,current){
+                            if(card.source == 0 &&get.tag(card,'damage')){
+                                return 'zeroplayertarget';
+                            }
+                        },
                     }
                 },
             },
@@ -24735,6 +24771,7 @@ game.broadcast(function(player,str,nature,avatar){
                     else{
                         audioname=audioinfo;
                         if(lib.skill[audioinfo]){
+                            info=get.info(audioinfo);
                             audioinfo=lib.skill[audioinfo].audio;
                         }
                     }
@@ -45959,7 +45996,15 @@ smoothAvatar:function(player,vice){
 							str2+='（'+get.translation(str)+'）';
 						}
 						else{
-							str2+='【'+get.translation(str.suit)+str.number+'】';
+                            var num;
+                            switch(str.number){
+                                case 1:num='A';break;
+                                case 11:num='J';break;
+                                case 12:num='Q';break;
+                                case 13:num='K';break;
+                                default:num = str.number;
+                            }
+							str2+='【'+get.translation(str.suit)+num+'】';
 							// var len=str2.length-1;
 							// str2=str2.slice(0,len)+'<span style="letter-spacing: -2px">'+str2[len]+'·</span>'+get.translation(str.suit)+str.number;
 						}

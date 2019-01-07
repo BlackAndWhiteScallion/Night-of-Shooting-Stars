@@ -391,38 +391,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				basic:{
-					order:7.5,
+					order:3,
 					useful:4,
 					value:9
 				},
 				result:{
 					target:function(player,target){
-						if(ai.get.attitude(player,target)<=0) return (target.num('he')>0)?-1.5:1.5;
-						var js=target.get('j');
-						if(js.length){
-							var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-							if(jj.name=='shunshou') return 3;
-							if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
-								return -1.5;
-							}
-							return 3;
-						}
+						if(ai.get.attitude(player,target)<=0) return (target.num('hej')>0)?-1.5:1.5;
 						return -1.5;
 					},
 					player:function(player,target){
 						if(ai.get.attitude(player,target)<0&&!target.num('he')){
-							return 0;
-						}
-						if(ai.get.attitude(player,target)>1){
-							var js=target.get('j');
-							if(js.length){
-								var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-								if(jj.name=='shunshou') return 1;
-								if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
-									return 0;
-								}
-								return 1;
-							}
 							return 0;
 						}
 						return 1;
@@ -678,8 +657,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				result:{
 					target:function(player,target){
-						if (!target.identityShown) return 2;
-						//if(ai.get.attitude(player,target)<=0) return (target.num('h'))?1.5:-1.5;
+						if (!target.identityShown) return -1;
+						if(ai.get.attitude(player,target)<=0) return (target.num('h'))?-1.5:-0.5;
 						return -get.attitude(player,target);
 					}
 				},
@@ -714,10 +693,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				basic:{
 					order:7.2,
 					useful:4,
-					value:9.2
+					value:5
 				},
 				result:{
-					target:2,
+					target:1,
 				},
 				tag:{
 					draw:0.5
@@ -773,13 +752,44 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.chooseToDiscard(true,'hej');
 				// 洗牌堆放到技能那边吧
 			},
+			contentAfter:function(){
+				var cards = [];
+				for(i=0;i<ui.discardPile.childNodes.length;i++){
+                    var currentcard=ui.discardPile.childNodes[i];
+                    currentcard.vanishtag.length=0;
+                    if(get.info(currentcard).vanish||currentcard.storage.vanish){
+                        currentcard.remove();
+                        continue;
+                    }
+                    cards.push(currentcard);
+                }
+                cards.randomSort();
+                for(var i = 0; i < ui.cardPile.childNodes.length;i++){
+                	ui.discardPile.appendChild(ui.cardPile.childNodes[i]);
+                }
+                for(var i=0;i<cards.length;i++){
+                    ui.cardPile.appendChild(cards[i]);
+                }
+                game.log("死境之门：交换弃牌堆和牌堆");
+			},
 			ai:{
 				basic:{
 					order:1,
 					useful:[3,1],
 					value:[3,1],
 				},
-				result:{player:0.5},
+				result:{
+					target:function(player,target){
+						var nh=target.countCards('hej');
+						if(nh==0) return 0;
+						if(nh==1) return -1.7
+						return -1.5;
+					},
+				},
+				tag:{
+					multitarget:1,
+					multineg:1,
+				}
 			},
 		},
 		// 幻想之门
@@ -870,6 +880,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			contentAfter:function(){
 				player.markSkill('bingyu1');
+				player.$skill('bingyu1');
 			},
 			ai:{
 				basic:{
@@ -911,24 +922,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				result:{
 					target:function(player,target){
-						if (target.maxHp == target.hp) return -10;
+						if (target.maxHp == target.hp) return 0;
 						var es=target.get('e');
 						var nh=target.num('h');
 						var noe=(es.length==0||target.hasSkillTag('noe'));
-						var noe2=(es.length==1&&es[0].name=='baiyin'&&target.hp<target.maxHp);
 						var noh=(nh==0||target.hasSkillTag('noh'));
 						if(noh&&noe) return 0;
-						if(noh&&noe2) return 0.01;
-						if(ai.get.attitude(player,target)<=0) return (target.num('he'))?-1.5:1.5;
-						var js=target.get('j');
-						if(js.length){
-							var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-							if(jj.name=='guohe') return 3;
-							if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
-								return -1.5;
-							}
-							return 2;
-						}
+						if(ai.get.attitude(player,target)<=0) return (target.num('hej'))?-1.5:1.5;
 						return -1.5;
 					},
 				},
@@ -1183,7 +1183,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					basic:{
 						order:1,
 						useful:[3,1],
-						value:0,
+						value:2,
 						equipValue:0
 					},
 					result:{
@@ -1318,9 +1318,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			ai:{
 				expose:0.3,
-				order:10,
+				order:2,
 				result:{
-					target:5
+					target:1
 				}
 			}
 		},
@@ -2220,6 +2220,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		_simen:{
 			trigger:{player:'discardAfter'},
 			forced:true,
+			skillAnimation:true,
 			filter:function(event,player){
     			for(var i=0;i<event.cards.length;i++){
     				if(event.cards[i].name == 'simen'){
@@ -2239,35 +2240,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					}
     				}
     			}
-			},
-		},
-		// 死门翻牌堆效果
-		_simen2:{
-			trigger:{player:'useCardAfter'},
-			forced:true,
-			filter:function(event,player){
-    			return (event.card.name=='simen');
-    		},
-			content:function(){
-				var cards = [];
-				for(i=0;i<ui.discardPile.childNodes.length;i++){
-                    var currentcard=ui.discardPile.childNodes[i];
-                    currentcard.vanishtag.length=0;
-                    if(get.info(currentcard).vanish||currentcard.storage.vanish){
-                        currentcard.remove();
-                        continue;
-                    }
-                    cards.push(currentcard);
-                }
-                cards.randomSort();
-                for(var i = 0; i < ui.cardPile.childNodes.length;i++){
-                	ui.discardPile.appendChild(ui.cardPile.childNodes[i]);
-                }
-                for(var i=0;i<cards.length;i++){
-                    ui.cardPile.appendChild(cards[i]);
-                }
-                game.log("死境之门：交换弃牌堆和牌堆");
-				//ui.discardPile.appendChild(ui.drawPile);
 			},
 		},
 		// 天国翻牌堆效果
@@ -2296,6 +2268,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
             },
 		},
 		_tianguo2:{
+			skillAnimation:true,
 			trigger:{player:'drawAfter'},
 			frequent:false,
 			filter:function(event,player){
@@ -2325,7 +2298,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							return (target.hp<target.maxHp)?2:0;
 						}
 					},
+					tag:{
+						recover:0.5,
+						multitarget:1
+					}
 				},
+			prompt:'是否发动【天国之阶】：摸到后，可以令所有角色回复1点体力？',
 		},
 		// 派对当潜行
 		_jingxia:{
@@ -2365,8 +2343,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		_zuiye:{
+			skillAnimation:true,
     		trigger:{source:'damageBefore'},
-    		frequent:false,
     		filter:function(event,player){
     			return player.countCards('h',{name:'zuiye'})>0&&event.nature != 'thunder';
     		},
@@ -2379,6 +2357,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		},
+    		prompt:'是否发动【罪业边狱】：将罪业边狱交给对方，令伤害+1',
+			check:function(event, player){
+				return -get.attitude(player, event.player);
+			},
 		},
 		huazhi_skill:{
 			trigger:{global:'phaseEnd'},
@@ -2459,6 +2441,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		// 令避发动时声明卡牌
 		_lingbi2:{
+			skillAnimation:true,
 			trigger:{player:'useCard'},
 			forced:true,
 			init:function(player){
@@ -2507,15 +2490,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		_huanxiang:{
-			trigger:{global:'gameStart'},
+			skillAnimation:true,
+			trigger:{global:'gameDrawAfter'},
 			filter:function(event,player){
-				return player.countCards('huanxiang','h') > 0;
+				return player.countCards('h',{name:'huanxiang'}) > 0;
 			},
 			content:function(){
 				for (var i = 0; i < game.filterPlayer().length; i ++){
 					game.filterPlayer()[i].draw();
 				}
-			}
+			},
+			check:function(event,player){
+				return true;
+			},
+			prompt:'是否发动【幻想之门】：游戏开始时，可以令所有角色摸一张牌',
 		},
 		danmaku_skill:{
 			mod:{
@@ -2645,21 +2633,23 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		stone_info:'你可以将两张牌(包括此牌)当作一种法术牌使用。',
 		stone_skill:'贤者之石',
 		simen:'死境之门',
+		_simen:'死境之门',
 		simen_info:'出牌阶段，对所有其他角色使用：目标各弃置一张牌；全弃置完后，交换牌堆和弃牌堆。</br> <u>追加效果：此牌因弃置进入弃牌堆后，所有角色失去1点体力。</u>',
 		huanxiang:'幻想之门',
+		_huanxiang:'幻想之门',
 		huanxiang_info:'出牌阶段，对所有角色使用：目标各摸一张牌，一张技能牌，获得1点灵力。</br> <u>追加效果：游戏开始时，你可以展示此牌，所有角色摸一张牌。</u>',
 		tianguo:'天国之阶',
 		_tianguo2:'天国之阶',
 		_tianguo2_info:'展示天国之阶，令所有角色回复1点体力',
 		tianguo_info:'出牌阶段，对所有角色使用：将弃牌堆洗入牌堆，然后目标各摸一张牌。</br> <u>追加效果：你摸到此牌时，可以展示之，所有角色回复1点体力。</u>',
 		lingbi:'令避之间',
-		lingbi_info:'准备阶段，对所有角色使用：你声明一张牌，目标角色不能使用该牌，直到你的回合开始。</br> <u>追加效果：此牌可以当作【请你住口！】使用。</u>',
+		lingbi_info:'准备阶段，对所有角色使用：你声明一张牌，目标角色不能使用该牌，直到你的回合开始，或你坠机时。</br> <u>追加效果：此牌可以当作【请你住口！】使用。</u>',
 		lingbi2:'令避之间2',
 		lingbi2_info:'',
 		lingbi1:'令避之间',
 		_lingbi:'令避之间',
 		_lingbi_info:'将【令避之间】当【请你住口！】使用',
-		_lingbi2:'不能使用的牌',
+		_lingbi2:'令避之间',
 		_lingbi2_bg:'避',
 		lingbi1_info:'不能使用标记里的牌',
 		zuiye:'罪业边狱',
@@ -2671,9 +2661,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		huazhi_skill:'花之祝福',
 		huazhi_skill_info:'结束阶段，你摸X张牌（X为其本回合造成的伤害点数）。',
 		bingyu:'冰域之宴',
+		_bingyu:'冰域之宴',
 		bingyu1:'冰域之宴',
 		bingyu1_bg:'冰',
-		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，手牌上限视为无限，直到你的回合开始。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
+		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，手牌上限视为无限，直到你的回合开始，或你坠机时。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
 		jingxia:'惊吓派对',
 		_jingxia:'惊吓派对',
 		jingxia_bg:'潜',

@@ -318,6 +318,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'phaseEnd'},
 				content:function(){
 					player.addSkill('qianxing_skill2');
+					
 				},
 			},
 			qianxing_skill2:{
@@ -398,22 +399,22 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			lingyong_info:'锁定技，你造成的伤害不会因没有灵力而防止；你的攻击范围至少为2。',
 		},
 		list:[
-			["diamond",0,'ziheng'],
-			["diamond",0,'ziheng'],
-			["diamond",0,'shenyou'],
-			["diamond",0,'shenyou'],
-			["diamond",0,'shengdun'],
-			["diamond",0,'shengdun'],
-			["diamond",0,'qusan'],
-			["diamond",0,'qusan'],
-			["diamond",0,'jinu'],
-			["diamond",0,'jinu'],
-			["diamond",0,'lianji'],
-			["diamond",0,'lianji'],
-			["diamond",0,'qianxing'],
-			["diamond",0,'qianxing'],
-			["diamond",0,'lingyong'],
-			["diamond",0,'lingyong'],
+			[null,0,'ziheng'],
+			[null,0,'ziheng'],
+			[null,0,'shenyou'],
+			[null,0,'shenyou'],
+			[null,0,'shengdun'],
+			[null,0,'shengdun'],
+			[null,0,'qusan'],
+			[null,0,'qusan'],
+			[null,0,'jinu'],
+			[null,0,'jinu'],
+			[null,0,'lianji'],
+			[null,0,'lianji'],
+			[null,0,'qianxing'],
+			[null,0,'qianxing'],
+			[null,0,'lingyong'],
+			[null,0,'lingyong'],
 		],
 	};
 });

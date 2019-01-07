@@ -549,6 +549,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 global:['shenxuan_viewAs'],
                 enable:'phaseUse',
                 usable:1,
+                audio:2,
                 filter:function(event,player){
                     return player.getCards('h');
                 },
@@ -742,9 +743,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             player.$give(result.cards.length,result.targets[0]);
                         }
                     }
+                    /*
                     event.list.remove(event.control);
                     if (!event.list.length || event.list.length > 2) event.finish();
                     else event.goto(1);
+                    */
                 },
             },
             zhenhun_mark:{
@@ -808,7 +811,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 spell:['henzou_skill'],
                 filter:function(event,player){
                     if (event.card.name != 'sha') return false;
-                    return player.lili > lib.skill.hezou.cost;
+                    return player.lili > lib.skill.hezou.cost && !player.isTurnedOver();
                 },
                 content:function(){
                     'step 0'
@@ -891,6 +894,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mingguan:{
                 global:['mingguan_viewAs'],
                 enable:'phaseUse',
+                audio:2,
                 usable:1,
                 filter:function(event,player){
                     return player.getCards('h');
@@ -1158,14 +1162,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.finish();
                     }
                     "step 2"
-                    if(event.targets.length){
-                        var target=event.targets.shift();
-                        event.current=target;
-                        target.draw();
-                        target.addTempSkill('moyin2','dyingAfter');
-                    }
-                    else{
-                        event.finish();
+                    for (var i = 0; i < event.targets.length; i ++){
+                        event.targets[i].draw();
+                        event.targets[i].addTempSkill('moyin2','dyingAfter');
                     }
                 },
                 ai:{
@@ -1179,7 +1178,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:'防止所有回复',
                 },
                 filter:function(event,player){
-                    return event.source.hasSkill('moyin2');
+                    return event.source == player;
                 },
                 content:function(){
                     trigger.num = 0;
@@ -1558,7 +1557,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     for (var i = 3; i > 0; i--){
                         cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
                     }
-                    event.cards=cards;
+                    event.cards=cards; 
                     var switchToAuto=function(){
                         _status.imchoosing=false;
                         if(event.dialog) event.dialog.close();
@@ -1591,7 +1590,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             }
                         }
                         bottom=cards;
-                        player.storage.bot = bottom;
                         for(var i=0;i<top.length;i++){
                             ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
                         }
@@ -1649,9 +1647,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     }
                                     player.popup(get.cnNumber(event.top.length)+'上'+get.cnNumber(event.cards.length-event.top.length)+'下');
                                     game.log(player,'将'+get.cnNumber(event.top.length)+'张牌置于牌堆顶');
-                                    if (!player==_status.currentPhase){
-                                        player.chooseDrawRecover(1,0,false);
-                                    }
                                 }
                                 event.dialog.close();
                                 event.control.close();
@@ -1704,6 +1699,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 
                     if(event.isMine()){
                         chooseButton();
+                        event.goto(2);
                     }
                     else if(event.isOnline()){
                         event.player.send(chooseButton,true,event.player,event.cards);
@@ -1712,6 +1708,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     else{
                         event.switchToAuto();
+                        event.goto(2);
                     }
                     "step 1"
                     if(event.result=='ai'||!event.result){
@@ -1733,10 +1730,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                         player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(event.cards.length-top.length)+'下');
                         game.log(player,'将'+get.cnNumber(top.length)+'张牌置于牌堆顶');
+                        game.delay(2);
                     }
                     "step 2"
                     if (player!=_status.currentPhase){
-                        player.chooseBool(get.prompt('mengjie')).set('choice',true);
+                        player.chooseBool('是否发动【梦界】摸一张牌？').set('choice',true);
                     }
                     'step 3'
                     if (result.bool){
@@ -1794,17 +1792,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             alice:'爱丽丝',
             huanfa:'幻法',
             huanfa_info:'弃牌阶段开始时，若“手办”数小于场上角色数，你可以将一至两张手牌扣置于角色牌上，称为“手办”：然后，摸一张牌。',
-            huanfa_audio1:'',
-            huanfa_audio2:'',
+            huanfa_audio1:'表演正在准备中，请稍微片刻。',
+            huanfa_audio2:'嗯？已经等不及了么？',
             mocai:'魔彩',
             mocai_audio1:'帮她一把吧，上海。',
             mocai_audio2:'别让她倒了，蓬莱。',
             mocai_info:'你攻击范围内的一名角色成为攻击牌的目标后，你可以选择一项：将一张“手办”置于其区域内；或弃置一张“手办”，观看技能牌堆顶的三张牌，并将其中一张交给目标。',
             hanghourai:'上吊的蓬莱人形',
             hanghourai_audio1:'诅咒「上吊的蓬莱人偶」!',
-            hanghourai_audio2:'',
+            hanghourai_audio2:'表演现在才刚刚开始哟！',
             hanghourai1:'上吊的蓬莱人形',
+            hanghourai1_audio1:'你只不过是一名演员而已。',
+            hanghourai2_audio2:'一切都是我的掌控之中。',
             hanghourai_info:'符卡技（2）<永续> 符卡发动时，你可以将任意张手牌扣置为“手办”，并摸等量牌；一名角色的结束阶段，你可以交给其一张“手办”；若其可以使用该牌，你令其使用之，目标由你指定。',
+            alice_die:'',
             lilywhite:'莉莉白',
             chunxiao:'春晓',
             chunxiao_info:'准备阶段，若你的灵力值不小于体力值，你可以令所有角色各摸一张牌，然后各弃置与其最近的一名角色一张牌。',
@@ -1814,43 +1815,47 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mengya_info:'一回合两次，出牌阶段，你可以选择一项：获得1点灵力，然后弃置一张牌；或消耗1点灵力，然后摸一张牌。',
             mengya_audio1:'春天是万物复苏的季节！',
             mengya_audio2:'春天是风调雨顺的季节！',
-            lilywhite_die:'哎，原来立春是明天吗？',
+            lilywhite_die:'哎，原来立春其实是明天的吗？',
             lunasa:'露娜萨',
             shenxuan:'神弦',
-            shenxuan_audio1:'',
-            shenxuan_audio2:'',
+            shenxuan_audio1:'（🎻）',
+            shenxuan_audio2:'仔细的聆听吧，这神魂飘荡的旋律。',
             shenxuan_info:'一回合一次，出牌阶段，你可以明置一张手牌；每名角色一回合一次，其可以将一张【轰！】当作与你一张非装备明置手牌同名的牌使用/打出。',
             shenxuan_viewAs:'神弦（转化）',
             zhenhun:'镇魂',
-            zhenhun_info:'一名角色的结束阶段，你可以选择一至两项：1. 获得其本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其一张明置牌。',
-            zhenhun_audio1:'',
-            zhenhun_audio2:'',
+            zhenhun_info:'一名角色的结束阶段，你可以选择一项：1. 获得其本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其一张明置牌。',
+            zhenhun_audio1:'这是献给你的镇魂曲。',
+            zhenhun_audio2:'……别这样看我啦，我不会一把大火烧死你的。掉所有人血？……那就不保证了。',
             lunasa_die:'',
             merlin:'梅露兰',
             mingguan:'冥管',
-            mingguan_audio1:'',
+            mingguan_audio1:'（🎺）',
             mingguan_audio2:'♪(´ε｀ )',
             mingguan_viewAs:'冥管（转化）', 
             mingguan_info:'一回合一次，出牌阶段，你可以明置一张手牌；你攻击范围内的角色的与你的明置手牌同名的手牌均视为【轰！】。',
             kuangxiang:'狂想',
-            kuangxiang_audio1:'',
+            kuangxiang_audio1:'这就是献给你的狂想曲~！',
             kuangxiang_audio2:'ヽ(ﾟ∀ﾟ*)ﾉ━━━ｩ♪',
             kuangxiang_info:'一回合一次，灵力值不大于你的一名角色成为【轰！】的目标时，你可以重铸你与其各一张牌；然后，若目标不包括你，将目标转移给你。',
             merlin_die:'°(°ˊДˋ°) °',
             //lyrica:'莉莉卡',
             mingjian:'冥键',
+            mingjian_audio1:'（🎹）',
+            mingjian_audio2:'',
             mingjian_info:'一回合各一次，出牌阶段，你可以明置一张手牌，或将一张牌交给一名其他角色并明置；你视为拥有所有有明置手牌的其他角色的装备技能；有明置手牌的其他角色视为拥有你的装备技能。',
             huanzou:'幻奏',
+            huanzou_audio1:'这是献给你的幻奏曲。',
+            huanzou_audio2:'不客气哟。',
             huanzou_info:'一名角色因使用，打出，替换，或自己弃置而失去一张明置牌后，你可以令其摸一张牌。',
             hezou:'棱镜协奏曲',
             hezou_2:'棱镜协奏曲',
             hezou_skill:'棱镜协奏曲',
-            hezou_skill_audio1:'',
-            hezou_skill_audio2:'',
-            hezou_skill_merlin_audio1:'',
-            hezou_skill_merlin_audio2:'',
-            hezou_skill_lyrica_audio1:'',
-            hezou_skill_lyrica_audio2:'',
+            hezou_skill_audio1:'合葬「棱镜协奏曲」。',
+            hezou_skill_audio2:'这就是我们三姐妹的羁绊！',
+            hezou_skill_merlin_audio1:'ლ(╹◡╹ლ)来啊辣鸡ლ(╹◡╹ლ)',
+            hezou_skill_merlin_audio2:'合葬「棱镜协奏曲」~♪',
+            hezou_skill_lyrica_audio1:'唔，姐姐们，来帮下忙？',
+            hezou_skill_lyrica_audio2:'合葬「棱镜协奏曲」——！',
             hezou_info:'符卡技（2）<瞬发>你成为一张【轰！】的目标时，可以选择一项：令之对你无效；或为之额外指定两名目标。',
             youmu:'妖梦',
             yishan:'一闪',
@@ -1880,6 +1885,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             youdie_audio2:'很快就要再见哟~',
             moyin:'墨樱',
             moyin2:'墨樱',
+            moyin2_bg:'死',
             moyin_info:'一名角色进入决死状态时，你可以令至多X名角色各摸一张牌；若如此做，防止这些角色于此次决死结算中令其回复的体力（X为你已受伤值+1）。',
             moyin_audio1:'biu~',
             moyin_audio2:'死神小姐，快来收尸了哟~',
@@ -1892,8 +1898,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             jiubian:'九变',
             jiubian2:'九变',
             jiubian_info:'你可以将一张法术牌当作【葱】，或将一张【葱】当作一种法术牌使用；你以此法使用牌指定目标时，可以指定一名角色，将目标或来源改为其。',
+            jiubian_audio1:'别问我为什么一只猴子比我多63变。',
+            jiubian_audio2:'算数是什么时候的事情了，能别提了吗……',
+            jiubian2_audio1:'别担心，我来助你一尾之力。',
+            jiubian2_audio2:'',
             shiqu:'式取',
             shiqu_info:'一回合一次，出牌阶段，你可以重铸一张牌；若该牌有灵力，你可以令一名角色获得等量的灵力；若如此做，直到你的准备阶段：你或其需要消耗灵力时，可以改为由对方消耗灵力。',
+            shiqu_audio1:'先说清楚，这可不是什么结婚宣言啊？',
+            shiqu_audio2:'是谁把我们妖狐的印象污染成了容易暴走的理性蒸发的疯怪啊……',
             tianhugongzhu:'天狐公主 -illusion-',
             tianhugongzhu_info:'符卡技（3）<永续>准备阶段，你指定一名其他角色，与其各回复1点体力；该角色需要消耗灵力时，可以改为失去等量的体力值。',
             yukari:'紫',
@@ -1901,8 +1913,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             huanjing_info:'一名角色的准备阶段，你可以弃置一张牌，然后展示牌堆底的牌；若为攻击牌或法术牌，将之对其使用；若为装备牌，将之置于其装备区内；否则，弃置之。',
             pileTop:'牌堆顶',
             pileBottom:'牌堆底',
+            huanjing_audio1:'来，见识一下隙间的尽头吧？',
+            huanjing_audio2:'我猜下面的应该不是【决斗】来着？',
             mengjie:'梦界',
             mengjie_info:'出牌阶段开始时，或你成为攻击牌的目标后，你可以观看牌堆底的三张牌，并可以将其中任意张置于牌堆顶；若此时为回合外，你可以摸一张牌。',
+            mengjie_audio1:'呼呼呼呼呼——',
+            mengjie_audio2:'嗯？说好的要尊重老人呢？',
             mengjing:'梦境与现实的诅咒',
             mengjing_info:'符卡技（4）<永续>准备阶段，你指定一名其他角色；你与其以外的所有角色视为不在游戏内；所有角色的胜利条件无效。',
         },

@@ -174,6 +174,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             init:function(player){
                player.storage.lianxu3=[];
             },
+            onremove:function(player){
+               player.storage.lianxu3=[];
+               player.unmarkSkill('lianxu3');
+            },
             popup:false,
             forced:true,
             mark:true,

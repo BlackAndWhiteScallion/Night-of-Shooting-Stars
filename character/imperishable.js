@@ -305,7 +305,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             player.storage.yinyang = true;
                         },
                   },
-                  
                   mengdie:{
                       skillAnimation:true,
                       audio:2,
@@ -369,6 +368,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                     },
                     check:function(event,player){
+                      if (event.target == player) return 0;
                       return -get.attitude(player,event.target);
                     },
                   },
@@ -385,7 +385,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             list.push(i+1);
                         }
                         player.chooseControl(list,function(){
-                            return 1;
+                            if (player.countCards('h')) return 0;
+                            else return 0;
                         }).set('prompt','少摸任意张牌，增加等量攻击范围');
                         'step 1'
                         if (result.control){
@@ -412,7 +413,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.chooseTarget('今天要去偷谁的东西呢？',function(card,player,target){
                             return player!=target && player.canUse('shunshou', target);
                          }).set('ai',function(target){
-                            return -get.attitude(_status.event.player,target);
+                            return -get.attitude(_status.event.player,target) && target.countCards('hej');
                          });
                          'step 1'
                          if (result.bool && result.targets){
@@ -469,21 +470,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         for (var i = 1; i <= player.lili; i ++){
                               list.push(i);
                         }
-                          player.chooseControl(list,function(){
-                                    return 1;
-                              }).set('prompt','消耗任意点灵力');
-                          'step 1'
-                          if (result.control){
-                              player.loselili(result.control);
-                              ui.backgroundMusic.src = lib.assetURL+'audio/background/marisa.mp3'
-                              lib.config.background_music = 'marisa';
-                              //lib.config.volumn_background = 100;
-                              lib.config.musicchange = 'off';
-                              player.storage.stardust = result.control;
-                              if (!player.storage._enhance) player.storage._enhance = result.control;
-                              else player.storage._enhance += result.control;
-                              player.turnOver();
-                          }
+                        player.chooseControl(list,function(){
+                                  return 1;
+                            }).set('prompt','消耗任意点灵力');
+                        'step 1'
+                        if (result.control){
+                            player.loselili(result.control);
+                            ui.backgroundMusic.src = lib.assetURL+'audio/background/marisa.mp3'
+                            lib.config.background_music = 'marisa';
+                            //lib.config.volumn_background = 100;
+                            lib.config.musicchange = 'off';
+                            player.storage.stardust = result.control;
+                            if (!player.storage._enhance) player.storage._enhance = result.control;
+                            else player.storage._enhance += result.control;
+                            player.turnOver();
+                        }
+                    },
+                    check:function(event,player){
+                      return player.lili > 3;
                     },
                   },
                   stardust1:{
@@ -800,11 +804,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       // 选择枝AI
                       var choice;
                       if (target.hp < player.hp){
-                        if ((player.lili - target.lili)/2 > (player.hp - target.hp)) choice = 'hp';
-                        else choice = 'lili';
-                      } else if (target.hp > player.hp){
                         if ((player.lili - target.lili)/2 > (player.hp - target.hp)) choice = 'lili';
                         else choice = 'hp';
+                      } else if (target.hp > player.hp){
+                        if ((player.lili - target.lili)/2 > (target.hp - player.hp)) choice = 'hp';
+                        else choice = 'lili';
                       } else choice = 'lili';
                       if (list.length == 0) event.finish();
                       else target.chooseControl(function(){
@@ -1047,7 +1051,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   businiao_audio2:'炎符「不死鸟之羽」！',
                   businiao2:'不死鸟之羽',
                   businiao2_audio1:'……浴火重生*',
-                  businiao2_audio2:'无论是多少次，无论是多少次！',
+                  businiao2_audio2:'无论是第几次，无论是多少次！',
                   businiao_info:'符卡技（1）<终语>你不坠机；当前回合的结束阶段，你可以消耗1点灵力值，并使用一张攻击牌；你可以重复此流程任意次；然后，你须消耗所有灵力，将体力回复至1，并将手牌补至3张。',
                   mokou_die:'啊——。有点太硌牙了呢。',
             },

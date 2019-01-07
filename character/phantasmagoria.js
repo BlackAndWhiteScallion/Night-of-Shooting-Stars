@@ -11,11 +11,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   eiki:['female','1',4,['huiwu','caijue','shenpan']],
 		},
 		characterIntro:{
-			           lilyblack:'似乎就是莉莉白换了身衣服？',
+			            lilyblack:'似乎就是莉莉白换了身衣服？',
                   medicine:'全名梅蒂欣·梅兰可莉。被人类抛弃，受铃兰之毒多年后妖怪化的人偶。',
-                  yuuka:'全名风间幽香。',
-                  komachi:'全名小野塚小町。',
-                  eiki:'全名四季映姬。',
+                  yuuka:'全名风间幽香。太阳花园之主。虽然只是种花的，但是实际战力是顶尖级别，还是战狂性格。不过最近比较满足于种花和养老。',
+                  komachi:'全名小野塚小町。负责将死者灵魂带入冥界的，冥河上摆渡的死神。虽然是至关重要的工作，但是因为太懒怠工疑似弄出了异变来。',
+                  eiki:'全名四季映姬。幻想乡的裁判长/阎魔王。负责判断死者灵魂是转生还是进入地狱永劫不复。职业病非常非常非常严重。',
 		},       
 		perfectPair:{
 		},
@@ -359,9 +359,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         for (var i = 1; i <= player.lili; i ++){
                               list.push(i);
                         }
+                        // 这里AI还没写
+                        var choice = 0;
                           player.chooseControl(list,function(){
-                                    return 1;
-                              }).set('prompt','消耗任意点灵力');
+                                    return choice;
+                              }).set('prompt','消耗任意点灵力').set('choice',choice);
                           'step 1'
                           if (result.control){
                               player.loselili(result.control);
@@ -369,10 +371,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               player.turnOver();
                           }
                       },
+                      check:function(event,player){
+                        return player.lili > 2;
+                      },
                   },
                   wujian_skill:{
                         enable:'phaseUse',
                         filter:function(event,player){
+                              if (!player.getStat().skill.wujian_skill) return true;
                               return player.getStat().skill.wujian_skill<player.storage.wujian;
                         },
                         content:function(){
@@ -390,6 +396,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     if (list[j].lili == 0) player.gainPlayerCard(list[j],true,'hej');
                               }
                         },
+                        ai:{
+                          basic:{
+                            order:10
+                          },
+                          result:{
+                            player:0.5,
+                          },
+                        }
                   },
                   huiwu:{
                     audio:0,
@@ -401,14 +415,26 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                         'step 0'
                         if (trigger.player.getStat('damage')>0){
-                            player.discardPlayerCard('hej',trigger.player,true);
+                          var neg=get.attitude(player,trigger.player)<=0;
+                            player.choosePlayerCard('hej',trigger.player,true).set('ai',function(button){
+                                if(_status.event.neg){
+                                  return get.buttonValue(button);
+                                } else {
+                                return -get.buttonValue(button);
+                              }
+                              }).set('neg',neg);
                             game.trySkillAudio('huiwu',player,true,1);
-                        } else {
-                            trigger.player.chooseToDiscard(true,'hej',get.prompt('huiwu'));
+                        } else {               
+                          trigger.player.chooseCard('hej',true,'悔悟：你须重铸一张牌').set('ai',function(card){
+                            return -get.value(card);
+                          });
                             game.trySkillAudio('huiwu',player,true,2);
                         }
                         'step 1'
-                        if (result.bool){
+                        if (result.bool&&result.cards.length){
+                            trigger.player.$throw(result.cards);
+                            result.cards[0].discard();
+                            game.log(get.translation(trigger.player)+'重铸了'+get.translation(result.cards[0]));
                             trigger.player.draw();
                         }
                     }
@@ -562,8 +588,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	yuuka_die:'嗯，我承认你还是挺强的呢。',
                   komachi:'小町',
                   guihang:'归航',
+                  guihang_audio1:'给我过来！',
+                  guihang_audio2:'想在我面前跑？跑到世界尽头你也跑不掉！',
                   guihang_info:'你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法对距离大于１的角色造成弹幕伤害后，弃置其一张牌，并令你与其距离视为１，且此技能无效，直到回合结束。',
                   wujian:'无间之狭间',
+                  wujian_skill:'无间之狭间',
                   wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；你以此法令一名角色的灵力变成0后，获得其场上一张牌。',
                   komachi_die:'被暴打可真的不能叫放松啊。',
                 eiki:'映姬',
