@@ -2171,14 +2171,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							return player!=target;
 						}).set('ai',function(target){
 							var player=_status.event.player;
-							if (target.identity == "fan") return -10;
-							if(player.maxHp-player.hp==1&&target.countCards('he')==0){
-								return 0;
-							}
-							if(get.attitude(_status.event.player,target)<0){
-								return get.attitude(_status.event.player,target);
-							}
-							return 1;
+							if (target.identityShown != true) return target;
+							if (target.identity == "fan") return 0;
+							return get.attitude(_status.event.player,target)<0;
 						});
     				}
     				'step 1'
@@ -2233,10 +2228,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},
 					result:{
 						player:function(player){
-							if (player.identity == 'fan') return 1;
-							if (player.identity == 'zhu') return 0.6;
+							if (player.identity == 'fan') return 0.5;
+							if (player.identity == 'zhu') return 0.1;
 							if (player.identity == 'zhong'){
-								if (game.zhu.identity == 'zhu') return 1;
+								if (game.zhu.identityShown == true) return 1;
 								else return 0;
 							}
 							if (player.identity == 'nei') return 1.5;

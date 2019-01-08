@@ -68,7 +68,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		    				choice.push('lose_lili');
 		    			}
 		    			player.chooseControl(choice).set('ai',function(){
-		    				return 'end_phase';
+		    				if (player.countCards('h') > player.hp) return 'lose_lili';
+                            if (player.lili > 2) return 'lose_lili';
+                            return 'end_phase';
     					});
     				}
     				"step 4"

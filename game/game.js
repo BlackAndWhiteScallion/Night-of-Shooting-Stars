@@ -677,7 +677,7 @@
                                     me.style.height='22px';
                                 }
                                 me.style.borderRadius='2px';
-                                var list=['re_caocao','re_liubei','sp_zhangjiao','sunquan'];
+                                var list=['reimu','remilia','yuyuko','kaguya'];
                                 for(var i=0;i<4;i++){
                                     var player=ui.create.div('.fakeplayer',node);
                                     ui.create.div('.avatar',player).setBackground(list.randomRemove(),'character');
@@ -22828,6 +22828,17 @@ game.broadcast(function(player,str,nature,avatar){
                         }
                     }
                 },
+                ai:{
+                    effect:{
+                        player:function(card,player,target,current){
+                          if (get.bonus(card) < 0){
+                            if (player.lili < 2) return -1;
+                            if (player.isTurnedOver() && player.lili < 3) return -2;
+                          } 
+                          return ; 
+                        },
+                    },
+                },
             },
             _enhance:{
                 popup:false,
@@ -22880,6 +22891,7 @@ game.broadcast(function(player,str,nature,avatar){
             _enhanceend:{
                 trigger:{player:'useCardAfter'},
                 forced:true,
+                popup:false,
                 content:function(){
                     if (player.storage._enhance){
                         player.storage._enhance = 0;
@@ -47942,8 +47954,10 @@ smoothAvatar:function(player,vice){
             return get.attitude(_status.event.player,to);
         },
     };
+    // AI在这里哟
     var ai={
         basic:{
+            // 按键选择
             chooseButton:function(check){
                 var event=_status.event;
                 var i,j,range,buttons,buttons2;
@@ -47991,14 +48005,22 @@ smoothAvatar:function(player,vice){
                     }
                 }
             },
+            // 卡牌选择（那个check就是技能和卡牌下面的check:function）
             chooseCard:function(check){
                 var event=_status.event;
-                if(event.filterCard==undefined) return (check()>0);
+                // 如果目前的使用事件没有限制的话，check收益大于0的就扔出去
+                // 在这里设置灵力问题应该就OK了？没法在这里做到检测是否有灵力啊……
+                if(event.filterCard==undefined){
+                    return (check()>0);
+                }
+                // 如果是有限制的话
                 var i,j,range,cards,cards2,skills,check,effect;
                 var ok=false,forced=event.forced;
                 var iwhile=100;
                 while(iwhile--){
+                    // range 是event需要选择的卡牌数量
                     range=get.select(event.selectCard);
+                    // 如果已选择的卡数量>=须选择的卡数量，按确认
                     if(ui.selected.cards.length>=range[0]){
                         ok=true;
                     }

@@ -4,6 +4,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 	name:'standard',
 	connect:true,
 	card:{
+		// 这前面几个都是给AI用的函数，检测收益用的
 		damage:{
 			ai:{
 				result:{
@@ -39,7 +40,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		thunderdamage:{
 			ai:{
 				result:{
-					target:-1.5
+					target:-1
 				},
 				tag:{
 					damage:1,
@@ -60,6 +61,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			}
 		},
+		// 到这里为止，都是给AI用的
+
 		// 这里是杀的代码！
 		// 还外带了所有杀有关时机的发动……真是
 		sha:{
@@ -393,17 +396,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				basic:{
 					order:3,
 					useful:4,
-					value:9
+					value:7
 				},
 				result:{
 					target:function(player,target){
-						if(ai.get.attitude(player,target)<=0) return (target.num('hej')>0)?-1.5:1.5;
+						if(ai.get.attitude(player,target)<=0) return (target.num('hej')>0)?-1.5:1;
 						return -1.5;
 					},
 					player:function(player,target){
-						if(ai.get.attitude(player,target)<0&&!target.num('he')){
+						if(ai.get.attitude(player,target)<0&&!target.num('hej')){
 							return 0;
 						}
+						if (!target.storage._mubiao) return 0.5;
 						return 1;
 					}
 				},
@@ -628,15 +632,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				"step 0"
 				var controls=[];
 				if (player.storage.enhance){
-					controls.push('被'+get.translation(player)+'观看手牌并明置身份');
+					controls.push('展示手牌并明置身份');
 				} else {
 					if(target.identityShown != true && get.mode()=='identity') controls.push('明置身份');	
-					controls.push('被'+get.translation(player)+'观看手牌');				
+					controls.push('展示手牌');				
 				}
 				target.chooseControl(controls,function(event,player){
-					if (controls.contains('被'+get.translation(player)+'观看手牌并明置身份')) return '被'+get.translation(player)+'观看手牌并明置身份';
+					if (controls.contains('展示手牌并明置身份')) return '展示手牌并明置身份';
 					if(controls.contains('明置身份')) return '明置身份';
-					return '被'+get.translation(player)+'观看手牌';
+					return '展示手牌';
 				});
 				"step 1"
 				if(result.control){
@@ -645,7 +649,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						target.showCards(target.get('h'));
 						player.draw();
 					}
-					if(result.control!='被'+get.translation(player)+'观看手牌') {
+					if(result.control!='展示手牌') {
 						if (target.identityShown != true && get.mode()=='identity') target.useSkill('_tanpai');
 					}
 				}
@@ -696,7 +700,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					value:5
 				},
 				result:{
-					target:1,
+					target:function(player,target){
+						if (player.lili > 2) return 1;
+						if (player.countCards('h',{name:'sha'}) < 2) return 0;
+						return 1.5;
+					},
 				},
 				tag:{
 					draw:0.5
@@ -754,7 +762,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			contentAfter:function(){
 				var cards = [];
-				for(i=0;i<ui.discardPile.childNodes.length;i++){
+				for(var i=0;i<ui.discardPile.childNodes.length;i++){
                     var currentcard=ui.discardPile.childNodes[i];
                     currentcard.vanishtag.length=0;
                     if(get.info(currentcard).vanish||currentcard.storage.vanish){
@@ -875,12 +883,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filterTarget:function(card,player,target){
 				return true;
 			},
+			contentBefore:function(){
+				player.$skill('冰域之宴');
+			},
 			content:function(){
 				if (target == player) target.addSkill('bingyu2');
 			},
 			contentAfter:function(){
 				player.markSkill('bingyu1');
-				player.$skill('bingyu1');
 			},
 			ai:{
 				basic:{
@@ -1027,7 +1037,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip5',
 			ai:{
 				basic:{
-					equipValue:8
+					equipValue:4
 				}
 			},
 			skills:['saiqian_skill','saiqian_skill3']
@@ -1038,7 +1048,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip2',
 			ai:{
 				basic:{
-					equipValue:8
+					equipValue:6
 				}
 			},
 			skills:['yinyangyu_skill_1','yinyangyu_skill_2']
@@ -1060,7 +1070,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:3
 				}
 			},
 			skills:['bailou_skill']
@@ -1071,7 +1081,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:7
 				}
 			},
 			skills:['laevatein_skill']
@@ -1082,7 +1092,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:4
 				}
 			},
 			skills:['windfan_skill']
@@ -1093,7 +1103,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:3
 				}
 			},
 			skills:['gungnir_skill']
@@ -1126,7 +1136,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:4
 				}
 			},
 			skills:['deathfan_skill']
@@ -1148,7 +1158,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:4
 				}
 			},
 			skills:['zhiyuu_skill']
@@ -1159,7 +1169,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip3',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:4
 				}
 			},
 			skills:['book_skill']
@@ -1235,7 +1245,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip3',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:6
 				}
 			},
 			skills:['lunadial_skill']
@@ -1246,7 +1256,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip1',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:3
 				}
 			},
 			skills:['hakkero_skill']
@@ -1257,7 +1267,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip2',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:7.5
 				}
 			},
 			skills:['lantern_skill']
@@ -1268,7 +1278,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip2',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:7
 				}
 			},
 			skills:['hourai_skill']
@@ -1279,7 +1289,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'equip5',
 			ai:{
 				basic:{
-					equipValue:2
+					equipValue:5
 				}
 			},
 			skills:['stone_skill']
@@ -1445,7 +1455,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:true,
 			trigger:{player:'shaBegin'},
 			check:function(event,player){
-				return ai.get.attitude(player,event.target)<=0;
+				return ai.get.attitude(player,event.target)<=0 && event.target.countCards('h') > 2;
 			},
 			content:function(){
 				"step 0"
@@ -1454,7 +1464,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					controls.push('lose_lili');
     				}
     				player.chooseControl(controls).ai=function(){
-    					if(player.lili > 2){
+    					if(player.lili > 3){
     						return 'lose_lili';
     					}
     					else{
@@ -1501,16 +1511,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						return player.num('h')<=player.hp?1:0;
 					}
 				},
-				effect:function(card,player){
-					if(get.tag(card,'damage')){
-						if(player.hasSkill('jueqing')) return [1,1];
-						return 1.2;
-					}
-					if(get.tag(card,'loseHp')){
-						if(player.hp<=1) return;
-						return [0,0];
-					}
-				}
 			}
 		},
 		deathfan_skill:{
@@ -1693,6 +1693,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.loselili();
 				target.addSkill('lunadial2');
 			},
+
 		},
 		lunadial2:{
 			trigger:{global:'phaseAfter'},
@@ -1798,7 +1799,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		filter:function(event,player){
     			return (player.num('e',{name:'stone'}) > 0);
     		},
-    		audio:2,
     		usable:1,
 			chooseButton:{
   				dialog:function(event,player){
@@ -1877,6 +1877,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					return '将两张牌（包括贤者之石）当作'+get.translation(links[0][2])+'使用';
     				}
     			},
+    			ai:{
+					order:6,
+					result:{
+						player:function(player){
+							return 1;
+						}
+					},
+					threaten:1,
+				}
 		},
 		pantsu_skill:{
 			alter:true,
@@ -2270,7 +2279,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		_tianguo2:{
 			skillAnimation:true,
 			trigger:{player:'drawAfter'},
-			frequent:false,
 			filter:function(event,player){
 				if (event.result.length) {
 					for(var i=0;i<event.result.length;i++){

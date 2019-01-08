@@ -234,7 +234,7 @@ window.noname_asset_list=[
 ];
 window.noname_skin_list={
     rumia:3,
-    meiling:2,
+    meiling:1,
     patchouli:2,
     koakuma:1,
     sakuya:2,

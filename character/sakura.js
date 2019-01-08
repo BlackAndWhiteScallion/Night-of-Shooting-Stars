@@ -382,6 +382,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.links && result.links.length > 0){
                         player.storage.huanfa.remove(result.links[0]);
                         player.syncStorage('huanfa');
+                        if (!player.storage.huanfa.length) player.unmarkSkill('huanfa');
                         if (event.index == 0){
                             trigger.target.gain(result.links[0],'log');
                             event.finish();
@@ -724,6 +725,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.finish();
                     }
                     "step 3"
+                    game.log('zhenhun');
                     if (result.bool && event.control == '获得牌'){
                         if (result.links.length){
                             //player.$gain(result.links);
@@ -1103,6 +1105,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 targets.push(players[i]);
                             }
                         }
+                        player.line(targets,'pink');
                         for (var j=0;j<targets.length;j++){
                             targets[j].loseHp();
                         }
@@ -1185,6 +1188,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     trigger.cancel();
                     trigger.finish();
                 },
+                ai:{
+                    effect:function(card,player){
+                        if(get.tag(card,'recover')){
+                            return [0,0];
+                        }
+                    }
+                },
             },
             fanhundie:{
                 audio:1,
@@ -1231,6 +1241,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.num--;
                         event.goto(1);
                     }
+                },
+                ai:{
+                    order:4,
+                    result:{
+                        target:-1
+                    },
                 },
             },
             jiubian:{
@@ -1307,6 +1323,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     prompt:function(links,player){
                         return '将一张葱当作'+get.translation(links[0][2])+'使用';
                     }
+                },
+                ai:{
+                    order:5,
+                    result:{
+                        player:0.5,
+                    },
                 },
             },
             jiubian2:{
@@ -1826,7 +1848,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             zhenhun_info:'一名角色的结束阶段，你可以选择一项：1. 获得其本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其一张明置牌。',
             zhenhun_audio1:'这是献给你的镇魂曲。',
             zhenhun_audio2:'……别这样看我啦，我不会一把大火烧死你的。掉所有人血？……那就不保证了。',
-            lunasa_die:'',
+            lunasa_die:'呜咕咕咕咕……',
             merlin:'梅露兰',
             mingguan:'冥管',
             mingguan_audio1:'（🎺）',

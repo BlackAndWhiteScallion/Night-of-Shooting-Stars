@@ -490,6 +490,156 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       return player.lili > 3;
                     },
                   },
+                  kaiyun:{
+                    global:'kaiyun_1',
+                  },
+                  kaiyun_1:{
+                    trigger:{player:'phaseUseBegin'},
+                    filter:function(event,player){
+                      return player.countCards('hej');
+                    },
+                    content:function(){
+                      'step 0'
+                        player.chooseCardTarget({
+                          selectCard:1,
+                          filterTarget:function(card,player,target){
+                            return target.hasSkill('kaiyun');
+                          },
+                          forced:true,
+                          ai2:function(target){
+                            return get.attitude(_status.event.player,target);
+                          }
+                        });
+                        'step 1'
+                        if(result.targets&&result.targets[0]){
+                          result.targets[0].gain(result.cards,player);
+                          player.$give(result.cards.length,result.targets[0]);
+                        }
+                        for(var i=0;i<ui.skillPile.childNodes.length;i++){
+                          if (ui.skillPile.childNodes[i].name == 'shenyou'){
+                            player.gain(ui.skillPile.childNodes[i]);
+                            break;
+                          } else if (i == ui.skillPile.childNodes.length -1){
+                              result.targets[0].say('技能牌堆里并没有【神佑】，呵呵——');                      
+                          }
+                        }
+                        player.addTempSkill('kaiyun_3');
+                        result.targets[0].addTempSkill('kaiyun_4');
+                    },
+                    check:function(event,player){
+                      if(player.countCards('h')<=player.hp) return false;
+                      return game.hasPlayer(function(current){
+                        return current!=player&&current.hasSkill('kaiyun')&&get.attitude(player,current)>0;
+                      });
+                    },
+                  },
+                  kaiyun_3:{
+                    mod:{
+                        playerEnabled:function(card,player,target){
+                          if(player!=target || !target.hasSkill('kaiyun_4')) return false;
+                        }
+                      }
+                  },
+                  kaiyun_4:{
+                    // 又是标记啊
+                  },
+                  mitu:{
+                    audio:2,
+                    group:'mitu_storage',
+                    trigger:{global:'useCardToBegin'},
+                    filter:function(event,player){
+                      if (!player.storage.mitu) return false;
+                      if (event.card.name != player.storage.mitu.name) return false;
+                      if (player.hasSkill('yuangu_1')){
+                        return get.distance(event.target,player,'attack')<=1;
+                      } else {
+                        return event.target == player;
+                      }
+                    },
+                    content:function(event,player){
+                      'step 0'
+                      player.showCards(player.storage.mitu);
+                      trigger.player.judge(function(card){
+                        if (get.color(card) == 'black') return -2;
+                        return 0;
+                      });
+                      'step 1'
+                      if (result.bool == false){
+                        player.discardPlayerCard(trigger.player,'hej',true);
+                        if(trigger.player == player) trigger.cancel();
+                        if(!player.hasSkill('yuangu_1')) {
+                          player.storage.mitu.discard();
+                          player.$throw(player.storage.mitu);
+                          player.storage.mitu.remove(card);
+                          player.unmarkSkill('mitu');
+                          player.syncStorage('mitu');
+                        }
+                      }
+                    },
+                    check:function(){return true},
+                    intro:{
+                        mark:function(dialog,content,player){
+                          if(content){
+                            if(player==game.me||player.isUnderControl()){
+                              dialog.addAuto(content);
+                            }
+                            else{
+                              return '这里有个坑哟';
+                            }
+                          }
+                        },
+                        content:function(content,player){
+                          if(content){
+                            if(player==game.me||player.isUnderControl()){
+                              return get.translation(content);
+                            }
+                            return '这里有个坑哟';
+                          }
+                        }
+                      },
+                  },
+                  mitu_storage:{
+                    trigger:{player:'phaseDiscardBegin'},
+                    filter:function(event,player){
+                      return player.countCards('he') && !player.storage.mitu;
+                    },
+                    content:function(){
+                      'step 0'
+                      player.chooseCard('he',get.prompt('mitu')).set('ai',function(card){
+                            return card.name == 'sha';
+                          });
+                      'step 1'
+                      if(result.cards&&result.cards.length){
+                        player.lose(result.cards,ui.special);
+                        player.storage.mitu=result.cards[0];
+                        player.syncStorage('mitu');
+                        player.markSkill('mitu');
+                      }
+                    },
+                    check:function(event,player){
+                      return player.countCards('h',{name:'sha'});
+                    },
+                  },
+                  yuangu:{
+                    audio:2,
+                    cost:2,
+                    spell:['yuangu_1'],
+                    roundi:true,
+                    trigger:{player:'phaseBegin'},
+                    filter:function(event,player){
+                        return player.lili > lib.skill.yuangu.cost;
+                    },
+                    content:function(){
+                        player.loselili(lib.skill.yuangu.cost);
+                        player.turnOver();
+                      },
+                    check:function(event,player){
+                      return player.lili > 3 && player.storage.mitu;
+                    },
+                  },
+                  yuangu_1:{
+                    // 结果这玩意就是个标记啊……
+                  },
                   stardust1:{
                     audio:2,
                     direct:true,
@@ -775,6 +925,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.unmarkSkill('zhaixing');
                       },
                   },
+                  
                   lanyue:{
                     audio:2,
                     enable:'phaseUse',
@@ -835,7 +986,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             return -get.attitude(player,target);
                           }
                         },
-                      threaten:2
+                      threaten:1.5,
                     },
                   },
                   tianwen:{
@@ -909,7 +1060,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.loselili(lib.skill.businiao.cost);
                           player.turnOver();
                       },
-                      check:false,
+                      check:function(){
+                        return false;
+                      },
                   },
                   businiao_die:{
                     audio:'businiao',
@@ -925,7 +1078,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.loselili(lib.skill.businiao.cost);
                           player.turnOver();
                       },
-                      check:true,
+                      check:function(){
+                        return true;
+                      },
                       ai:{
                         save:true,
                       },
@@ -951,7 +1106,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         'step 0'
                         if (player.lili > 0){
                             player.chooseToUse('【不死鸟之羽】：你可以消耗1点灵力，使用一张【轰！】；可以重复此流程。',{name:'sha'},function(card,player,target){
-                                return player.canUse('sha',target, true);
+                                return player.canUse('sha', target, true);
                             });
                         }
                         'step 1'
@@ -965,7 +1120,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             player.hp = 1;
                             player.update();
                         }
-                        player.draw(3 - player.countCards('h'));
+                        if (player.countCards('h') < 3) player.draw(3 - player.countCards('h'));
                     },
                   },
             },
@@ -1030,6 +1185,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   stardust_audio2:'现在开始，这就是我的舞台了！',
                   stardust_info:'符卡技（X）（X为任意值）你本回合使用下一张牌时：若有强化效果，执行强化效果X次；若不是装备牌，可以无视距离限制指定X名额外目标。',
                   marisa_die:'没事，这夜晚还很长呢！',
+                  tewi:'帝',
+                  mitu:'迷途',
+                  mitu_info:'弃牌阶段开始时，若你没有“伏”，你可以将一张牌扣置于角色牌上，称为“伏”；你成为牌的目标后，你可以展示同名“伏”，令来源判定；若为黑色，弃置“伏”，弃置来源一张牌，并令该牌对你无效。',
+                  kaiyun:'开运',
+                  kaiyun_2:'开运',
+                  kaiyun_info:'一名角色的出牌阶段开始时，其可以交给你一张牌：获得一张【神佑】技能牌，且其不能对你或其以外的角色使用牌，直到回合结束。',
+                  yuangu:'远古的骗术',
+                  yuangu_info:'符卡技（2）<永续>【迷途】中的“你成为牌的目标后”视为“你攻击范围内的一名角色成为牌的目标后”；无视【迷途】中的“弃置"伏"”。',
                   eirin:'永琳',
                   zhaixing:'摘星',
                   zhaixing_info:'结束阶段，你可以观看牌堆顶，或技能牌堆顶的X张牌（X为你本回合使用的牌花色数）；你将其中一张交给一名角色，其余按任意顺序置于该牌堆顶或底。',

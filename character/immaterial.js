@@ -56,24 +56,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
             	},
             	cuiji_buff:{
-            		mod:{
-						cardEnabled:function(card,player){
-							if(_status.event.skill!='cuiji_buff'&&player.lili>player.hp&&card.name!='sha'&&get.color(card)=='black') return false;
-						},
-						cardUsable:function(card,player){
-							if(_status.event.skill!='cuiji_buff'&&player.lili>player.hp&&card.name!='sha'&&get.color(card)=='black') return false;
-						},
-						cardUsable:function(card,player,num){
-							if(card.name=='sha'&&get.color(card)=='black') return Infinity;
-						},
-						cardRespondable:function(card,player){
-							if(_status.event.skill!='cuiji_buff'&&player.lili>player.hp&&card.name!='sha'&&get.color(card)=='black') return false;
-						},
-						cardSavable:function(card,player){
-							if(_status.event.skill!='cuiji_buff'&&player.lili>player.hp&&card.name!='sha'&&get.color(card)=='black') return false;
-						},
-					},
 					audio:2,
+					usable:1,
 					enable:['chooseToUse','chooseToRespond'],
 					filter:function(event,player){
 						return player.lili>player.hp;
@@ -91,7 +75,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						order:4,
 						useful:-1,
 						value:-1
-					}
+					},
+					mod:{
+						cardUsable:function(card,player,num){
+							if(card.name=='sha') return num + 1;
+						}
+					},
             	},
             	baigui:{
             		spell:['baigui1','baigui2'],
@@ -149,7 +138,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	cuiji_buff:'萃集',
             	cuiji_hp:'失去1点体力，获得2点灵力',
             	cuiji_lili:'消耗2点灵力，回复1点体力',
-            	cuiji_info:'准备阶段，或你造成弹幕伤害后你可以选择一项：1. 失去1点体力，然后获得2点灵力；2. 消耗2点灵力值，然后回复1点体力；若你的灵力大于体力，你的黑色手牌均视为【轰！】，你以此法使用的【轰！】不计次数。',
+            	cuiji_info:'准备阶段，或你造成弹幕伤害后你可以选择一项：1. 失去1点体力，然后获得2点灵力；2. 消耗2点灵力值，然后回复1点体力；若你的灵力大于体力，一回合一次，你可以将一张黑色牌当作不计次数的【轰！】使用/打出。',
             	baigui:'百万鬼夜行',
             	baigui_info:'符卡技（0）你使用攻击牌指定目标后，令目标对该牌使用的前X张防御牌无效；该牌造成弹幕伤害后，你须将灵力消耗至1，弃置受伤角色Y张牌 （X为体力值，Y为消耗的灵力值）',
    

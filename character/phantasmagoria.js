@@ -194,7 +194,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   huayuan:{
                         audio:2,
                         cost:2,
-                        spell:['huayuan_1'],
+                        spell:['huayuan_1', 'huayuan_2'],
                         trigger:{player:['phaseBegin']},
                         roundi:function(event,player){
                               return player.isMaxHp(true);
@@ -210,11 +210,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   huayuan_1:{
                         audio:2,
                         trigger:{global:'recoverBegin'},
-                        direct:true,
                         usable:1,
                         content:function(){
                               'step 0'
                               player.chooseControl('令回复量-1','令回复量+1',function(event,player){
+                                    if (get.attitude(player, event.player) >= 0) return '令回复量+1';
                                     return '令回复量-1';
                               });
                               'step 1'
@@ -356,7 +356,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       content:function(){
                         'step 0'
                         var list = [];
-                        for (var i = 1; i <= player.lili; i ++){
+                        for (var i = 1; i < player.lili; i ++){
                               list.push(i);
                         }
                         // 这里AI还没写
@@ -385,7 +385,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               var list = [];
                               var players = game.filterPlayer();
                               for (var i = 0; i < players.length; i ++){
-                                    if (get.distance(players[i],player,'attack')<=1 && players[i] != player){
+                                    if (get.distance(player, players[i],'attack')<=1 && players[i] != player){
                                           list.push(players[i]);
                                     }
                               }
@@ -393,7 +393,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     list[j].damage('thunder');
                               }
                               for (var j = 0; j < list.length; j++){
-                                    if (list[j].lili == 0) player.gainPlayerCard(list[j],true,'hej');
+                                    if (list[j].lili == 0 && list[j].countCards('hej')) player.gainPlayerCard(list[j],true,'hej');
                               }
                         },
                         ai:{
@@ -464,7 +464,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             }
                         }
                         var num = list.length;
-                        console.log(list.length);
                         if (list.length > 0){
                             result.targets[0].discard(list);
                             result.targets[0].damage(Math.min(num, player.lili-1), 'thunder');
