@@ -26,7 +26,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		skill:{
 			heiguan:{
     			audio:2,
-                direct:true,
     			trigger:{player:'phaseUseBegin'},
     			//prompt:'选择一些灵力小于你，并且相邻的角色，和他们依次拼点：若你赢，视为对其使用一张【轰！】；若没赢，你须选择：消耗1点灵力，或取消其他目标并结束出牌阶段。',
     			filter:function(event,player){
@@ -40,7 +39,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     					}
 						return target.countCards('h')>0&&player!=target&&target.lili<player.lili;
 					}).set('ai',function(target){
-					});
+					   return get.attitude(player,target) <= 0;
+                    });
 					"step 1"
     				if(result.bool){
     					player.logSkill('heiguan',result.targets);

@@ -46,6 +46,8 @@ window.noname_package={
     },
     music:{
         music_default:'默认',
+        BadApple:'烂苹果',
+        Cirno:'琪露诺',
         scarlet:'红月异变',
         sakura:'散樱异变',
         imperishable:'永夜异变',
