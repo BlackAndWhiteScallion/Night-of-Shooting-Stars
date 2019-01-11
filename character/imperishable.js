@@ -568,9 +568,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if(!player.hasSkill('yuangu_1')) {
                           player.storage.mitu.discard();
                           player.$throw(player.storage.mitu);
-                          player.storage.mitu.remove(card);
+                          delete player.storage.mitu;
                           player.unmarkSkill('mitu');
-                          player.syncStorage('mitu');
                         }
                       }
                     },
