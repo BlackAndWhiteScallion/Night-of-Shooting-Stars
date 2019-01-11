@@ -93,6 +93,7 @@ window.noname_asset_list=[
     'image/character/merlin.jpg',
     'image/character/mokou.jpg',
     'image/character/mystia.jpg',
+    'image/character/zigui.jpg',
     'image/character/patchouli.jpg',
     'image/character/ran.jpg',
     'image/character/reimu.jpg',
