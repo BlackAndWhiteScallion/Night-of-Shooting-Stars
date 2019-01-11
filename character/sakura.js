@@ -362,13 +362,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return (get.subtype(event.card) == 'attack');
                 },
                 check:function(event,player){
-                    return get.attitude(player,event.player)>0;
+                    return get.attitude(player,event.target)>0;
                 },
                 content:function(){
                     'step 0'
                     player.chooseControlList(get.prompt('mocai'),'给目标一张“手办”','给目标找一张技能牌',function(event,player){
-                        return '给目标一张“手办”';
-                    });
+                        return 0;
+                    },true);
                     'step 1'
                     if (result.control){
                         event.index=result.index;
@@ -424,6 +424,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.draw(result.cards.length);
                     }
                 },
+                check:function(event,player){
+                    return player.lili > 3 && player.storage.huanfa.length + player.countCards('h') >= 4;
+                }
             },
             hanghuorai1:{
                 audio:2,
@@ -453,9 +456,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 2'
                     if (result.bool && result.targets.length){
+                        player.storage.huanfa.remove(event.card);
                         event.player.useCard(event.card,result.targets);
+                        player.syncStorage('huanfa');
                     }
-                }
+                },
+                check:function(event,player){
+                    return get.attitude(player,event.player)>0;
+                },
             },
             chunxiao:{
                 audio:2,

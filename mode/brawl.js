@@ -766,13 +766,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		'来和5血<s>稻草人</s>子规老师练习一下吧？',
 	        	],
 	        	init:function(){
-					//game.saveConfig('player_number','2','old_identity');
 					lib.config.mode_config['old_identity']['player_number'] = '2';
-					//game.saveConfig('double_character',false,'old_identity');
-					//lib.config.mode_config['old_identity']['double_character'] = false;
+					lib.config.mode_config['old_identity']['free_choose'] = true;
+					lib.config.mode_config['old_identity']['continue_game'] = true;
 				},
 	        	content:{
-					chooseCharacterFixed:true,
+					//chooseCharacterFixed:true,
 					chooseCharacterAi:function(player){
 						player.init('zigui');
 					},

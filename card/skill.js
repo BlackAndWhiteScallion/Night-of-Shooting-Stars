@@ -264,13 +264,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				"step 0"
-    				for (var i = 0; i <= player.num('j'); i ++){
-						var card=player.get('j',i);
-						if(card&&card.name == ('shenyou')){
-							player.discard(card);
-							break;
+    				var cards = player.getCards('j');
+						for (var i = 0; i <= cards.length; i ++){
+							if(cards[i]&&cards[i].name == 'shenyou'){
+								player.discard(cards[i]);
+								break;
+							}
 						}
-					}
 					trigger.cancel();
     			},
 			},
@@ -285,13 +285,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				"step 0"
     				player.logSkill('shenyou_skill_2');
     				trigger.player.judging[0].suit = "heart";
-    				for (var i = 0; i <= player.num('j'); i ++){
-						var card=player.get('j',i);
-						if(card&&card.name == ('shenyou')){
-							player.discard(card);
-							break;
+    				"step 1"
+    				var cards = player.getCards('j');
+						for (var i = 0; i <= cards.length; i ++){
+							if(cards[i]&&cards[i].name == 'shenyou'){
+								player.discard(cards[i]);
+								break;
+							}
 						}
-					}
     				game.log(trigger.player,'的判定牌的花色改为'+get.translation("heart"));
     			},
 			},

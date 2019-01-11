@@ -160,7 +160,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                         if(game.players[i].isOut()||game.players[i]==player) continue;
                         if(game.players[i].lili>=player.lili) return false;
                     }
-    				return player.isMaxHp(false);
+    				return player.isMaxHp(true);
     			},
     			content:function(){
     				game.over(true);
@@ -184,6 +184,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				skillAnimation:true,
     			trigger:{player:'phaseBegin'},
     			filter:function(event,player){
+    				console.log('3');
     				return player.isMinHandcard(true) && player.isMinHp(true);
     			},
     			content:function(){

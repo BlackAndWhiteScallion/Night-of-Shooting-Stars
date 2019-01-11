@@ -1888,11 +1888,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		pantsu_skill:{
 			alter:true,
 			mod:{
-				canBeDiscarded:function(card){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu') return false;
+				canBeDiscarded:function(card,player,target,event){
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
 				},
-				cardDiscardable:function(card){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu') return false;
+				cardDiscardable:function(card,player,target,event){
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
 				}
 			},
 		},
@@ -2500,6 +2500,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{global:'gameDrawAfter'},
 			filter:function(event,player){
 				return player.countCards('h',{name:'huanxiang'}) > 0;
+			},
+			contentBefore:function(){
+				game.log('幻想之门：游戏开始时，令所有角色摸一张牌');
 			},
 			content:function(){
 				for (var i = 0; i < game.filterPlayer().length; i ++){
