@@ -879,7 +879,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             }
                           }
                           for(i=0;i<bottom.length;i++){
-                            if (get.type(top[i]) == 'delay'){
+                            if (get.type(bottom[i]) == 'delay'){
                               ui.skillPile.appendChild(bottom[i]);
                             } else {
                               ui.cardPile.appendChild(bottom[i]);
@@ -925,19 +925,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.unmarkSkill('zhaixing');
                       },
                   },
-                  
                   lanyue:{
                     audio:2,
                     enable:'phaseUse',
                     usable:1,
-                    /*
-                    filter:function(event,player){
-                      if(player.countCards('h')==0) return false;
-                      return game.hasPlayer(function(current){
-                        return current.hp>player.hp&&current.countCards('h');
-                      });
-                    },
-                    */
                     filterTarget:function(card,player,target){
                       var players = game.filterPlayer();
                       var length = 0;
@@ -990,7 +981,285 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                   },
                   tianwen:{
-
+                      audio:2,
+                      cost:0,
+                      spell:['tianwen_skill'],
+                      trigger:{player:['phaseBeginStart']},
+                      filter:function(event,player){
+                          return player.lili > 1;
+                      },
+                      content:function(){
+                        'step 0'
+                        var list = [];
+                        for (var i = 1; i < player.lili; i ++){
+                              list.push(i);
+                        }
+                        // 这里AI还没写
+                        var choice = 0;
+                          player.chooseControl(list,function(){
+                                    return choice;
+                              }).set('prompt','消耗任意点灵力').set('choice',choice);
+                          'step 1'
+                          if (result.control){
+                              player.loselili(result.control);
+                              player.storage.tianwen = result.control;
+                              player.turnOver();
+                          }
+                      },
+                      check:function(event,player){
+                        return player.lili > 3;
+                      },
+                  },
+                  tianwen_skill:{
+                    direct:true,
+                    trigger:{player:'phaseBegin'},
+                    content:function(){
+                      'step 0'
+                      var num = player.storage.tianwen*2;
+                      player.chooseCardButton(num,true,get.cards(num),'按顺序将卡牌置于牌堆顶（先选择的在上）').set('ai',function(button){
+                        return get.value(button.link);
+                      });
+                      'step 1'
+                      if(result.bool){
+                        player.storage.tianwen = [];
+                        var list=result.links.slice(0);
+                        while(list.length){
+                          ui.cardPile.insertBefore(list.pop(),ui.cardPile.firstChild);
+                        }
+                      }
+                      'step 2'
+                      player.judge();
+                      'step 3'
+                      player.storage.tianwen.push(result.card);
+                      if (player.storage.tianwen.length == 1) event.goto(2);
+                      'step 4'
+                      player.chooseCardButton(player.storage.tianwen,'天文密葬法：获得一张判定牌，该牌效果视为另一张牌的效果，直到回合结束', true).set('ai',function(button){
+                            return get.value(button.link);
+                        });
+                      'step 5'
+                      if (result.bool){
+                        player.gain(result.links[0]);
+                        player.$gain2(result.links[0]);
+                        player.storage.tianwen.remove(result.links[0]);
+                        player.storage.tianwen_use = player.storage.tianwen[0];
+                        player.storage.tianwen = result.links[0];
+                        player.addTempSkill('tianwen_use');
+                      }
+                    }
+                  },
+                  tianwen_use:{
+                    direct:true,
+                    trigger:{player:'useCardToBegin'},
+                    filter:function(event,player){
+                      return event.card == player.storage.tianwen;
+                    },
+                    onremove:function(player){
+                      delete player.storage.tianwen;
+                      delete player.storage.tianwen_use;
+                    },
+                    content:function(){
+                      if (player.canUse(player.storage.tianwen_use,targets)){
+                        trigger.cancel();
+                        player.useCard({name:player.storage.tianwen_use.name,color:get.color(trigger.card),number:get.number(trigger.card)},targets);
+                      }
+                    },
+                  },
+                  nanti:{
+                    audio:2,
+                    enable:'phaseUse',
+                    usable:1,
+                    selectTarget:1,
+                    position:'he',
+                    filterCard:function(){
+                      return true;
+                    },
+                    selectCard:[1,Infinity],
+                    discard:false,
+                    lose:false,
+                    filterTarget:function(card,player,target){
+                      return player != target;
+                    },
+                    content:function(){
+                      'step 0'
+                      player.showCards(cards);
+                      player.chooseControl('牌名长度','花色','点数','种类','属性',function(){
+                      },true);
+                      'step 1'
+                      if (result.control){
+                        game.log(get.translation(player)+'选择了'+result.control);
+                        var valid = [];
+                        for (var i in cards){
+                          switch(result.control){
+                            case '牌名长度': valid.push(get.translation(cards[i].name).length); break;
+                            case '花色': valid.push(get.suit(cards[i])); break;
+                            case '点数': valid.push(get.number(cards[i])); break;
+                            case '种类': valid.push(get.type(cards[i])); break;
+                            case '属性': valid.push(get.subtype(cards[i])); break;
+                          }
+                        }
+                        targets[0].chooseCard(get.prompt('nanti'),'he',function(card){
+                            switch(result.control){
+                              case '牌名长度': return !valid.contains(get.translation(card.name).length); break;
+                              case '花色': return !valid.contains(get.suit(card)); break;
+                              case '点数': return !valid.contains(get.number(card)); break;
+                              case '种类': return !valid.contains(get.type(card)); break;
+                              case '属性': return !valid.contains(get.subtype(card)); break;
+                            }
+                        }).set('ai',function(card){
+                          return 6-get.value(card);
+                        });
+                      }
+                      'step 2'
+                      if (result.bool){
+                        targets[0].showCards(result.cards);
+                        game.log(get.translation(targets[0])+'成功回答了难题！');
+                        player.gain(result.cards);
+                        player.discard(cards);
+                      } else {
+                        game.log(get.translation(targets[0])+'没有回答出难题。');
+                        player.choosePlayerCard(targets[0],'he',
+                          (Math.min(targets[0].countCards('he'), cards.length)),'重铸没有回答出难题的角色的牌，并对其造成1点灵击伤害', true);
+                      }
+                      'step 3'
+                      if (result.bool && result.links.length){
+                        targets[0].$throw(result.links);
+                        result.links.discard();
+                        targets[0].damage('thunder');
+                      }
+                    },
+                  },
+                  poxiao:{
+                    audio:2,
+                    trigger:{player:'phaseEnd'},
+                    filter:function(event,player){
+                      return player.countCards('he');
+                    },
+                    content:function(){
+                      'step 0'
+                      player.chooseCard('he',[1,player.countCards('he')],'破晓：可以重铸任意张牌',true).set('ai',function(card){
+                            return 7-get.value(card);
+                        });
+                      'step 1'
+                      if (result.bool && result.cards.length){
+                          player.$throw(result.cards);
+                          var suits = [];
+                          for (var i = 0; i < result.cards.length; i ++){
+                            if (get.suit(result.cards[i]) && suits.contains(get.suit(result.cards[i]))) suit.push(get.suit(result.cards[i]))
+                            result.cards[i].discard();
+                          }
+                          game.log(get.translation(trigger.player)+'重铸了'+get.translation(result.cards));
+                          player.draw(result.cards.length);
+                          if (suits.length == 4){
+                              player.addSkill('poxiao_2');
+                          }
+                      }
+                    },
+                  },
+                  poxiao_2:{
+                    direct:true,
+                    trigger:{player:'phaseAfter'},
+                    filter:function(event,player){
+                      return player.lili > 0;
+                    },
+                    content:function(){
+                      player.removeSkill('poxiao_2');
+                      player.loselili();
+                      player.insertPhase();
+                    },
+                  },
+                  yongye:{
+                    audio:2,
+                      cost:1,
+                      group:'yongye_die',
+                      spell:['yongye1','yongye2','yongye3','yongye4'],
+                      infinte:true,
+                      trigger:{player:'phaseBegin'},
+                      filter:function(event,player){
+                          return player.lili > lib.skill.yongye.cost;
+                      },
+                      content:function(){
+                          player.loselili(lib.skill.yongye.cost);
+                          player.turnOver();
+                      },
+                      check:function(){
+                        return false;
+                      },
+                  },
+                  yongye_die:{
+                    audio:'yongye',
+                    cost:1,
+                    infinte:true,
+                     spell:['yongye1','yongye2','yongye3','yongye4'],
+                      enable:'chooseToUse',
+                      filter:function(event,player){
+                         if(event.type!='dying') return false;
+                         if(player!=event.dying) return false;
+                         return player.lili > lib.skill.yongye.cost;
+                      },
+                      content:function(){
+                          player.loselili(lib.skill.yongye.cost);
+                          player.turnOver();
+                      },
+                      check:function(){
+                        return player.countCards('h',{name:'tao'}) == 0;
+                      },
+                      ai:{
+                        save:true,
+                      },
+                  },
+                  yongye1:{
+                    direct:true,
+                    trigger:{player:'phaseEnd'},
+                    init:function(player){
+                      player.nodying=true;
+                      player.hp=0;
+                      player.update();
+                    },
+                    onremove:function(player){
+                      delete player.nodying;
+                    },
+                    content:function(){
+                      player.loselili();
+                    }
+                  },
+                  yongye2:{
+                    audio:2,
+                    trigger:{player:'phaseUseBegin'},
+                    filter:function(event,player){
+                      return player.lili <= 3 && player.countCards('he');
+                    },
+                    content:function(){
+                      var cards = player.getCards('he');
+                       player.$throw(cards);
+                          for (var i = 0; i < cards.length; i ++){
+                             result.cards[i].discard();
+                          }
+                          game.log(get.translation(player)+'重铸了'+get.translation(cards));
+                          player.draw(cards.length);
+                    },
+                  },
+                  yongye3:{
+                    audio:2,
+                    direct:true,
+                    trigger:{player:'phaseBegin'},
+                    filter:function(event,player){
+                      return player.lili <= 2;
+                    },
+                    content:function(){
+                      player.gain(ui.skillPile.childNodes[0],'draw2');
+                      player.gain(ui.skillPile.childNodes[0],'draw2');
+                    }
+                  },
+                  yongye4:{
+                    audio:2,
+                    direct:true,
+                    trigger:{player:'useCard'},
+                    filter:function(event,player){
+                      return player.lili <= 1;
+                    },
+                    content:function(){
+                      player.draw();
+                    }
                   },
                   yuhuo:{
                     audio:2,
@@ -1051,7 +1320,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       audio:2,
                       cost:1,
                       group:'businiao_die',
-                      spell:['businiao1','businiao2'],
+                      spell:['businiao2'],
                       trigger:{player:'phaseBegin'},
                       filter:function(event,player){
                           return player.lili > lib.skill.businiao.cost;
@@ -1193,13 +1462,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   kaiyun_info:'一名角色的出牌阶段开始时，其可以交给你一张牌：获得一张【神佑】技能牌，且其不能对你或其以外的角色使用牌，直到回合结束。',
                   yuangu:'远古的骗术',
                   yuangu_info:'符卡技（2）<永续>【迷途】中的“你成为牌的目标后”视为“你攻击范围内的一名角色成为牌的目标后”；无视【迷途】中的“弃置"伏"”。',
+                  kaguya:'辉夜',
+                  nanti:'难题',
+                  nanti_info:'一回合一次，出牌阶段，你可以展示任意张手牌，并声明一项：牌名的字数，花色，点数，属性，或类型，然后令一名其他角色选择一项：交给你一张该项与你展示的牌均不同的牌，并弃置展示的牌；或令你重铸其与展示的牌等量张牌，并对其造成1点灵击伤害。',
+                  poxiao:'破晓',
+                  poxiao_info:'结束阶段，你可以重铸任意张牌；若你以此法重铸了4张不同花色的牌，你可以消耗1点灵力，然后进行一个额外的回合。',
+                  yongye:'永夜归返',
+                  yongye2:'永夜归返',
+                  yongye_info:'符卡技（1）<极意><终语>结束阶段，你消耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
                   eirin:'永琳',
                   zhaixing:'摘星',
                   zhaixing_info:'结束阶段，你可以观看牌堆顶，或技能牌堆顶的X张牌（X为你本回合使用的牌花色数）；你将其中一张交给一名角色，其余按任意顺序置于该牌堆顶或底。',
                   lanyue:'揽月',
                   lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同',
                   tianwen:'天文秘葬法',
-                  tianwen_info:'符卡技（X）（X为任意值）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
+                  tianwen_skill:'天文秘葬法',
+                  tianwen_info:'符卡技（X）（X为任意值，至少为1）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
                   mokou:'妹红',
                   yuhuo:'狱火',
                   yuhuo_2:'狱火',

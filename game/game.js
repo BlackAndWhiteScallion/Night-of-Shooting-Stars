@@ -5479,6 +5479,25 @@
                     },
                 }
             },
+            stg:{
+                name:'闯关',
+                config:{
+                    free_choose:{
+                        name:'自由选将',
+                        init:true,
+                        frequent:true,
+                        onclick:function(bool){
+                            game.saveConfig('free_choose',bool,this._link.config.mode);
+                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
+                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
+                            else if(ui.cheat2&&!get.config('free_choose')){
+                                ui.cheat2.close();
+                                delete ui.cheat2;
+                            }
+                        }
+                    },
+                }
+            },
             chess:{
                 name:'战棋',
                 config:{
@@ -5644,71 +5663,6 @@
                         name:'边缘滚动速度',
                         init:'20',
                         intro:'鼠标移至屏幕边缘时自动滚屏',
-                        item:{
-                            '0':'不滚动',
-                            '10':'10格/秒',
-                            '20':'20格/秒',
-                            '30':'30格/秒',
-                        }
-                    },
-                }
-            },
-            tafang:{
-                name:'塔防',
-                config:{
-                    tafang_turn:{
-                        name:'游戏胜利',
-                        init:'10',
-                        frequent:true,
-                        item:{
-                            '10':'十回合',
-                            '20':'二十回合',
-                            '30':'三十回合',
-                            '1000':'无限',
-                        }
-                    },
-                    // tafang_size:{
-                    //  name:'战场大小',
-                    //  init:'9',
-                    //  frequent:true,
-                    //  item:{
-                    //      '6':'小',
-                    //      '9':'中',
-                    //      '12':'大',
-                    //  }
-                    // },
-                    tafang_difficulty:{
-                        name:'战斗难度',
-                        init:'2',
-                        frequent:true,
-                        item:{
-                            '1':'简单',
-                            '2':'普通',
-                            '3':'困难',
-                        }
-                    },
-                    show_range:{
-                        name:'显示卡牌范围',
-                        init:true,
-                    },
-                    show_distance:{
-                        name:'显示距离',
-                        init:true,
-                    },
-                    ban_weak:{
-                        name:'屏蔽弱将',
-                        init:true,
-                        restart:true,
-                    },
-                    ban_strong:{
-                        name:'屏蔽强将',
-                        init:false,
-                        restart:true,
-                    },
-                    chessscroll_speed:{
-                        name:'边缘滚动速度',
-                        intro:'鼠标移至屏幕边缘时自动滚屏',
-                        init:'20',
                         item:{
                             '0':'不滚动',
                             '10':'10格/秒',
@@ -22991,11 +22945,13 @@ game.broadcast(function(player,str,nature,avatar){
                             for (var j = 0; j < info.spell.length; j ++){
                                 if (!player.isTurnedOver()){
                                     player.removeSkill(info.spell[j]);
+                                    player.addSkillTrigger(player.skills[i]);
                                     if (info.infinite){
                                         player.die();
                                     }
                                 } else {
                                     player.addSkill(info.spell[j]);
+                                    player.removeSkillTrigger(player.skills[i]);
                                 }
                             }
                         }
