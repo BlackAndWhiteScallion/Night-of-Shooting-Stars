@@ -767,7 +767,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                         currentcard.remove();
                         continue;
                     }
-                    cards.push(currentcard);
+                    if (currentcard.name != 'simen') cards.push(currentcard);
                 }
                 cards.randomSort();
                 for(var i = 0; i < ui.cardPile.childNodes.length;i++){
@@ -2501,10 +2501,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filter:function(event,player){
 				return player.countCards('h',{name:'huanxiang'}) > 0;
 			},
-			contentBefore:function(){
-				game.log('幻想之门：游戏开始时，令所有角色摸一张牌');
-			},
 			content:function(){
+				game.log('幻想之门：游戏开始时，令所有角色摸一张牌');
 				for (var i = 0; i < game.filterPlayer().length; i ++){
 					game.filterPlayer()[i].draw();
 				}

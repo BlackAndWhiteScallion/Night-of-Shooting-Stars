@@ -398,7 +398,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (event.list[0] == '跳过出牌阶段，将一张牌当作一种法术牌使用'){
                             if (player.skipList.contains('phaseDiscard')) return 0;
                             if (player.lili > 1  && player.countCards('h','sha') < 2) return 1;
-                            else return 2;
+                            else return 'cancel2';
                         }
                         return event.list.length - 1;
                     });

@@ -33,50 +33,59 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		skill:{
             shuangjiang:{
-                group:['shuangjiang2'],
+                audio:2,
+                group:['shuangjiang2','shuangjiang3'],
                 trigger:{player:'phaseEnd'},
                 filter:function(event,player){
-                    return true;
+                    //if (_status.event.name != 'phaseEnd' && !player.hasSkill('baofengxue2')) return false; 
+                    return game.hasPlayer(function(target){
+                        return target!=player&&!target.storage.shuang && target.storage._mubiao;
+                    });
                 },
                 content:function(){
                     'step 0'
-                    if (player.hasSkill('baofengxue2')){
-                        var num = 0 + game.countPlayer(function(current){
-                                if(player!= current && current.storage._mubiao > 0 && !current.storage.shuang) return 1;
-                            });
-                        player.chooseTarget([num, num], get.prompt('shuangjiang'),function(card,player,target){
-                            return target!=player && target.storage._mubiao > 0 && !target.storage.shuang;
-                        }).set('ai',function(target){
-                            return get.attitude(_status.event.player,target);
-                        });
-                    } else {
-                        player.chooseTarget(get.prompt('shuangjiang'),function(card,player,target){
-                            return target!=player && target.storage._mubiao > 0 && !target.storage.shuang;
-                        }).set('ai',function(target){
-                            return get.attitude(_status.event.player,target);
-                        });
+                    var players = game.filterPlayer();
+                    for (var i = 0; i < players.length; i ++){
+                        if (players[i] == player) players.remove(players[i]);
+                        else if (!(!players[i].storage.shuang && players[i].storage._mubiao)) players.remove(players[i]);
                     }
+                    player.chooseTarget([players.num,players.num],('霜降：是否对这些角色各造成1点灵击伤害'),function(card,player,target){
+                            return players.contains(target);
+                          }).set('ai',function(target){
+                              return -get.attitude(_status.event.player,target);
+                          }); 
                     'step 1'
                     if(result.bool){
                         player.logSkill('shuangjiang',result.targets);
                         result.targets[0].damage('thunder');
                     }
                 },
+                check:function(){
+                    return true;
+                }
             },
             shuangjiang2:{
                 trigger:{global:['useCard','respond']},
                 forced:true,
                 popup:false,
                 filter:function(event,player){
-                    return true;
+                    return _status.currentPhase == player;
                 },
                 content:function(){
                     if (trigger.player){
-                        //if (trigger.player._mubiao > 0){
-                            trigger.player.storage.shuang = 1;
-                        //}
+                        trigger.player.storage.shuang = 1;
                     }
                 },
+            },
+            shuangjiang3:{
+                trigger:{player:'phaseAfter'},
+                direct:true,
+                content:function(){
+                    var players = game.filterPlayer();
+                     for (var i = 0; i < players.length; i ++){
+                        delete players[i].storage.shuang;
+                    }
+                }
             },
             baofengxue:{
                 audio:2,
@@ -87,35 +96,40 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.lili > lib.skill.baofengxue.cost;
                 },
                 check:function(event,player){
-                    if(player.countCards('h')>3 && player.lili > 3) return true;
+                    if(player.countCards('h')>2 && player.lili > 3) return true;
                     return false;
                 },
                 content:function(){
                     player.loselili(lib.skill.baofengxue.cost);
                     player.turnOver();
                 },
+                intro:{
+                    content:function(storage){
+                        if (!storage) return null;
+                        var str = '';
+                        for (var i = 0; i < player.storage.baofengxue.length; i ++){
+                              str += get.translation(player.storage.baofengxue[i]) + ',';
+                        }
+                        return '所有角色不能使用'+str+'花色的牌';
+                    }
+                },
             },
             baofengxue2:{
                 audio:2,
                 trigger:{player:'useCard'},
-                frequent:false,
+                global:'baofengxue3',
+                direct:true,
                 filter:function(event){
-                    return (get.suit(event.card));
+                    //return (get.suit(event.card));
+                    return true;
+                },
+                init:function(player){
+                    player.storage.baofengxue = [];
+                    player.markSkill('baofengxue');
                 },
                 content:function(){
-                   "step 0"
-                    event.current=player.next;
-                    "step 1"
-                    if (!event.current.hasSkill('baofengxue3')){
-                        event.current.addTempSkill('baofengxue3');
-                        event.current.storage.baofengxue = [];
-                    }
-                    event.current.storage.baofengxue.add(get.suit(trigger.card));
-                    if(event.current.next!=player){
-                        event.current=event.current.next;
-                        game.delay(0.5);
-                        event.goto(1);
-                    }
+                    if (get.suit(trigger.card) && !player.storage.baofengxue.contains(get.suit(trigger.card))) player.storage.baofengxue.push(get.suit(trigger.card));
+                    player.useSkill('shuangjiang');
                 },
                 ai:{
                     threaten:1.4,
@@ -123,26 +137,26 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
             },
             baofengxue3:{
-                trigger:{global:'phaseAfter'},
-                forced:true,
-                mark:true,
-                audio:false,
-                content:function(){
-                    player.removeSkill('baofengxue3');
-                    delete player.storage.baofengxue;
-                },
                 mod:{
                     cardEnabled:function(card,player){
-                        if(player.storage.baofengxue.contains(get.suit(card))) return false;
+                        if (game.hasPlayer(function(current){
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                            })) return false;
                     },
                     cardUsable:function(card,player){
-                        if(player.storage.baofengxue.contains(get.suit(card))) return false;
+                        if (game.hasPlayer(function(current){
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                            })) return false;
                     },
                     cardRespondable:function(card,player){
-                        if(player.storage.baofengxue.contains(get.suit(card))) return false;
+                        if (game.hasPlayer(function(current){
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                            })) return false;
                     },
                     cardSavable:function(card,player){
-                        if(player.storage.baofengxue.contains(get.suit(card))) return false;
+                        if (game.hasPlayer(function(current){
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                            })) return false;
                     }
                 },
                 intro:{
@@ -733,7 +747,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.finish();
                     }
                     "step 3"
-                    game.log('zhenhun');
+                    player.logSkill('zhenhun');
                     if (result.bool && event.control == '获得牌'){
                         if (result.links.length){
                             //player.$gain(result.links);
