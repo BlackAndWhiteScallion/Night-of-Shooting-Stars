@@ -153,6 +153,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			scarlet_win:{
     			forced:true,
+    			skillAnimation:true,
     			trigger:{player:'phaseBegin'},
     			filter:function(event,player){
     				for(var i=0;i<game.players.length;i++){
@@ -180,16 +181,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		},
     		sakura_win:{
 				forced:true,
+				skillAnimation:true,
     			trigger:{player:'phaseBegin'},
     			filter:function(event,player){
-    				for(var i=0;i<game.players.length;i++){
-                        if(game.players[i].isOut()||game.players[i]==player) continue;
-                        if(game.players[i].lili<player.lili) return false;
-                    	if(game.players[i].hp<player.hp) return false;
-                    }
-    				return true;
+    				return player.isMinHandcard(true) && player.isMinHp(trueW);
     			},
-    			direct:true,
     			content:function(){
     				game.over(true);
     			}	
@@ -197,7 +193,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		imperishable_normal:{
     			trigger:{global:'loseEnd'},
     			forced:true,
-    			direct:true,
     			filter:function(event,player){
     				return event.player.countCards('j') == 0;
     			},
@@ -224,7 +219,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				player.storage.imperishable_win += 1;
     				player.syncStorage('imperishable_win');
     				player.markSkill('imperishable_win');
-    				if (player.storage.imperishable == 7) game.over(true);
+    				if (player.storage.imperishable_win == 7){
+    					game.over(true);
+    					player.$skill('永夜胜利');
+    				};
     			},
     		},
     		phantasmagoria_normal:{
@@ -250,9 +248,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
     		},
     		immaterial_win:{
-    			enable:'phaseEnd',
+    			trigger:{player:'phaseEnd'},
     			forced:true,
     			direct:true,
+    			skillAnimation:true,
     			filter:function(event,player){
     				return true;
     			},
@@ -293,6 +292,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		},	
     		sb_win:{
     			trigger:{global:'useSkillAfter'},
+    			skillAnimation:true,
     			filter:function(event,player){
     				return event.skill.spell;
     			},
@@ -304,20 +304,19 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			// 啊？你以为这个技能有效果的？baka！ 
     		},
     		baka_win:{
-    			trigger:{global:'die'},
+    			trigger:{global:'dieAfter'},
     			filter:function(event,player){
-    				return player == source;	
+    				return player == event.source;	
     			},
-    			intro:'mark',
+    			skillAnimation:true,
+    			init:function(event,player){
+    				if (player.getStat('kill')) if (player.getStat('kill') > 1) game.over(true);
+    			},
+    			filter:function(event,player){
+    				return player.getStat('kill') > 1;
+    			},
     			content:function(){
-    				if (!player.storage.baka_win){
-    					player.storage.baka_win = 1;
-    				} else {
-    					player.storage.baka_win += 1;
-    				}
-    				if (player.storage.baka_win == 2){
-    					game.over(true);
-    				}
+    				game.over(true);
     			},
     		},
     		death_normal:{
@@ -330,6 +329,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
     		},
     		death_win:{
+    			skillAnimation:true,
     			trigger:{global:'die'},
     			filter:function(event,player){
     				return game.filterPlayers.length == 1;

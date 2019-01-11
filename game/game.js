@@ -13277,10 +13277,10 @@
                                 event.loseEquip=true;
                                 player.removeEquipTrigger(cards[num]);
                             } else {
-                                var info=get.info(cards[num]);
-                                if(info.skills){
-                                    for(var i=0;i<info.skills.length;i++){
-                                        player.removeSkill(info.skills[i]);
+                                var info1=get.info(cards[num]);
+                                if(info1.skills){
+                                    for(var i=0;i<info1.skills.length;i++){
+                                        player.removeSkill(info1.skills[i]);
                                     }
                                 }
                             }

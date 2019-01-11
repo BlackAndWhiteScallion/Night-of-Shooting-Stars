@@ -971,7 +971,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.loselili(player.hp);
-                    player.addIncident({name:'death'});
+                    player.addIncident(game.createCard('death','zhenfa',''));
                     player.turnOver();
                 },
             },

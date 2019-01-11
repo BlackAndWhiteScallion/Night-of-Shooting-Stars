@@ -206,6 +206,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               player.loselili(lib.skill.huayuan.cost);
                               player.turnOver();
                         },
+                        check:function(event,player){
+                          if (!player.storage.zaidu) return false;
+                          return player.lili > 3;
+                        },
                   },
                   huayuan_1:{
                         audio:2,
@@ -284,7 +288,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	},
                   xiaofeng1:{
                         forced:true,
-                        trigger:{source:'damageBefore'},
+                        trigger:{source:'damageBegin'},
                         content:function(){
                               trigger.num++;
                         }
@@ -482,7 +486,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
               },   
               shenpan:{
-                    skillAnimation:true,
+                      skillAnimation:true,
                       audio:2,
                       cost:0,
                       spell:'shenpan_1',

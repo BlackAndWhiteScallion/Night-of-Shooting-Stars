@@ -207,7 +207,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               if (player.lili == 1) return -1;
                         },
                         content:function(){
-                              player.loselili();
+                              if (player.lili > 0) player.loselili();
                               target.recover();
                         },
                         ai:{

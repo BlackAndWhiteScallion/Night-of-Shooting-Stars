@@ -187,7 +187,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             return !player.storage.qipai.contains(get.type(card));
                          },'弃置3张不同种类的牌，或消耗3点灵力。');
                          'step 2'
-                         console.log(player.storage.qipai.length);
                          if (result.bool){
                             event.list.push(result.cards[0]);
                             player.storage.qipai.push(get.type(result.cards[0]));
@@ -207,7 +206,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          'step 3'
                          if (event.bool){
                             player.turnOver();
-                            console.log('d');
                             player.storage.richuguo=false;
                           }
                        },
@@ -983,7 +981,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   tianwen:{
                       audio:2,
                       cost:0,
-                      spell:['tianwen_skill'],
+                      spell:['tianwen_skill','tianwen_use'],
                       trigger:{player:['phaseBeginStart']},
                       filter:function(event,player){
                           return player.lili > 1;
@@ -1043,7 +1041,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.storage.tianwen.remove(result.links[0]);
                         player.storage.tianwen_use = player.storage.tianwen[0];
                         player.storage.tianwen = result.links[0];
-                        player.addTempSkill('tianwen_use');
                       }
                     }
                   },
@@ -1058,7 +1055,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       delete player.storage.tianwen_use;
                     },
                     content:function(){
-                      if (player.canUse(player.storage.tianwen_use,targets)){
+                      if (player.canUse(player.storage.tianwen_use.name,targets)){
                         trigger.cancel();
                         player.useCard({name:player.storage.tianwen_use.name,color:get.color(trigger.card),number:get.number(trigger.card)},targets);
                       }
@@ -1200,7 +1197,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.loselili(lib.skill.yongye.cost);
                           player.turnOver();
                       },
-                      check:function(){
+                      check:function(event,player){
                         return player.countCards('h',{name:'tao'}) == 0;
                       },
                       ai:{

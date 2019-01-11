@@ -1134,6 +1134,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                         return -attitude;
                 },
+                ai:{
+                    threaten:2
+                }
             },
             moyin:{
                 trigger:{global:'dying'},
