@@ -835,7 +835,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				loopType:1,
 				chongzheng:4,
 				init:function(){
-					lib.backgroundmusicURL = ui.backgroundMusic.src;
+					//lib.backgroundmusicURL = ui.backgroundMusic.src;
                     ui.backgroundMusic.src = lib.assetURL+'audio/background/boss.mp3';
                     lib.config.background_music = 'boss';
 				},
@@ -888,7 +888,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.resetSkills();
 					if (lib.config.background_music != 'marisa'){
 						setTimeout(function(){
-						ui.backgroundMusic.src = 'audio/background/reimu.mp3'
+						ui.backgroundMusic.src = lib.assetURL+'audio/background/reimu.mp3'
                     	lib.config.background_music = 'reimu';
                     	},500);
                 	}

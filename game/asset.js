@@ -137,6 +137,7 @@ window.noname_asset_list=[
     'audio/background/signature.mp3',
     'audio/background/reimu.mp3',
     'audio/background/marisa.mp3',
+    'audio/background/boss.mp3',
     'audio/card/female/bingyu.mp3',
     'audio/card/female/caifang.mp3',
     'audio/card/female/danmakucraze.mp3',

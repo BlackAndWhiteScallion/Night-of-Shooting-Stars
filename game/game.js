@@ -2884,7 +2884,7 @@
                     },
                     show_history:{
                         name:'出牌记录栏',
-                        init:'left',
+                        init:'off',
                         intro:'在屏幕左侧或右侧显示出牌记录',
                         unfrequent:true,
                         item:{
@@ -11657,7 +11657,7 @@
                             directh=false;
                         }
                         else if(event.position[i]=='j'&&target.countCards('j')){
-                            event.dialog.addText('判定区');
+                            event.dialog.addText('技能牌');
                             event.dialog.add(target.getCards('j'));
                             directh=false;
                         }
@@ -11782,7 +11782,7 @@
  						else if(event.position[i]=='j'){
 							var js=target.getDiscardableCards(player,'j');
 							if(js.length){
-	                            event.dialog.addText('判定区');
+	                            event.dialog.addText('技能牌');
 	                            event.dialog.add(js);
 	                            directh=false;
 	                        }
@@ -11932,7 +11932,7 @@
 						else if(event.position[i]=='j'){
 							var js=target.getGainableCards(player,'j');
 							if(js.length){
-								event.dialog.addText('判定区');
+								event.dialog.addText('技能牌');
 								event.dialog.add(js);
 								directh=false;
 							}
@@ -13943,7 +13943,7 @@
                         cards[0].discard();
                     }
                     else{
-                        // 然后插入判定区node里去
+                        // 然后插入技能牌node里去
                         cards[0].style.transform='';
                         cards[0].classList.add('drawinghidden');
                         player.node.judges.insertBefore(cards[0],player.node.judges.firstChild);

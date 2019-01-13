@@ -938,28 +938,28 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                       "step 0"
                       var list = [];
-                      if (target.hp != player.hp) list.push('hp');
-                      if (target.lili != player.lili) list.push('lili');
+                      if (target.hp != player.hp) list.push('体力');
+                      if (target.lili != player.lili) list.push('灵力');
                       // 选择枝AI
                       var choice;
                       if (target.hp < player.hp){
-                        if ((player.lili - target.lili)/2 > (player.hp - target.hp)) choice = 'lili';
-                        else choice = 'hp';
+                        if ((player.lili - target.lili)/2 > (player.hp - target.hp)) choice = '灵力';
+                        else choice = '体力';
                       } else if (target.hp > player.hp){
-                        if ((player.lili - target.lili)/2 > (target.hp - player.hp)) choice = 'hp';
-                        else choice = 'lili';
-                      } else choice = 'lili';
+                        if ((player.lili - target.lili)/2 > (target.hp - player.hp)) choice = '体力';
+                        else choice = '灵力';
+                      } else choice = '灵力';
                       if (list.length == 0) event.finish();
                       else target.chooseControl(function(){
                               return _status.event.choice;
                             },true).set('choiceList',list).set('choice',choice);
                       "step 1"
                       if(result.control){
-                        if (result.control == 'hp'){
+                        if (result.control == '体力'){
                           game.log(get.translation(target)+'的体力调整为'+player.hp);
                           target.hp = player.hp;
                           target.update();
-                        } else if (result.control == 'lili'){
+                        } else if (result.control == '灵力'){
                           game.log(get.translation(target)+'的灵力调整为'+player.lili);
                           target.lili = player.lili;
                           target.update();
@@ -1184,7 +1184,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yongye_die:{
                     audio:'yongye',
                     cost:1,
-                    infinte:true,
+                    infinite:true,
                      spell:['yongye1','yongye2','yongye3','yongye4'],
                       enable:'chooseToUse',
                       filter:function(event,player){
@@ -1431,6 +1431,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mengxiang_audio2:'以博丽巫女之名，我会退治你这个异变！',
                   mengxiang1_audio1:'走你！',
                   mengxiang2_audio2:'下次异变之前，可要问问我的意见啊？',
+                  discard:'弃牌',
                   lilidamage:'受到1点灵击伤害',
                   reimu_die:'啊啊，肚子饿了，回去了回去了。',
                   marisa:'魔理沙',
@@ -1454,6 +1455,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mitu:'迷途',
                   mitu_info:'弃牌阶段开始时，若你没有“伏”，你可以将一张牌扣置于角色牌上，称为“伏”；你成为牌的目标后，你可以展示同名“伏”，令来源判定；若为黑色，弃置“伏”，弃置来源一张牌，并令该牌对你无效。',
                   kaiyun:'开运',
+                  kaiyun_1:'开运',
                   kaiyun_2:'开运',
                   kaiyun_info:'一名角色的出牌阶段开始时，其可以交给你一张牌：获得一张【神佑】技能牌，且其不能对你或其以外的角色使用牌，直到回合结束。',
                   yuangu:'远古的骗术',

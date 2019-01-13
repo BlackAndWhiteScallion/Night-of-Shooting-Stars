@@ -488,10 +488,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				if (player.storage._enhance){
 					for(var i=0;i<player.storage._enhance;i++){
-    					player.gain(ui.skillPile.childNodes[0],'draw2');
+    					target.gain(ui.skillPile.childNodes[0],'draw2');
     				}
 				}
-				player.draw(2);
+				target.draw(2);
 			},
 			ai:{
 				basic:{

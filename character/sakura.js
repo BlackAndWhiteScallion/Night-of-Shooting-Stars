@@ -1910,6 +1910,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             yishan_audio1:'一刀两断！',
             yishan_audio2:'斩！',
             yinhuashan:'六根清静斩',
+            yinhuashan2:'六根清静斩',
             yinhuashan_info:'符卡技（0）你使用【轰！】指定目标时，可以消耗1点灵力，并选择一项：额外指定一名目标角色，或重置【一闪】。',
             yinhuashan_audio1:'妖怪锻造的这把剑，斩不断的东西根本没有！',
             yinhuashan_audio2:'我的名字是魂魄妖梦！幽幽子大人之剑！',

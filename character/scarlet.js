@@ -949,7 +949,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     lib.skill['kuangyan'].forced = true;
                 },
                 check:function(){
-
+                    return true;
                 },
             },
             kuangyan2:{

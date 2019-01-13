@@ -9,10 +9,6 @@ window.config={
 	},
 	forbidchess:['hetaihou','swd_kangnalishi'],
 	forbidboss:['caiwenji','gjqt_aruan','pal_xuanxiao','swd_hupo'],
-	forbidstg:[
-		['stg_scarlet','reimu','marisa'],
-		['stg_sakura','reimu','marisa','sakuya'],
-	],
 	forbiddouble:['zhugedan','swd_kangnalishi','dongzhuo','wutugu','hs_siwangzhiyi','hs_ronghejuren','hs_shanlingjuren'],
 	all:{
 		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka'],
