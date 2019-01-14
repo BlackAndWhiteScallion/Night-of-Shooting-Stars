@@ -480,6 +480,50 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		card:{
+			stg_yinyangyu:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_yinyangyu_skill']
+			},
+			stg_needle:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_needle_skill']
+			},
+			stg_bagua:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_bagua_skill']
+			},
+			stg_missile:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_missile_skill']
+			},
 		},
 		characterPack:{
 			mode_stg:{
@@ -487,12 +531,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_maoyu:['male','2',2,[],['hiddenboss','bossallowed']],
 				stg_yousei:['female','1',1,[],['hiddenboss','bossallowed']],
 				stg_maid:['female','2',1,['saochu'],['hiddenboss','bossallowed']],
-				stg_bookshelf:['female','5',5,[],['hiddenboss','bossallowed']],
+				stg_bookshelf:['female','5',5,['juguang'],['hiddenboss','bossallowed']],
 				//stg_bunny:['female','2',2,[],['hiddenboss','bossallowed']],
 			}
 		},
 		cardPack:{
-			mode_stg:[]
+			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -564,6 +608,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				ui.arena.appendChild(boss);
 				boss.directgain(get.cards(4));
+
+				if (game.me.storage.skill){
+					for (var i = 0; i < game.me.storage.skill.length; i ++){
+						boss.addSkill(game.me.storage.skill[i]);
+					}
+				}
+				if (game.me.storage.unskill){
+					for (var i = 0; i < game.me.storage.unskill.length; i ++){
+						boss.removeSkill(game.me.storage.unskill[i]);
+					}
+				}
 			},
 			checkResult:function(){
 				if(game.boss==game.me){
@@ -831,12 +886,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.additionalReward=function(){
 						return 500;
 					}
-					//game.me.storage.reinforce = ['stg_yousei','stg_yousei','rumia'];
-					game.me.storage.reinforce = ['stg_yousei','rumia'];
+					game.me.storage.reinforce = ['stg_yousei','stg_yousei','rumia'];
+					//game.me.storage.reinforce = ['stg_yousei','rumia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu','好舒服啊','','啊嘞嘞？',''],
-							['rumia','就是说啊～','刚刚不是见过了吗','end']
+							['reimu','好舒服呢','因为每次白天出来妖怪都很少<br>这次才试着在夜里出来的……','不过该往哪边走都搞不清楚了<br>这么暗',
+								'但是……<br>夜里的境内还真够浪漫呢','','呃，你谁啊？','','人类在一片漆黑的地方<br>本来就看不到东西啊<br>(刚刚见过吗？)',''
+								,'那种人你就算抓来吃了也无所谓啊','','不过，你很碍事呢',''],
+							['rumia','就是说啊～<br>还会出现妖怪，真是受不了啊','','刚刚不是见过了吗<br>你难不成是夜盲症吗？','','是吗？我好像也看到过<br>只在夜里才活动的人呢'
+							,'','是——这样吗？','','在我眼前的就是吃了也没关系的人类？','end']
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
@@ -899,17 +957,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'dieBefore'},
 				direct:true,
 				filter:function(event,player){
-					return player.storage.reskill;
+					return game.me.storage.reskill;
 				},
 				content:function(){
 					game.log(get.translation(player)+'进入下一个阶段！');
 					player.hp = player.maxHp;
 					player.lili = player.maxlili;
 					player.update();
-					for (var i = 0; i < player.storage.reskill.length; i ++){
-						player.addSkill(player.storage.reskill[i]);
+					for (var i = 0; i < game.me.storage.reskill.length; i ++){
+						player.addSkill(game.me.storage.reskill[i]);
 					}
-					player.storage.reskill = 0;
+					game.me.storage.reskill = 0;
 					trigger.cancel();
 				},
 			},
@@ -955,8 +1013,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			// 手牌上限+关卡数
+			// 同时，装备不能弃置/获得也在这里进行。
 			handcard_max:{
 				mark:true,
+				alter:true,
 				intro:{
 					content:function(storage, player){
 						return '手牌上限+'+player.storage.tongguan;
@@ -973,6 +1034,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return Infinity;
 						*/
 						return num + player.storage.tongguan;
+					},
+					canBeDiscarded:function(card,player,target,event){
+						if(get.subtype(card) == 'equip4') return false;
+					},
+					cardDiscardable:function(card,player,target,event){
+						if(get.subtype(card) == 'equip4') return false;
+					},
+					cardGainable:function(card,player,target,event){
+						if(get.subtype(card) == 'equip4') return false;
 					},
 				},
 			},
@@ -995,11 +1065,34 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				unique:true,
 				fixed:true,
 				content:function(){
+					"step 0"
 					player.hide();
 					game.addVideo('hidePlayer',player);
 					player.delete();
 					game.players.remove(player);
 					game.dead.remove(player);
+					event.target = game.me; 
+					"step 1"
+					var list = [];
+					if (event.target.name == 'marisa'){
+						list = ['stg_missile', 'stg_bagua'];
+						event.target.removeSkill('stardust');
+					} else if (event.target.name == 'reimu'){
+						list = ['stg_needle','stg_yinyangyu'];
+						event.target.removeSkill('mengxiang');
+					}
+					for(var i=0;i<list.length;i++){
+						list[i]=['','',list[i]];
+					}
+					if (list != []){
+						event.target.chooseButton(['选择本次闯关使用的装备',[list,'vcard']], true);
+					}
+					"step 2"
+					if (result.bool){
+						event.target.equip(game.createCard(result.links[0][2]));
+						event.target.maxequip ++;
+					}
+					"step 3"
 					// 制作关卡开始的对话框
 					var dialog=ui.create.dialog("第一关<br><br>梦幻夜行绘卷");
 					dialog.open();
@@ -1025,7 +1118,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var j = 0;						// 记录当前检测谁的对话的
 					var step1=function(){
 						// 读取当前对话
-						var dialog = ui.create.dialog('<br>');
+						var dialog = ui.create.dialog();
 						for (var i = 0; i < game.me.storage.dialog.length; i ++){
 							if (game.me.storage.dialog[i][0] == name){
 								if (game.me.storage.dialog[i][a[j]] == ''){
@@ -1035,7 +1128,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 										name = game.me.name;
 									} else {
 										j ++;
-										if (game.boss.name != game.me.storage.reinforce[0]){
+										if (game.me.storage.reinforce[0] && game.boss.name != game.me.storage.reinforce[0]){
 											game.changeBoss(game.me.storage.reinforce[0]);
 											game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
 										}
@@ -1047,8 +1140,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									return;
 								} else {
 									var player = ui.create.div('.avatar',dialog).setBackground(name,'character');
-									dialog.add(game.me.storage.dialog[i][a[j]]);
-									dialog.style.paddingLeft = '50px';
+									dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.dialog[i][a[j]]+'</div></div>');
 									a[j] ++;
 								}
 							}
@@ -1078,10 +1170,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						});
 					};
 					game.pause();
-					step1();
+					step1(); 
 					game.me.addSkill(game.me.storage.stage);
-					game.me.gain(ui.skillPile.childNodes[0],'draw2');
-					game.me.recover();
 				},
 				filter:function(event,player){
 					return player==game.boss;
@@ -1119,6 +1209,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							//game.dead.remove(game.players[i]);
 						}
 					}
+					game.me.gain(ui.skillPile.childNodes[0],'draw2');
+					game.me.recover();
 					'step 2'
 					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
 					dialog.open();
@@ -1154,6 +1246,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					game.me.removeSkill('boss_chiyan2x');
 					game.boss.removeSkill('boss_chiyan2');
+					game.me.storage.unskill = ['perfect'];
 					game.resetSkills();
 					_status.paused=false;
 					_status.event.player=game.me;
@@ -1195,6 +1288,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							//game.dead.remove(game.players[i]);
 						}
 					}
+					game.me.gain(ui.skillPile.childNodes[0],'draw2');
+					game.me.recover();
 					'step 2'
 					var dialog=ui.create.dialog("第三关<br><br>红色之境");
 					dialog.open();
@@ -1213,23 +1308,102 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['stg_maid','stg_maoyu','meiling'];
-					game.me.storage.stage = 'boss_chiyan3x';
+					game.me.storage.reinforce = ['stg_maid','meiling'];
+					game.me.storage.stage = 'boss_chiyan4x';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu','','end'],
-							['cirno',''],
+							['reimu','','你是不会往啥都没有的地方逃的对吧？','','顺便问下，你是什么人？','','	我只是个当巫女的普通人来着啊',''
+							,'不要传谣了！','end'],
+							['meiling','啊啦，就算你跟着我过来<br>这边也是什么都没有的啊？','','嗯——<br>逃的时候就只想着逃的事情了',''
+							,'哎—普通人哟<br>你是普通之外的说','','那可真是太好了','确实有……<br>巫女是吃了也没问题的人类<br>之类的传说呢……',''],
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
 							['marisa','','end'],
-							['cirno',''],
+							['meiling',''],
 						];
 					}
-					game.boss.removeSkill('boss_chiyan2x');
-					game.boss.removeSkill('jicai');
-					game.boss.reskill=['jicai','shogon'];
-					game.boss.addSkill('revive_boss');
+					game.me.removeSkill('boss_chiyan3x');
+					game.me.storage.skill = ['revive_boss'];
+					game.me.storage.unskill = ['jicai'];
+					game.me.storage.reskill=['jicai','shogon'];
+					game.resetSkills();
+					_status.paused=false;
+					_status.event.player=game.me;
+					_status.event.step=0;
+					_status.roundStart=game.me;
+					game.phaseNumber=0;
+					game.roundNumber=0;
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+					}
+				}
+			},
+			boss_chiyan4x:{
+				trigger:{global:'dieAfter'},
+				forced:true,
+				priority:-10,
+				//fixed:true,
+				//globalFixed:true,
+				unique:true,
+				filter:function(event){
+					if(lib.config.mode!='stg') return false;
+					return event.player==game.boss;
+				},
+				content:function(){
+					'step 0'
+					game.boss.hide();
+					game.addVideo('hidePlayer',game.boss);
+					game.delay();
+					'step 1'
+					var players = game.players;
+					for (var i = 0; i<game.players.length; i ++){
+						game.players[i].classList.remove('turnedover');
+						if (game.players[i].identity != 'cai'){
+							game.players[i].hide();
+							game.addVideo('hidePlayer',game.players[i]);
+							game.players[i].delete();
+							game.players.remove(game.players[i]);
+							//game.dead.remove(game.players[i]);
+						}
+					}
+					game.me.gain(ui.skillPile.childNodes[0],'draw2');
+					game.me.recover();
+					'step 2'
+					var dialog=ui.create.dialog("第四关<br><br>漆黑之馆");
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('走起！',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 3'
+					game.addBossFellow(3,'stg_maid',2);
+					game.addBossFellow(5,'stg_bookshelf',0);
+					'step 4'
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.me.storage.tongguan ++; 
+					game.me.storage.reinforce = ['koamuka','patchouli'];
+					game.me.storage.stage = 'boss_chiyan5x';
+					if (game.me.name == 'reimu'){
+						game.me.storage.dialog = [
+							['reimu','','end'],
+							['patchouli',''],
+						];
+					} else if (game.me.name == 'marisa'){
+						game.me.storage.dialog = [
+							['marisa','','end'],
+							['patchouli',''],
+						];
+					}
+					game.me.removeSkill('boss_chiyan4x');
+					game.me.storage.skill = ['revive_boss'];
+					game.me.storage.unskill = ['xianzhe'];
+					game.me.storage.reskill=[];
 					game.resetSkills();
 					_status.paused=false;
 					_status.event.player=game.me;
@@ -1256,9 +1430,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							//game.dead.remove(game.players[i]);
 						}
 					}
-					game.addBossFellow(5,'stg_maid',2);
-					game.addBossFellow(3,'stg_maid',2);
-					player.useSkill('jicai');
+					game.addBossFellow(6,'stg_maid',2);
+					game.addBossFellow(2,'stg_maid',2);
+					game.boss.useSkill('jicai');
 					lib.skill['jicai'].infinite = true;
 				},	
 			},
@@ -1276,6 +1450,129 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.draw();
 				},
 			},
+			stg_needle_skill:{
+				init:function(player){
+					player.addSkill();
+				},
+				mod:{
+					maxHandcard:function(player,num){
+						return num++;
+					}
+				},
+				trigger:{player:'shaBegin'},
+				filter:function(){
+					return true;
+				},
+				content:function(){
+					trigger.target.addTempSkill('fengyin','shaAfter');
+					trigger.target.addTempSkill('unequip','shaAfter');
+				},
+			},
+			stg_yinyangyu_skill:{
+				init:function(player){
+					player.addSkill('mengxiang');
+				},
+				enable:'chooseToUse',
+				usable:1,
+				hiddenCard:function(player,name){
+                    return name == 'shan' || name == 'tao';
+                },
+                filter:function(event,player){
+                    return player.countCards('he') > 0;
+                },
+                chooseButton:{
+                    dialog:function(event,player){
+                        var list = [];
+                        for (var i in lib.card){
+                            if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                            if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if(lib.card[i].type == 'basic' && event.filterCard({name:i},player,event)){
+                                list.add(i);
+                            }
+                        }
+                        for(var i=0;i<list.length;i++){
+                            list[i]=[get.type(list[i]),'',list[i]];
+                        }
+                        return ui.create.dialog([list,'vcard']);
+                    },
+                    check:function(button){
+                        var player=_status.event.player;
+                        var recover=0,lose=1,players=game.filterPlayer();
+                        for(var i=0;i<players.length;i++){
+                            if(!players[i].isOut()){
+                                if(players[i].hp<players[i].maxHp){
+                                    if(get.attitude(player,players[i])>0){
+                                        if(players[i].hp<2){
+                                            lose--;
+                                            recover+=0.5;
+                                        }
+                                        lose--;
+                                        recover++;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        if(players[i].hp<2){
+                                            lose++;
+                                            recover-=0.5;
+                                        }
+                                        lose++;
+                                        recover--;
+                                    }
+                                }
+                                else{
+                                    if(get.attitude(player,players[i])>0){
+                                        lose--;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        lose++;
+                                    }
+                                }
+                            }
+                        }
+                        return (button.link[2]=='wuzhong')?1:-1;
+                    },
+                    backup:function(links,player){
+                        return {
+                            filterCard:function(card,player){
+                                return get.type(card) != 'basic';
+                            },
+                            position:'he',
+                            selectCard:1,
+                            popname:true,
+                            viewAs:{name:links[0][2]},
+                        }
+                    },
+                    prompt:function(links,player){
+                        return '将一张非基本牌当作'+get.translation(links[0][2])+'使用/打出';
+                    }
+                },
+			},
+			stg_bagua_skill:{
+				init:function(player){
+					player.addSkill('masterspark');
+				},
+			},
+			stg_missile_skill:{
+				init:function(player){
+					player.addSkill('stardust');
+				},
+				trigger:{player:'phaseEnd'},
+				filter:function(event,player){
+					return player.countUsed('sha')>0;
+				},
+				content:function(){
+					'step 0'
+					player.chooseTarget('魔法飞弹：视为使用一张【轰！】',function(card,player,target){
+						return player.canUse({name:'sha'},target,false);
+					}).set('ai',function(target){
+						return get.effect(target,{name:'sha'},_status.event.player);
+					});
+					"step 1"
+					if(result.bool){
+						player.logSkill('stg_missile',result.targets);
+						player.useCard({name:'sha'},result.targets[0],false);
+					}
+				},
+			},
 		},
 		forbidstg:[
 			['stg_scarlet', 'reimu', 'marisa'],
@@ -1287,7 +1584,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			zhong:'从',
 
 			handcard_max:'手牌上限',
-			masterspark:'极限火花',
 			stg_scarlet:'红魔乡',
 			stg_maoyu:'毛玉',
 			stg_yousei:'妖精',
@@ -1295,6 +1591,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_bookshelf:'魔导书塔',
 			saochu:'扫除',
 			saochu_info:'锁定技，结束阶段：若你有牌，弃置一张牌；然后，无论是否弃置了牌，摸一张牌。',
+			
+			stg_needle:'封魔针',
+			stg_needle_info:'锁定技，你的手牌上限+1；你使用【轰！】指定目标后，目标的技能和装备技能无效，直到结算完毕。',
+			stg_yinyangyu:'鬼神阴阳玉',
+			stg_yinyangyu_skill:'鬼神阴阳玉',
+			stg_yinyangyu_info:'一回合一次，你可以将一张非基本牌（可以为此牌）当作一种基本牌使用/打出；你将此牌当作的【轰！】造成弹幕伤害时，该伤害+1。',
+			stg_missile:'魔法飞弹',
+			stg_missile_skill:'魔法飞弹',
+			stg_missile_info:'结束阶段，若你本回合使用过【轰！】，你可以视为使用一张【轰！】。',
+			stg_bagua:'迷你八卦炉',
+			stg_bagua_info:'',
+			masterspark:'极限火花',
+
 			mode_stg_card_config:'STG卡牌',
 			mode_stg_character_config:'STG角色',
 		},

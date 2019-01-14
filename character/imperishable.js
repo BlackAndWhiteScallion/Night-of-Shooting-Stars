@@ -342,7 +342,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mengxiang1:{
                     audio:2,
                     trigger:{player:'useCardToBegin'},
-                    filter:function(){return true},
+                    filter:function(event,player){
+                      return event.target;
+                    },
                     content:function(){
                       'step 0'
                       var list = [];

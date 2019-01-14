@@ -152,7 +152,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			trigger:{player:'phaseDrawEnd'},
     			content:function(){
     				"step 0"
-    				player.chooseToDiscard();
+    				player.chooseToDiscard('hej');
     				"step 1"
     				if(result.bool){
     					player.draw();

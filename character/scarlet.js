@@ -9,7 +9,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             koakuma:['female','4',3,['qishu','anye']],
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
             sakuya:['female','2',3,['huanzang','shijing','world']],
-            remilia:['female','5',4,['mingyun','feise']],
+            remilia:['female','5',4,['mingyun','feise','feise_start']],
             flandre:['female','1',4,['kuangyan','zhihou']],
 		},
 		characterIntro:{
@@ -919,6 +919,106 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return -get.attitude(player, event.player) && get.attitude(player, event.target);
                 },
             },
+            mingyun:{
+                audio:2,
+                trigger:{player:['phaseUseBegin','damageEnd']},
+                filter:function(event,player){
+                    if (event.name == 'damage') return event.nature != 'thunder';
+                    return true;
+                },
+                content:function(){
+                    "step 0"
+                    var num = player.getAttackRange();
+                    player.chooseCardButton(num,true,get.cards(num),'按顺序将卡牌置于牌堆顶（先选择的在上）').set('ai',function(button){
+                        return get.value(button.link);
+                      });
+                      'step 1'
+                      if(result.bool){
+                        var list=result.links.slice(0);
+                        while(list.length){
+                          ui.cardPile.insertBefore(list.pop(),ui.cardPile.firstChild);
+                        }
+                      }
+                    "step 2"
+                    player.addTempSkill('mingyun2');
+                }
+            },
+            mingyun2:{
+                trigger:{global:'useCardToBegin'},
+                direct:true,
+                filter:function(event, player){
+                    return !event.skill || event.skill != 'mingyun2';
+                },
+                content:function(){
+                    "step 0"
+                    trigger.cancel();
+                    trigger.player.judge();
+                    "step 1"
+                     if (trigger.player.canUse(result.card,trigger.target)){
+                        trigger.player.useCard(result.card,trigger.target,'mingyun2');
+                     }
+                }
+            },
+            feise:{
+                audio:2,
+                cost:4,
+                roundi:true,
+                spell:['feise2'],
+                trigger:{player:'phaseBegin'},
+                filter:function(event,player){
+                    return player.lili > lib.skill.feise.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.feise.cost);
+                    player.turnOver();
+                },
+            },
+            feise_start:{
+                trigger:{player:'phaseBeginStart'},
+                direct:true,
+                content:function(){
+                    if (player.lili > lib.skill.feise.cost) player.useSkill('feise');
+                    player.removeSkill('feise_start');
+                },
+            },
+            feise2:{
+                audio:2,
+                global:'feise3',
+                globalSilent:true,
+                trigger:{global:'phaseEnd'},
+                filter:function(event,player){
+                    return event.player!=player&&event.player.hasSkill('feise4');
+                },
+                content:function(){
+                    player.line(trigger.player,'red');
+                    trigger.player.damage();
+                },
+                check:function(event,player){
+                    return -get.attitude(player,event.player);
+                },
+            },
+            feise3:{
+                trigger:{player:'useCard'},
+                filter:function(event,player){
+                    return _status.currentPhase==player&&event.targets&&(event.targets.length>1||event.targets[0]!=player);
+                },
+                forced:true,
+                popup:false,
+                content:function(){
+                    player.addTempSkill('feise4');
+                },
+                mod:{
+                    attackFrom:function(from,to,distance){
+                        return distance-3*game.countPlayer(function(current){
+                            if(current.hasSkill('feise2')) return true;
+                            if(current.identity=='unknown'||current.identity=='ye') return false;
+                            if (current.identity=='zhu'&&from.identity=='zhong') return true;
+                            if(current.identity!=from.identity) return false;
+                        });
+                    }
+                },
+            },
+            feise4:{},
             kuangyan:{
                 audio:2,
                 group:['kuangyan2'],
@@ -1118,6 +1218,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             world_skill_audio1:'在我的世界里想要做什么呢。',
             world_skill_audio2:'你是勇气可嘉呢，还是单纯是个笨蛋呢？',
             sakuya_die:'啊啊……我还是回去好了。',
+            remilia:'蕾米莉亚',
+            mingyun:'命运',
+            mingyun2:'命运',
+            mingyun_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以：摸X张牌，并将等量牌置于牌堆顶（X为攻击范围），然后，直到结束阶段：一名角色使用其手牌指定唯一目标时，若该牌不是以此法使用，其取消目标并判定：若判定牌可以对目标使用，其将判定牌对目标使用。',
+            feise:'绯色幻想乡',
+            feise2:'绯色幻想乡',
+            feise_info:'符卡技（4）<永续><u>你的第一回合开始时，若灵力足够：须发动此符卡；</u>你和与你同阵营的角色攻击范围+3；其他角色的结束阶段，若其对其以外的角色使用过牌，你可以：对其造成1点弹幕伤害。',
             flandre:'芙兰朵露',
             kuangyan:'狂宴',
             kuangyan_audio1:'嗯？捏一下这个，你就会爆炸吗？',

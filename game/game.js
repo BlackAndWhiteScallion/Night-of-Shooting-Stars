@@ -9188,7 +9188,7 @@
             equip1:'武器',
             equip2:'防具',
             equip3:'道具',
-            equip4:'攻击马',
+            equip4:'宝具',
             equip5:'宝物',
             zero:'零',
             one:'一',
@@ -14084,7 +14084,6 @@
                     if(!get.owner(event.result.card)) event.position.appendChild(event.result.card);
                 },
                 turnOver:function(){
-                    game.log(player,'翻面');
                     // 不仅是翻面的UI还是代表翻面了的东西？？？
                     // 看来只能去layout把翻面的动画改成正常的并且去掉翻面的翻译了……
                     player.classList.toggle('turnedover');
@@ -14093,6 +14092,7 @@
                         if(lib.config.background_audio){
                             game.playAudio('effect','spell');
                         }
+                        game.log(player,'启动符卡！');
                         player.node.turnedover.setBackgroundImage('theme/spell.gif');
                         player.node.turnedover.style.backgroundSize='123px 123px';
                         player.node.turnedover.style.opacity=0.4;
@@ -14103,6 +14103,7 @@
                         player.node.turnedover.setBackgroundImage('');
                         player.node.turnedover.style.opacity=0;
                         ui.refresh(player);
+                        game.log(player,'符卡结束');
                     }
                     // 到这里结束
                     game.broadcast(function(player){
@@ -18714,7 +18715,7 @@ getDiscardableCards:function(player,arg1,arg2){
                 },
                 getAttackRange:function(){
                     var player=this;
-                    var range=0;
+                    var range=-player.lili;
                     range=game.checkMod(player,player,range,'globalFrom',player);
                     range=game.checkMod(player,player,range,'attackFrom',player);
                     var equips=player.getCards('e');
@@ -18728,7 +18729,7 @@ getDiscardableCards:function(player,arg1,arg2){
                             range+=info.attackFrom;
                         }
                     }
-                    return (1-range);
+                    return (0-range);
                 },
                 getGlobalFrom:function(){
                     var player=this;
