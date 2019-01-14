@@ -1,5 +1,5 @@
 window.noname_update={
-    version:'0.74',
+    version:'0.75',
     update:'0.70',
     changeLog:[
         '更新成功！',
