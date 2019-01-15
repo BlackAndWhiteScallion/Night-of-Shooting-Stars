@@ -15253,7 +15253,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     }
                     return cards;
                 },
-getDiscardableCards:function(player,arg1,arg2){
+                getDiscardableCards:function(player,arg1,arg2){
 					var cards=this.getCards(arg1,arg2);
 					for(var i=0;i<cards.length;i++){
 						if(!lib.filter.canBeDiscarded(cards[i],player,this)){

@@ -524,6 +524,61 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				skills:['stg_missile_skill']
 			},
+			stg_waterbook:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_waterbook_skill']
+			},
+			stg_firebook:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_firebook_skill']
+			},
+			stg_dirtbook:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_dirtbook_skill']
+			},
+			stg_goldbook:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_goldbook_skill']
+			},
+			stg_woodbook:{
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_woodbook_skill']
+			},
 		},
 		characterPack:{
 			mode_stg:{
@@ -536,7 +591,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		cardPack:{
-			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle'],
+			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle',
+			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -886,15 +942,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.additionalReward=function(){
 						return 500;
 					}
-					game.me.storage.reinforce = ['stg_yousei','stg_yousei','rumia'];
-					//game.me.storage.reinforce = ['stg_yousei','rumia'];
+					//game.me.storage.reinforce = ['stg_yousei','stg_yousei','rumia'];
+					game.me.storage.reinforce = ['rumia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
 							['reimu','好舒服呢','因为每次白天出来妖怪都很少<br>这次才试着在夜里出来的……','不过该往哪边走都搞不清楚了<br>这么暗',
 								'但是……<br>夜里的境内还真够浪漫呢','','呃，你谁啊？','','人类在一片漆黑的地方<br>本来就看不到东西啊<br>(刚刚见过吗？)',''
-								,'那种人你就算抓来吃了也无所谓啊','','不过，你很碍事呢',''],
+								,'那种人你就算抓来吃了也无所谓啊','','不过，你很碍事呢','','良药苦口<br>这句话你有听过吗？','end'],
 							['rumia','就是说啊～<br>还会出现妖怪，真是受不了啊','','刚刚不是见过了吗<br>你难不成是夜盲症吗？','','是吗？我好像也看到过<br>只在夜里才活动的人呢'
-							,'','是——这样吗？','','在我眼前的就是吃了也没关系的人类？','end']
+							,'','是——这样吗？','','在我眼前的就是吃了<br>也没关系的人类？','']
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
@@ -907,7 +963,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.fuhuo = 2;
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
-					//game.me.addSkill('masterspark');
+					//game.me.addSkill('finalspark');
 					game.me.addSkill('handcard_max');
 				},
 				gameDraw:function(player){
@@ -1036,18 +1092,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return num + player.storage.tongguan;
 					},
 					canBeDiscarded:function(card,player,target,event){
-						if(get.subtype(card) == 'equip4') return false;
+						if(get.is.altered('handcard_max')&&get.subtype(card) == 'equip4') return false;
 					},
 					cardDiscardable:function(card,player,target,event){
-						if(get.subtype(card) == 'equip4') return false;
+						if(get.is.altered('handcard_max')&&get.subtype(card) == 'equip4') return false;
+					},
+					canBeGained:function(card,player,target,event){
+						if(get.is.altered('handcard_max')&&get.subtype(card) == 'equip4') return false;
 					},
 					cardGainable:function(card,player,target,event){
-						if(get.subtype(card) == 'equip4') return false;
+						if(get.is.altered('handcard_max')&&get.subtype(card) == 'equip4') return false;
 					},
 				},
 			},
 			// 直接秒一个人
-			masterspark:{
+			finalspark:{
 				enable:'phaseUse',
 				selectTarget:1,
 				filterTarget:function(){
@@ -1383,11 +1442,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addBossFellow(3,'stg_maid',2);
 					game.addBossFellow(5,'stg_bookshelf',0);
 					'step 4'
+					var target=game.findPlayer(function(current){
+								return current.name == 'stg_bookshelf';
+							});
+					if(target){
+						target.equip(game.createCard('stg_woodbook'));
+						target.equip(game.createCard('stg_firebook'));
+						target.equip(game.createCard('stg_goldbook'));
+						target.equip(game.createCard('stg_waterbook'));
+						target.equip(game.createCard('stg_dirtbook'));
+					}
+					'step 5'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['koamuka','patchouli'];
+					game.me.storage.reinforce = ['koakuma','patchouli'];
 					game.me.storage.stage = 'boss_chiyan5x';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -1403,7 +1473,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.removeSkill('boss_chiyan4x');
 					game.me.storage.skill = ['revive_boss'];
 					game.me.storage.unskill = ['xianzhe'];
-					game.me.storage.reskill=[];
+					game.me.storage.reskill=['patchyspell'];
 					game.resetSkills();
 					_status.paused=false;
 					_status.event.player=game.me;
@@ -1416,7 +1486,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
-			///////////////////////////// 这里开始是正经的角色技能 ////////////////////////////////////////////////////
+			/////////////////////////////// 这里开始是正经的角色技能 ////////////////////////////////////////////////////
 			shogon:{
 				init:function(event,character){
 					var players = game.players;
@@ -1436,6 +1506,139 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.skill['jicai'].infinite = true;
 				},	
 			},
+			patchyspell:{
+				init:function(event,character){
+					if (game.me.name == 'reimu'){
+						game.boss.addSkill('mercury');
+						game.boss.useSkill('mercury');
+					} else if (game.me.name == 'marisa'){
+						game.boss.addSkill('emerald');
+						game.boss.useSkill('emerald');
+					} else {
+						game.boss.addSkill('waterfairy');
+						game.boss.useSkill('waterfairy');
+					}
+				},
+			},
+			mercury:{
+				audio:2,
+                cost:0,
+                infinite:true,
+                 spell:['mercury1'],
+             	trigger:{},
+                  init:function(event,player){
+                  	var target = game.findPlayer(function(current){
+                  		return current.name == 'stg_bookshelf';
+                  	});
+                  	if (target){
+                  		target.equip(game.createCard('stg_goldbook'));
+                  		target.equip(game.createCard('stg_waterbook'));
+                  	}
+                  },
+                  content:function(){
+                      player.loselili(lib.skill.mercury.cost);
+                      player.turnOver();
+                  },
+			},
+			mercury1:{
+				trigger:{player:['useCard','respondAfter']},
+				frequent:true,
+				filter:function(event,player){
+					if(_status.currentPhase==player) return false;
+					if(!event.cards) return false;
+					if(event.cards.length!=1) return false;
+					if(lib.filter.autoRespondSha.call({player:player})) return false;
+					return get.color(event.cards[0])=='black';
+				},
+				content:function(){
+					'step 0'
+					player.chooseTarget(get.prompt('mercury'),function(card,player,target){
+							return true;
+						}).set('ai',function(target){
+							return get.attitude(_status.event.player,target) < 0;
+						});
+					'step 1'
+					if (result.target){
+						result.target.loseHp();
+					}
+				}
+			},
+			emerald:{
+				audio:2,
+                cost:0,
+                infinite:true,
+                spell:['emerald1'],
+                init:function(event,player){
+                  	var target = game.findPlayer(function(current){
+                  		return current.name == 'stg_bookshelf';
+                  	});
+                  	if (target){
+                  		target.equip(game.createCard('stg_goldbook'));
+                  		target.equip(game.createCard('stg_dirtbook'));
+                  	}
+                  },
+                  content:function(){
+                      player.loselili(lib.skill.emerald.cost);
+                      player.turnOver();
+                  },
+			},
+			emerald1:{
+				global:'emerald2',
+			},
+			emerald2:{
+				alter:true,
+				mod:{
+					canBeDiscarded:function(card,player,target,event){
+						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip'&& game.hasPlayer(function(current){
+							return current.hasSkill('emerald1') && current.identity == player.identity;
+						})) return false;
+					},
+					cardDiscardable:function(card,player,target,event){
+						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip'&& game.hasPlayer(function(current){
+							return current.hasSkill('emerald1') && current.identity == player.identity;
+						})) return false;
+					},
+					canBeGained:function(card,player,target,event){
+						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip'&& game.hasPlayer(function(current){
+							return current.hasSkill('emerald1') && current.identity == player.identity;
+						})) return false;
+					},
+					cardGainable:function(card,player,target,event){
+						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip' && game.hasPlayer(function(current){
+							return current.hasSkill('emerald1') && current.identity == player.identity;
+						})) return false;
+					},
+				},
+			},
+			waterfairy:{
+				audio:2,
+                cost:0,
+                infinite:true,
+                 spell:['waterfairy1'],
+                   init:function(event,player){
+                  	var target = game.findPlayer(function(current){
+                  		return current.name == 'stg_bookshelf';
+                  	});
+                  	if (target){
+                  		target.equip(game.createCard('stg_woodbook'));
+                  		target.equip(game.createCard('stg_waterbook'));
+                  	}
+                  },
+                  content:function(){
+                      player.loselili(lib.skill.waterfairy.cost);
+                      player.turnOver();
+                  },
+			},
+			waterfairy1:{
+				direct:true,
+				trigger:{player:'phaseEnd'},
+				content:function(){
+					var players = game.filterPlayer();
+					for (var i = 0; i < players.length; i ++){
+						players[i].draw(players[i].maxHandcard() - players[i].countCards('h'));
+					}
+				},
+			},
 			saochu:{
 				audio:2,
 				forced:true,
@@ -1450,16 +1653,41 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.draw();
 				},
 			},
+			juguang:{
+				audio:2,
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				init:function(player){
+					player.maxequip+=2;
+				},
+				content:function(){
+					"step 0"
+					player.chooseTarget(get.prompt('juguang'),function(card,player,target){
+						return player.canUse({name:'sha'},target,false);
+					}).set('ai',function(target){
+						return get.effect(target,{name:'sha'},_status.event.player);
+					});
+					"step 1"
+					if(result.bool){
+						player.logSkill('juguang',result.targets);
+						player.useCard({name:'sha'},result.targets[0],false);
+						player.skip('phaseUse');
+						player.skip('phaseDraw');
+						player.skip('phaseDiscard');
+					}
+				},
+			},
 			stg_needle_skill:{
 				init:function(player){
-					player.addSkill();
+					player.addSkill('fengmo');
 				},
 				mod:{
 					maxHandcard:function(player,num){
-						return num++;
+						return num+1;
 					}
 				},
 				trigger:{player:'shaBegin'},
+				forced:true,
 				filter:function(){
 					return true;
 				},
@@ -1496,39 +1724,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                         return ui.create.dialog([list,'vcard']);
                     },
                     check:function(button){
-                        var player=_status.event.player;
-                        var recover=0,lose=1,players=game.filterPlayer();
-                        for(var i=0;i<players.length;i++){
-                            if(!players[i].isOut()){
-                                if(players[i].hp<players[i].maxHp){
-                                    if(get.attitude(player,players[i])>0){
-                                        if(players[i].hp<2){
-                                            lose--;
-                                            recover+=0.5;
-                                        }
-                                        lose--;
-                                        recover++;
-                                    }
-                                    else if(get.attitude(player,players[i])<0){
-                                        if(players[i].hp<2){
-                                            lose++;
-                                            recover-=0.5;
-                                        }
-                                        lose++;
-                                        recover--;
-                                    }
-                                }
-                                else{
-                                    if(get.attitude(player,players[i])>0){
-                                        lose--;
-                                    }
-                                    else if(get.attitude(player,players[i])<0){
-                                        lose++;
-                                    }
-                                }
-                            }
-                        }
-                        return (button.link[2]=='wuzhong')?1:-1;
+                        return (button.link[2]=='tao')?1:-1;
                     },
                     backup:function(links,player){
                         return {
@@ -1537,6 +1733,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                             },
                             position:'he',
                             selectCard:1,
+                            usable:1,
                             popname:true,
                             viewAs:{name:links[0][2]},
                         }
@@ -1550,14 +1747,31 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				init:function(player){
 					player.addSkill('masterspark');
 				},
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					// 这段是检测次数限制的
+					if(!lib.filter.filterCard({name:'sha'},player,event)){
+						return false;
+					}
+					return true;
+				},
+				filterTarget:function(card,player,target){
+					return player.canUse('sha',target);
+				},
+				content:function(){
+					target.addTempSkill('unequip','shaAfter');
+					player.useCard({name:'sha'},target);
+				},
 			},
 			stg_missile_skill:{
+				group:'missile_count',
 				init:function(player){
 					player.addSkill('stardust');
 				},
 				trigger:{player:'phaseEnd'},
 				filter:function(event,player){
-					return player.countUsed('sha')>0;
+					return player.hasSkill('missile_ready');
 				},
 				content:function(){
 					'step 0'
@@ -1571,6 +1785,176 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.logSkill('stg_missile',result.targets);
 						player.useCard({name:'sha'},result.targets[0],false);
 					}
+				},
+			},
+			missile_count:{
+				trigger:{player:'shaAfter'},
+				direct:true,
+				priority:-10,
+				content:function(){
+					player.addTempSkill('missile_ready');
+				}
+			},
+			missile_ready:{
+			},
+			masterspark:{
+				audio:2,
+                cost:0,
+                spell:['spark1'],
+                roundi:true,
+                trigger:{player:'phaseBegin'},
+                filter:function(event,player){
+                    return player.lili > lib.skill.masterspark.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.masterspark.cost);
+                    player.turnOver();
+                  },
+                check:function(event,player){
+                  return player.lili > 3;
+                },
+			},
+			spark1:{
+				trigger:{player:'shaBegin'},
+				forced:true,
+				filter:function(event,player){
+					return player.lili > 1;
+				},
+				content:function(){
+					player.storage.spark = player.lili -1;
+					player.loselili(player.lili-1);
+					player.addTempSkill('spark2','shaAfter');
+				},
+			},
+			spark2:{
+				trigger:{source:'damageBegin'},
+				filter:function(event){
+					return event.card&&(event.card.name=='sha')&&event.notLink();
+				},
+				forced:true,
+				content:function(){
+					trigger.num+=player.storage.spark;
+					delete player.storage.spark;
+				}
+			},
+			fengmo:{
+                audio:2,
+                cost:2,
+                spell:['fengmo1'],
+                roundi:true,
+                trigger:{player:'phaseBegin'},
+                filter:function(event,player){
+                    return player.lili > lib.skill.fengmo.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.fengmo.cost);
+                    player.turnOver();
+                  },
+                check:function(event,player){
+                  return player.lili > 3;
+                },
+			},
+			fengmo1:{
+				init:function(player){
+					var players = game.filterPlayer();
+					players.remove(player);
+					for (var i = 0; i < players.length; i++){
+						players[i].addTempSkill('fengyin');
+						players[i].addTempSkill('unequip');
+						player.discardPlayerCard(players[i],'hej',[1,1],true);
+					}
+				},
+				onremove:function(player){
+					var players = game.filterPlayer();
+					players.remove(player);
+					for (var i = 0; i < players.length; i++){
+						players[i].removeSkill('fengyin');
+						players[i].removeSkill('unequip');
+					}
+				},
+			},
+			stg_firebook_skill:{
+				global:'firebook1',
+			},
+			firebook1:{
+				trigger:{player:'shaBegin'},
+				usable:1,
+				forced:true,
+				filter:function(event,player){
+					return game.hasPlayer(function(current){
+						return current.identity == player.identity && current.hasSkill('stg_firebook_skill');
+					});
+				},
+				content:function(){
+					player.getStat().card.sha--;
+				},
+			},
+			stg_waterbook_skill:{
+				global:'waterbook1',
+			},
+			waterbook1:{
+				enable:['chooseToUse','chooseToRespond'],
+				filterCard:function(card){
+					return get.color(card)=='black';
+				},
+				viewAs:{name:'shan'},
+				viewAsFilter:function(player){
+					if(!player.countCards('h',{color:'black'})) return false;
+					return game.hasPlayer(function(current){
+						return current.identity == player.identity && current.hasSkill('stg_waterbook_skill');
+					});
+				},
+				prompt:'将一张黑色手牌当【没中】使用/打出',
+				check:function(){return 1},
+				ai:{
+					respondShan:true,
+					skillTagFilter:function(player){
+						if(!player.countCards('h',{color:'black'})) return false;
+					},
+					effect:{
+						target:function(card,player,target,current){
+							if(get.tag(card,'respondShan')&&current<0) return 0.6
+						}
+					}
+				}
+			},
+			stg_woodbook_skill:{
+				global:'woodbook1',
+			},
+			woodbook1:{
+				mod:{
+					maxHandcard:function(player,num){
+						return num+game.countPlayer(function(current){
+							return current.hasSkill('stg_woodbook_skill') && current.identity == player.identity;
+						});
+					}
+				},
+			},
+			stg_dirtbook_skill:{
+				forced:true,
+				trigger:{global:'dieEnd'},
+				filter:function(event,player){
+					return event.player.identity != player.identity && event.player.countCards('hej');
+				},
+				content:function(){
+					player.gainPlayerCard('hej',trigger.player,true);
+				}
+			},
+			stg_goldbook_skill:{
+				global:'goldbook1',
+			},
+			goldbook1:{
+				direct:true,
+				trigger:{player:'phaseDrawBegin'},
+				filter:function(event,player){
+					return game.countPlayer(function(current){
+							return current.hasSkill('stg_goldbook_skill') && current.identity == player.identity;
+						}) > 0;
+				},
+				content:function(){
+					trigger.num+=game.countPlayer(function(current){
+							return current.hasSkill('stg_goldbook_skill') && current.identity == player.identity;
+						});
 				},
 			},
 		},
@@ -1591,7 +1975,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_bookshelf:'魔导书塔',
 			saochu:'扫除',
 			saochu_info:'锁定技，结束阶段：若你有牌，弃置一张牌；然后，无论是否弃置了牌，摸一张牌。',
-			
+			juguang:'聚光',
+			juguang_info:'锁定技，跳过你的所有阶段，视为使用一张【轰！】；你的装备上限+1。',
+
 			stg_needle:'封魔针',
 			stg_needle_info:'锁定技，你的手牌上限+1；你使用【轰！】指定目标后，目标的技能和装备技能无效，直到结算完毕。',
 			stg_yinyangyu:'鬼神阴阳玉',
@@ -1600,9 +1986,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_missile:'魔法飞弹',
 			stg_missile_skill:'魔法飞弹',
 			stg_missile_info:'结束阶段，若你本回合使用过【轰！】，你可以视为使用一张【轰！】。',
-			stg_bagua:'迷你八卦炉',
-			stg_bagua_info:'',
+			stg_bagua:'八卦炉MKII',
+			stg_bagua_skill:'八卦炉MKII',
+			stg_bagua_info:'一回合一次，出牌阶段，你可以视为使用一张【轰！】；该【轰！】指定目标后，目标的装备技能无效，直到结算完毕。',
 			masterspark:'极限火花',
+			masterspark_info:'符卡技（0）你使用【轰！】指定目标后，将灵力值消耗至1：若如此做，该【轰！】造成伤害时，该伤害+X（X为消耗灵力量）。',
+			fengmo:'封魔阵',
+			fengmo_info:'符卡技（2）符卡发动时，弃置所有其他角色各一张牌；其他角色的技能和装备技能无效。',
+			
+			stg_firebook:'火魔导书',
+			stg_firebook_info:'锁定技，与你阵营相同的角色于其出牌阶段使用的第一张【轰！】不计次数。',
+			stg_waterbook:'水魔导书',
+			waterbook1:'水魔导书',
+			stg_waterbook_info:'与你阵营相同的角色可以将一张黑色手牌当做【没中】使用/打出。',
+			stg_woodbook:'木魔导书',
+			stg_woodbook_info:'锁定技，与你阵营相同的角色的手牌上限+2。',
+			stg_dirtbook:'土魔导书',
+			stg_dirtbook_info:'锁定技，与你阵营不同的角色坠机后，获得其因坠机弃置的一张牌。',
+			stg_goldbook:'金魔导书',
+			stg_goldbook_info:'锁定技，与你阵营相同的角色摸牌阶段额外摸一张牌。',
+
+			mercury:'金＆水符「水银之毒」',
+			mercury_info:'符卡技（0）<极意>你于回合外使用/打出黑色牌后，可以令一名角色失去1点体力。',
+			emerald:'土＆金符「翡翠巨石」',
+			emerald_info:'符卡技（0）<极意>与你相同阵营的角色的装备牌不能被弃置/获得。',
+			waterfairy:'水＆木符「水精灵」',
+			waterfairy_info:'符卡技（0）<极意>结束阶段，所有角色将手牌数补至手牌上限。',
 
 			mode_stg_card_config:'STG卡牌',
 			mode_stg_character_config:'STG角色',

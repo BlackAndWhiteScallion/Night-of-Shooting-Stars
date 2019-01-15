@@ -1736,7 +1736,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		hakkero_skill:{
-			audio:3,
 			enable:'phaseUse',
 			filter:function(event,player){
 				// 这段是检测次数限制的

@@ -411,7 +411,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                         'step 0'
                         player.chooseTarget('今天要去偷谁的东西呢？',function(card,player,target){
-                            return player!=target && player.canUse('shunshou', target);
+                            return player.canUse('shunshou', target);
                          }).set('ai',function(target){
                             return -get.attitude(_status.event.player,target) && target.countCards('hej');
                          });
