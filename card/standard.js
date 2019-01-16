@@ -1172,6 +1172,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			skills:['book_skill']
 		},
+		yuzhi:{
+			fullskin:true,
+			type:'equip',
+			subtype:'equip5',
+			ai:{
+				basic:{
+					equipValue:4
+				}
+			},
+			skills:['yuzhi_skill']
+		},
 		frog:{
 			fullskin:true,
 			type:'equip',
@@ -1642,6 +1653,63 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (player.lili < 3) return false;
 				if (player.countCards('j') >= 3) return false;
 				return true;
+			},
+		},
+		yuzhi_skill:{
+			audio:2,
+			enable:'phaseUse',
+			usable:1,
+			discard:false,
+			filterCard:function(card){
+				return true;
+			},
+			prepare:function(cards,player,targets){
+				player.showCards(cards);
+				player.storage.yuzhi = cards[0];
+			},
+			content:function(){
+				'step 0'
+				player.chooseControl('花色','点数').set('ai',function(){
+						return '点数';
+					}).set('prompt','想要更改哪一样？');
+				'step 1'
+				if (result.control){
+					var list = [];
+					event.control = result.control;
+					if (result.control == '花色'){
+						list = ['heart', 'spade', 'diamond', 'club'];
+					} else if (result.control == '点数'){
+						list = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
+					}
+					player.chooseControl(list).set('prompt','想要改成什么？');
+				}
+				'step 2'
+				if (result.control){
+					if (event.control == '花色'){
+						player.storage.yuzhisuit = result.control;
+					} else if (event.control == '点数'){
+						var num = result.control;
+						switch(num){
+                            case 'A':num=1;break;
+                            case 'J':num=11;break;
+                            case 'Q':num=12;break;
+                            case 'K':num=13;break;
+                            default:num=num;
+                        }
+                        player.storage.yuzhinumber = result.control;
+					}
+					player.addTempSkill('yuzhi_skill2');
+				}
+			},
+		},
+		yuzhi_skill2:{
+			mod:{
+				suit:function(card,suit){
+					if(card == player.storage.yuzhi && player.storage.yuzhisuit) return player.storage.yuzhisuit;
+				},
+				number:function(card,number){
+					if(card == player.storage.yuzhi && player.storage.yuzhinumber) return player.storage.yuzhinumber;
+				},
 			},
 		},
 		magatama_skill:{
@@ -2744,9 +2812,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["spade",3,'guohe'],
 		["spade",4,'guohe'],
 		["spade",10,'guohe'],
-		["spade",12,'guohe'],
+		["diamond",12,'guohe'],
 		["club",3,'guohe'],
 		["club",4,'guohe'],
+		["spade",8,'guohe'],
 		["spade",9,'frog',""],
 		["spade",11,'wuxie'],
 		["spade",12,'wuxie'],
@@ -2761,7 +2830,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["club",11,'caifang'],
 		["diamond",1,'deathfan'],
 		["spade",1,'windfan',"",1],
-		["club",1,'wuxie'],
 		["heart",1,'lunadial',""],
 		["spade",2,'ibuki',"",1],
 		["club",2,'hourai',"",-1],
@@ -2772,7 +2840,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		["club",5,'lantern',"",-1],
 		["club",6,'bailou',"",-1],
 		["spade",6,'louguan',"",1],
-		["spade",8,'guohe'],
 		["club",8,'mirror'],
 		["club",9,'frog',""],
 		["spade",11,'book',"",1],

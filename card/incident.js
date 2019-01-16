@@ -295,6 +295,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		sb_win:{
     			trigger:{global:'useSkillAfter'},
     			skillAnimation:true,
+    			forced:true,
     			filter:function(event,player){
     				return event.skill.spell;
     			},
@@ -310,6 +311,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			filter:function(event,player){
     				return player == event.source;	
     			},
+    			forced:true,
     			skillAnimation:true,
     			init:function(event,player){
     				if (player.getStat('kill')) if (player.getStat('kill') > 1) game.over(true);
