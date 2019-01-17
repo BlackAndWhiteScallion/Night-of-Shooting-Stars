@@ -1199,7 +1199,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.turnOver();
                       },
                       check:function(event,player){
-                        return player.countCards('h',{name:'tao'}) == 0;
+                        return !player.countCards('h',{name:'tao'});
                       },
                       ai:{
                         save:true,

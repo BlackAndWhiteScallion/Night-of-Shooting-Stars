@@ -4439,7 +4439,7 @@
                     },
                     ai_strategy:{
                         name:'内奸策略',
-                        init:'ai_strategy_1',
+                        init:'ai_strategy_4',
                         item:{
                             ai_strategy_1:'均衡',
                             ai_strategy_2:'偏反',
@@ -39436,7 +39436,6 @@ smoothAvatar:function(player,vice){
                 }
 
                 ui.gameinfo=ui.create.div('#time',ui.window);
-
                 ui.arenalog=ui.create.div('#arenalog',ui.arena);
                 if(lib.config.show_log=='off'){
                     ui.arenalog.style.display='none';
@@ -39671,6 +39670,40 @@ smoothAvatar:function(player,vice){
                         _status.identityShown=true;
                     }
                 },true);
+
+                ui.incidents=ui.create.system('场上异变',null,true);
+                lib.setPopped(ui.incidents,function(){
+                    var uiintro=ui.create.dialog('hidden');
+
+                    uiintro.add('场上异变');
+                    var table=ui.create.div('.bosschongzheng');
+
+                    var tr,td,added=false;
+                    for(var i=0;i<game.filterPlayer().length;i++){
+                        if (game.filterPlayer()[i].storage._tanpai){
+                            added=true;
+                            tr=ui.create.div(table);
+                            td=ui.create.div(tr);
+                            td.innerHTML=get.translation(game.filterPlayer()[i]);
+                            tr=ui.create.div(table);
+                            td=ui.create.div(tr);
+                            //td.innerHTML=get.translation(game.filterPlayer()[i].storage._tanpai[0].name+'_info');
+                            td.innerHTML=get.translation(game.filterPlayer()[i].storage._tanpai[0]);
+                        }
+                    }
+
+                    if(!added){
+                        uiintro.add('<div class="text center">无明置异变</div>');
+                        uiintro.add(ui.create.div('.placeholder.slim'))
+                    }
+                    else{
+                        uiintro.add(table);
+                    }
+
+                    return uiintro;
+                }, 200);
+                if (lib.config.mode != 'identity') ui.incidents.style.display = 'none';
+
                 if(!lib.config.show_playerids||!game.showIdentity){
                     ui.playerids.style.display='none';
                 }

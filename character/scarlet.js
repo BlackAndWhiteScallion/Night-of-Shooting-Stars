@@ -954,7 +954,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     trigger.cancel();
                     trigger.player.judge();
                     "step 1"
-                     if (trigger.player.canUse(result.card,trigger.target)){
+                     if (trigger.target && trigger.player.canUse(result.card,trigger.target)){
                         trigger.player.useCard(result.card,trigger.target,'mingyun2');
                      }
                 }

@@ -7,9 +7,9 @@ window.config={
 	],
 	replacecharacter:{
 	},
-	forbidchess:['hetaihou','swd_kangnalishi'],
-	forbidboss:['caiwenji','gjqt_aruan','pal_xuanxiao','swd_hupo'],
-	forbiddouble:['zhugedan','swd_kangnalishi','dongzhuo','wutugu','hs_siwangzhiyi','hs_ronghejuren','hs_shanlingjuren'],
+	forbidchess:[],
+	forbidboss:[],
+	forbiddouble:[],
 	all:{
 		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka'],
 		sgscards:['standard','incident','skill'],

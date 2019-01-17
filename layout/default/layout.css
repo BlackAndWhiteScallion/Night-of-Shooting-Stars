@@ -1,4 +1,4 @@
-/*--------标签--------*/
+﻿/*--------标签--------*/
 html {
 	width: 100%;
 	height: 100%;
@@ -1117,6 +1117,27 @@ body>.background.upper {
 .background,.button,.avatar,.avatar2 {
 	transition-property: top,box-shadow,opacity,transform;
 	transition-duration: 0.5s;
+}
+.bosschongzheng{
+    width:calc(100%);
+    white-space:nowrap;
+    position:relative;
+}
+.bosschongzheng div{
+    position:relative;
+}
+.bosschongzheng>div{
+    width:calc(100% + 100px);
+    display:block;
+    margin-bottom:5px;
+}
+.bosschongzheng>div>div:first-child{
+    text-align:left;
+    width:20%;
+}
+.bosschongzheng>div>div:last-child{
+    text-align:left;
+    width:70%;
 }
 .fullsize{
 	width: 100%;

@@ -230,6 +230,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		phantasmagoria_normal:{
     			trigger:{global:'phaseEnd'},
     			forced:true,
+    			direct:true,
     			filter:function(event,player){
     				return true;
     			},
@@ -247,6 +248,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					player.useCard({name:'reidaisai'},game.filterPlayers());
+					player.loselili();
 				},
     		},
     		immaterial_win:{
@@ -313,9 +315,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			forced:true,
     			skillAnimation:true,
+    			/*
     			init:function(event,player){
     				if (player.getStat('kill')) if (player.getStat('kill') > 1) game.over(true);
     			},
+				*/
     			filter:function(event,player){
     				return player.getStat('kill') > 1;
     			},
@@ -373,7 +377,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			sb_normal:'【文花】异变效果',
 			sb_normal_info:'<u>一回合一次，你可以将一张牌当作【突击采访】使用 。</u>',
 			baka:'笨蛋',
-			baka_info:'<u>胜利条件：</u>你击坠两名角色。<br/><u>异变效果：</u>所有数字视为⑨进制。',
+			baka_info:'<u>胜利条件：</u>你击坠角色后，且已击坠过其以外的角色。<br/><u>异变效果：</u>所有数字视为⑨进制。',
 			baka_normal:'【笨蛋】效果',
 			baka_normal_info:'<u>所有数字视为⑨进制。</u>',
 			death:'皆杀',

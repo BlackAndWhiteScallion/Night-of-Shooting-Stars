@@ -7,6 +7,7 @@ window.noname_package={
         phantasmagoria:'花映',
         sb:'文花',
         baka:'笨蛋',
+        random:'乱入',
         d3:'三次元乱入',
     },
     card:{
