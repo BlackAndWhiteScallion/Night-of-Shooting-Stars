@@ -416,6 +416,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						fan:'自',
 							zhong:'异',
 							nei:'路',
+							zhu:'黑',
 							cai:'猜',
 					}
 				}

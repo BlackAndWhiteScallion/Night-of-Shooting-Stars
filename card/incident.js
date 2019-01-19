@@ -153,7 +153,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			scarlet_win:{
     			forced:true,
-    			skillAnimation:true,
     			trigger:{player:'phaseBegin'},
     			filter:function(event,player){
     				for(var i=0;i<game.players.length;i++){
@@ -163,6 +162,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return player.isMaxHp(true);
     			},
     			content:function(){
+    				player.$skill('红月胜利',null,null,true);
     				game.over(true);
     			}	
     		},
@@ -189,6 +189,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return player.isMinHandcard(true) && player.isMinHp(true);
     			},
     			content:function(){
+    				player.$skill('散樱胜利',null,null,true);
     				game.over(true);
     			}	
     		},
@@ -222,8 +223,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				player.syncStorage('imperishable_win');
     				player.markSkill('imperishable_win');
     				if (player.storage.imperishable_win == 7){
+    					player.$skill('永夜胜利', null, null, true);
     					game.over(true);
-    					player.$skill('永夜胜利');
     				};
     			},
     		},
@@ -247,7 +248,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return player.lili > 0;
 				},
 				content:function(){
-					player.useCard({name:'reidaisai'},game.filterPlayers());
+					player.useCard({name:'reidaisai'},game.filterPlayer());
 					player.loselili();
 				},
     		},
@@ -272,8 +273,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                             decknum++;
                         }
     				}
-    				if (decknum == num){ 
-    					player.logSkill('immaterial_win');
+    				if (decknum == num){
+    				    player.$skill('萃梦胜利',null,null,true); 
     					game.over(true);
     				}
     			},
@@ -302,7 +303,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return event.skill.spell;
     			},
     			content:function(){
-
+    				trigger.player.storage.sb = 1;
+    				var players = game.filterPlayer();
+    				var win = true;
+    				for (var i = 0; i < players.length; i++){
+    					if (!players[i].storage.sb) win = false; 
+    				}
+    				if (win == true){
+    					player.$skill('文花胜利',null,null,true);
+    					game.over(true);
+    				}
     			},
     		},
     		baka_normal:{
@@ -324,6 +334,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return player.getStat('kill') > 1;
     			},
     			content:function(){
+    				player.$skill('笨蛋胜利',null,null,true);
     				game.over(true);
     			},
     		},
@@ -340,7 +351,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			skillAnimation:true,
     			trigger:{global:'die'},
     			filter:function(event,player){
-    				return game.filterPlayers.length == 1;
+    				return game.filterPlayer().length == 1;
     			},
     			content:function(){
     				game.over(true);

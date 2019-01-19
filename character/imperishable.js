@@ -5,7 +5,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		character:{
 			   wriggle:['female','4',3,['yingguang','yechong']],
-                  mystia:['female','4',3,[]],
+                  mystia:['female','4',3,['shiming','wuye']],
                   keine:['female','3',4,['jiehuo','richuguo']],
                   reimu:['female','2',3,['yinyang','mengdie','mengxiang']],
                   marisa:['female','2',3,['liuxing','xingchen','stardust']],
@@ -129,32 +129,182 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                   },
-                  jiehuo:{
-                        trigger:{player:'useCardAfter'},
-                        usable:1,
-                        audio:2,
-                        filter:function(event,player){
-                              return (get.position(event.card)=='d'&&get.itemtype(event.card)=='card'&&player.lili>0);
-                        },
-                        content:function(){
-                              'step 0'
-                              player.loselili();
-                               player.chooseTarget('将'+get.translation(trigger.card)+'交给一名角色',true,function(card,player,target){
-                                    return true;
-                                }).set('ai',function(target){
-                                    if (get.bonus(trigger.card) > 0) return player;
-                                    return get.attitude(_status.event.player,target);
-                                });
-                                'step 1'
-                                if (result.targets){
-                                    result.targets[0].gain(trigger.card);
-                                    result.targets[0].$gain2(trigger.card);
+                  shiming:{
+                    audio:2,
+                    trigger:{player:['phaseBegin','damageEnd']},
+                    content:function(){
+                      'step 0'
+                      player.chooseTarget('失明：洗混一名角色手牌').set('ai',function(target){
+                            return -get.attitude(_status.event.player,target);
+                          });
+                      'step 1'
+                      if (result.bool){
+                        player.logSkill(event.name,result.targets);
+                        result.targets[0].addTempSkill('shiming_2');
+                        result.targets[0].addTempSkill('shiming_3');
+                      }
+                    },
+                    check:function(){
+                      return true;
+                    }
+                  },
+                  shiming_2:{
+                    silent:true,
+                    popup:false,
+                      enable:'chooseToUse',
+                      group:'shiming_4',
+                      filter:function(event,player){
+                        return player.countCards('h') > 0 && !player.storage.shiming;
+                      },
+                      content:function(){
+                        "step 0"
+                        var next = player.choosePlayerCard('h','失明：试图使用一张牌？', player,'invisible');
+                        next.set('ai',function(card){
+                            if (_status.event.player.countCards('h') > _status.event.player.hp) return 2;
+                            return 0;
+                        });
+                        "step 1"
+                        if (result.bool){
+                          player.showCards(result.links[0]);
+                          player.removeSkill('shiming_3');
+                          if (lib.filter.filterCard({name:result.links[0].name},player,_status.event.getParent().getParent())){
+                            if (!player.storage.shiming) player.storage.shiming = [];
+                            player.storage.shiming.push(result.links[0]);
+                          } else {
+                            player.discard(result.links[0]);
+                          }
+                          player.addTempSkill('shiming_3');
+                        }
+                      },
+                      check:function(){
+                        return true;
+                      },
+                      ai:{
+                        order:4,
+                      }
+                  },
+                  shiming_3:{
+                    mod:{
+                          cardEnabled:function(card,player){
+                              if(!player.storage.shiming || !player.storage.shiming.contains(card)) return false;
+                          },
+                          cardUsable:function(card,player){
+                                if(!player.storage.shiming || !player.storage.shiming.contains(card)) return false;
+                          },
+                          cardRespondable:function(card,player){
+                                if(!player.storage.shiming || !player.storage.shiming.contains(card)) return false;
+                          },
+                          cardSavable:function(card,player){
+                                if(!player.storage.shiming || !player.storage.shiming.contains(card)) return false;
+                          }
+                      },
+                  },
+                  shiming_4:{
+                      direct:true,
+                      popup:false,
+                      trigger:{player:'useCardAfter'},
+                      filter:function(event,player){
+                        return player.storage.shiming;
+                      },
+                      content:function(){
+                        delete player.storage.shiming;
+                      }
+                  },
+                  wuye:{
+                    audio:2,
+                    spell:['wuye2'],
+                    cost:2,
+                    trigger:{player:'phaseBegin'},
+                    filter:function(event,player){
+                      return player.lili > lib.skill.wuye.cost;
+                    },
+                    content:function(){
+                      player.loselili(lib.skill.wuye.cost);
+                      player.turnOver();
+                    },
+                  },
+                  wuye2:{
+                          audio:2,
+                          trigger:{target:'useCardtoBefore'},
+                          direct:true,
+                          priority:5,
+                          filter:function(event,player){
+                              return get.distance(player,event.player,'attack')<=1;
+                          },
+                          content:function(){
+                            "step 0"
+                            player.chooseTarget('午夜中的合唱指挥：你可以将'+get.translation(trigger.card)+'转移给一名其他角色').ai=function(target){
+                              return trigger.player.canUse(trigger.card, target);
+                            };
+                            "step 1"
+                            if(result.bool){
+                              player.logSkill(event.name,result.targets);
+                              trigger.target=result.targets[0];
+                              trigger.targets.remove(player);
+                              trigger.targets.push(result.targets[0]);
+                            }
+                            else{
+                              event.finish();
+                            }
+                            "step 2"
+                            trigger.untrigger();
+                            trigger.trigger('useCardToBefore');
+                            trigger.trigger('shaBefore');
+                            game.delay();
+                          },
+                          ai:{
+                            effect:{
+                              target:function(card,player,target){
+                                if(target.countCards('he')==0) return;
+                                if(card.name!='sha') return;
+                                var min=1;
+                                var friend=get.attitude(player,target)>0;
+                                var vcard={name:'shacopy',nature:card.nature,suit:card.suit};
+                                var players=game.filterPlayer();
+                                for(var i=0;i<players.length;i++){
+                                  if(player!=players[i]&&
+                                    get.attitude(target,players[i])<0&&
+                                    target.canUse(card,players[i])){
+                                    if(!friend) return 0;
+                                    if(get.effect(players[i],vcard,player,player)>0){
+                                      if(!player.canUse(card,players[0])){
+                                        return [0,0.1];
+                                      }
+                                      min=0;
+                                    }
+                                  }
+                                }
+                                return min;
                               }
-                        },
-                        check:function(event,player){
-                              //return get.value(event.card) >= 5;
-                            return player.lili > 1;
-                        },
+                            }
+                          }
+                    },
+                  jiehuo:{
+                      trigger:{player:'useCardAfter'},
+                      usable:1,
+                      audio:2,
+                      filter:function(event,player){
+                            return (get.position(event.card)=='d'&&get.itemtype(event.card)=='card'&&player.lili>0);
+                      },
+                      content:function(){
+                         'step 0'
+                         player.loselili();
+                         player.chooseTarget('将'+get.translation(trigger.card)+'交给一名角色',true,function(card,player,target){
+                              return true;
+                          }).set('ai',function(target){
+                              if (get.bonus(trigger.card) > 0) return player;
+                              return get.attitude(_status.event.player,target);
+                          });
+                          'step 1'
+                          if (result.targets){
+                              result.targets[0].gain(trigger.card);
+                              result.targets[0].$gain2(trigger.card);
+                          }
+                      },
+                      check:function(event,player){
+                            //return get.value(event.card) >= 5;
+                          return player.lili > 1;
+                      },
                   },
                   richuguo:{
                          audio:2,
@@ -259,7 +409,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               player.chooseControl(controls).set('ai',function(){
                                     var trigger=_status.event.getTrigger();
-                                    if(trigger.player.countCards('hej')&&get.attitude(_status.event.player,trigger.target)<0){
+                                    if(trigger.player.countCards('hej')&&get.attitude(player,trigger.player)<0){
                                           return 'spin_card';
                                     }
                                     else{
@@ -281,8 +431,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                       ui.skillPile.appendChild(result.links[0]);
                                     } else {
                                       ui.cardPile.appendChild(result.links[0]);
-                                      if (!player.storage.bot) player.storage.bot = result.links[0];
-                                      else player.storage.bot.insertBefore(result.links[0]); 
                                     }
                                     trigger.player.lose(result.links[0]);
                               }
@@ -413,7 +561,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.chooseTarget('今天要去偷谁的东西呢？',function(card,player,target){
                             return player.canUse('shunshou', target);
                          }).set('ai',function(target){
-                            return -get.attitude(_status.event.player,target) && target.countCards('hej');
+                            return -get.attitude(player,target) && target.countCards('hej');
                          });
                          'step 1'
                          if (result.bool && result.targets){
@@ -566,7 +714,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 1'
                       if (result.bool == false){
                         player.discardPlayerCard(trigger.player,'hej',true);
-                        if(trigger.player == player) trigger.cancel();
+                        if(trigger.target == player) trigger.cancel();
                         if(!player.hasSkill('yuangu_1')) {
                           player.storage.mitu.discard();
                           player.$throw(player.storage.mitu);
@@ -611,6 +759,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if(result.cards&&result.cards.length){
                         player.lose(result.cards,ui.special);
                         player.storage.mitu=result.cards[0];
+                        player.logSkill('mitu');
                         player.syncStorage('mitu');
                         player.markSkill('mitu');
                       }
@@ -1404,6 +1553,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yechong_audio1:'蠢符「夜虫风暴」~',
                   yechong_audio2:'那么，用星星把你淹死吧？',
                   wriggle_die:'用杀虫剂是犯规啦！',
+                  mystia:'米斯蒂亚',
+                  shiming:'失明',
+                  shiming_2:'失明',
+                  shiming_info:'准备阶段，或你受到伤害后，你可以令一名角色获得以下效果，直到当前回合结束：其不能以此技能以外的方式使用牌；其需要使用牌时，可以洗混其手牌；其不能查看其中暗置牌；其展示其中一张：若可以使用，本次结算中其可以使用该牌；否则，其弃置之，并可以重复此流程。',
+                  wuye:'午夜中的合唱指挥',
+                  wuye_info:'符卡技（2）<永续>你成为攻击范围内的角色的牌的目标时，你可以指定一名其他角色，将目标转移给其。',
                   keine:'慧音',
                   jiehuo:'解惑',
                   jiehuo_info:'一回合一次，一名角色的出牌阶段，一张牌因你使用/打出进入弃牌堆时，可以消耗1点灵力，令一名角色获得之。',

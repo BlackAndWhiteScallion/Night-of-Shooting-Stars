@@ -721,6 +721,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (event.list.length == 1) event.finish();
                     player.chooseControl(event.list,function(event,player){
                         if (event.list.contains('获得牌')) return '获得牌';
+                        if (player.storage.mingzhi.length > 1) return '交出去明置牌';
                         return 'cancel2';
                     }).set('prompt',get.prompt('zhenhun'));
                     "step 2"
@@ -1557,10 +1558,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.countCards('hej');
                 },
                 check:function(event,player){
-                    if(!player.storage.bot) return false;
-                    if(player.countCards('he')<3) return false;
-                    //if(lib.card[player.storage.bot[0]].subtype == 'attack' || lib.card[player.storage.bot[0]].subtype == 'disrupt') return get.attitude(player,event.player) < 0;
-                    //if(lib.card[player.storage.bot[0]].type == 'equip' || lib.card[player.storage.bot[0]].subtype == 'support') return get.attitude(player,event.player) > 0;
+                    if(player.countCards('hej')<3) return false;
+                    var card = ui.cardPile.childNodes[ui.cardPile.childNodes.length-1];
+                    if (get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt') return get.attitude(player,event.player) < 0;
+                    if (get.type(card) == 'equip' || get.subtype(card) == 'support') return get.attitude(player,event.player) > 0;
                     return false;
                 },
                 content:function(){
@@ -1602,6 +1603,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     var cards=[];
                     for (var i = 3; i > 0; i--){
+                        if (ui.cardPile.childNodes.length == 0){
+                            var card = get.cards(1);
+                            ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
+                        }
                         cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
                     }
                     event.cards=cards; 
@@ -1801,6 +1806,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.mengjing.cost);
                     player.turnOver();
                 },
+                check:function(){
+                    return false;
+                },
             },
             mengjing2:{
                 // 紫妈还没完成呢
@@ -1911,7 +1919,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             yishan_audio2:'斩！',
             yinhuashan:'六根清静斩',
             yinhuashan2:'六根清静斩',
-            yinhuashan_info:'符卡技（0）你使用【轰！】指定目标时，可以消耗1点灵力，并选择一项：额外指定一名目标角色，或重置【一闪】。',
+            yinhuashan_info:'符卡技（1）你使用【轰！】指定目标时，可以消耗1点灵力，并选择一项：额外指定一名目标角色，或重置【一闪】。',
             yinhuashan_audio1:'妖怪锻造的这把剑，斩不断的东西根本没有！',
             yinhuashan_audio2:'我的名字是魂魄妖梦！幽幽子大人之剑！',
             yinhuashan_audio3:'空观剑「六根清净斩」!',

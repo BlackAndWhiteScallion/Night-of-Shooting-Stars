@@ -11633,7 +11633,8 @@
                             event.dialog.addText('手牌区');
                             var hs=target.getCards('h');
                             hs.randomSort();
-                            if(event.visible||target.isUnderControl(true)){
+                            // invisible是米斯蒂亚的专用变量：无视持有者是谁都会屏蔽掉手牌
+                            if((event.visible||target.isUnderControl(true)) && !event.invisible){
                                 event.dialog.add(hs);
                                 directh=false;
                             } else{
@@ -11648,6 +11649,7 @@
                                     directh=false;
                                 } else {
                                     event.dialog.add([hs,'blank']);
+                                    if (event.invisible) directh = false;
                                 }
                             }
                         }
@@ -14655,7 +14657,7 @@
                     // 浮空时间。原数值：2000毫秒
                     setTimeout(function(){
                         dialog.delete();
-                    },3500);
+                    },3000);
                     var info=[get.translation(this.name)||this.nickname,str];
                     lib.chatHistory.push(info);
                     if(_status.addChatEntry){
@@ -16026,7 +16028,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     next._args=Array.from(arguments);
                     return next;
                 },
-     				chooseUseTarget:function(card,prompt,includecard){
+     			chooseUseTarget:function(card,prompt,includecard){
 					// not online-ready
 					if(typeof card=='string'){
 						card={name:card};
@@ -16292,6 +16294,9 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         }
                         else if(arguments[i]=='visible'){
                             next.visible=true;
+                        }
+                        else if (arguments[i] == 'invisible'){
+                            next.invisible=true;
                         }
                         else if(typeof arguments[i]=='function'){
                             if(next.ai) next.filterButton=arguments[i];
@@ -45745,7 +45750,7 @@ smoothAvatar:function(player,vice){
                     game.shuffleNumber++;
                     var cards=[],i;
                     for(var i=0;i<lib.onwash.length;i++){
-                        					if(lib.onwash[i]()=='remove'){
+                        if(lib.onwash[i]()=='remove'){
 							lib.onwash.splice(i--,1);
 						}
 					}

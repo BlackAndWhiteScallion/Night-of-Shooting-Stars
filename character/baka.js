@@ -291,6 +291,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   zhiyue_audio1:'这是送给你的——♪',
                   zhiyue_audio2:'祝你武运昌盛——♪',
                   zhiyue_info:'一回合一次，出牌阶段，你可以交给一名其他角色一张牌；然后，你可以消耗1点灵力，摸一张牌。',
+                  daiyousei_die:'呜——',
             },
       };
 });

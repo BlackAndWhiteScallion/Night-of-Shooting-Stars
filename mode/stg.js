@@ -958,8 +958,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
-							['marisa','？',''],
-							['rumia','就是说啊～','?','end']
+							['marisa','这种心情，<br>是要怎么说来着……？','要是那家伙呢<br>肯定会说“感觉真不错呢”','我可是不喜欢夜晚，<br><br>只有奇怪的家伙而已','',
+							'谁也没有说是你啊。','','不过，干嘛把手伸得这么直啊。','','看上去像是<br>“人类采用了十进制”','end'],
+							['rumia','你说谁是奇怪的家伙啊','','那个嘛，当然。','','看上去像不像是<br>“圣人被钉在十字架上”？',''],
 						];
 					}
 					game.me.storage.tongguan = 0;
@@ -1261,6 +1262,24 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addVideo('hidePlayer',game.boss);
 					game.delay();
 					'step 1'
+					var line;
+					if (game.me.name == 'reimu'){
+						line = '不过就算说是良药<br>如果不喝了试试的话又怎么知道';
+					} else if (game.me.name == 'marisa'){
+						line = '难道说，<br>除了人类以外都不是十指吗';
+					}
+					var dialog = ui.create.dialog();
+					dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">'+line+'</div></div>');
+					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('下一关',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 2'
 					var players = game.players;
 					for (var i = 0; i<game.players.length; i ++){
 						game.players[i].classList.remove('turnedover');
@@ -1272,9 +1291,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							//game.dead.remove(game.players[i]);
 						}
 					}
+					'step 3'
 					game.me.gain(ui.skillPile.childNodes[0],'draw2');
 					game.me.recover();
-					'step 2'
 					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
 					dialog.open();
 	                game.pause();
@@ -1284,10 +1303,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    game.resume();
 	                });
 	                lib.init.onfree();
-	                'step 3'
+	                'step 4'
 					game.addBossFellow(3,'stg_yousei',1);
 					game.addBossFellow(5,'stg_maoyu',2);
-					'step 4'
+					'step 5'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
@@ -1303,8 +1322,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
 							['marisa','我记着岛屿明明是在这附近来着…<br>难道说那个岛屿移动了不成？',
-							'而且……<br>现在可是夏天呢<br>为什么天气会这么冷的说？','','是你吧。让天这么冷','end'],
-							['cirno','不会再让你回到陆地上了啊！',''],
+							'而且……<br>现在可是夏天呢<br>为什么天气会这么冷的说？','','是你吧。让天这么冷','','靶子？<br>这还真是令人吃惊啊',
+							''],
+							['cirno','不会再让你回到陆地上了啊！','','你啊 可别吓着了喔，<br>在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，<br>就和英吉利牛肉一起冰冻冷藏起来吧！！'
+							,'end'],
 						];
 					}
 					game.me.removeSkill('boss_chiyan2x');
