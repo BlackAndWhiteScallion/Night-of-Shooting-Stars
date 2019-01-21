@@ -74,6 +74,7 @@ window.config={
 	card_style:'ol',
 	cardback_style:'ol',
 	hp_style:'official',
+	lili_style:'official',
 
 	image_character:'default',
 	image_background:'shengshi_bg',

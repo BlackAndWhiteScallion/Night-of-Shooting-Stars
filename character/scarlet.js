@@ -929,9 +929,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     "step 0"
                     var num = player.getAttackRange();
-                    player.chooseCardButton(num,true,get.cards(num),'按顺序将卡牌置于牌堆顶（先选择的在上）').set('ai',function(button){
-                        return get.value(button.link);
-                      });
+                    if (num != 0){
+                        player.chooseCardButton(num,true,get.cards(num),'按顺序将卡牌置于牌堆顶（先选择的在上）').set('ai',function(button){
+                            return get.value(button.link);
+                        });
+                    }
                       'step 1'
                       if(result.bool){
                         var list=result.links.slice(0);

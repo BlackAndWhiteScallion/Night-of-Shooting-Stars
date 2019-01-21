@@ -313,7 +313,7 @@
                     },
                     game_speed:{
                         name:'游戏速度',
-                        init:'mid',
+                        init:'slow',
                         item:{
                             vslow:'慢',
                             slow:'较慢',
@@ -24326,6 +24326,7 @@ game.broadcast(function(player,str,nature,avatar){
                 list[i].remove();
             }
         },
+        // 这是联机时使用的座位分配
         randomMapOL:function(type){
             if(type=='hidden'){
                 ui.arena.classList.add('playerhidden');

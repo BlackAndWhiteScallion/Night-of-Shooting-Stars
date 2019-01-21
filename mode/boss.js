@@ -726,7 +726,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(!ui.cheat2&&get.config('free_choose'))
 					ui.create.cheat2();
 
-					event.asboss=ui.create.control('应战',function(){
+					event.asboss=ui.create.control('当BOSS',function(){
 						event.boss=true;
 						event.enemy=[];
 						for(var i=0;i<ui.selected.buttons.length;i++){

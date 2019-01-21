@@ -222,6 +222,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.loselili(lib.skill.wuye.cost);
                       player.turnOver();
                     },
+                    check:function(event,player){
+                      return player.hp < 2;
+                    },
                   },
                   wuye2:{
                           audio:2,
@@ -1351,7 +1354,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return !player.countCards('h',{name:'tao'});
                       },
                       ai:{
-                        save:true,
+                        order:1,
+                          skillTagFilter:function(player){
+                            if(player.hp>0) return false;
+                          },
+                          save:true,
+                          result:{
+                            player:function(player){
+                              if(player.hp==0) return 10;
+                              if(player.hp<=2&&player.countCards('he')<=1) return 10;
+                              return 0;
+                            }
+                          },
+                          threaten:function(player,target){
+                            return 0.6;
+                          }
                       },
                   },
                   yongye1:{
@@ -1498,7 +1515,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return true;
                       },
                       ai:{
-                        save:true,
+                        order:1,
+                          skillTagFilter:function(player){
+                            if(player.hp>0) return false;
+                          },
+                          save:true,
+                          result:{
+                            player:function(player){
+                              if(player.hp==0) return 10;
+                              if(player.hp<=2&&player.countCards('he')<=1) return 10;
+                              return 0;
+                            }
+                          },
+                          threaten:function(player,target){
+                            return 0.6;
+                          }
                       },
                   },
                   businiao2:{

@@ -201,6 +201,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			// 不太对吧，那联机模式就不选将了？？
 			"step 4"
 			if(_status.connectMode){
+				// 是这里的问题吗？
 				_status.mode=lib.configOL.identity_mode;
 				if(_status.mode=='zhong'){
 					lib.configOL.number=8;	// 8人
@@ -271,6 +272,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 				// 这个是加强主公包的玩意……全删了吧？
+				/*
 				var enhance_zhu=false;
 				if(_status.connectMode){
 					enhance_zhu=(_status.mode!='zhong'&&lib.configOL.enhance_zhu&&get.population('fan')>=3);
@@ -298,6 +300,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.storage.enhance_zhu=skill;
 					},game.zhu,skill);
 				}
+				*/
 			}
 			// 这里就游戏开始时了。
 			game.syncState();
@@ -1275,7 +1278,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				});
 			},
-			// 客户端/玩家的选将
+			// 联机模式下的选将
 			chooseCharacterOL:function(){
 				var next=game.createEvent('chooseCharacter',false);
 				next.setContent(function(){
@@ -1370,11 +1373,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						},game.zhu,map);
 						event.special_identity=map;
 					}
-
+					/*
 					game.zhu.setIdentity();
 					game.zhu.identityShown=true;
 					game.zhu.isZhu=(game.zhu.identity=='zhu');
 					game.zhu.node.identity.classList.remove('guessing');
+					*/
 					game.me.setIdentity();
 					game.me.node.identity.classList.remove('guessing');
 					if(game.me.special_identity){
@@ -1387,10 +1391,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								lib.playerOL[i].setIdentity('cai');
 								lib.playerOL[i].node.identity.classList.add('guessing');
 							}
-							zhu.identityShown=true;
-							zhu.identity=zhuid;
-							zhu.setIdentity();
-							zhu.node.identity.classList.remove('guessing');
+							//zhu.identityShown=true;
+							//zhu.identity=zhuid;
+							//zhu.setIdentity();
+							//zhu.node.identity.classList.remove('guessing');
 							me.setIdentity(identity);
 							me.node.identity.classList.remove('guessing');
 							if(me.special_identity){
@@ -1449,7 +1453,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list2.remove(game.zhu.name);
 					event.list2.remove(game.zhu.name2);
 
-					// 我还是没有搞清楚这里是做什么的
+					// 如果游戏人数>4，主公加上限
 					if(game.players.length>4){
 						game.zhu.maxHp++;
 						game.zhu.hp++;
@@ -1714,6 +1718,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 				},
+				// 等下，这是AI用的吧？
 				logAi:function(targets,card){
 					if(this.ai.shown==1||this.isMad()) return;
 					if(typeof targets=='number'){
@@ -1763,6 +1768,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(this.ai.shown>0.95) this.ai.shown=0.95;
 					if(this.ai.shown<-0.5) this.ai.shown=-0.5;
 
+					// 如果这不是联机模式
 					var marknow=(!_status.connectMode&&this!=game.me&&get.config('auto_mark_identity')&&this.ai.identity_mark!='finished');
 					if(true){
 						if(marknow&&_status.clickingidentity&&_status.clickingidentity[0]==this){
@@ -2156,7 +2162,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					});
     				// 异变：令一名角色抽牌	
     				} else if (player.identity=="zhong"){
-    					player.chooseTarget(get.prompt('tanpai_zhong'),function(card,player,target){
+    					player.chooseTarget('异变明置效果：令一名角色摸一张牌',function(card,player,target){
 							return true;
 						}).set('ai',function(target){
 							if (target.identity == 'zhu') return true;
@@ -2164,7 +2170,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						});
     				// 自机：伪采访一个
     				} else if (player.identity=="fan"){
-    					player.chooseTarget(get.prompt('tanpai_fan'),function(card,player,target){
+    					player.chooseTarget('自机明置效果：令一名角色选择：弃一张牌或明置身份',function(card,player,target){
 							return player!=target;
 						}).set('ai',function(target){
 							var player=_status.event.player;
