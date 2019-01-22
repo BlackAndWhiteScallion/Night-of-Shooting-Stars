@@ -79,13 +79,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'phaseEnd'},
 				//direct:true,
 				filter:function(event,player){
-					return event.player.isAlive()&&(player.countUsed('attack')==0||!event.player.getStat('damage'));
+					return event.player.isAlive()&&(player.countUsed('sha')==0&&!event.player.getStat('damage'));
 				},
 				check:function(event,player){
-					return get.attitude(player, event.player) >= 0;
+					return get.attitude(player,event.player) >= 0;
 				},
 				content:function(){
 					'step 0'
+					event.player = trigger.player;
 					var list = [];
 					if (event.player.lili<event.player.maxlili){
 						list.push('当前回合角色恢复灵力');
@@ -551,7 +552,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.gain(ui.skillPile.childNodes[i]);
 							break;
 						} else if (i == ui.skillPile.childNodes.length -1){
-							result.targets[0].say('技能牌堆里并没有【神佑】，呵呵——');					  
+							player.say('技能牌堆里并没有【神佑】，呵呵——');					  
 						}
 					}
 				},
@@ -563,7 +564,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return (player.countCards('hej')>0);
 				},
 				check:function(event, player){
-					if (player.countCards('he') <= player.hp) return false;
+					//if (player.countCards('he') <= player.hp) return false;
+					if (get.attitude(player, event.player) > 0) return false;
 					var good_att = false;
 					var players = game.filterPlayer();
 					for(var i=0;i<players.length;i++){
@@ -645,7 +647,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.gain(ui.skillPile.childNodes[i]);
 							break;
 						} else if (i == ui.skillPile.childNodes.length -1){
-							result.targets[0].say('技能牌堆里并没有【神佑】，呵呵——');					  
+							player.say('技能牌堆里并没有【神佑】，呵呵——');					  
 						}
 					}
 				},
@@ -1024,7 +1026,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.gain(ui.skillPile.childNodes[i]);
 							break;
 						} else if (i == ui.skillPile.childNodes.length -1){
-							result.targets[0].say('技能牌堆里并没有【连击】，呵呵——');					  
+							player.say('技能牌堆里并没有【连击】，呵呵——');					  
 						}
 					}
 					'step 2'
@@ -1082,7 +1084,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					player.chooseTarget('选一名靶子');
 					'step 1'
-					if(result.targets.length){
+					if(result.targets){
 						result.targets[0].addTempSkill('sbrs_liansuo_4', 'phaseBegin');
 					}
 				},
@@ -1166,7 +1168,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 					"step 1"
 					if(result.bool){
-						player.logSkill('shensu2',result.targets);
+						player.logSkill('explosion',result.targets);
 						result.targets[0].damage(2);
 						result.targets[0].damage(2,'thunder');
 						player.discard(player.getCards('e'));
