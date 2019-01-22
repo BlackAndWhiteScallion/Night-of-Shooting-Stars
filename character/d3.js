@@ -4,16 +4,39 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'d3',
 		connect:false,
 		character:{
-			zigui:['female','5',5,[]],
+			zigui:['female','5',5,["shijianliushi","xinjianfuka1"]],
 			zither:['female','2',3,["zhisibuyu","chenshihuanxiang"]],
+			actress:['female','3',3,["ye’sbian","schrÖdinger"]],
+			wingedtiger:['female','1',4,["wt_zongqing","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
 		},
 		characterIntro:{
 			zigui:'咕咕咕~',
 			zither:'心火怎甘扬汤止沸',
-		},       
+		},	   
 		perfectPair:{
 		},
-            skill:{
+			skill:{
+				shijianliushi:{
+					audio:"ext:d3:true",
+				},
+				xinjianfuka1:{
+					spell:["xinjianfuka2"],
+					cost:4,
+					audio:"ext:d3:true",
+					trigger:{player:'phaseBegin'},
+					filter:function(event,player){
+						return player.lili > lib.skill.xinjianfuka1.cost;
+					},
+					check:function(event,player){
+						return false;
+					},
+					content:function(){
+						player.loselili(lib.skill.xinjianfuka1.cost);
+						player.turnOver();
+					},
+				},
+				xinjianfuka2:{
+				},
 				zhisibuyu:{
 					audio:"ext:d3:true",
 					group:["zhongzhenbuyu","shizhibuyu"],
@@ -28,7 +51,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player:"shaBefore",
 					},
 					check:function (event,player){
-						return true;
+					return true;
 					},
 					content:function (){
 						"step 0"
@@ -88,8 +111,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					trigger:{
 						player:"phaseUseBegin",
 					},
-					check:function (event,player){
+					filter:function (event,player){
 						if (player.countCards('h') < 1 || player.lili < 2) return false;
+						return true;
+					},
+					check:function (event,player){
+					if (player.countCards('h') < 3 || player.lili < 3) return false;
 						return true;
 					},
 					content:function (event,player){
@@ -120,17 +147,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					mark:true,
 					onremove:true,
 					mod:{
-					cardEnabled:function(card,player){
-						if(get.type(card)=='trick') return false;
-					},
+						cardEnabled:function(card,player){
+							if(get.type(card)=='trick') return false;
+						},
 						cardUsable:function (card,player){
 						if(get.type(card)=='trick') return false;
 						},
 						cardRespondable:function (card,player){
 						if(get.type(card)=='trick') return false;
-					},
-					cardSavable:function(card,player){
-						if(get.type(card)=='trick') return false;
+						},
+						cardSavable:function(card,player){
+							if(get.type(card)=='trick') return false;
 						},
 					},
 				},
@@ -152,7 +179,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								player.stat[player.stat.length-1].card.sha--;
 							}
 						}
-					'step 1'
+						'step 1'
 						var trigger=_status.event.getTrigger();
 						var player=_status.event.player
 						var info=get.info(trigger.card);
@@ -169,19 +196,145 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					},
 				},
-            },
-            translate:{
-            	zigui:'子规',
-            	zigui_die:'太过分了！太过分了！',
-            	zither:'听琴',
-            	zither_die:'此生无怨无悔',
+				"ye’sbian":{
+					audio:0,
+					trigger:{player:'damageEnd',source:'damageEnd'},
+					filter:function(event){
+						if(event._notrigger.contains(event.player)||event.nature == 'thunder') return false;
+						return event.num&&event.source&&event.player&&event.player.isAlive()&&event.source.isAlive()&&event.source!=event.player;
+					},
+					check:function(event,player){
+						if(event.player==player) return get.attitude(player,event.source)>-3;
+						return get.attitude(player,event.player)>-3;
+					},
+					content:function(){
+						"step 0"
+						var target = trigger.player
+						if(trigger.player==player) target = trigger.source;
+						player.loselili();
+						"step 1"
+						game.trySkillAudio('ye’sbian',player,true,1);
+						target.showHandcards();
+						game.trySkillAudio('ye’sbian',target,true,2);
+						"step 2"
+						player.gain(target.getCards('he',{color:'black'}),target,true);
+						"step 3"
+						game.delay();
+					},
+					ai:{
+						maixie:true,
+						maixie_hp:true
+					}
+				},
+				"schrÖdinger":{
+					audio:0,
+					trigger:{
+						player:'dieBegin',
+					},
+					forced:true,
+					content:function(){
+						"step 0"
+						var players=game.filterPlayer();
+						for(var i=0;i<players.length;i++){
+							if(players[i]==player)continue;
+							players[i].showHandcards();
+							if(players[i].countCards('he',{name:'tao'}))players[i].addSkill('schrÖdinger_2');
+						}
+					}
+				},
+				"schrÖdinger_2":{
+					audio:'ext:d3:2',
+					trigger:{
+						global:'dieAfter',
+					},
+					forced:true,
+					content:function(){
+						"step 0"
+						player.die();
+						game.trySkillAudio('schrÖdinger',player,true,Math.ceil(2*Math.random()));
+						player.removeSkill('schrÖdinger_2');
+					}
+				},
+				wt_zongqing:{
+					audio:"ext:d3:2",
+					trigger:{
+						player:"phaseBegin",
+					},
+					check:function (event,player){
+						if (player.isTurnedOver()) return false;
+						if (player.maxHp == 0 && player.lili > 4) return false;
+						if (player.lili >= player.maxHp) return false;
+						return true;
+					},
+					content:function (){
+						'step 0'
+						player.gainlili(player.maxHp - player.lili);
+						player.loseMaxHp();
+					},
+				},
+				wt_feihu:{
+					audio:0,
+					init:function(player){
+						player.storage.wt_feihu=false;
+					},
+					filter:function(event,player){
+						if(player.storage.wt_feihu) return false;
+						return true;
+					},
+					trigger:{player:'phaseUseBegin'},
+					content:function (event,player){
+						if(event.triggername=='phaseUseBegin'){
+							'step 0'
+							var list = [];
+							var players = game.filterPlayer();
+							for (var i = 0; i < players.length; i ++){
+								var skills = players[i].getSkills(true)
+								for(var j = 0;j < skills.length;j++){
+									if (lib.skill[players[i].skills[j]] && lib.skill[players[i].skills[j]].spell){
+										list.push(players[i].skills[j]);
+									}
+								}
+							}
+							'step 0'
+							player.awakenSkill('wt_feihu');
+							player.storage.wt_feihu=true;
+							if(list.length==0)return false;
+							player.chooseControl(list).set('prompt','选择获得一项技能');
+							'step 1'
+							player.addSkill(result.control);
+							if(list.length<4){
+								game.trySkillAudio('wt_feihu',player,true,1);
+							} else if(Math.random()<0.75){
+								game.trySkillAudio('wt_feihu',player,true,2);
+							}else{
+								game.trySkillAudio('wt_feihu',player,true,3);
+							}
+						}
+					},
+				},
+			},
+			translate:{
+				zigui:'子规',
+				zigui_die:'太过分了！太过分了！',
+				zither:'听琴',
+				zither_die:'此生无怨无悔……',
+				actress:'伶',
+				actress_die:'我的技能就是这么傻屌，有能耐妳让妈妈重做一个',
+				wingedtiger:'飞虎',
+				wingedtiger_die:'在此，施撒所有的诅咒将会永世伴随着妳们，妾身就是有着如此之大的怨念啊！',
+				
+				shijianliushi:"时逝",
+				shijianliushi_info:"这个技能组我过几天再写吧。",
+				xinjianfuka1:"新建符卡１",
+				xinjianfuka1_info:"符卡技（4）<font color=\"black\"><b>应该是个很厉害的大招吧</b></font>",
+				xinjianfuka2:"新建符卡１",
 				zhisibuyu:"至死不渝",
 				zhisibuyu_info:"当你使用【轰！】或法术牌指定一名角色为目标时，你可以令该角色选择一项：令你获得其一张牌，然后此牌对其无效；或不能对之使用牌。",
-					zhongzhenbuyu:"至死不渝",
+				zhongzhenbuyu:"至死不渝",
 				zhongzhenbuyu_info:"当妳使用【轰！】指定一名角色为目标时，妳可以令该角色选择一项：令妳获得其一张牌，然后此【杀】对其无效；或不能对此【杀】使用牌。",
-					shizhibuyu:"至死不渝",
+				shizhibuyu:"至死不渝",
 				shizhibuyu_info:"当妳使用法术牌指定一名角色为目标时，妳可以令所有目标角色选择一项：令妳获得其一张牌，然后此法术对其无效；或本回合不能法术牌。",
-					chenshihuanxiang:"尘世幻想",
+				chenshihuanxiang:"尘世幻想",
 				chenshihuanxiang_info:"出牌阶段开始时，你可以消耗2点灵力，你使用一张基本牌或法术牌；若如此做，此牌需额外指定所有其他角色为目标。",
 				yuyi0:"渝移",
 				yuyi0_info:"妳本回合不能法术牌",
@@ -193,6 +346,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				shizhibuyu_audio2:'你，是敌人还是朋友？',
 				chenshihuanxiang_audio1:'这是我自己选择的道路！',
 				chenshihuanxiang_audio2:'妳们谁都别想置身事外',
-            },
-      };
+				"ye’sbian":"夜之彼岸",
+				"ye’sbian_info":"当你造成或受到弹幕伤害后，你可以消耗1点灵力：展示受伤角色或伤害来源的所有手牌，获得其所有黑色牌。",
+				"schrÖdinger":"活猫心脏",
+				"schrÖdinger_info":"锁定技，你坠机时，展示所有其他角色的手牌：若有角色有【葱】，该角色坠机。",
+				"ye’sbian_audio1":'在？看看手牌',
+				"ye’sbian_audio2":'不要啊，海豚哥！！！',
+				"schrÖdinger_audio1":'我肏，哪𣬠𣬶傻屄杀的我',
+				"schrÖdinger_audio2":'谁能不能告诉我我他妈怎么死的？',
+				wt_zongqing:"纵情",
+				wt_zongqing_info:"准备阶段，你可以将灵力补至体力上限的点数；若如此做，你减1点体力上限。",
+				wt_zongqing_audio1:'把妳的不开心说出来让我们高兴高兴',
+				wt_zongqing_audio2:'zZＺ',
+				wt_feihu:"设计不错但下一秒就是我的",
+				wt_feihu_info:"<font color=\"red\"><b>限定技，</b></font>出牌阶段开始时，你声明一名其他角色的符卡，比如“新建符卡1”；若如此做，你获得声明技能的拷贝。",
+				wt_feihu_audio1:'你们就只能拿出这么点东西来吗',
+				wt_feihu_audio2:'真好啊，真好呢（嘲讽意）',
+				wt_feihu_audio3:'我跟你讲，这个符卡超好用的',
+			},
+	};
 });
