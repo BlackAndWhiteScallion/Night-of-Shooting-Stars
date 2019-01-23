@@ -1233,6 +1233,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 0'
                       player.showCards(cards);
                       player.chooseControl('牌名长度','花色','点数','种类','属性',function(){
+                        var list = ['牌名长度','花色','点数','种类','属性'];
+                        list.randomSort();
+                        return list[0];
                       },true);
                       'step 1'
                       if (result.control){
@@ -1256,8 +1259,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               case '属性': return !valid.contains(get.subtype(card)); break;
                             }
                         }).set('ai',function(card){
-                          return 6-get.value(card);
+                          return get.value(card);
                         });
+                      } else {
+                        event.finish();
                       }
                       'step 2'
                       if (result.bool){
@@ -1272,10 +1277,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                       'step 3'
                       if (result.bool && result.links.length){
+                        game.log(get.translation(targets[0])+'重铸了'+get.translation(result.links));
                         targets[0].$throw(result.links);
-                        result.links.discard();
+                        for (var i = 0; i < result.links.length; i ++){
+                          result.links[0].discard();
+                        }
+                        targets[0].draw(result.links.length);
                         targets[0].damage('thunder');
                       }
+                    },
+                    check:function(card){
+                      if(ui.selected.cards.length<1) return 7-get.value(card);
+                      return -0.1;
+                    },
+                    ai:{
+                      order:4,
+                      expose:0.2,
+                      result:{
+                        target:-1,
+                        player:function(player,target){
+                          return 0;
+                        }
+                      },
+                      threaten:0.5
                     },
                   },
                   poxiao:{

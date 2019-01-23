@@ -12380,6 +12380,7 @@
                             }
                         },event.id);
                     };
+                    // 这个是制作游戏记录的
                     if(get.type(card)!='equip'){
                         var str='';
                         if(targets.length){
@@ -12413,6 +12414,8 @@
                             game.logv(player,[card,cards],targets);
                         }
                     }
+                    // 这个是计次数的
+                    // ……靠…………直接不计次数不就好了吗…………
                     if(event.addCount!=false){
                         if(player.stat[player.stat.length-1].card[card.name]==undefined){
                             player.stat[player.stat.length-1].card[card.name]=1;
@@ -12439,6 +12442,7 @@
                         }
                     }
                     "step 1"
+                    // 这个是“卡牌使用前的效果的”
                     var info=get.info(card);
                     if(info.contentBefore){
                         var next=game.createEvent(card.name+'ContentBefore');
@@ -12459,6 +12463,7 @@
 						next.type='precard';
                     }
                     "step 2"
+                    // 然后这里是执行正经效果的（如果目标已经死了就什么都不发生）
                     if(targets[num]&&targets[num].isDead()) return;
                     if(targets[num]&&targets[num].isOut()) return;
                     if(targets[num]&&targets[num].removed) return;
@@ -12525,6 +12530,7 @@
                             game.delayx(0.5);
                         }
                     }
+                    // 如果没有被取消，就结算下一个目标
                     "step 3"
                     if(!get.info(event.card).multitarget&&num<targets.length-1&&!event.cancelled){
                         event.num++;
@@ -21349,7 +21355,6 @@ game.broadcast(function(player,str,nature,avatar){
                 finish:function(){
                     this.finished=true;
                 },
-
                 cancel:function(){
                     this.untrigger.call(this,arguments);
                     this.finish();
