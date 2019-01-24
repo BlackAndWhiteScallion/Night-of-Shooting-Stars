@@ -11,6 +11,7 @@ window.noname_source_list=[
     'character/sb.js',
     'character/rank.js',
     'character/d3.js',
+    'character/random.js',
     'game/asset.js',
     'game/codemirror.js',
     'game/config.js',

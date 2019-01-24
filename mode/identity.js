@@ -2278,6 +2278,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                    	delete player.storage._tanyibian;
                    	player.unmarkSkill('_tanyibian');
 				},
+				ai:{
+					order:10,
+					result:{
+						player:function(player, target){
+							if (game.roundNumber > 1) return 3;
+							return -1;
+						}
+					}
+				},
 			}
 		},
 		help:{

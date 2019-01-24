@@ -214,6 +214,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     audio:2,
                     spell:['wuye2'],
                     cost:2,
+                    roundi:true,
                     trigger:{player:'phaseBegin'},
                     filter:function(event,player){
                       return player.lili > lib.skill.wuye.cost;

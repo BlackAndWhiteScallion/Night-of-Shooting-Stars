@@ -184,8 +184,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				skillAnimation:true,
     			trigger:{player:'phaseBegin'},
     			filter:function(event,player){
-    				console.log(player.isMinHandcard(true));
-    				console.log(player.isMinHp(true));
     				return player.isMinHandcard(true) && player.isMinHp(true);
     			},
     			content:function(){

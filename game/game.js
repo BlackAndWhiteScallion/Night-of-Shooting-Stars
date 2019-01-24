@@ -37442,7 +37442,7 @@ smoothAvatar:function(player,vice){
                         var norow2=function(){
                             var node=currentrow1;
                             if(!node) return false;
-                            return node.innerHTML=='横置'||node.innerHTML=='翻面'||node.innerHTML=='换人'||node.innerHTML=='复活';
+                            return node.innerHTML=='横置'||node.innerHTML=='符卡'||node.innerHTML=='换人'||node.innerHTML=='复活';
                         };
                         var checkCheat=function(){
                             if(norow2()){

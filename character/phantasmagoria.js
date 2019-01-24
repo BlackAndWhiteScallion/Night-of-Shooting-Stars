@@ -251,24 +251,43 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             			return player.getCards('h') && !player.hasSkill('zanghua_boom');
             		},
             		filterTarget:function(card,player,target){
-						return player!=target&&target.countCards('h')>0;
-					},
+      						return player!=target&&target.countCards('h')>0;
+      					},
             		content:function(){
             			"step 0"
-					player.chooseToCompare(target);
-					"step 1"
-					if (!result.tie){
-                                    if(result.bool){
-      						if (player.canUse('juedou',target)) player.useCard({name:'juedou'},target);
-      					} else {
-      						if (target.canUse('juedou',player)) target.useCard({name:'juedou'},player);
-                                    }
-                              } else {
-                                    player.addTempSkill('zanghua_boom');
-                              }
-                              "step 2"
-                              if (target.hp < player.hp) player.addTempSkill('zanghua_boom');
+        					player.chooseToCompare(target);
+        					"step 1"
+        					if (!result.tie){
+                      if(result.bool){
+              						if (player.canUse('juedou',target)) player.useCard({name:'juedou'},target);
+              					} else {
+              						if (target.canUse('juedou',player)) target.useCard({name:'juedou'},player);
+                      }
+                    } else {
+                          player.addTempSkill('zanghua_boom');
+                    }
+                    "step 2"
+                    if (target.hp < player.hp) player.addTempSkill('zanghua_boom');
             		},
+                ai:{
+                    result:{
+                      target:function(player,target){
+                        var hs=player.getCards('h');
+                        if(hs.length<3) return 0;
+                        var bool=false;
+                        for(var i=0;i<hs.length;i++){
+                          if(hs[i].number>=9&&get.value(hs[i])<7){
+                            bool=true;
+                            break;
+                          }
+                        }
+                        if(!bool) return 0;
+                        if(target.countCards < hs.length) return -2; 
+                        return -0.5;
+                      }
+                    },
+                    order:9,
+                  }
             	},
             	xiaofeng:{
                         audio:2,

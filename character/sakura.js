@@ -361,7 +361,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.storage.huanfa=player.storage.huanfa.concat(result.cards);
                         player.syncStorage('huanfa');
                         player.markSkill('huanfa');
-                        game.log(player,'将',result.cards,'置为“手办”');
+                        game.log(player,'将',result.cards.length,'张牌置为“手办”');
                         player.draw();
                     }
                 },
@@ -414,7 +414,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             hanghourai:{
                 audio:2,
-                spell:['hanghuorai1'],
+                spell:['hanghourai1'],
                 cost:2,
                 roundi:true,
                 trigger:{player:['phaseBegin']},
@@ -434,15 +434,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.storage.huanfa=player.storage.huanfa.concat(result.cards);
                         player.syncStorage('huanfa');
                         player.markSkill('huanfa');
-                        game.log(player,'将',result.cards,'置为“手办”');
+                        game.log(player,'将',result.cards.length,'张牌置为“手办”');
                         player.draw(result.cards.length);
                     }
                 },
                 check:function(event,player){
-                    return player.lili > 3 && player.storage.huanfa.length + player.countCards('h') >= 4;
+                    return player.lili > 3 && player.storage.huanfa.length + player.countCards('h') >= 3;
                 }
             },
-            hanghuorai1:{
+            hanghourai1:{
                 audio:2,
                 trigger:{global:'phaseEnd'},
                 filter:function(event,player){
@@ -456,8 +456,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     };
                     'step 1'
                     if (result.bool && result.links.length){
+                        console.log(player.storage);
+                        console.log(player.storage.huanfa);
+                        console.log(event.card);
                         var players = game.filterPlayer();
                         event.card = result.links[0];
+                        event.player.gain(event.card);
+                        player.storage.huanfa.remove(event.card);
+                        player.syncStorage('huanfa');
                         for (var i = 0; i < players.length; i++){
                             if (!event.player.canUse(event.card, players[i])) players.remove(players[i]);
                         }
@@ -470,9 +476,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 2'
                     if (result.bool && result.targets.length){
-                        player.storage.huanfa.remove(event.card);
                         event.player.useCard(event.card,result.targets);
-                        player.syncStorage('huanfa');
                     }
                 },
                 check:function(event,player){
