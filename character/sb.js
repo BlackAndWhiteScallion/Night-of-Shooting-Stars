@@ -140,6 +140,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             group:['lianxu3'],
             enable:'phaseUse',
             audio:2,
+            init:function(player){
+               player.storage.lianxu3=[];
+            },
+            onremove:function(player){
+               player.storage.lianxu3=[];
+               player.syncStorage('lianxu3');
+               player.unmarkSkill('lianxu3');
+               delete player.storage.lianxu3;
+            },
             filter:function(event,player){
                var cards=player.getCards('h');
                for (var i in cards){ 
@@ -186,39 +195,39 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             intro:{
                content:function(storage,player){
                   var str = '';
-                                    for (var i = 0; i < player.storage.lianxu3.length; i ++){
-                                          str += get.translation(player.storage.lianxu3[i]) + ',';
+                        for (var i = 0; i < player.storage.lianxu3.length; i ++){
+                              str += get.translation(player.storage.lianxu3[i]) + ',';
+                        }
+                        return str;
+                  }
+            },
+            trigger:{global:'loseEnd'},
+            filter:function(event,player){
+                 for(var i=0;i<event.cards.length;i++){
+                        if(get.position(event.cards[i])=='d'){
+                              return true;
+                        }
+                  }
+                  return false;
+            },
+            content:function(){
+                  for (var i=0; i < trigger.cards.length; i ++){
+                        if(get.position(trigger.cards[i])=='d'){
+                              if (!player.storage.lianxu3){
+                                    player.storage.lianxu3 = [get.number(trigger.cards[i]), get.suit(trigger.cards[i])];
+                              } else {
+                                    if (!player.storage.lianxu3.contains(get.number(trigger.cards[i]))){
+                                          player.storage.lianxu3.push(get.number(trigger.cards[i]));
                                     }
-                                    return str;
-                              }
-                        },
-                        trigger:{global:'loseEnd'},
-                        filter:function(event,player){
-                             for(var i=0;i<event.cards.length;i++){
-                                    if(get.position(event.cards[i])=='d'){
-                                          return true;
+                                    if (!player.storage.lianxu3.contains(get.suit(trigger.cards[i]))){
+                                          player.storage.lianxu3.push(get.suit(trigger.cards[i]));
                                     }
                               }
-                              return false;
-                        },
-                        content:function(){
-                              for (var i=0; i < trigger.cards.length; i ++){
-                                    if(get.position(trigger.cards[i])=='d'){
-                                          if (!player.storage.lianxu3){
-                                                player.storage.lianxu3 = [get.number(trigger.cards[i]), get.suit(trigger.cards[i])];
-                                          } else {
-                                                if (!player.storage.lianxu3.contains(get.number(trigger.cards[i]))){
-                                                      player.storage.lianxu3.push(get.number(trigger.cards[i]));
-                                                }
-                                                if (!player.storage.lianxu3.contains(get.suit(trigger.cards[i]))){
-                                                      player.storage.lianxu3.push(get.suit(trigger.cards[i]));
-                                                }
-                                          }
-                                    }    
-                              }
-                              player.markSkill('lianxu3');
-                              player.syncStorage('lianxu3');
-                        },
+                        }    
+                  }
+                  player.markSkill('lianxu3');
+                  player.syncStorage('lianxu3');
+            },
          },
          kuanglan:{
             trigger:{global:'phaseEnd'},

@@ -3636,6 +3636,7 @@
                         name:'重新下载游戏',
                         onclick:function(){
                             var node=this;
+                            // 看这个设置，这里好像少写了个！……
                             if(node._clearing){
                                 localStorage.removeItem('noname_inited');
                                 game.reload();
@@ -22858,7 +22859,7 @@ game.broadcast(function(player,str,nature,avatar){
                 forced:true,
                 popup:false,
                 content:function(){
-                    if (player.storage._enhance){
+                    if (player.storage._enhance && lib.card[trigger.card.name].enhance){
                         player.storage._enhance = 0;
                     }
                 },

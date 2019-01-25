@@ -1564,8 +1564,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 check:function(event,player){
                     if(player.countCards('hej')<3) return false;
                     var card = ui.cardPile.childNodes[ui.cardPile.childNodes.length-1];
+                    /*
                     if (get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt') return get.attitude(player,event.player) < 0;
                     if (get.type(card) == 'equip' || get.subtype(card) == 'support') return get.attitude(player,event.player) > 0;
+                    */
+                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name},_status.event.player);
                     return false;
                 },
                 content:function(){

@@ -871,6 +871,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			audio:1,
     			trigger:{player:['damageAfter','gainliliAfter']},
     			forced:true,
+    			skillAnimation:true,
     			init:function(player){
 					player.lili = 0;
 				},
@@ -880,6 +881,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			content:function(){
 					var lili=player.lili;
 					player.init('boss_reimu2');
+					player.$skill('到此为止了！',null,null,true);
 					player.lili=lili;
 					player.update();
 					while(_status.event.name!='phaseLoop'){
