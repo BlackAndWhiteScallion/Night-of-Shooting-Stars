@@ -817,11 +817,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:'cards'
                 },
                 filter:function(event,player){
-                    return player.lili > 0 && player.storage.shijing.length > 0 && player.countCards('h') < 3;
+                    return player.lili > 0 && player.storage.shijing.length > 0;
                 },
                 content:function(){
                     'step 0'
                     event.num = 3 - player.countCards('h');
+                    if (player.countCards('e',{name:'stg_watch'})) event.num++;
+                    if (event.num < 0) event.finish();
                     player.chooseCardButton(player.storage.shijing,'获得'+event.num+'张牌',[1,event.num],true).ai=function(button){
                         var val=get.value(button.link);
                         if(val<0) return -10;
@@ -835,7 +837,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 check:function(event,player){
-                    return player.lili > 1;
+                    return player.lili > 1 && !player.countCards('h') > 3;
                 },
             },
             shijing_mark:{
@@ -1211,7 +1213,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shijing:'时静',
             shijing_audio1:'时间不是不等人，它只是不等你而已。',
             shijing_audio2:'我好像少拿东西了，你就等我一会儿吧？',
-            shijing_info:'结束阶段，你可以消耗1点灵力：获得本回合进入弃牌堆的牌，直到你的手牌数等于手牌上限。',
+            shijing_info:'结束阶段，你可以消耗1点灵力：获得本回合进入弃牌堆的牌，直到你的手牌数等于3。',
             world:'咲夜的世界',
             world_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定目标时，若该牌不是以此法使用，你可以消耗1点灵力：取消目标，并弃置一名角色的一张牌；若弃置牌可以对目标使用，来源将弃置牌对目标使用。',
             world_audio1:'「咲夜的世界」！',

@@ -324,7 +324,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseDiscardBegin'},
                 audio:2,
                 init:function(player){
-                    player.storage.huanfa=[];
+                    if (!player.storage.huanfa) player.storage.huanfa=[];
                 },
                 intro:{
                     mark:function(dialog,content,player){
@@ -362,7 +362,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.syncStorage('huanfa');
                         player.markSkill('huanfa');
                         game.log(player,'将',result.cards.length,'张牌置为“手办”');
-                        player.draw();
+                        player.draw(result.cards.length);
                     }
                 },
             },
@@ -417,7 +417,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 spell:['hanghourai1'],
                 cost:2,
                 roundi:true,
-                trigger:{player:['phaseBegin']},
+                trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.hanghourai.cost;
                 },
@@ -450,33 +450,30 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    event.player = _status.currentPhase;
-                    player.chooseCardButton(player.storage.huanfa,'选择一张“手办”交给'+get.translation(event.player),1,true).ai=function(button){
+                    trigger.target = _status.currentPhase;
+                    player.chooseCardButton(player.storage.huanfa,'选择一张“手办”交给'+get.translation(trigger.target),1,true).ai=function(button){
                         return get.value(button.link);
                     };
                     'step 1'
                     if (result.bool && result.links.length){
-                        console.log(player.storage);
-                        console.log(player.storage.huanfa);
-                        console.log(event.card);
-                        var players = game.filterPlayer();
                         event.card = result.links[0];
-                        event.player.gain(event.card);
+                        trigger.target.gain(event.card);
                         player.storage.huanfa.remove(event.card);
                         player.syncStorage('huanfa');
+                        var players = game.filterPlayer();
                         for (var i = 0; i < players.length; i++){
-                            if (!event.player.canUse(event.card, players[i])) players.remove(players[i]);
+                            if (!trigger.target.canUse(event.card, players[i])) players.remove(players[i]);
                         }
                         if (players.length == 0) event.finish();
                         else {
-                            player.chooseTarget(('选择'+get.translation(event.player)+'使用'+get.translation(event.card)+'的目标'),function(card,player,target){
+                            player.chooseTarget(('选择'+get.translation(trigger.target)+'使用'+get.translation(event.card)+'的目标'),function(card,player,target){
                                 return players.contains(target);
                             });
                         }
                     }
                     'step 2'
                     if (result.bool && result.targets.length){
-                        event.player.useCard(event.card,result.targets);
+                        trigger.target.useCard(event.card,result.targets);
                     }
                 },
                 check:function(event,player){
@@ -966,7 +963,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     var players = game.filterPlayer();
                     var list = [];
                     for (var i = 0; i < players.length; i ++){
-                        if (players[i].hasSkill('mingguan') && players[i].storage.mingzhi){
+                        if (players[i].hasSkill('mingguan') && get.distance(players[i],player,'attack')<=1 && players[i].storage.mingzhi){
                             for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
                         }
                     }
@@ -974,6 +971,48 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 check:function(card){
                     return 8-get.value(card);
+                },
+                mod:{
+                    cardEnabled:function(card,player){
+                        var players = game.filterPlayer();
+                        var list = [];
+                        for (var i = 0; i < players.length; i ++){
+                            if (players[i].hasSkill('mingguan') && get.distance(players[i],player,'attack')<=1 && players[i].storage.mingzhi){
+                                for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
+                            }
+                        }
+                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                    },
+                    cardUsable:function(card,player){
+                        var players = game.filterPlayer();
+                        var list = [];
+                        for (var i = 0; i < players.length; i ++){
+                            if (players[i].hasSkill('mingguan') && get.distance(players[i],player,'attack')<=1 && players[i].storage.mingzhi){
+                                for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
+                            }
+                        }
+                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                    },
+                    cardRespondable:function(card,player){
+                        var players = game.filterPlayer();
+                        var list = [];
+                        for (var i = 0; i < players.length; i ++){
+                            if (players[i].hasSkill('mingguan') && get.distance(players[i],player,'attack')<=1 && players[i].storage.mingzhi){
+                                for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
+                            }
+                        }
+                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                    },
+                    cardSavable:function(card,player){
+                        var players = game.filterPlayer();
+                        var list = [];
+                        for (var i = 0; i < players.length; i ++){
+                            if (players[i].hasSkill('mingguan') && get.distance(players[i],player,'attack')<=1 && players[i].storage.mingzhi){
+                                for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
+                            }
+                        }
+                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                    },
                 },
                 ai:{
                     basic:{
@@ -1012,6 +1051,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return get.attitude(player,event.target)>0 && event.target.hp < player;
                 },
             },
+            
             yishan:{
                 audio:2,
                 direct:true,
@@ -1612,7 +1652,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     for (var i = 3; i > 0; i--){
                         if (ui.cardPile.childNodes.length == 0){
                             var card = get.cards(1);
-                            ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
+                            //ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
                         }
                         cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
                     }
@@ -1652,7 +1692,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         for(var i=0;i<top.length;i++){
                             ui.cardPile.insertBefore(top[i],ui.cardPile.firstChild);
                         }
-                        for(i=0;i<bottom.length;i++){
+                        for(var i=0;i<bottom.length;i++){
                             ui.cardPile.appendChild(bottom[i]);
                         }
                         player.popup(get.cnNumber(top.length)+'上'+get.cnNumber(bottom.length)+'下');
@@ -1853,7 +1893,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             chen_die:'蓝大人不会放过你的！',
             alice:'爱丽丝',
             huanfa:'幻法',
-            huanfa_info:'弃牌阶段开始时，若“手办”数小于场上角色数，你可以将一至两张手牌扣置于角色牌上，称为“手办”：然后，摸一张牌。',
+            huanfa_info:'弃牌阶段开始时，若“手办”数小于场上角色数，你可以将一至两张手牌扣置于角色牌上，称为“手办”，并摸等量张牌。',
             huanfa_audio1:'表演正在准备中，请稍微片刻。',
             huanfa_audio2:'嗯？已经等不及了么？',
             mocai:'魔彩',

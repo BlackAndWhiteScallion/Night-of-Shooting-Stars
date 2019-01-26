@@ -86,26 +86,26 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					event.player = trigger.player;
 					var list = [];
-					if (event.player.lili<event.player.maxlili){
+					if (trigger.player.lili<trigger.player.maxlili){
 						list.push('当前回合角色恢复灵力');
 					}
 					list.push('交给当前回合角色一张牌');
 					player.chooseControl(list,function(event,player){
-						if(event.player.isTurnedOver()&& list.contains('交给当前回合角色一张牌'))return '交给当前回合角色一张牌';
+						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return '当前回合角色恢复灵力';
+						return '交给当前回合角色一张牌';
 					});
 					'step 1'
 					if (result.control == '当前回合角色恢复灵力'){
-						event.player.gainlili();
+						trigger.player.gainlili();
 					} else {
 						player.draw();
-						player.chooseCard('交给'+get.translation(event.player)+'一张手牌',true).set('ai',function(card){
+						player.chooseCard('交给'+get.translation(trigger.player)+'一张手牌',true).set('ai',function(card){
 							return 5-get.value(card);
 						});
 						if(result.bool){
-							event.player.gain(result.cards[0],player);
-							player.$give(1,event.player);
+							trigger.player.gain(result.cards[0],player);
+							player.$give(1,trigger.player);
 						}
 					}
 				},
@@ -813,7 +813,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 				content:function(){
-					player.addTempSkill('huanrao_4','phaseBeginStart');
+					player.addTempSkill('huanrao_4');
 					if(!player.storage.huanrao){
 						player.storage.huanrao=[];
 					}
@@ -846,21 +846,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if(player) return true;
 							return false;
 						},
-						viewAs:{
-							name:"sha",
-							suit:"heart",
-							number:6,
-							cards:[{"node":{"image":{},"info":{},"name":{},"name2":{},"background":{},"intro":{},"range":{}},"storage":{},"vanishtag":[],"_uncheck":[],"suit":"heart","number":6,"name":"tao","cardid":"9572059279","clone":{"name":"tao","suit":"heart","number":6,"node":{"name":{},"info":{},"intro":{},"background":{},"image":{}},"_transitionEnded":true,"timeout":838},"timeout":813,"original":"h"}],
-						},
+						viewAs:{name:"sha"},
 						viewAsFilter:function (player){
 							var huanrao_has=false;
 							for(var i=0;i<player.storage.huanrao.length;i++){
 								if(player.countCards('he',player.storage.huanrao[i])) huanrao_has=true;
 							}
-							return huanrao_has
+							return huanrao_has;
 						},
 						prompt:"将【环绕】牌当【杀】使用",
-						check:function (){return 1},
+						check:function(){return 1},
 						sub:true,
 					},
 				},
@@ -1003,8 +998,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				init:function (player){
 					player.storage.hongxi={
-						
 					}
+				},
+				random:function (player){
+					player.storage.hongxi={
+					}
+					player.unmarkSkill('hongxi');
 				},
 				filter:function(event,player){
 					return player.hp == 1||player.lili > lib.skill.solomon.cost;
@@ -1159,12 +1158,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			explosion_2:{
 				audio:2,
 				trigger:{player:'phaseUseBefore'},
+				skillAnimation:true,
 				forced:true,
 				direct:true,
 				content:function(){
 					"step 0"
 					player.chooseTarget(get.prompt('explosion'),true).set('ai',function(target){
-						return get.attitude(player,target);
+						return -get.attitude(player,target);
 					});
 					"step 1"
 					if(result.bool){
@@ -1235,9 +1235,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbrs_liansuo_info:'准备阶段，你可以指定一名角色：本回合一次，该角色因弃置或获得而失去牌后，你视为对其距离X以内的所有角色使用一张【轰！】；目标角色可以弃置一张非基本牌来抵消该【轰！】（X为你的灵力）。',
 			sbrs_liansuo_2:'莲锁',
 			sbrs_liansuo_3:'莲锁',
-			explosion:'EXxPpppLllOooSIOoooNnnnnnn!',
+			explosion:'EXPLOSIONNNNN！',
 			explosion_info:'符卡技（4）跳过你的出牌阶段，然后对一名角色造成2点弹幕伤害，2点灵击伤害，并弃置其装备区内所有牌。',
-			explosion_2:'EXxPpppLllOooSIOoooNnnnnnn!',
+			explosion_2:'EXPLOSIONNNNN！',
 		},
 	};
 });

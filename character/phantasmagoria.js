@@ -292,7 +292,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	xiaofeng:{
                         audio:2,
                         cost:4,
-                        spell:['xiaofeng1,xiaofeng2'],
+                        spell:['xiaofeng1','xiaofeng2'],
                         trigger:{player:['phaseBegin']},
                         filter:function(event,player){
                           if (player.hp == 1) return player.lili > (lib.skill.xiaofeng.cost - 2)
@@ -508,7 +508,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       skillAnimation:true,
                       audio:2,
                       cost:0,
-                      spell:'shenpan_1',
+                      spell:['shenpan_1'],
                       trigger:{player:'phaseBegin'},
                       init:function(player){
                            player.storage.shenpan=true;

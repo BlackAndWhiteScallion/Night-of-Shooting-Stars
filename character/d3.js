@@ -172,7 +172,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var type=get.type(event.card);
 						return type=='basic'||type=='trick';
 					},
-					content:function (){
+					content:function(){
 						'step 0'
 						if(_status.currentPhase==player&&trigger.card.name=='sha') {
 							if(player.stat[player.stat.length-1].card.sha>0){
@@ -199,23 +199,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				"ye’sbian":{
 					audio:0,
 					trigger:{player:'damageEnd',source:'damageEnd'},
-					filter:function(event){
+					filter:function(event, player){
 						if(event._notrigger.contains(event.player)||event.nature == 'thunder') return false;
 						return event.num&&event.source&&event.player&&event.player.isAlive()&&event.source.isAlive()&&event.source!=event.player;
 					},
 					check:function(event,player){
-						if(event.player==player) return get.attitude(player,event.source)>-3;
-						return get.attitude(player,event.player)>-3;
+						if(event.player==player) return -get.attitude(player,event.source);
+						return -get.attitude(player,event.player);
 					},
 					content:function(){
 						"step 0"
-						var target = trigger.player
-						if(trigger.player==player) target = trigger.source;
+						event.target = trigger.player;
+						if(trigger.player==player) event.target = trigger.source;
 						player.loselili();
 						"step 1"
-						game.trySkillAudio('ye’sbian',player,true,1);
-						target.showHandcards();
-						game.trySkillAudio('ye’sbian',target,true,2);
+						event.target.showHandcards();
 						"step 2"
 						player.gain(target.getCards('he',{color:'black'}),target,true);
 						"step 3"
@@ -350,10 +348,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				"ye’sbian_info":"当你造成或受到弹幕伤害后，你可以消耗1点灵力：展示受伤角色或伤害来源的所有手牌，获得其所有黑色牌。",
 				"schrÖdinger":"活猫心脏",
 				"schrÖdinger_info":"锁定技，你坠机时，展示所有其他角色的手牌：若有角色有【葱】，该角色坠机。",
-				"ye’sbian_audio1":'在？看看手牌',
-				"ye’sbian_audio2":'不要啊，海豚哥！！！',
-				"schrÖdinger_audio1":'我肏，哪𣬠𣬶傻屄杀的我',
-				"schrÖdinger_audio2":'谁能不能告诉我我他妈怎么死的？',
+				"ye’sbian_audio1":'亡鸦不渡寒潭。',
+				"ye’sbian_audio2":'永不复还。',
+				"schrÖdinger_audio1":'合拢的嘴，泄密的心……',
+				"schrÖdinger_audio2":'它还在楼上跳个不停。',
 				wt_zongqing:"纵情",
 				wt_zongqing_info:"准备阶段，你可以将灵力补至体力上限的点数；若如此做，你减1点体力上限。",
 				wt_zongqing_audio1:'把妳的不开心说出来让我们高兴高兴',

@@ -437,6 +437,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                       ui.cardPile.appendChild(result.links[0]);
                                     }
                                     trigger.player.lose(result.links[0]);
+                                    trigger.player.update();
                               }
                               player.storage.yinyang = false;
                         },
@@ -1406,6 +1407,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     onremove:function(player){
                       delete player.nodying;
+                      player.die();
                     },
                     content:function(){
                       player.loselili();
@@ -1680,6 +1682,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   poxiao_info:'结束阶段，你可以重铸任意张牌；若你以此法重铸了4张不同花色的牌，你可以消耗1点灵力，然后进行一个额外的回合。',
                   yongye:'永夜归返',
                   yongye2:'永夜归返',
+                  yongye_die:'永夜归返',
                   yongye_info:'符卡技（1）<极意><终语>结束阶段，你消耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
                   eirin:'永琳',
                   zhaixing:'摘星',

@@ -754,6 +754,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return target!=player;
 			},
 			reverseOrder:true,
+			contentBefore:function(){
+				player.$skill('死境之门',null,null,true);
+			},
 			content:function(){
 				target.chooseToDiscard(true,'hej');
 				// 洗牌堆放到技能那边吧
@@ -777,6 +780,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     ui.cardPile.appendChild(cards[i]);
                 }
                 game.log("死境之门：交换弃牌堆和牌堆");
+                if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
 			},
 			ai:{
 				basic:{
@@ -807,6 +811,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
 				return true;
+			},
+			contentBefore:function(){
+				player.$skill('幻想之门',null,null,true);
 			},
 			content:function(){
 				target.draw();
@@ -845,6 +852,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
 				return true;
+			},
+			contentBefore:function(){
+				player.$skill('天国之阶',null,null,true);
 			},
 			content:function(){
 				target.draw();
@@ -1340,7 +1350,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				expose:0.3,
 				order:2,
 				result:{
-					target:1
+					target:0.1
 				}
 			}
 		},
@@ -1381,7 +1391,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		yinyangyu_skill_1:{
 			audio:2,
-			enable:['chooseToRespond'],
+			enable:['chooseToRespond','chooseToUse'],
 			filterCard:function(card){
 				return get.color(card)=='red';
 			},
@@ -1661,6 +1671,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			enable:'phaseUse',
 			usable:1,
 			discard:false,
+			lose:false,
 			filterCard:function(card){
 				return true;
 			},
@@ -1961,7 +1972,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				cardDiscardable:function(card,player,target,event){
 					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
-				}
+				},
+				cardGainable:function(card,player,target,event){
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
+				},
+				canBeGained:function(card,player,target,event){
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
+				},
 			},
 		},
 		bingyu1:{
@@ -2340,6 +2357,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     ui.cardPile.appendChild(cards[i]);
                 }
                 game.log("天国之阶：弃牌堆加入牌堆");
+                if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
             },
 		},
 		_tianguo2:{
@@ -2633,7 +2651,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		penglaiyao_info:'结束阶段，你失去2点灵力。',
 		*/
 		pantsu:'蓝白胖次',
-		pantsu_info:'锁定技，其他角色不能弃置或获得你的此牌以外的牌。',
+		pantsu_info:'锁定技，其他角色不能弃置或获得你的【蓝白胖次】以外的牌。',
 		laevatein:'莱瓦丁',
 		laevatein_info:'锁定技，出牌阶段，你对每名角色使用的第一张【轰！】不算次数。',
 		gungnir:'冈格尼尔',
@@ -2693,7 +2711,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		magatama_info:'一回合一次，出牌阶段，你可以观看一名角色的手牌。',
 		*/
 		lunadial:'月时针',
-		lunadial_skill:'暂停',
+		lunadial_skill:'The World',
 		lunadial_info:'一回合一次，出牌阶段，你可以消耗1点灵力，然后令一名其他角色不能使用或打出手牌，直到结束阶段。',
 		/*
 		kusanagi:'草薙剑',
