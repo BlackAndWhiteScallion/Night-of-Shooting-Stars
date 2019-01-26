@@ -990,7 +990,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.fuhuo = 2;
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
-					game.me.addSkill('finalspark');
+					//game.me.addSkill('finalspark');
 					game.me.addSkill('handcard_max');
 				},
 				gameDraw:function(player){
