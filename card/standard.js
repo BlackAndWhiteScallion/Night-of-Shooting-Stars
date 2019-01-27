@@ -346,15 +346,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						if(noh&&noe) return 0;
 						if(noh&&noe2) return 0.01;
 						if(ai.get.attitude(player,target)<=0) return (target.num('he'))?-1.5:1.5;
-						var js=target.get('j');
-						if(js.length){
-							var jj=js[0].viewAs?{name:js[0].viewAs}:js[0];
-							if(jj.name=='guohe') return 3;
-							if(js.length==1&&ai.get.effect(target,jj,target,player)>=0){
-								return -1.5;
-							}
-							return 2;
-						}
 						return -1.5;
 					},
 				},
@@ -998,6 +989,21 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.addSkill('huazhi_skill');
 				if (player.lili == 0) player.gainlili(2);
 			},
+			ai:{
+				basic:{
+					order:1,
+					useful:[4,2],
+					value:[4,2],
+				},
+				result:{
+					target:function(player,target){
+						return target.getStat('damage');
+					}
+				},
+				tag:{
+					draw:0.5
+				}
+			}
 		},
 		// 惊吓派对
 		jingxia:{

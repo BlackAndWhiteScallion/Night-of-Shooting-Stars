@@ -667,6 +667,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if(result.targets&&result.targets[0]){
                           result.targets[0].gain(result.cards,player);
                           player.$give(result.cards.length,result.targets[0]);
+                          result.targets[0].say('哦嘞，这个是给我的？');  
                         }
                         for(var i=0;i<ui.skillPile.childNodes.length;i++){
                           if (ui.skillPile.childNodes[i].name == 'shenyou'){
@@ -751,6 +752,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                   },
                   mitu_storage:{
+                    audio:2,
                     trigger:{player:'phaseDiscardBegin'},
                     filter:function(event,player){
                       return player.countCards('he') && !player.storage.mitu;
@@ -1148,7 +1150,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               list.push(i);
                         }
                         // 这里AI还没写
-                        var choice = 0;
+                        var choice = 1;
                           player.chooseControl(list,function(){
                                     return choice;
                               }).set('prompt','消耗任意点灵力').set('choice',choice);
@@ -1210,7 +1212,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       delete player.storage.tianwen_use;
                     },
                     content:function(){
-                      if (player.canUse(player.storage.tianwen_use.name,targets)){
+                      if (player.canUse({name:player.storage.tianwen_use},targets)){
                         trigger.cancel();
                         player.useCard({name:player.storage.tianwen_use.name,color:get.color(trigger.card),number:get.number(trigger.card)},targets);
                       }
@@ -1614,9 +1616,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mystia:'米斯蒂亚',
                   shiming:'失明',
                   shiming_2:'失明',
+                  shiming_audio1:'我来让你获得夜盲症吧！',
+                  shiming_audio2:'我来教教你暗夜的恐怖吧！',
                   shiming_info:'准备阶段，或你受到伤害后，你可以令一名角色获得以下效果，直到当前回合结束：其不能以此技能以外的方式使用牌；其需要使用牌时，可以洗混其手牌；其不能查看其中暗置牌；其展示其中一张：若可以使用，本次结算中其可以使用该牌；否则，其弃置之，并可以重复此流程。',
                   wuye:'午夜中的合唱指挥',
+                  wuye_audio1:'米斯蒂亚的独唱会开始啦！',
+                  wuye_audio2:'独家专辑正在绝赞发售中！',
                   wuye_info:'符卡技（2）<永续>你成为攻击范围内的角色的牌的目标时，你可以指定一名其他角色，将目标转移给其。',
+                  mystia_die:'别忘了光顾我的烧烤店啊~',
                   keine:'慧音',
                   jiehuo:'解惑',
                   jiehuo_info:'一回合一次，一名角色的出牌阶段，一张牌因你使用/打出进入弃牌堆时，可以消耗1点灵力，令一名角色获得之。',
@@ -1668,28 +1675,46 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   marisa_die:'没事，这夜晚还很长呢！',
                   tewi:'帝',
                   mitu:'迷途',
+                  mitu_storage_audio1:'嘘——',
+                  mitu_storage_audio2:'这里什么都没有哟，什么都没有',
+                  mitu_audio1:'中计啦，你个傻瓜！',
+                  mitu_audio2:'真的是笨蛋呢你！',
                   mitu_info:'弃牌阶段开始时，若你没有“伏”，你可以将一张牌扣置于角色牌上，称为“伏”；你成为牌的目标后，你可以展示同名“伏”，令来源判定；若为黑色，弃置“伏”，弃置来源一张牌，并令该牌对你无效。',
                   kaiyun:'开运',
                   kaiyun_1:'开运',
                   kaiyun_2:'开运',
                   kaiyun_info:'一名角色的出牌阶段开始时，其可以交给你一张牌：获得一张【神佑】技能牌，且其不能对你或其以外的角色使用牌，直到回合结束。',
                   yuangu:'远古的骗术',
+                  yuangu_audio1:'狡兔可是有三窟的——',
+                  yuangu_audio2:'哈哈，来玩到尽兴为止吧！',
                   yuangu_info:'符卡技（2）<永续>【迷途】中的“你成为牌的目标后”视为“你攻击范围内的一名角色成为牌的目标后”；无视【迷途】中的“弃置"伏"”。',
+                  tewi_die:'你这家伙真的不好玩！',
                   kaguya:'辉夜',
                   nanti:'难题',
+                  nanti_audio1:'这些难题可已经劝退了无数的人哟。',
+                  nanti_audio2:'你，解的开多少个呢？',
                   nanti_info:'一回合一次，出牌阶段，你可以展示任意张手牌，并声明一项：牌名的字数，花色，点数，属性，或类型，然后令一名其他角色选择一项：交给你一张该项与你展示的牌均不同的牌，并弃置展示的牌；或令你重铸其与展示的牌等量张牌，并对其造成1点灵击伤害。',
                   poxiao:'破晓',
                   poxiao_info:'结束阶段，你可以重铸任意张牌；若你以此法重铸了4张不同花色的牌，你可以消耗1点灵力，然后进行一个额外的回合。',
+                  poxiao_audio1:'黎明就要到来了。',
+                  poxiao_audio2:'曙光就在前方呢。',
                   yongye:'永夜归返',
                   yongye2:'永夜归返',
                   yongye_die:'永夜归返',
                   yongye_info:'符卡技（1）<极意><终语>结束阶段，你消耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
+                  kaguya_die:'=w=明天晚上再见！',
                   eirin:'永琳',
                   zhaixing:'摘星',
+                  zhaixing_audio1:'哈哈，吃药还是做不到这个程度的。',
+                  zhaixing_audio2:'就算是星星，我也可以摘下来给你。',
                   zhaixing_info:'结束阶段，你可以观看牌堆顶，或技能牌堆顶的X张牌（X为你本回合使用的牌花色数）；你将其中一张交给一名角色，其余按任意顺序置于该牌堆顶或底。',
                   lanyue:'揽月',
+                  lanyue_audio1:'药也可以这么用的呢。',
+                  lanyue_audio2:'即使是月亮，',
                   lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同',
                   tianwen:'天文秘葬法',
+                  tianwen_audio1:'秘術「天文密葬法」。',
+                  tianwen_audio2:'',
                   tianwen_skill:'天文秘葬法',
                   tianwen_info:'符卡技（X）（X为任意值，至少为1）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
                   mokou:'妹红',

@@ -656,7 +656,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{player:['discardAfter','useCardAfter']},
 				filter:function(event,player){
-					if(event.triggername=='useCardAfter'&&player==_status.currentPhase)return false;
+					if(event.name=='useCard'&&player==_status.currentPhase)return false;
 					for(var i=0;i<event.cards.length;i++){
 						if(get.position(event.cards[i])=='d'){
 							return true;
@@ -838,27 +838,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(_status.event.skill==undefined&&player.storage.huanrao.contains(card)) return false;
 					},
 				},
-				group:["huanrao_4_sha"],
-				subSkill:{
-					sha:{
-						enable:["chooseToUse"],
-						filterCard:function(){
-							if(player) return true;
-							return false;
-						},
-						viewAs:{name:"sha"},
-						viewAsFilter:function (player){
-							var huanrao_has=false;
-							for(var i=0;i<player.storage.huanrao.length;i++){
-								if(player.countCards('he',player.storage.huanrao[i])) huanrao_has=true;
-							}
-							return huanrao_has;
-						},
-						prompt:"将【环绕】牌当【杀】使用",
-						check:function(){return 1},
-						sub:true,
-					},
+				enable:["chooseToUse"],
+				filter:function(){
+					return true;
 				},
+				filterCard:function(card){
+					var player=_status.event.player;
+					return player.storage.huanrao.contains(card);
+				},
+				viewAs:{name:"sha"},
+				prompt:"将【环绕】牌当【杀】使用",
+				sub:true,
 			},
 			sliver_arrow:{
 				spell:["sliver_arrow_2"],

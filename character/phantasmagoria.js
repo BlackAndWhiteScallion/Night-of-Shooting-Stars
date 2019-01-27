@@ -345,7 +345,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                         onuse:function(result,player){
                             player.loselili();
-                            player.getStat().card.sha--;
+                            if (player.getStat().card.sha) player.getStat().card.sha--;
+                            else player.getStat().card.sha = -1;
                         },
                         prompt:'消耗1点灵力，将一张牌当【轰！】使用',
                         check:function(card){return 4-get.value(card)},

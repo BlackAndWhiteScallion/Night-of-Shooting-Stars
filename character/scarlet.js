@@ -739,20 +739,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             huanzang:{
                 audio:2,
                 group:['huanzang_1','huanzang_2'],
-                trigger:{target:'useCardtoBegin'},
+                trigger:{target:'useCardToBegin'},
                 filter:function(event,player){
                     if (!event.card) return false;
-                    if (event.target.length)
-                    return (player.countCards('he',{suit:event.card.suit}) || player.countCards('he', {number:event.card.number}));
+                    if(event.targets&&event.targets.length>1) return false;
+                    if (event.player == player) return false;
+                    return player.countCards('he',{suit:get.suit(event.card)}) || player.countCards('he', {number:get.number(event.card)});
                 },
                 content:function(){
                     'step 0'
                     var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
-                    player.chooseToDiscard(get.prompt('huanzang'), true ,function(card){
-                        return (get.type(card) == get.type(trigger.card) || get.number(card) == get.number(trigger.card));
+                    player.chooseToDiscard(get.prompt('huanzang'), true,function(card){
+                        return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }).set('ai',function(card){
                         if(_status.event.eff>0){
-                            return 10-get.value(card);
+                            return 7-get.value(card);
                         }
                         return 0;
                     }).set('eff',eff);
@@ -763,13 +764,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             huanzang_1:{
+                audio:'huanzang',
                 trigger:{global:['useCardToBefore']},
                 filter:function(event,player){
                     if (!event.card) return false;
                     if (_status.currentPhase!=player) return false;
+                    if (event.card.name == 'shan') return false;
                     if (event.player == player) return false;
                     if(event.targets&&event.targets.length>1) return false;
-                    return (player.countCards('he',{suit:event.card.suit}) || player.countCards('he', {number:event.card.number}));
+                    return (player.countCards('he',{suit:get.suit(event.card)}) || player.countCards('he', {number:get.number(event.card)}));
                 },
                 content:function(){
                     'step 0'
@@ -780,12 +783,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.bool){
-                        //trigger.cancel();
-                        trigger.untrigger();
+                        trigger.cancel();
                     }
                 },
             },
             huanzang_2:{
+                audio:'huanzang',
                 trigger:{global:'shaMiss'},
                 filter:function(event,player){
                     if (!event.responded) return false;
@@ -817,7 +820,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:'cards'
                 },
                 filter:function(event,player){
-                    return player.lili > 0 && player.storage.shijing.length > 0;
+                    return player.lili > 0 && player.storage.shijing;
                 },
                 content:function(){
                     'step 0'
@@ -837,7 +840,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 check:function(event,player){
-                    return player.lili > 1 && !player.countCards('h') > 3;
+                    return player.lili > 1 && !player.countCards('h') > 2;
                 },
             },
             shijing_mark:{
@@ -846,7 +849,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filter:function(event,player){
                     if (_status.currentPhase!=player) return false;
                     for(var i=0;i<event.cards.length;i++){
-                        if(get.position(event.cards[i])=='d'){
+                        if (get.position(event.cards[i]) == 'e'){}
+                        else if(get.position(event.cards[i])=='d'){
                             return true;
                         }
                     }
@@ -862,7 +866,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             shijing_mark2:{
-                trigger:{player:'phaseEnd'},
+                trigger:{player:'phaseAfter'},
                 direct:true,
                 priority:-100,
                 filter:function(event,player){
@@ -1209,7 +1213,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             huanzang_2:'幻葬',
             huanzang_audio1:'啊？这玩笑可不好笑啊。',
             huanzang_audio2:'呵，多谢款待了。',
-            huanzang_info:'你成为其他角色的牌的唯一目标后，或其他角色于你的回合内使用牌指定目标后，你可以打出一张相同花色/点数的牌：令该牌对目标无效。',
+            huanzang_info:'你成为其他角色的牌的唯一目标后，或其他角色于你的回合内使用牌指定目标后，你可以弃置一张相同花色/点数的牌：令该牌对目标无效。',
             shijing:'时静',
             shijing_audio1:'时间不是不等人，它只是不等你而已。',
             shijing_audio2:'我好像少拿东西了，你就等我一会儿吧？',

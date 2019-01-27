@@ -135,13 +135,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             translate:{
             	suika:'萃香',
             	cuiji:'萃集',
+            	cuiji_audio1:'（吨吨吨吨——）',
+            	cuiji_audio2:'Zzzzzz',
             	cuiji_buff:'萃集',
+            	cuiji_buff_audio1:'DUANG！',
+            	cuiji_buff_audio2:'亲身感受鬼的力量吧！',
             	cuiji_hp:'失去1点体力，获得2点灵力',
             	cuiji_lili:'消耗2点灵力，回复1点体力',
             	cuiji_info:'准备阶段，或你造成弹幕伤害后你可以选择一项：1. 失去1点体力，然后获得2点灵力；2. 消耗2点灵力值，然后回复1点体力；若你的灵力大于体力，一回合一次，你可以将一张黑色牌当作不计次数的【轰！】使用/打出。',
             	baigui:'百万鬼夜行',
+            	baigui_audio1:'哈哈哈哈！「百万鬼夜行」！',
+            	baigui_audio2:'你比月亮起来，哪个更硬一些啊？',
             	baigui_info:'符卡技（0）你使用攻击牌指定目标后，令目标对该牌使用的前X张防御牌无效；该牌造成弹幕伤害后，你须将灵力消耗至1，弃置受伤角色Y张牌 （X为体力值，Y为消耗的灵力值）',
-   
+            	suika_die:'那就先到这里吧。',
             },
       };
 });

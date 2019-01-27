@@ -9208,7 +9208,8 @@
             _lianhuan2:'连环',
             qianxing:'潜行',
             mianyi:'免疫',
-            fengyin:'封印',
+            fengyin:'沉默',
+            unequip:'封印',
 
             pause:'暂停',
             config:'选项',
@@ -18213,14 +18214,14 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                             }
                         }
                     }
-					if(info.hookTrigger){
-						if(!this._hookTrigger){
-							this._hookTrigger=[];
-						}
-						this._hookTrigger.add(skill);
-					}
-					return this;
-				},
+                    if(info.hookTrigger){
+                        if(!this._hookTrigger){
+                            this._hookTrigger=[];
+                        }
+                        this._hookTrigger.add(skill);
+                    }
+                    return this;
+                },
 				addSkillLog:function(skill){
 					this.addSkill(skill);
 					this.popup(skill);
@@ -20270,12 +20271,15 @@ throwDice:function(num){
 							_status.discarded.remove(card);
 						}
                     }
+                    /*
                     var info=get.info(card);
                     if(info.skills){
                         for(var i=0;i<info.skills.length;i++){
                             player.addSkillTrigger(info.skills[i]);
                         }
                     }
+                    */
+                    player.addEquipTrigger()
                     return player;
                 },
                 $gain:function(card,log,init){
@@ -22464,30 +22468,14 @@ game.broadcast(function(player,str,nature,avatar){
             zhu:{},
             zhuSkill:{},
             unequip:{
-                filter:function(event,player){
-                    return player.num('e') > 0;
-                },
+                mark:true,
                 init:function(player){
-                    var es=player.getCards('e');
-                    for(var j=0;j<es.length;j++){
-                        var info=get.info(es[j]);
-                        if(info.skills){
-                            for(var i=0;i<info.skills.length;i++){
-                                player.removeSkillTrigger(info.skills[i]);
-                            }
-                        }
-                    }
+                    player.removeEquipTrigger();
+                    player.update();
                 },
                 onremove:function(player){
-                    var es=player.getCards('e');
-                    for(var j=0;j<es.length;j++){
-                        var info=get.info(es[j]);
-                        if(info.skills){
-                            for(var i=0;i<info.skills.length;i++){
-                                player.addSkillTrigger(info.skills[i]);
-                            }
-                        }
-                    }
+                    player.addEquipTrigger();
+                    player.update();
                 },
                 ai:{unequip:true}
             },
@@ -30126,6 +30114,7 @@ smoothAvatar:function(player,vice){
                         }
                         if(typeof equipValue=='function') return equipValue(card,player)-value;
                         if(typeof equipValue!='number') equipValue=0;
+                        if(player.countCards('e') < player.maxequip) return equipValue;
                         return equipValue-value;
                     }
                     card.ai.result.target=(function(name){

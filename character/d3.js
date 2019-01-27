@@ -317,7 +317,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				zither:'听琴',
 				zither_die:'此生无怨无悔……',
 				actress:'伶',
-				actress_die:'我的技能就是这么傻屌，有能耐妳让妈妈重做一个',
 				wingedtiger:'飞虎',
 				wingedtiger_die:'在此，施撒所有的诅咒将会永世伴随着妳们，妾身就是有着如此之大的怨念啊！',
 				
