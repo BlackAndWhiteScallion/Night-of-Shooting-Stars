@@ -10,6 +10,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			arisa:['female','2',3,['yaowu','huanrao','sliver_arrow']],
 			yudachi:['female','2',4,['hongxi','solomon']],
 			megumin:['female','4',3,['honglian','sbrs_liansuo','explosion']],
+			satone:['female','2',3,['guyin','tianze']],
 		},
 		characterIntro:{
 			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
@@ -20,66 +21,86 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		skill:{
 			zhongzou:{
-				/*trigger:{global:'phaseEnd'},
-				group:["zhongzou_2","zhongzou_3"],
-				//direct:true,
-				init:function(player){
-					player.storage.zhongzou=[];
-				},
+				trigger:{global:'phaseEnd'},
+				group:["zhongzou_2","zhongzou_3",'zhongzou_5'],
+				/*init:function(player){
+					player.addSkill('zhongzou_4');
+				},*/
 				filter:function(event,player){
-					var bad_att = true
-					for(var i=0;i<player.storage.zhongzou.length;i++){
-						if(get.attitude(player,player.storage.zhongzou[i])>0){
-							bad_att = true;
-							break;
-						}
-					}
-					return bad_att;
+					if (player.lili <= 0) return false;
+					return game.hasPlayer(function(current){
+						return current.storage.zhongzou == true;
+					});
 				},
 				content:function(){
 					'step 0'
 					player.loselili();
-					//for(var i=0;i<player.storage.zhongzou.length;i++){
-						
-						//player.storage.zhongzou[i].draw();
-						//player.useCard({name:'sha'},player.storage.zhongzou[i]);
-					//}
-					player.useCard({name:'sha'},player.storage.zhongzou.shift());
-					//player.storage.zhongzou.shift().draw();
-					delete player.storage.zhongzou;
-				}
+					var targets = [];
+					var players = game.filterPlayer();
+					for (var i = 0; i < players.length; i ++){
+						if (players[i].storage.zhongzou == true) targets.push(players[i]);
+					}
+					if (targets.length) player.useCard({name:'sha'},targets,false);
+				},
+				check:function(event,player){
+					return player.lili > 1;
+				},
 			},
 			zhongzou_2:{
-				forced:true,
 				trigger:{global:'damageEnd'},
 				filter:function(event,player){
-					return true;//((!event.card||get.type(event.card)!='attack')&&event.source);
+					if (!event.source) return false;
+					return !event.card||get.subtype(event.card)!='attack';
 				},
 				direct:true,
 				content:function(){
-					"step 0"
-					player.draw();
-					player.storage.zhongzou.push(event.source);
+					trigger.source.storage.zhongzou = true;
 				},
 			},
 			zhongzou_3:{
-				forced:true,
-				trigger:{global:['shaMiss','juedouCancelled','wuzhongCancelled','guoheCancelled','shunshouCancelled','caifangCancelled','reidaisaiCancelled','danmakucrazeCancelled','reidaisaiCancelled','wuxieCancelled','juedouCancel','wuzhongCancel','guoheCancel','shunshouCancel','caifangCancel','reidaisaiCancel','danmakucrazeCancel','reidaisaiCancel','wuxieCancel']},
-				filter:function(event,player){
-					return true;//((!event.card||get.type(event.card)!='defense')&&event.source);
+				trigger:{global:'useCard'},
+				filter:function(event, player){
+					return event.targets.length;
 				},
 				direct:true,
 				content:function(){
-					"step 0"
-					player.draw();
-					player.storage.zhongzou.push(event.source);
-				},*/
+					lib.skill['zhongzou_4'].trigger = {global:trigger.card.name + 'Cancelled'};
+					player.removeSkill('zhongzou_4')
+					player.addSkill('zhongzou_4');
+				},
+			},
+			zhongzou_4:{
+				direct:true,
+				//trigger:{global:'shaCancelled'},
+				trigger:{},
+				content:function(){
+					trigger.target.storage.zhongzou = true;
+					console.log(trigger.target.name);
+					player.removeSkill('zhongzou_4');
+					/*
+					if (trigger.targets){
+						for (var i = 0; i < trigger.targets.length; i ++){
+							trigger.targets[i].storage.zhongzou = true;
+						}
+					}*/
+					//delete lib.skill['zhongzou_4'].trigger;
+				},
+			},
+			zhongzou_5:{
+				direct:true,
+				trigger:{global:'phaseAfter'},
+				content:function(){
+					var players = game.filterPlayer();
+					for (var i = 0; i < players.length; i ++){
+						players[i].storage.zhongzou = false;
+					}
+				}
 			},
 			moxin:{
 				trigger:{global:'phaseEnd'},
 				//direct:true,
 				filter:function(event,player){
-					return event.player.isAlive()&&(player.countUsed('sha')==0&&!event.player.getStat('damage'));
+					return event.player.isAlive()&&(!event.player.countUsed('sha')&&!event.player.getStat('damage'));
 				},
 				check:function(event,player){
 					return get.attitude(player,event.player) >= 0;
@@ -98,15 +119,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if (result.control == '当前回合角色恢复灵力'){
 						trigger.player.gainlili();
-					} else {
+					} else if (result.control == '交给当前回合角色一张牌'){
 						player.draw();
 						player.chooseCard('交给'+get.translation(trigger.player)+'一张手牌',true).set('ai',function(card){
 							return 5-get.value(card);
 						});
-						if(result.bool){
-							trigger.player.gain(result.cards[0],player);
-							player.$give(1,trigger.player);
-						}
+					}
+					'step 2'
+					if(result.bool){
+						trigger.player.gain(result.cards[0]);
+						player.$give(1,trigger.player);
 					}
 				},
 			},
@@ -597,6 +619,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.targets){
 						result.targets[0].gain(event.togive,'draw');
 						player.line(result.targets[0],'green');
+						player.logSkill('kc_yuzhi',result.targets[0]);
 						game.log(result.targets[0],'获得了'+get.cnNumber(event.togive.length)+'张牌');
 						result.targets[0].addTempSkill('kc_yuzhi_3', 'phaseBegin');
 					}
@@ -1034,10 +1057,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function (event,player){
 					'step 0'
 					player.chooseTarget('选择一名靶子',true).set('ai',function(target){
-						return -get.attitude(_status.event.player,target)
+						return -get.attitude(_status.event.player,target);
 					}).set('enemy');
 					'step 1'
 					if(result.targets.length){
+						player.logSkill('honglian',result.targets);
 						result.targets[0].addTempSkill('honglian_3', 'phaseBegin');
 					}
 				},
@@ -1074,6 +1098,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseTarget('选一名靶子');
 					'step 1'
 					if(result.targets){
+						player.logSkill('sbrs_liansuo', result.targets);
 						result.targets[0].addTempSkill('sbrs_liansuo_4', 'phaseBegin');
 					}
 				},
@@ -1166,14 +1191,118 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			guyin:{
+				forced:true,
+				group:['guyin_2','guyin_3'],
+				trigger:{player:'useCard'},
+				filter:function(event, player){
+					 return lib.card[event.card.name].enhance;
+				},
+				content:function(){
+					game.log(get.translation(player)+'发动【孤樱】强化了'+get.translation(trigger.card.name)+'。');
+					if (!player.storage._enhance) player.storage._enhance = 1;
+					else player.storage._enhance++; 
+				},
+			},
+			guyin_2:{
+				forced:true,
+				trigger:{player:'useCardToBegin', target:'useCardToBegin'},
+				filter:function(event,player){
+					return get.type(event.card) == 'basic' && event.targets.length == 1;
+				},
+				content:function(){
+					'step 0'
+					trigger.cancel();
+                    var list = [];
+                    for (var i in lib.card){
+                        if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                        if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                        if(lib.card[i].type == 'trick' && lib.card[i].subtype == get.subtype(trigger.card)){
+                            list.add(i);
+                        }
+                    }
+                    for(var i=0;i<list.length;i++){
+                        list[i]=['法术','',list[i]];
+                    }
+                    if(list.length){
+                        trigger.player.chooseButton(['视为使用一张法术牌',[list,'vcard']]).set('ai',function(button){
+                            var player=_status.event.player;
+                            var card={name:button.link[2]};
+                            return get.value(card);
+                        });
+                    } else {
+                    	event.finish();
+                    }
+                    'step 1'
+                    if(result&&result.bool&&result.links[0]){
+                        var card = {name:result.links[0][2]};
+                        event.fakecard=card;
+                        if (trigger.player.canUse(event.fakecard,trigger.targets[0],true)){
+                        	trigger.player.useCard(event.fakecard, trigger.targets[0]);
+                    	}
+                    } else {
+                        event.finish();
+                    }       
+				},
+			},
+			guyin_3:{
+				audio:2,
+				enable:'chooseToUse',
+				filterCard:function(card){
+					return card.name == 'shan';
+				},
+				viewAsFilter:function(player){
+					return player.countCards('h',{name:'shan'})>0;
+				},
+				viewAs:{name:'wuxie'},
+				prompt:'将一张【没中】当【请你住口！】使用',
+				check:function(card){return 8-get.value(card)},
+				threaten:1.2,
+				mod:{
+					cardEnabled:function(card,player){
+						if(card.name=='shan'&&_status.event.skill!='guyin_3') return false;
+					},
+					cardUsable:function(card,player){
+						if(card.name=='shan'&&_status.event.skill!='guyin_3') return false;
+					},
+					cardRespondable:function(card,player){
+						if(card.name=='shan'&&_status.event.skill!='guyin_3') return false;
+					},
+					cardSavable:function(card,player){
+						if(card.name=='shan'&&_status.event.skill!='guyin_3') return false;
+					},
+				},
+			},
+			tianze:{
+				forced:true,
+				group:'tianze2',
+				trigger:{player:'damageEnd'},
+				filter:function(event,player){
+					return event.nature != 'thunder' && event.source;
+				},
+				content:function(){
+					trigger.source.damage('thunder', trigger.num);
+				},
+			},
+			tianze2:{
+				forced:true,
+				trigger:{target:'useCardToBefore'},
+				filter:function(event,player){
+					return event.card && get.suit(event.card) == 'heart' && get.subtype(event.card) == 'support' && player.lili > 1;
+				}, 
+				content:function(){
+					player.loselili();
+					player.recover();
+				},
+			},
 		},
 		translate:{
 			kanade:'奏',
 			kanade_die:'赐予我生命，真的，很感谢',
 			zhongzou:'终奏',
-			zhongzou_info:'终奏',
+			zhongzou_info:'一名角色的结束阶段，若本回合有角色：成为过牌的目标，并因防御牌以外的方式令牌取消其或无效；或以攻击牌以外的方式造成伤害；你可以消耗1点灵力，视为对所有这些角色使用一张【轰！】。',
 			moxin:'默心',
-			moxin_info:'一名角色的结束阶段，若其本回合没有使用过攻击牌或造成过伤害，你可以令其获得一点灵力，或摸一张牌然后交给其一张牌。',
+			moxin_info:'一名角色的结束阶段，若其本回合：没有使用过攻击牌，没有造成过伤害，你可以令其获得一点灵力，或摸一张牌然后交给其一张牌。',
 			illyasviel:'伊莉雅',
 			illyasviel_die:'旋转吧雪月花',
 			huanzhao:'幻召',
@@ -1228,6 +1357,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			explosion:'EXPLOSIONNNNN！',
 			explosion_info:'符卡技（4）跳过你的出牌阶段，然后对一名角色造成2点弹幕伤害，2点灵击伤害，并弃置其装备区内所有牌。',
 			explosion_2:'EXPLOSIONNNNN！',
+			satone:'七宫',
+			guyin:'孤樱',
+			guyin_2:'孤樱',
+			guyin_3:'孤樱',
+			guyin_info:'锁定技，你使用牌时，无视消耗强化之；你使用基本牌指定角色为目标时，或成为基本牌的目标时，取消你，然后来源视为对原目标使用一张与之属性相同的法术牌；你的【没中】视为【请你住口！】',
+			tianze:'天则',
+			tianze2:'天则',
+			tianze_info:'锁定技，你受到弹幕伤害后，对伤害来源造成等量灵力伤害；你成为红桃辅助牌的目标时，须消耗1点灵力，然后回复1点体力。',
 		},
 	};
 });

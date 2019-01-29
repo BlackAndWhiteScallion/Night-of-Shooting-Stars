@@ -49,7 +49,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (players[i] == player) players.remove(players[i]);
                         else if (!(!players[i].storage.shuang && players[i].storage._mubiao)) players.remove(players[i]);
                     }
-                    player.chooseTarget([players.num,players.num],('霜降：是否对这些角色各造成1点灵击伤害'),function(card,player,target){
+                    player.chooseTarget(players.num,('霜降：是否对这些角色各造成1点灵击伤害'),function(card,player,target){
                             return players.contains(target);
                           }).set('ai',function(target){
                               return -get.attitude(_status.event.player,target);
@@ -594,7 +594,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 ai:{
-                    order:1,
+                    order:5,
                     result:{
                         player:function(player,target){
                             return 1;
@@ -682,6 +682,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     prompt:function(links,player){
                         return '将一张【轰！】当作'+get.translation(links[0][2])+'使用';
+                    },
+                    ai:{
+                    order:6,
+                        result:{
+                            player:function(player){
+                                return 0.5;
+                            }
+                        },
                     }
                 },
                 ai:{
@@ -949,7 +957,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 ai:{
-                    order:1,
+                    order:5,
                     result:{
                         player:function(player,target){
                             return 1;
@@ -1084,7 +1092,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 ai:{
-                    order:1,
+                    order:10,
                     result:{
                         player:function(player,target){
                             return 1;
@@ -1119,15 +1127,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     result:{
                         target:function(player,target){
-                            if(ui.selected.cards.length&&ui.selected.cards[0].name=='du'){
-                                if(target.hasSkillTag('nodu')) return 0;
-                                return -10;
-                            }
-                            if(target.hasJudge('lebu')) return 0;
                             var nh=target.countCards('h');
                             var np=player.countCards('h');
-                            if(player.hp==player.maxHp||player.storage.rende<0||player.countCards('h')<=1){
-                                if(nh>=np-1&&np<=player.hp&&!target.hasSkill('haoshi')) return 0;
+                            if(player.hp==player.maxHp||player.countCards('h')<=1){
+                                if(nh>=np-1&&np<=player.hp) return 0;
                             }
                             return Math.max(1,5-nh);
                         }
@@ -1139,7 +1142,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     var players=game.filterPlayer();
                                     for(var i=0;i<players.length;i++){
                                         if(players[i]!=player&&get.attitude(player,players[i])>0){
-                                            return 0;
+                                            return 0.1;
                                         }
                                     }
                                 }
@@ -1166,13 +1169,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (target){
                         if (trigger.name == 'equip'){
                             var info=get.info(trigger.card);
-                            if (trigger.player == target){
+                            if (trigger.player == target && player.storage.mingzhi){
                                 if(info.skills){
                                     for(var j=0;j<info.skills.length;j++){
                                         player.addSkill(info.skills[j]);
                                     }
                                 }
-                            } else if (trigger.player == player){
+                            } else if (trigger.player == player && player.storage.mingzhi){
                                 if(info.skills){
                                     for(var j=0;j<info.skills.length;j++){
                                         target.addSkill(info.skills[j]);
@@ -1190,10 +1193,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                         }
                                     }
                                 }
+                                var ef=player.getCards('e');
+                                for(var j=0;j<ef.length;j++){
+                                   var info=get.info(ef[j]);
+                                   if(info.skills){
+                                        for(var h=0;h<info.skills.length;h++){
+                                            target.addSkill(info.skills[h]);
+                                        }
+                                    }
+                                }
                             }
                         } else if (trigger.name == 'lose'){
-                            for (var i in trigger.cards){
-                                if (i.original == 'h' && trigger.player == player && !player.storage.mingzhi){
+                            for (var i = 0; i < trigger.cards.length; i ++){
+                                if (trigger.cards[i].original == 'h' && trigger.player == player && !player.storage.mingzhi){
                                     var es=target.getCards('e');
                                     for(var j=0;j<es.length;j++){
                                        var info=get.info(es[j]);
@@ -1203,8 +1215,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                             }
                                         }
                                     }
-                                } else if (i.original == 'e'){
-                                    var info=get.info(trigger.card);
+                                    var ef=player.getCards('e');
+                                    for(var j=0;j<ef.length;j++){
+                                       var info=get.info(ef[j]);
+                                       if(info.skills){
+                                            for(var h=0;h<info.skills.length;h++){
+                                                target.removeSkill(info.skills[h]);
+                                            }
+                                        }
+                                    }
+                                } else if (trigger.cards[i].original == 'e'){
+                                    var info=get.info(trigger.cards[i]);
                                     if (trigger.player == player && player.storage.mingzhi){
                                         if(info.skills){
                                             for(var j=0;j<info.skills.length;j++){
@@ -1221,8 +1242,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 }
                             }
                         }
-                        player.update();
-                        target.update();
                     }
                 },
             },
@@ -1238,6 +1257,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     trigger.player.draw();
                 },
+                check:function(event,player){
+                    return get.attitude(player,event.player) > 0;
+                },
             },
             huanzou2:{
                 audio:'huanzou',
@@ -1252,6 +1274,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     trigger.player.draw();
+                },
+                check:function(event,player){
+                    return get.attitude(player,event.player) > 0;
                 },
             },
             yishan:{
@@ -1810,7 +1835,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt') return get.attitude(player,event.player) < 0;
                     if (get.type(card) == 'equip' || get.subtype(card) == 'support') return get.attitude(player,event.player) > 0;
                     */
-                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name},_status.event.player);
+                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name},player);
                     return false;
                 },
                 content:function(){
@@ -2047,7 +2072,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:4,
                 spell:['mengjing2'],
-                trigger:{player:'phaseBegin'},
+                trigger:{player:'phaseBeginStart'},
                 filter:function(event,player){
                     return player.lili > lib.skill.mengjing.cost;
                 },
@@ -2061,6 +2086,32 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             mengjing2:{
                 // 紫妈还没完成呢
+                forced:true,
+                roundi:true,
+                trigger:{player:'phaseBegin'},
+                content:function(){
+                    player.chooseTarget([1,1],get.prompt('mengjing'),function(card,player,target){
+                        return target != player;
+                    },true).set('ai',function(target){
+                        return get.attitude(_status.event.player,target);
+                    });
+                    'step 1'
+                    if (result.bool){
+                        player.logSkill('mengjing',result.targets);
+                        var players = game.filterPlayer();
+                        players.remove(result.targets[0]);
+                        players.remove(player);
+                        for (var i = 0; i < players.length; i ++){
+                            players[i].addSkill('chuwai');
+                        }
+                    }
+                },
+                onremove:function(player){
+                    var players = game.filterPlayer();
+                    for (var i = 0; i < players.length; i ++){
+                        players[i].removeSkill('chuwai');
+                    }
+                },
             },
         },
 		translate:{

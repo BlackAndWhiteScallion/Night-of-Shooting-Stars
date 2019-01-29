@@ -1354,7 +1354,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			ai:{
 				expose:0.3,
-				order:2,
+				order:1,
 				result:{
 					target:0.1
 				}
@@ -1968,7 +1968,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						}
 					},
 					threaten:1,
-				}
+				},
 		},
 		pantsu_skill:{
 			alter:true,

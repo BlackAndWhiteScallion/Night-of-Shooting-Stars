@@ -146,7 +146,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     check:function(){
                       return true;
-                    }
+                    },
+                    ai:{
+                      maixie_defend:true,
+                    },
                   },
                   shiming_2:{
                     silent:true,
@@ -181,6 +184,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                       ai:{
                         order:4,
+                        result:{
+                          player:function(player){
+                            if (player.hp <= 1) return 1;
+                            if (player.countCards('h') > player.hp){
+                              if (_status.currentPhase == player) return 0.1;
+                              else return 0;
+                            }
+                          },
+                        },
                       }
                   },
                   shiming_3:{
@@ -681,7 +693,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         result.targets[0].addTempSkill('kaiyun_4');
                     },
                     check:function(event,player){
-                      if(player.countCards('h')<=player.hp) return false;
+                      if(player.countCards('h')>=player.hp) return false;
                       return game.hasPlayer(function(current){
                         return current!=player&&current.hasSkill('kaiyun')&&get.attitude(player,current)>0;
                       });
@@ -1701,7 +1713,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yongye:'永夜归返',
                   yongye2:'永夜归返',
                   yongye_die:'永夜归返',
-                  yongye_info:'符卡技（1）<极意><终语>结束阶段，你消耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
+                  yongye_info:'符卡技（1）<极意><终语>结束阶段，消你耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
                   kaguya_die:'=w=明天晚上再见！',
                   eirin:'永琳',
                   zhaixing:'摘星',
@@ -1710,13 +1722,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   zhaixing_info:'结束阶段，你可以观看牌堆顶，或技能牌堆顶的X张牌（X为你本回合使用的牌花色数）；你将其中一张交给一名角色，其余按任意顺序置于该牌堆顶或底。',
                   lanyue:'揽月',
                   lanyue_audio1:'药也可以这么用的呢。',
-                  lanyue_audio2:'即使是月亮，',
+                  lanyue_audio2:'即使是月亮，也不会离开我的手心之中。',
                   lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同',
                   tianwen:'天文秘葬法',
                   tianwen_audio1:'秘術「天文密葬法」。',
-                  tianwen_audio2:'',
+                  tianwen_audio2:'所谓星空，也只不过是试验场罢了。',
                   tianwen_skill:'天文秘葬法',
                   tianwen_info:'符卡技（X）（X为任意值，至少为1）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
+                  eirin_die:'哎，我也没力气永远陪你们跳舞的。',
                   mokou:'妹红',
                   yuhuo:'狱火',
                   yuhuo_2:'狱火',

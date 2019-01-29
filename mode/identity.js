@@ -1260,6 +1260,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.update();
 					}
 					*/
+					event.list.randomSort();
 					for(var i=0;i<game.players.length;i++){
 						// 主公和玩家不选将（已经选过了）
 						//if(game.players[i]!=game.zhu&&game.players[i]!=game.me){
@@ -2232,12 +2233,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					result:{
 						player:function(player){
 							if (player.identity == 'fan') return 0.5;
-							if (player.identity == 'zhu') return 0.1;
+							if (player.identity == 'zhu'){
+								var num = game.countPlayer(function(current){
+									if(player!=current&&current.identityShown == true) return 1;
+								});
+								if (num > 2) return 0.5;
+								return 0;
+							}
 							if (player.identity == 'zhong'){
 								if (game.zhu.identityShown == true) return 1;
 								else return 0;
 							}
-							if (player.identity == 'nei') return 1.5;
+							if (player.identity == 'nei') {
+								if (game.roundNumber > 1) return 1;
+								else return 0;
+							}
 						},
 					},
 				}

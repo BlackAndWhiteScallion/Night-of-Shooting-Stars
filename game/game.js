@@ -14665,7 +14665,7 @@
                     // 浮空时间。原数值：2000毫秒
                     setTimeout(function(){
                         dialog.delete();
-                    },3000);
+                    },2500);
                     var info=[get.translation(this.name)||this.nickname,str];
                     lib.chatHistory.push(info);
                     if(_status.addChatEntry){
@@ -22797,7 +22797,7 @@ game.broadcast(function(player,str,nature,avatar){
             _enhance:{
                 popup:false,
                 trigger:{player:'useCard'},
-                filter:function(event){
+                filter:function(event, player){
                     return (lib.card[event.card.name].enhance && !(event.player.lili < lib.card[event.card.name].enhance));
                 },
                 content:function(){
@@ -47896,6 +47896,7 @@ smoothAvatar:function(player,vice){
             else if(nature=='thunder'){
                 name='thunderdamage';
             }
+            if (player.lili == 0) return 0;
             var eff=get.effect(target,{name:name},player,viewer);
             if(eff>0&&target.hujia>0) return 0;
             return eff;
