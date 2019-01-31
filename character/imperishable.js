@@ -43,10 +43,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                         content:function(){
                               "step 0"
-                              //game.log(get.skillCount('yingguang'));
-                              //event.card=get.cards()[0];
                               event.card = ui.skillPile.childNodes[0];
                               //event.card = ui.skillPile.removeChild(ui.skillPile.firstChild);
+                              if (!event.card) event.finish();
                               game.broadcast(function(card){
                                     ui.arena.classList.add('thrownhighlight');
                                     card.copy('thrown','center','thrownhighlight',ui.arena).animate('start');
@@ -655,13 +654,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       return player.lili > 3;
                     },
                   },
+                  stardust1:{
+                    audio:2,
+                    direct:true,
+                    trigger:{player:'useCardAfter'},
+                    filter:function(event,player){
+                      return player.storage.stardust;
+                    },
+                    content:function(){
+                      delete player.storage.stardust;
+                    },
+                    mod:{
+                      targetInRange:function(card,player,target,now){
+                        if(player.storage.stardust && card.type != 'equip') return true;
+                      },
+                      selectTarget:function(card,player,range){
+                        if(player.storage.stardust && card.type != 'equip'&&range[1]!=-1) range[1]+=player.storage.stardust;
+                      },
+                    },
+                  },
                   kaiyun:{
                     global:'kaiyun_1',
                   },
                   kaiyun_1:{
                     trigger:{player:'phaseUseBegin'},
                     filter:function(event,player){
-                      return player.countCards('hej');
+                      return player.countCards('hej') && game.hasPlayer(function(current){
+                          return current.hasSkill('kaiyun');
+                      });
                     },
                     content:function(){
                       'step 0'
@@ -807,23 +827,27 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yuangu_1:{
                     // 结果这玩意就是个标记啊……
                   },
-                  stardust1:{
+                  huanshi:{
                     audio:2,
-                    direct:true,
-                    trigger:{player:'useCardAfter'},
+                    enable:'phaseUse',
+                    usable:1,
+                    
+                  },
+                  zhenshi:{
+                    audio:2,
+                    cost:1,
+                    spell:['zhenshi_1'],
+                    roundi:true,
+                    trigger:{player:'phaseBegin'},
                     filter:function(event,player){
-                      return player.storage.stardust;
+                        return player.lili > lib.skill.zhenshi.cost;
                     },
                     content:function(){
-                      delete player.storage.stardust;
-                    },
-                    mod:{
-                      targetInRange:function(card,player,target,now){
-                        if(player.storage.stardust && card.type != 'equip') return true;
+                        player.loselili(lib.skill.zhenshi.cost);
+                        player.turnOver();
                       },
-                      selectTarget:function(card,player,range){
-                        if(player.storage.stardust && card.type != 'equip'&&range[1]!=-1) range[1]+=player.storage.stardust;
-                      },
+                    check:function(event,player){
+                      return player.lili > 3 && player.countCards('hej') > 3;
                     },
                   },
                   zhaixing:{
@@ -1208,7 +1232,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.gain(result.links[0]);
                         player.$gain2(result.links[0]);
                         player.storage.tianwen.remove(result.links[0]);
-                        player.storage.tianwen_use = player.storage.tianwen[0];
+                        player.storage.tianwen_use = player.storage.tianwen[0][2];
                         player.storage.tianwen = result.links[0];
                       }
                     }
@@ -1266,7 +1290,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             case '属性': valid.push(get.subtype(cards[i])); break;
                           }
                         }
-                        targets[0].chooseCard(get.prompt('nanti'),'he',function(card){
+                        targets[0].chooseCard('是否交给'+get.translation(player)+'一张与'+get.translation(result.cards)+'不同'+result.control+'的牌？','he',function(card){
                             switch(result.control){
                               case '牌名长度': return !valid.contains(get.translation(card.name).length); break;
                               case '花色': return !valid.contains(get.suit(card)); break;
@@ -1288,8 +1312,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.discard(cards);
                       } else {
                         game.log(get.translation(targets[0])+'没有回答出难题。');
+                        targets[0].damage('thunder');
                         player.choosePlayerCard(targets[0],'he',
-                          (Math.min(targets[0].countCards('he'), cards.length)),'重铸没有回答出难题的角色的牌，并对其造成1点灵击伤害', true);
+                          (Math.min(targets[0].countCards('he'), cards.length)),'重铸没有回答出难题的角色的牌', true);
                       }
                       'step 3'
                       if (result.bool && result.links.length){
@@ -1299,7 +1324,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           result.links[0].discard();
                         }
                         targets[0].draw(result.links.length);
-                        targets[0].damage('thunder');
                       }
                     },
                     check:function(card){
@@ -1576,7 +1600,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   businiao2:{
                     init:function(player){
                       player.nodying=true;
-                      player.hp=0;
+                      if (player.hp <= 0) player.hp=0;
                       player.update();
                     },
                     onremove:function(player){
@@ -1605,7 +1629,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         'step 2'
                         player.loselili(player.lili);
                         if (player.hp < 1){
-                            player.hp = 1;
+                            player.recover(1-player.hp);
                             player.update();
                         }
                         if (player.countCards('h') < 3) player.draw(3 - player.countCards('h'));

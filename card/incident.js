@@ -238,6 +238,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     		},
     		phantasmagoria_win:{
+    			trigger:{global:'onWash'},
+    			direct:true,
+    			skillAnimation:true,
+    			filter:function(event,player){
+    				return !game.dead || game.dead.length == 0;
+    			},
+    			content:function(){
+    				game.over(true);
+    			},
     		},
     		immaterial_normal:{
 				enable:'phaseUse',
@@ -259,19 +268,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return true;
     			},
     			content:function(){
-    				var num = 0;
-    				for (var i in ui.discardPile){
-    					if (i.name == 'tao' || i == "tao"){
-    						num += 1;
-    					}
-    				}
-    				var decknum = 0;
-    				for(var i=0;i<lib.card.list.length;i++){
-    					if(lib.card.list[i][2]=='tao'){
-                            decknum++;
-                        }
-    				}
-    				if (decknum == num){
+    				var num=0;
+					for(var i=0;i<ui.discardPile.childNodes.length;i++){
+                        if (ui.discardPile.childNodes[i].name == 'tao') num ++;
+                    }
+    				if (num >= 8){
     				    player.$skill('萃梦胜利',null,null,true); 
     					game.over(true);
     				}
@@ -288,8 +289,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				viewAs:{name:'caifang'},
 				ai:{
-					basic:{
-						order:5
+					order:5,
+					result:{
+						target:-0.5,
+						player:0.5,
 					}
 				}
     		},	
@@ -364,7 +367,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			scarlet_normal_info:'<u>与你同阵营的角色的攻击范围+1。</u>',
 			sakura:'散樱',
 			sakura_info:'<u>胜利条件：</u>准备阶段，你的体力值和手牌数均为场上最低（没有之一）。<br/><u>异变效果：</u>一名角色进入决死状态时，你获得1点灵力。',
-			sakura_normal:'',
+			sakura_normal:'【散樱】异变效果',
 			sakura_normal_info:'<u>一名角色进入决死状态时，你获得1点灵力。</u>',
 			imperishable:'永夜',
 			imperishable_info:'<u>胜利条件：</u>明置此牌后的第7个回合开始时。<br/><u>异变效果：</u>一名角色失去牌后，若没有技能牌，摸一张技能牌。',
@@ -378,11 +381,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			phantasmagoria_normal:'【花映】异变效果',
 			phantasmagoria_normal_info:'<u>一名角色的结束阶段，其获得1点灵力。</u>',
 			immaterial:'萃梦',
-			immaterial_info:'<u>胜利条件：</u>结束阶段，弃牌堆内包括所有【葱】。<br/><u>异变效果：</u>一回合一次，你可以消耗1点灵力，视为使用一张【博丽神社例大祭】。',
+			immaterial_info:'<u>胜利条件：</u>结束阶段，弃牌堆内有8张【葱】。<br/><u>异变效果：</u>一回合一次，你可以消耗1点灵力，视为使用一张【博丽神社例大祭】。',
 			immaterial_normal:'【萃梦】异变效果',
 			immaterial_normal_info:'<u>一回合一次，你可以消耗1点灵力，视为使用一张【博丽神社例大祭】。</u>',
 			sb:'文花',
-			sb_info:'<u>胜利条件：</u>准备阶段，所有存活角色均发动过符卡。<br/><u>异变效果：</u>一回合一次，你可以将一张牌当作【突击采访】使用 。',
+			sb_info:'<u>胜利条件：</u>所有存活角色均在此牌明置期间发动过符卡技。<br/><u>异变效果：</u>一回合一次，你可以将一张牌当作【突击采访】使用 。',
 			sb_normal:'【文花】异变效果',
 			sb_normal_info:'<u>一回合一次，你可以将一张牌当作【突击采访】使用 。</u>',
 			baka:'笨蛋',

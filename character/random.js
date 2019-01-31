@@ -43,7 +43,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if (targets.length) player.useCard({name:'sha'},targets,false);
 				},
 				check:function(event,player){
-					return player.lili > 1;
+					var num = 0;
+					num += game.countPlayer(function(current){
+						return current.storage.zhongzou && get.attitude(player,current) < 0;
+					});
+					num -= game.countPlayer(function(current){
+						return current.storage.zhongzou && get.attitude(player,current) > 0;
+					});
+					return player.lili > 1 && num > 0;
+				},
+				prompt:function(){
+					var player=_status.event.player;
+					var list=game.filterPlayer(function(current){
+						return current.storage.zhongzou;
+					});
+					var str='是否发动【终奏】消耗1点灵力对'+get.translation(list)+'视为使用一张【轰！】？';
+					return str;
 				},
 			},
 			zhongzou_2:{
@@ -75,7 +90,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{},
 				content:function(){
 					trigger.target.storage.zhongzou = true;
-					console.log(trigger.target.name);
 					player.removeSkill('zhongzou_4');
 					/*
 					if (trigger.targets){
@@ -114,16 +128,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					list.push('交给当前回合角色一张牌');
 					player.chooseControl(list,function(event,player){
 						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return '当前回合角色恢复灵力';
-						return '交给当前回合角色一张牌';
+						return '摸一张牌，交给当前回合角色一张牌';
 					});
 					'step 1'
 					if (result.control == '当前回合角色恢复灵力'){
 						trigger.player.gainlili();
-					} else if (result.control == '交给当前回合角色一张牌'){
+					} else if (result.control == '摸一张牌，交给当前回合角色一张牌'){
 						player.draw();
-						player.chooseCard('交给'+get.translation(trigger.player)+'一张手牌',true).set('ai',function(card){
-							return 5-get.value(card);
-						});
+						if (trigger.player != player){
+							player.chooseCard('交给'+get.translation(trigger.player)+'一张手牌',true).set('ai',function(card){
+								return 5-get.value(card);
+							});
+						}
 					}
 					'step 2'
 					if(result.bool){
@@ -1286,7 +1302,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			tianze2:{
 				forced:true,
-				trigger:{target:'useCardToBefore'},
+				trigger:{target:'useCardToBegin'},
 				filter:function(event,player){
 					return event.card && get.suit(event.card) == 'heart' && get.subtype(event.card) == 'support' && player.lili > 1;
 				}, 

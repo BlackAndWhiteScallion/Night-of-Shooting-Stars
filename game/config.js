@@ -11,7 +11,7 @@ window.config={
 	forbidboss:[],
 	forbiddouble:[],
 	all:{
-		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka'],
+		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka','secret'],
 		sgscards:['standard','incident','skill'],
 		sgsmodes:['identity','versus','brawl','connect','library'],
 		stockmode:['old_identity','identity','versus','boss','stg','chess','connect','brawl','library'],
@@ -125,7 +125,7 @@ window.config={
 	sort:'type_sort',
 
 	cards:['standard','incident','skill'],
-	characters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka'],
+	characters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka','secret'],
 	connect_characters:[],
 	connect_cards:[],
 	plays:[],

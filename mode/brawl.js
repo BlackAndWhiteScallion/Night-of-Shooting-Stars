@@ -368,14 +368,53 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        lib.init.onfree();
 	    },
 	    brawl:{
+	    	practise:{
+	        	name:'对战练习',
+	        	mode:'old_identity',
+	        	submode:'1v1',
+	        	intro:[
+	        		'不会用角色？不熟悉牌堆？不熟悉游戏操作？',
+	        		'来和5血<s>稻草人</s>子规老师练习一下吧？',
+	        	],
+	        	init:function(){
+					lib.config.mode_config['old_identity']['player_number'] = '2';
+					lib.config.mode_config['old_identity']['free_choose'] = true;
+					lib.config.mode_config['old_identity']['continue_game'] = true;
+				},
+	        	content:{
+					//chooseCharacterFixed:true,
+					chooseCharacterAi:function(player){
+						player.init('zigui');
+					},
+	        	},
+	        	showcase:function(init){
+					var node=this;
+					var player;
+					if(init){
+						player=ui.create.player(null,true);
+						player.init('zigui');
+						player.node.avatar.show();
+						player.style.left='calc(50% - 75px)';
+						player.style.top='20px';
+						player.node.count.remove();
+						//player.node.hp.remove();
+						player.style.transition='all 0.5s';
+						node.appendChild(player);
+						node.playernode=player;
+					}
+					else{
+						player=node.playernode;
+					}
+				},
+	        },
 	        weiwoduzun:{
 	            name:'唯我独尊',
 	            mode:'old_identity',
 	            intro:[
-	                '牌堆中杀的数量增加30%',
+	                '牌堆中轰！的数量增加30%',
 	                '游戏开始时，主公获得一枚战神标记',
 	                '拥有战神标记的角色杀造成的伤害+1',
-	                '受到杀造成的伤害后战神印记将移到伤害来源的武将牌上'
+	                '受到轰！造成的伤害后战神印记将移到伤害来源的武将牌上'
 	            ],
 	            showcase:function(init){
 	                var node=this;
@@ -519,142 +558,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            }
 	        },
-	        // shenrudihou:{
-	        //     name:'深入敌后',
-	        //     mode:'versus',
-	        //     submode:'1v1',
-	        //     intro:'选将阶段选择武将和对战阶段选择上场的武将都由对手替你选择，而且你不知道对手为你选择了什么武将'
-	        // },
-	        /* 能改造成CP之争吗（笑） 
-	        tongxingzhizheng:{
-				name:'同姓之争',
-				mode:'versus',
-				submode:'2v2',
-				intro:'姓氏相同的武将组合一队',
-				showcase:function(init){
-					var node=this;
-					var getList=function(){
-						var list=[['guanyu','guanping','guansuo','guanyinping'],
-						['caocao','caopi','caozhi','caorui'],['liubei','liushan','liuchen'],
-						['xiahouyuan','xiahouba','xiahoushi'],['sunjian','sunquan','sunce'],
-						['sp_zhangjiao','zhangliang','zhangbao'],['zhugeliang','zhugeguo','zhugejin','zhugeke'],
-						['mateng','machao','madai','mayunlu']];
-						list.randomSort();
-						var list2=[];
-						for(var i=0;i<list.length;i++){
-							list2=list2.concat(list[i]);
-						}
-						node.list=list2;
-					};
-					var func=function(){
-						if(!node.list.length){
-							getList();
-						}
-						var card=ui.create.player(null,true);
-						card.init(node.list.shift());
-						card.node.marks.remove();
-						card.node.count.remove();
-						card.node.hp.remove();
-						node.nodes.push(card);
-						card.style.position='absolute';
-						var rand1=Math.round(Math.random()*100);
-						var rand2=Math.round(Math.random()*100);
-						var rand3=Math.round(Math.random()*40)-20;
-						card.style.left='calc('+rand1+'% - '+(rand1*1.5)+'px)';
-						card.style.top='calc('+rand2+'% - '+(rand2*1.8)+'px)';
-						card.style.transform='scale(1.2) rotate('+rand3+'deg)';
-						card.style.opacity=0;
-						ui.refresh(card);
-						node.appendChild(card);
-						ui.refresh(card);
-						card.style.transform='scale(0.9) rotate('+rand3+'deg)';
-						card.style.opacity=1;
-						if(node.nodes.length>4){
-							setTimeout(function(){
-								while(node.nodes.length>3){
-									node.nodes.shift().delete();
-								}
-							},500);
-						}
-					};
-					node.list=[];
-					if(init){
-						node.nodes=[];
-						for(var i=0;i<3;i++){
-							func();
-						}
-					}
-					node.showcaseinterval=setInterval(func,1000);
-				},
-				init:function(){
-					var map={};
-					var map3=[];
-					var list1=['司','夏','诸'];
-					var list2=['马','侯','葛'];
-					var exclude=['界','新','大'];
-					for(var i in lib.character){
-						if(lib.filter.characterDisabled(i)) continue;
-						var surname=lib.translate[i];
-						for(var j=0;j<surname.length;j++){
-							if(exclude.contains(surname[j])) continue;
-							if(!/[a-z]/i.test(surname[j])){
-								var index=list1.indexOf(surname[j]);
-								if(index!=-1&&surname[j+1]==list2[index]){
-									surname=surname[j]+surname[j+1];
-								}
-								else{
-									surname=surname[j];
-								}
-								break;
-							}
-						}
-						if(!map[surname]){
-							map[surname]=[];
-						}
-						map[surname].push(i);
-					}
-					for(var i in map){
-						if(map[i].length<4){
-							delete map[i];
-						}
-						else{
-							map3.push(i);
-						}
-					}
-					_status.brawl.map=map;
-					_status.brawl.map3=map3;
-				},
-				content:{
-					submode:'two',
-					chooseCharacterFixed:true,
-					chooseCharacter:function(list,player){
-						if(player.side==game.me.side){
-							if(_status.brawl.mylist){
-								return _status.brawl.mylist.randomGets(2);
-							}
-						}
-						else{
-							if(_status.brawl.enemylist){
-								return _status.brawl.enemylist.randomGets(2);
-							}
-						}
-						var surname=_status.brawl.map3.randomRemove();
-						var list=_status.brawl.map[surname];
-						if(player==game.me){
-							_status.brawl.mylist=list;
-						}
-						else{
-							_status.brawl.enemylist=list;
-						}
-						return list.randomRemove(2);
-					}
-				}
-			},
-			*/
 	        tongjiangmoshi:{
-	            name:'同将模式',
+	            name:'同⑨模式',
 	            mode:'identity',
-	            intro:'玩家选择一个武将，所有角色均使用此武将',
+	            intro:'玩家选择一个角色，所有玩家均使用此角色',
 	            showcase:function(init){
 	                if(init){
 	                    this.nodes=[];
@@ -740,62 +647,148 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            }
 	        },
-	        // baiyudujiang:{
-	        //     name:'白衣渡江',
-	        //     mode:'versus',
-	        //     submode:'2v2',
-	        //     intro:[
-	        //         '玩家在选将时可从6-8张的武将牌里选择两张武将牌，一张面向大家可见（加入游戏），另一张是隐藏面孔（暗置）',
-	        //         '选择的两张武将牌需满足以下至少两个条件：1.性别相同；2.体力上限相同；3.技能数量相同',
-	        //         '每名玩家在其回合开始或回合结束时，可以选择将自己的武将牌弃置，然后使用暗置的武将牌进行剩余的游戏'
-	        //     ],
-	        //     content:{
-	        //         submode:'two',
-	        //         chooseCharacterNum:2,
-	        //         chooseCharacterAfter:function(){
-	        //
-	        //         }
-	        //     }
-	        // }
-	        practise:{
-	        	name:'对战练习',
-	        	mode:'old_identity',
-	        	submode:'1v1',
-	        	intro:[
-	        		'不会用角色？不熟悉牌堆？不熟悉游戏操作？',
-	        		'来和5血<s>稻草人</s>子规老师练习一下吧？',
-	        	],
-	        	init:function(){
-					lib.config.mode_config['old_identity']['player_number'] = '2';
-					lib.config.mode_config['old_identity']['free_choose'] = true;
-					lib.config.mode_config['old_identity']['continue_game'] = true;
-				},
-	        	content:{
-					//chooseCharacterFixed:true,
-					chooseCharacterAi:function(player){
-						player.init('zigui');
-					},
-	        	},
-	        	showcase:function(init){
-					var node=this;
-					var player;
-					if(init){
-						player=ui.create.player(null,true);
-						player.node.avatar.style.backgroundSize='cover';
-						player.node.avatar.setBackgroundImage('image/character/zigui.jpg');
-						player.node.avatar.show();
-						player.style.left='calc(50% - 75px)';
-						player.style.top='20px';
-						player.node.count.remove();
-						player.node.hp.remove();
-						player.style.transition='all 0.5s';
-						node.appendChild(player);
-						node.playernode=player;
-					}
-					else{
-						player=node.playernode;
-					}
-				},
+	        pandora:{
+	        	name:'禁忌解放',
+	            mode:'identity',
+	            intro:[
+	            	'不知道谁把潘多拉的魔盒打开了！',
+	                '牌堆中的<b><u>禁忌牌</b></u>数量增加了<b><u>400%！</b></u>',
+	            ],
+	            showcase:function(init){
+	                var node=this;
+	                var player;
+	                if(init){
+	                    player=ui.create.player(null,true);
+	                    player.init('yuyuko');
+	                    player.node.avatar.show();
+	                    player.style.left='calc(50% - 75px)';
+	                    player.style.top='20px';
+	                    player.node.count.remove();
+	                    player.node.hp.remove();
+	                    player.node.lili.remove();
+	                    player.style.transition='all 0.5s';
+	                    node.appendChild(player);
+	                    node.playernode=player;
+	                }
+	                else{
+	                    player=node.playernode;
+	                }
+	                var num=0;
+	                var num2=0;
+	                this.showcaseinterval=setInterval(function(){
+	                    var dx,dy
+	                    if(num2%5==0){
+							for(var i=0;i<5;i++){
+								switch(i){
+			                        case 0:dx=-180;dy=0;break;
+			                        case 1:dx=-140;dy=100;break;
+			                        case 2:dx=0;dy=155;break;
+			                        case 3:dx=140;dy=100;break;
+			                        case 4:dx=180;dy=0;break;
+			                    }
+								var card=game.createCard('simen');
+			                    card.style.left='calc(50% - 52px)';
+			                    card.style.top='68px';
+			                    card.style.position='absolute';
+			                    card.style.margin=0;
+			                    card.style.zIndex=2;
+			                    card.style.opacity=0;
+			                    setTimeout((function(card, dx, dy){
+			                        return function(){
+					                    node.appendChild(card);
+					                    ui.refresh(card);
+					                    card.style.opacity=1;
+					                    card.style.transform='translate('+dx+'px,'+dy+'px)';
+									};
+			                    })(card, dx, dy),i*200);
+			                    setTimeout((function(card){
+			                    	return function(){
+			                    		card.delete();
+			                    	};
+			                    })(card),1400);
+							}
+	                    }
+	                    num2++;
+	                    if(num>=5){
+	                        num=0;
+	                    }
+	                },700);
+	            },
+	            init:function(){
+	            },
+	            content:{
+	                cardPile:function(list){
+	                    var num=0;
+	                    var cardlist = [];
+	                    for(var i=0;i<list.length;i++){
+	                        if(get.type({name:list[i][2]}) == 'jinji'){
+	                        	num++;
+	                        	cardlist.push(list[i][2]);
+	                        }
+	                    }
+	                    num=num*4;
+	                    if(num<=0) return list;
+	                    while(num--){
+	                        var rand=Math.floor(Math.random()*cardlist.length);
+	                        var name = cardlist[rand];
+	                        var suit=['heart','spade','club','diamond'].randomGet();
+	                        var number=Math.ceil(Math.random()*13);
+	                        list.push([suit,number,name]);
+	                    }
+	                    return list;
+	                },
+	                gameStart:function(){
+	                }
+	            }
+	        },
+		    shenxian:{
+	            name:'神仙打架',
+	            mode:'identity',
+	            intro:[
+	            	'高达一号凭依了幻想乡里的所有人！',
+	                '所有角色在使用一张牌后摸一张牌！',
+	                '顺便，牌堆牌数翻倍了。',
+	            ],
+	            showcase:function(init){
+	                var node=this;
+	                var player;
+	                if(init){
+	                    player=ui.create.player(null,true);
+	                    player.node.avatar.style.backgroundSize='cover';
+	                    player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_zhaoyun.jpg');
+	                    player.node.avatar.show();
+	                    player.style.left='calc(50% - 75px)';
+	                    player.style.top='20px';
+	                    player.node.count.remove();
+	                    player.node.hp.remove();
+	                    player.style.transition='all 0.5s';
+	                    node.appendChild(player);
+	                    node.playernode=player;
+	                }
+	                else{
+	                    player=node.playernode;
+	                }
+	            },
+	            init:function(){
+	                lib.skill._gaoda={
+	                	trigger:{player:'useCard'},
+	                	direct:true,
+	                	content:function(){
+	                		player.draw();
+	                	},
+	                };
+	            },
+	            content:{
+	                cardPile:function(list){
+	                    return list.concat(list);
+	                },
+	                gameStart:function(){
+	                	var players = game.filterPlayer();
+	                	for (var i = 0; i < players.length; i ++){
+	                		
+	                	}
+	                }
+	            }
 	        },
 	        /*
 	        pubg:{

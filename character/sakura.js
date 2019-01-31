@@ -127,6 +127,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.storage.baofengxue = [];
                     player.markSkill('baofengxue');
                 },
+                onremove:function(player){
+                    player.storage.baofengxue = [];
+                    player.unmarkSkill('baofengxue');
+                },
                 content:function(){
                     if (get.suit(trigger.card) && !player.storage.baofengxue.contains(get.suit(trigger.card))) player.storage.baofengxue.push(get.suit(trigger.card));
                     player.useSkill('shuangjiang');
@@ -1879,7 +1883,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     for (var i = 3; i > 0; i--){
                         if (ui.cardPile.childNodes.length == 0){
                             var card = get.cards(1);
-                            //ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
+                            ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
                         }
                         cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
                     }

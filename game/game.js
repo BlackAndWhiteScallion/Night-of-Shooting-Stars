@@ -13631,6 +13631,12 @@
                         player.doubleDraw();
                     }
                 },
+                gainMaxlili:function(){
+                    "step 0"
+                    game.log(player,'增加了'+get.cnNumber(num)+'点灵力上限');
+                    player.maxlili+=num;
+                    player.update();
+                },
                 changeHp:function(){
                     player.hp+=num;
                     if(player.hp>player.maxHp) player.hp=player.maxHp;
@@ -14195,14 +14201,16 @@
                         info[4]=[];
                     }
                     // 默认起始灵力值 （默认为2）
-                    if(!info[1] || !parseInt(info[1])){
-                        info[1]=2;
+                    if(!info[1]){
+                        info[1]=0;
                     } else{
                         info[1] = parseInt(info[1]);
                     }
                     // 默认灵力上限
                     if(!info[6]){
                         info[6]=5;
+                    } else {
+                        info[6] = parseInt(info[6]);
                     }
                     var skills=info[3];
                     this.clearSkills(true);
@@ -17144,6 +17152,21 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     next.setContent('gainMaxHp');
                     return next;
                 },
+                gainMaxlili:function(){
+                    var next=game.createEvent('gainMaxlili');
+                    next.player=this;
+                    next.num=1;
+                    for(var i=0;i<arguments.length;i++){
+                        if(typeof arguments[i]==='number'){
+                            next.num=arguments[i];
+                        }
+                        else if(typeof arguments[i]==='boolean'){
+                            next.forced=arguments[i];
+                        }
+                    }
+                    next.setContent('gainMaxlili');
+                    return next;
+                },
                 changeHp:function(num,popup){
                     var next=game.createEvent('changeHp',false);
                     next.num=num;
@@ -18041,7 +18064,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         this.classList.remove('linked');
                     }
                 },
-                				canUse:function(card,target,distance,includecard){
+                canUse:function(card,target,distance,includecard){
 					if(typeof card=='string') card={name:card};
 					var info=get.info(card);
 					if(info.multicheck&&!info.multicheck(card,this)) return false;
@@ -21432,7 +21455,7 @@ game.broadcast(function(player,str,nature,avatar){
                     delete this._targetChoice;
                     delete this._skillChoice;
                 },
-               				getParent:function(level,forced){
+               	getParent:function(level,forced){
 					var parent;
 					if(this._modparent&&game.online){
 						parent=this._modparent;
@@ -40051,6 +40074,9 @@ smoothAvatar:function(player,vice){
                             ui.create.div(node.node.lili);
                             if (infoitem[1] && parseInt(infoitem[1])){
                                 var textlili=ui.create.div('.text',get.numStr(parseInt(infoitem[1])),node.node.lili);
+                            } else if (parseInt(infoitem[1]) == 0) {
+                                if (infoitem[6] && parseInt(infoitem[6]) == 0) node.node.lili.hide();
+                                else var textlili=ui.create.div('.text','0',node.node.lili);
                             } else {
                                 var textlili=ui.create.div('.text','2',node.node.lili);
                             }
@@ -45766,6 +45792,7 @@ smoothAvatar:function(player,vice){
                     for(var i=0;i<cards.length;i++){
                         ui.cardPile.appendChild(cards[i]);
                     }
+                    _status.event.trigger('onWash');
                 }
                 if(ui.cardPile.hasChildNodes()==false){
                     game.over('平局');

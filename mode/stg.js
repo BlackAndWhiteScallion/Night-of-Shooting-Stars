@@ -131,6 +131,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				event.current=bosslist.childNodes[1];
 				event.current.classList.add('highlight');
 			}
+			_status.bosschoice = event.current;
 			ui.create.div(bosslist);
 			ui.create.cardsAsync();
 			game.finishCards();
@@ -822,7 +823,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						//if(lib.config.forbidboss.contains(i)) continue;
 						if(lib.filter.characterDisabled(i)) continue;
 						for (var j = 0; j < lib.forbidstg.length; j ++){
-							if (lib.forbidstg[j].contains(lib.storage.current)){
+							if (lib.forbidstg[j].contains(_status.bosschoice.name)){
 								if (lib.forbidstg[j].contains(i)){
 									list.push(i);
 								}
@@ -886,7 +887,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					ui.create.cheat2=function(){
 						_status.createControl=event.asboss;
-						ui.cheat2=ui.create.control('自由选将',function(){
+						ui.cheat2=ui.create.control('自由选自机',function(){
 							if(this.dialog==_status.event.dialog){
 								if(game.changeCoin){
 									game.changeCoin(50);
@@ -965,6 +966,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				init:function(){
+					lib.init.layout('newlayout');
 					_status.additionalReward=function(){
 						return 500;
 					}
@@ -1168,7 +1170,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<list.length;i++){
 						list[i]=['','',list[i]];
 					}
-					if (list != []){
+					if (list.length){
 						event.target.chooseButton(['选择本次闯关使用的装备',[list,'vcard']], true);
 					}
 					"step 2"
@@ -1540,6 +1542,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
+					game.me.storage.fuhuo ++;
+					game.log(get.translation(game.me)+'获得了一个残机！');
 					game.me.storage.reinforce = ['koakuma','patchouli'];
 					game.me.storage.stage = 'boss_chiyan5x';
 					if (game.me.name == 'reimu'){
@@ -1751,6 +1755,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
+					game.me.storage.fuhuo ++;
+					game.log(get.translation(game.me)+'获得了一个残机！');
 					game.me.storage.reinforce = ['sakuya','remilia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [ 

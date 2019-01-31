@@ -734,7 +734,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filter:function(event,player){
                     if(!event.target) return false;
                     if(event.player==player&&event.target==player) return false;
-                    if(player.storage._mubiao == 0) return false;
+                    if(!player.storage._mubiao) return false;
                     if(player==_status.currentPhase) return false;
                     return (get.type(event.card)=='trick');
                 },
@@ -940,7 +940,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 2'
                     if (result.cards && result.cards[0].type != 'delay'){
-                        if (trigger.player.canUse(result.cards[0],trigger.target)) trigger.player.useCard(result.cards[0],trigger.target);
+                        if (trigger.player.canUse(result.cards[0],trigger.target,false,true)) trigger.player.useCard(result.cards[0],trigger.target);
                     }
                 },
                 check:function(event,player){
@@ -974,7 +974,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 check:function(event,player){
                     if (event.name == 'damage') return true;
-                    return player.lili > 2;
+                    return player.getAttackRange() > 2;
                 },
             },
             mingyun2:{
@@ -988,7 +988,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     trigger.cancel();
                     trigger.player.judge();
                     "step 1"
-                     if (trigger.target && trigger.player.canUse(result.card,trigger.target)){
+                     if (trigger.target && trigger.player.canUse(result.card,trigger.target,false,true)){
                         trigger.player.useCard(result.card,trigger.target,'mingyun2');
                      }
                 }
@@ -1031,7 +1031,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     trigger.player.damage();
                 },
                 check:function(event,player){
-                    return -get.attitude(player,event.player);
+                    return get.attitude(player,event.player) < 0;
                 },
             },
             feise3:{

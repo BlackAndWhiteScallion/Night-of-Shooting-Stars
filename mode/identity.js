@@ -2157,10 +2157,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					player.chooseButton(['选择异变',[libincident,'vcard']],true).set('filterButton',function(button){
     						return true;
     					}).set('ai',function(button){
-    						var num = Math.floor(Math.random()*(libincident.length-1));
-    						return button.link[2] == libincident[num]; 
-							//}
-    					});
+    						return button.link[2] == libincident[_status.event.num]; 
+    					}).set('num',Math.floor(Math.random()*(libincident.length-1)));
     				// 异变：令一名角色抽牌	
     				} else if (player.identity=="zhong"){
     					player.chooseTarget('异变明置效果：令一名角色摸一张牌',function(card,player,target){

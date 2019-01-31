@@ -8,6 +8,7 @@ window.noname_source_list=[
     'character/sakura.js',
     'character/immaterial.js',
     'character/baka.js',
+    'character/secret.js',
     'character/sb.js',
     'character/rank.js',
     'character/d3.js',

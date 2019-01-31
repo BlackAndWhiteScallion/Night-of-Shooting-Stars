@@ -7,6 +7,7 @@ window.noname_package={
         phantasmagoria:'花映',
         sb:'文花',
         baka:'笨蛋',
+        secret:'秘封',
         random:'乱入',
         d3:'三次元乱入',
     },
@@ -20,6 +21,7 @@ window.noname_package={
         cardpile:'牌堆补充',
     },
     mode:{
+        library:'图鉴',
         old_identity:'身份',
         identity:'异变',
         versus:'对决',
@@ -28,7 +30,6 @@ window.noname_package={
         stg:'闯关',
         chess:'战棋',
         brawl:'场景',
-        library:'图鉴',
     },
     background:{
         shengshi_bg:'盛世',
