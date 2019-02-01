@@ -2076,6 +2076,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:4,
                 spell:['mengjing2'],
+                roundi:true,
                 trigger:{player:'phaseBeginStart'},
                 filter:function(event,player){
                     return player.lili > lib.skill.mengjing.cost;
@@ -2089,9 +2090,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             mengjing2:{
-                // 紫妈还没完成呢
+                // 紫妈不知道行不行……
                 forced:true,
-                roundi:true,
                 trigger:{player:'phaseBegin'},
                 content:function(){
                     player.chooseTarget([1,1],get.prompt('mengjing'),function(card,player,target){

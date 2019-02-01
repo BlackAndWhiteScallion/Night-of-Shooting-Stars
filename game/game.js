@@ -10703,7 +10703,7 @@
                         else if(Array.isArray(event.logSkill)){
                             player.logSkill.apply(player,event.logSkill);
                         }
-                    }
+                    }   
                     if(!game.online){
                         if(typeof event.delay=='boolean'){
                             player.discard(event.result.cards).set('delay',event.delay);
@@ -11650,7 +11650,6 @@
                                     }
                                     directh=false;
                                 } else {
-                                    event.dialog.add([hs,'blank']);
                                     if (event.invisible) directh = false;
                                 }
                             }
@@ -13756,6 +13755,7 @@
                         player.classList.remove('out');
                         player.node.count.innerHTML='0';
                         player.node.hp.hide();
+                        player.node.lili.hide();
                         player.node.equips.hide();
                         player.node.count.hide();
                         player.previous.next=player.next;
@@ -17316,6 +17316,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     this.node.avatar.style.transform='';
                     this.node.avatar2.style.transform='';
                     this.node.hp.show();
+                    this.node.lili.show();
                     this.node.equips.show();
                     this.node.count.show();
                     this.update();
@@ -22853,12 +22854,12 @@ game.broadcast(function(player,str,nature,avatar){
                 ai:{
                     effect:{
                         target:function(card,player,target,current){
-                            if(player.lili == 0 &&get.tag(card,'damage')){
+                            if(player.lili == 0 &&get.tag(card,'damage') && !player.countCards('j',{name:'lingyong'})){
                                 return 'zeroplayertarget';
                             }
                         },
                         player:function(card,player,target,current){
-                            if(card.source == 0 &&get.tag(card,'damage')){
+                            if(card.source == 0 &&get.tag(card,'damage') && !card.source.countCards('j', {name:'lingyong'})){
                                 return 'zeroplayertarget';
                             }
                         },
@@ -26145,6 +26146,7 @@ smoothAvatar:function(player,vice){
                 player.classList.remove('out');
                 player.node.count.innerHTML='0';
                 player.node.hp.hide();
+                player.node.lili.hide();
                 player.node.equips.hide();
                 player.node.count.hide();
                 player.previous.next=player.next;
@@ -26214,6 +26216,7 @@ smoothAvatar:function(player,vice){
                 }
                 player.classList.remove('dead');
                 player.node.hp.show();
+                player.node.lili.show();
                 player.node.equips.show();
                 player.node.count.show();
                 player.node.avatar.style.transform='';
@@ -27630,10 +27633,10 @@ smoothAvatar:function(player,vice){
                 noclick=true;
                 suit=null;
             }
-            if(!suit&&lib.card[name].cardcolor){
+            if(!suit&&lib.card[name]&&lib.card[name].cardcolor){
                 suit=lib.card[name].cardcolor;
             }
-            if(!nature&&lib.card[name].cardnature){
+            if(!nature&&lib.card[name]&&lib.card[name].cardnature){
                 nature=lib.card[name].cardnature;
             }
             if(typeof suit!='string'){
@@ -39703,16 +39706,18 @@ smoothAvatar:function(player,vice){
                     var table=ui.create.div('.bosschongzheng');
 
                     var tr,td,added=false;
+                    var list = [];
                     for(var i=0;i<game.filterPlayer().length;i++){
                         if (game.filterPlayer()[i].storage._tanpai){
                             added=true;
                             tr=ui.create.div(table);
                             td=ui.create.div(tr);
                             td.innerHTML=get.translation(game.filterPlayer()[i]);
-                            tr=ui.create.div(table);
-                            td=ui.create.div(tr);
+                            //tr=ui.create.div(table);
+                            td=ui.create.div(tr); 
                             //td.innerHTML=get.translation(game.filterPlayer()[i].storage._tanpai[0].name+'_info');
                             td.innerHTML=get.translation(game.filterPlayer()[i].storage._tanpai[0]);
+                            list.push(game.filterPlayer()[i].storage._tanpai[0]);
                         }
                     }
 
@@ -39722,6 +39727,7 @@ smoothAvatar:function(player,vice){
                     }
                     else{
                         uiintro.add(table);
+                        uiintro.add([list,'vcard']);
                     }
 
                     return uiintro;

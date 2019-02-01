@@ -1629,7 +1629,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			ai:{
 					basic:{
-						order:4,
+						order:10,
 						value:[3,1],
 						useful:1,
 					},
@@ -1777,7 +1777,24 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.loselili();
 				target.addSkill('lunadial2');
 			},
-
+			ai:{
+				basic:{
+					order:10,
+					value:[6,3],
+					useful:3,
+				},
+				result:{
+					player:function(player){
+						return -1;
+					},
+					target:function(player,target){
+						if(target.countCards('h')==0) return 0;
+						if(player.countCards('h')<=1) return 0;
+						if(player.lili<=2) return 0;
+						return get.attitude(player,target);
+					}
+				},
+			}
 		},
 		lunadial2:{
 			trigger:{global:'phaseAfter'},
@@ -1837,13 +1854,26 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.loselili();
 				player.useCard({name:'sha'},target);
 			},
+			ai:{
+				basic:{
+					order:5,
+					value:[4,2],
+					useful:1,
+				},
+				result:{
+					target:function(player,target){
+						if (player.lili <= 1) return 0;
+						return get.effect(target,{name:'sha'},player);
+					}
+				},
+			}
 		},
 		lantern_skill:{
 			audio:2,
 			trigger:{target:'useCardToBefore'},
 			forced:true,
 			filter:function(event,player){
-				return event.card.name=='sha'&& get.distance(player, event.player, 'attack') <= 1 ;
+				return event.card.name=='sha'&& get.distance(player, event.player, 'attack') <= 1 && player.countCards('h') && event.player.countCards('h');
 			},
 			content:function(){
 				"step 0"
@@ -2092,7 +2122,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if((targets||target)&&!isJudge){
 						str+='对'+get.translation(targets||target);
 					}
-					str+='将'+(state>0?'生效':'失效')+'，是否让他住口？';
+					str+='将'+(state>0?'生效':'失效')+'，是否让她住口？';
 
 					if(player.isUnderControl(true)&&!_status.auto&&!ui.tempnowuxie&&tempnowuxie){
 						var translation=get.translation(card.name);

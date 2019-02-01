@@ -386,7 +386,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               player.chooseTarget([1,1],get.prompt('richuguo'),true,function(card,player,target){
                                 return true;
                               }).ai=function(target){
-                                    return 1;
+                                    return get.attitude(player, target);
                               }
                               'step 1'
                               if (result.targets){
@@ -441,6 +441,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               'step 2'
                               if (result.bool&&result.links.length){
+                                    game.log(get.translation(player)+'将'+get.translation(trigger.player)+'的'+get.translation(result.links[0])+'置入牌堆底');
                                     trigger.player.showCards(result.links[0]);
                                     if (get.type(result.links[0]) == 'delay'){
                                       ui.skillPile.appendChild(result.links[0]);
@@ -831,7 +832,113 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     audio:2,
                     enable:'phaseUse',
                     usable:1,
-                    
+                    discard:false,
+                    filterCard:true,
+                    filter:function(event,player){
+                      return player.countCards('hej');
+                    },
+                    content:function(){
+                      'step 0'
+                      var list = [];
+                      for (var i in lib.card){
+                          if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                          if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                          if(lib.card[i].subtype == 'attack' || lib.card[i].subtype == 'disrupt'){
+                              list.add(i);
+                          }
+                      }
+                      for(var i=0;i<list.length;i++){
+                          list[i]=[get.type(list[i]),'',list[i]];
+                      }
+                      if(list.length){
+                          player.chooseButton(['视为使用一张牌',[list,'vcard']]).set('ai',function(button){
+                              var player=_status.event.player;
+                              var card={name:button.link[2]};
+                              return get.value(card);
+                          });
+                      }
+                      'step 1'
+                      if(result&&result.bool&&result.links[0]){
+                          var card = {name:result.links[0][2]};
+                          event.fakecard=card;
+                          player.chooseTarget(function(card,player,target){
+                              return player.canUse(event.fakecard,target,true);
+                          },true,'选择'+get.translation(card.name)+'的目标').set('ai',function(target){
+                              return get.effect(target,card,player,player);
+                          });
+                      } else {
+                          event.finish();
+                      }       
+                      'step 2'
+                      if(result.bool&&result.targets&&result.targets.length){
+                        for (var i = 0; i < result.targets.length; i ++){
+                          result.targets[0].addTempSkill('huanshi_2','useCardAfter');
+                        }
+                        player.storage.huanshi = [cards[0]];
+                        player.useCard(event.fakecard,result.targets);
+                      }
+                    },
+                    ai:{
+                        order:6,
+                        result:{
+                            player:function(player){
+                                return 1;
+                            }
+                        },
+                        threaten:1,
+                    }
+                  },
+                  huanshi_2:{
+                    trigger:{target:'useCardToBegin'},
+                    filter:function(event,player){
+                      return event.getParent().getParent().name == 'huanshi';
+                    },
+                    check:function(){
+                      return true;
+                    },
+                    content:function(){
+                      'step 0'
+                      player.chooseCard('he','将一张牌当作一种防御牌使用').set('ai',function(card){
+                            return 7-get.value(card);
+                        });
+                      'step 1'
+                      if (!result.cards) event.finish();
+                      event.card = result.cards[0];
+                      var list = [];
+                      for (var i in lib.card){
+                          if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                          if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                          if(lib.card[i].subtype == 'defense'){
+                              list.add(i);
+                          }
+                      }
+                      for(var i=0;i<list.length;i++){
+                          list[i]=[get.type(list[i]),'',list[i]];
+                      }
+                      if(list.length){
+                          player.chooseButton(['将'+get.translation(event.card)+'当作一张牌使用',[list,'vcard']]).set('ai',function(button){
+                              var player=_status.event.player;
+                              var card={name:button.link[2]};
+                              return get.value(card);
+                          });
+                      }
+                      'step 2'
+                      if(result.bool&&result.links){
+                        player.$throw(event.card,500);
+                        game.log(get.translation(player)+'将'+get.translation(event.card)+'当作'+get.translation(result.links[0][2])+'打出');
+                        trigger.cancel();
+                        if (trigger.player.storage.huanshi){
+                            var rcard = trigger.player.storage.huanshi[0];
+                            if (trigger.player.canUse(rcard, player)){
+                              if (result.links[2] == 'shan' && trigger.player.storage.huanshi[0][2] != 'sha' ||
+                                result.links[2] == 'wuxie' && get.type(trigger.player.storage.huanshi[0]) != 'trick')
+                              trigger.player.useCard(rcard,player);
+                            }
+                        }
+                      } else {
+                          event.finish();
+                      }
+                    },
                   },
                   zhenshi:{
                     audio:2,
@@ -847,7 +954,55 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.turnOver();
                       },
                     check:function(event,player){
-                      return player.lili > 3 && player.countCards('hej') > 3;
+                      //return player.lili > 3 && player.countCards('hej') > 3;
+                      return true;
+                    },
+                  },
+                  zhenshi_1:{
+                    trigger:{global:'useCardToBefore'},
+                    filter:function(event,player){
+                      return get.subtype(event.card) == 'attack' && get.distance(player,event.target,'attack')<=1 && event.targets.length == 1;
+                    },
+                    check:function(event,player){
+                      //return player.countCards('hej') > 2 && get.attitude(player, event.target);
+                      return true;
+                    },
+                    content:function(){
+                      'step 0'
+                      var next=player.chooseToDiscard('为使用月亮的力量而弃置一张牌吧');
+                        next.ai=function(card){
+                            return 9-get.value(card);
+                        };
+                      'step 1'
+                      player.chooseTarget([1,2],'选择要被月光晒瞎的倒霉人吧',true,function(card,player,target){
+                                return target != trigger.targets[0];
+                              }).ai=function(target){
+                                    return -get.attitude(player,target);
+                              }
+                      'step 2'
+                      if (result.targets){
+                        player.logSkill('zhenshi',result.targets);
+                        event.targets = result.targets;
+                        event.targets.push(trigger.targets[0]);
+                        var rand = [game.createCard('?','',''),game.createCard('?','','')];
+                        if (result.targets.length == 2){
+                          rand.push(game.createCard('?','',''));
+                        }
+                        trigger.player.chooseCardButton(1,true,rand,'选择'+get.translation(trigger.card)+'新的目标').set('ai',function(button){
+                            return 1;
+                        });
+                      }
+                      'step 3'
+                      if (result.links){
+                        event.targets.randomSort();
+                        trigger.targets.remove(trigger.targets[0]);
+                        trigger.target=event.targets[0];
+                        game.log(get.translation(trigger.card)+'转移给了'+get.translation(event.targets[0]));
+                        trigger.untrigger();
+                        trigger.trigger('useCardToBefore');
+                        trigger.trigger(trigger.card.name+'Before');
+                        game.delay();
+                      }
                     },
                   },
                   zhaixing:{
@@ -1648,6 +1803,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yechong_info:'符卡技（2）无视【萤光】中的“一回合一次”；结束阶段，你弃置所有角色各一张牌；然后，对所有以此法失去技能牌，且牌数不小于你的角色造成1点灵击伤害。',
                   yechong_audio1:'蠢符「夜虫风暴」~',
                   yechong_audio2:'那么，用星星把你淹死吧？',
+                  yechong1_audio1:'',
+                  yechong_audio2:'',
                   wriggle_die:'用杀虫剂是犯规啦！',
                   mystia:'米斯蒂亚',
                   shiming:'失明',
@@ -1725,6 +1882,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yuangu_audio2:'哈哈，来玩到尽兴为止吧！',
                   yuangu_info:'符卡技（2）<永续>【迷途】中的“你成为牌的目标后”视为“你攻击范围内的一名角色成为牌的目标后”；无视【迷途】中的“弃置"伏"”。',
                   tewi_die:'你这家伙真的不好玩！',
+                  reisen:'铃仙',
+                  huanshi:'幻视',
+                  huanshi_2:'幻视',
+                  huanshi_info:'一回合一次，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；一名角色成为此牌的目标后，其可将一张牌当做一种防御牌打出。若如此做，你的扣置牌无效且你亮出此牌；若此牌不为此防御牌的合法目标，则你对其使用此牌。',
+                  zhenshi:'真实之月（隐形满月）',
+                  zhenshi_1:'真实之月（隐形满月）',
+                  zhenshi_info:'符卡技（1）【永续】你攻击范围内角色成为攻击牌的唯一目标时，你可以弃置一张牌，将包括其的至多3名角色牌扣置并洗混；来源明置一张：将目标转移给明置的角色；然后将这些牌调整为原状态。',
                   kaguya:'辉夜',
                   nanti:'难题',
                   nanti_audio1:'这些难题可已经劝退了无数的人哟。',

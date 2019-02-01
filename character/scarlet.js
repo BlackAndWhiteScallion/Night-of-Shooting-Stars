@@ -131,8 +131,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     		},
             xingmai:{
                 audio:2,
-                enable:'chooseToUse',
-                group:'xingmai1',
+                enable:['chooseToUse','chooseToRespond'],
                 hiddenCard:function(player,name){
                     return name == 'shan';
                 },
@@ -188,46 +187,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 ai:{
-                    order:1,
+                    order:3,
                     result:{
                         target:0.5,
+                        player:0.5,
                     },
                     skillTagFilter:function(player){
                         return player.countCards('h',{name:'sha'})>0;
                     },
                     save:true,
-                },
-            },
-            xingmai1:{
-                audio:2,
-                trigger:{player:'chooseToRespondBegin'},
-                filter:function(event,player){
-                    if(event.responded) return false;
-                    if(!event.filterCard({name:'shan'}) && !event.filterCard({name:'sha'})) return false;
-                    return player.num('he',{name:'sha'}) > 0;
-                },
-                direct:true,
-                content:function(){
-                    "step 0"
-                    player.chooseCard(get.prompt('xingmai'),'he',function(card){
-                        return card.name == 'sha';
-                    }).set('ai',function(card){
-                        return 6-get.value(card);
-                    });
-                    "step 1"
-                    if(result.bool){
-                        trigger.untrigger();
-                        trigger.responded=true;
-                        if (trigger.filterCard({name:'shan'})) trigger.result={bool:true,card:{name:'shan'}};
-                        else if (trigger.filterCard({name:'sha'})) trigger.result = {bool:true,card:{name:'sha'}};
-                        player.lose(result.cards,ui.special);
-                        player.$throw(result.cards);
-                        player.removeSkill('xingmai');
-                        player.addSkill('xingmai2');
-                    }
-                    else{
-                        event.finish();
-                    }
                 },
             },
             xingmai2:{
@@ -271,7 +239,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    var next=player.chooseToDiscard('你可以发动"地转",把目标转移给你。');
+                    var next=player.chooseCard('你可以发动"地转",把目标转移给你。');
                     next.set('ai',function(card){
                                 var player=_status.event.player;
                                 var trigger=_status.event.getTrigger();
@@ -283,9 +251,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             });
                     next.logSkill='dizhuan';
                     "step 1"
-                    if(result.bool){
+                    if(result.cards){
                         //player.logskill(event.name, result.targets);
-                        trigger.targets.remove(result.targets[0]);
+                        trigger.targets[0].gain(result.cards);
+                        trigger.targets.remove(trigger.targets[0]);
                         //trigger.targets.push(player);
                         trigger.target=player;
                     }
@@ -293,6 +262,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.finish();
                     }
                     "step 2"
+                    game.log(get.translation(trigger.card)+'转移给了'+get.translation(player));
                     trigger.untrigger();
                     trigger.trigger('useCardToBefore');
                     trigger.trigger('shaBefore');
@@ -1048,6 +1018,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     attackFrom:function(from,to,distance){
                         return distance-3*game.countPlayer(function(current){
                             if(current.hasSkill('feise2')) return true;
+                            if (from.identityShown == false) return false;
                             if(current.identity=='unknown'||current.identity=='ye') return false;
                             if (current.identity=='zhu'&&from.identity=='zhong') return true;
                             if(current.identity!=from.identity) return false;

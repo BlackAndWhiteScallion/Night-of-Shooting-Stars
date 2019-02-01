@@ -1039,6 +1039,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			revive_boss:{
+				skillAnimation:true,
 				trigger:{player:'dieBefore'},
 				direct:true,
 				filter:function(event,player){
@@ -2498,6 +2499,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			juguang_info:'锁定技，跳过你的所有阶段，视为使用一张【轰！】；你的装备上限+1。',
 			xixue:'吸血',
 			xixue_info:'锁定技，你造成伤害后：令蕾米莉亚获得1点灵力；然后若其灵力等于上限，令其摸一张牌。',
+			revive_boss:'阶段切换！',
 			stg_needle:'封魔针',
 			stg_needle_info:'锁定技，你的手牌上限+1；你使用【轰！】指定目标后，目标的技能和装备技能无效，直到结算完毕。',
 			stg_yinyangyu:'鬼神阴阳玉',
@@ -2555,7 +2557,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			gungirs_audio1:'神枪「冈格尼尔」!',
 			gungirs_audio2:'诸神之王的神器，必中的永恒之枪……尝尝它的力量吧？',
 			gungirs_info:'符卡技（0）<极意> 符卡发动时，你创建并装备一张【冈格尼尔】；你失去装备区内的【冈格尼尔】后，创建一张【冈格尼尔】并装备之。',
-
 		},
 		get:{
 			rawAttitude:function(from,to){
