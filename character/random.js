@@ -11,6 +11,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yudachi:['female','2',4,['hongxi','solomon']],
 			megumin:['female','4',3,['honglian','sbrs_liansuo','explosion']],
 			satone:['female','2',3,['guyin','tianze']],
+			nero:['female','2',4,['muqi','AestusDomusAurea']],
 		},
 		characterIntro:{
 			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
@@ -1311,6 +1312,237 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.recover();
 				},
 			},
+			muqi:{
+				group:'muqi2',
+				enable:['chooseToUse','chooseToRespond'],
+				init:function(player){
+					player.storage.muqi = [];
+					player.node.framebg.dataset.auto='gold';
+					player.node.framebg.dataset.decoration='gold';
+				},
+				filter:function(event,player){
+                    return player.countCards('he')>1;
+                },
+                chooseButton:{
+                    dialog:function(){
+                        var list = [];
+                        for (var i in lib.card){
+                            if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                            if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if(lib.card[i].type == 'trick' || lib.card[i].type == 'basic'){
+                                list.add(i);
+                            }
+                        }
+                        for(var i=0;i<list.length;i++){
+                            list[i]=[get.type(list[i]),'',list[i]];
+                        }
+                        return ui.create.dialog([list,'vcard']);
+                    },
+                    filter:function(button,player){
+                    	return _status.event.getParent().filterCard({name:button.link[2]},player) && !player.storage.muqi.contains(button.link[2]);
+                        //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
+                    },
+                    check:function(button){
+                        var player=_status.event.player;
+                        var recover=0,lose=1,players=game.filterPlayer();
+                        for(var i=0;i<players.length;i++){
+                            if(!players[i].isOut()){
+                                if(players[i].hp<players[i].maxHp){
+                                    if(get.attitude(player,players[i])>0){
+                                        if(players[i].hp<2){
+                                            lose--;
+                                            recover+=0.5;
+                                        }
+                                        lose--;
+                                        recover++;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        if(players[i].hp<2){
+                                            lose++;
+                                            recover-=0.5;
+                                        }
+                                        lose++;
+                                        recover--;
+                                    }
+                                }
+                                else{
+                                    if(get.attitude(player,players[i])>0){
+                                        lose--;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        lose++;
+                                    }
+                                }
+                            }
+                        }
+                        return (button.link[2]=='wuzhong')?1:-1;
+                    },
+                    backup:function(links,player){
+                        return {
+                            filterCard:function(card,player){
+                                return true;
+                            },
+                            position:'he',
+                            selectCard:2,
+                            audio:2,
+                            popname:true,
+                            viewAs:{name:links[0][2]},
+                            onuse:function(result,player){
+                            	if (get.type(result.card.name) == 'trick') player.storage.muqi.push(result.card.name);
+                            },
+                        }
+                    },
+                    prompt:function(links,player){
+                        return '将两张牌当作'+get.translation(links[0][2])+'使用';
+                    },
+                },
+				hiddenCard:function(player,name){
+                    return name == 'shan' || name == 'wuxie';
+                },
+                ai:{
+                	save:true,
+                    order:4,
+                    result:{
+                        player:function(player){
+                            return 1;
+                        }
+                    },
+                    threaten:1,
+                }
+			},
+			muqi2:{
+				direct:true,
+				trigger:{global:'phaseAfter'},
+				content:function(){
+					player.storage.muqi = [];
+				}
+			},
+			AestusDomusAurea:{
+				  audio:2,
+                  cost:2,
+                  roundi:true,
+                  spell:['ADA2','ADA3'],
+                  trigger:{player:'phaseBegin'},
+                  filter:function(event,player){
+                      return player.lili > lib.skill.AestusDomusAurea.cost;
+                  },
+                  content:function(){
+                      player.loselili(lib.skill.AestusDomusAurea.cost);
+                      player.turnOver();
+                      player.draw(player.getHandcardLimit()-player.countCards('h'));
+                  },
+			},
+			ADA2:{
+				audio:2,
+				enable:'phaseUse',
+				init:function(player){
+
+				},
+				filter:function(event,player){
+                    return player.countCards('h')>0;
+                },
+                onremove:function(player){
+
+                },
+                chooseButton:{
+                    dialog:function(){
+                        var list = [];
+                        for (var i in lib.card){
+                            if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                            if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if(lib.card[i].type == 'delay'){
+                                list.add(i);
+                            }
+                        }
+                        for(var i=0;i<list.length;i++){
+                            list[i]=['delay','',list[i]];
+                        }
+                        return ui.create.dialog([list,'vcard']);
+                    },
+                    filter:function(button,player){
+                    	
+                    },
+                    check:function(button){
+                        var player=_status.event.player;
+                        var recover=0,lose=1,players=game.filterPlayer();
+                        for(var i=0;i<players.length;i++){
+                            if(!players[i].isOut()){
+                                if(players[i].hp<players[i].maxHp){
+                                    if(get.attitude(player,players[i])>0){
+                                        if(players[i].hp<2){
+                                            lose--;
+                                            recover+=0.5;
+                                        }
+                                        lose--;
+                                        recover++;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        if(players[i].hp<2){
+                                            lose++;
+                                            recover-=0.5;
+                                        }
+                                        lose++;
+                                        recover--;
+                                    }
+                                }
+                                else{
+                                    if(get.attitude(player,players[i])>0){
+                                        lose--;
+                                    }
+                                    else if(get.attitude(player,players[i])<0){
+                                        lose++;
+                                    }
+                                }
+                            }
+                        }
+                        return (button.link[2]=='wuzhong')?1:-1;
+                    },
+                    backup:function(links,player){
+                        return {
+                            filterCard:function(card,player){
+                                return true;
+                            },
+                            position:'h',
+                            selectCard:1,
+                            audio:2,
+                            popname:true,
+  							content:function(){
+  								for(var i=0;i<ui.skillPile.childNodes.length;i++){
+		                          if (ui.skillPile.childNodes[i].name == result.links[2]){
+		                            player.gain(ui.skillPile.childNodes[i]);
+		                            break;
+		                          } else if (i == ui.skillPile.childNodes.length -1){
+		                              player.say('什么，余居然没有这种技能？');                      
+		                          }
+		                        }
+  							}
+                        }
+                    },
+                    prompt:function(links,player){
+                        return '弃置一张牌，获得一张'+get.translation(links[0][2]);
+                    },
+                },
+                ai:{
+                    order:4,
+                    result:{
+                        player:function(player){
+                            return 3 - player.countCards('j');
+                        }
+                    },
+                    threaten:1,
+                }
+			},
+			ADA3:{
+				audio:2,
+				trigger:{player:'turnOverBefore'},
+				filter:function(event,player){
+					return player.lili > 2;
+				},
+				content:function(){
+					player.loselili();
+					trigger.cancel();
+				}
+			},
 		},
 		translate:{
 			kanade:'奏',
@@ -1381,6 +1613,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			tianze:'天则',
 			tianze2:'天则',
 			tianze_info:'锁定技，你受到弹幕伤害后，对伤害来源造成等量灵力伤害；你成为红桃辅助牌的目标时，须消耗1点灵力，然后回复1点体力。',
+			nero:'尼禄',
+			muqi:'幕启',
+			muqi_info:'你可以将两张牌当作一种基本牌，或本回合没有使用过的一种法术牌使用/打出。',
+			AestusDomusAurea:'招荡的黄金剧场',
+			AestusDomusAurea_info:'符卡技（2）【永续】准备阶段，你将手牌数补至手牌上限；出牌阶段，你可以弃置一张手牌，声明一种技能牌，然后获得之；符卡结束时，你可以消耗1点灵力，令符卡不结束。',
 		},
 	};
 });

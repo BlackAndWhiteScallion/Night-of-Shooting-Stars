@@ -239,7 +239,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		player.maxlili -= 4;
             		player.update();
             		player.removeSkill('rumeng');
-            	}
+            	},
+                check:function(event,player){
+                    return player.hp < 2;
+                },
             },
             dshift:{
             	audio:1,

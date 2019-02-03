@@ -981,9 +981,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			fullskin:true,
 			type:'jinji',
 			enable:true,
+			selectTarget:-1,
 			filterTarget:function(card,player,target){
 				return target==player;
-			},	
+			},
+			modTarget:true,
 			content:function(){
 				player.$skill('花之祝福',null,null,true);
 				player.addSkill('huazhi_skill');

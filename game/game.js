@@ -304,7 +304,7 @@
                     show_splash:{
                         name:'显示开始界面',
                         intro:'游戏开始前进入模式选择画面',
-                        init:'always',
+                        init:'off',
                         item:{
                             off:'关闭',
                             init:'首次启动',
@@ -9664,7 +9664,7 @@
                         event.callback();
                     }
                 },
-                				arrangeTrigger:function(){
+                arrangeTrigger:function(){
 					'step 0'
 					var list=event.list;
 					if(!list.length){
@@ -15651,7 +15651,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     if (lib.config.background_audio && lib.config.background_music!='music_off' && get.type(card) == 'zhenfa'){
                         if ((this.identity == 'zhu' && lib.config.musicchange != 'off') 
                             || (this.identity == 'nei' && lib.config.musicchange == 'luren')){
-                            lib.backgroundmusicURL = ui.backgroundMusic.src;
+                            lib.backgroundmusicURL = lib.config.background_music;
                             ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
                             lib.config.background_music = card.name;
                         }
@@ -20608,7 +20608,7 @@ throwDice:function(num){
                         top+this.offsetHeight-30,700,'recover');
                 },
                 $fullscreenpop:function(str,nature,avatar){
-game.broadcast(function(player,str,nature,avatar){
+                    game.broadcast(function(player,str,nature,avatar){
 						player.$fullscreenpop(str,nature,avatar);
 					},this,str,nature,avatar);
 					game.addVideo('fullscreenpop',this,[str,nature,avatar]);
@@ -22226,7 +22226,7 @@ game.broadcast(function(player,str,nature,avatar){
                     if(typeof filter=='function') return filter(card,player,event);
                 }
             },
-           cardRespondable:function(card,player,event){
+            cardRespondable:function(card,player,event){
 				event=event||_status.event;
 				if(event.name!='chooseToRespond') return true;
 				var source=event.getParent().player;
@@ -27680,6 +27680,7 @@ smoothAvatar:function(player,vice){
         },
         // 这里是游戏结束的设置
         over:function(result){
+            game.saveConfig('new_tutorial',true);
             if(_status.over) return;
             var i,j,k,num,table,tr,td,dialog;
             _status.over=true;
@@ -37455,6 +37456,225 @@ smoothAvatar:function(player,vice){
                         }
                     }());
                     (function(){
+                        var page=ui.create.div('');
+                        var node=ui.create.div('.menubutton.large','战绩',start.firstChild,clickMode);
+                        node.type='rec';
+                        node.link=page;
+                        page.style.paddingBottom='10px';
+                        var reset=function(){
+                            if(this.innerHTML=='重置'){
+                                this.innerHTML='确定';
+                                var that=this;
+                                setTimeout(function(){
+                                    that.innerHTML='重置';
+                                },1000);
+                            }
+                            else{
+                                this.parentNode.previousSibling.remove();
+                                this.parentNode.remove();
+                                lib.config.gameRecord[this.parentNode.link]={data:{}};
+                                game.saveConfig('gameRecord',lib.config.gameRecord);
+                            }
+                        }
+                        for(var i=0;i<lib.config.all.mode.length;i++){
+                            if(!lib.config.gameRecord[lib.config.all.mode[i]]) continue;
+                            if(lib.config.gameRecord[lib.config.all.mode[i]].str){
+                                ui.create.div('.config.indent',lib.translate[lib.config.all.mode[i]],page).style.marginBottom='-5px';
+                                var item=ui.create.div('.config.indent',lib.config.gameRecord[lib.config.all.mode[i]].str+'<span>重置</span>',page);
+                                item.style.height='auto';
+                                item.lastChild.addEventListener('click',reset);
+                                item.lastChild.classList.add('pointerdiv');
+                                item.link=lib.config.all.mode[i];
+                            }
+                        }
+                    }());
+                    (function(){
+                        if(!window.indexedDB||window.nodb) return;
+                        var page=ui.create.div('');
+                        var node=ui.create.div('.menubutton.large','录像',start.firstChild,clickMode);
+                        node.type='video';
+                        node.link=page;
+
+                        var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
+                        lib.videos=[];
+                        store.openCursor().onsuccess=function(e){
+                            var cursor=e.target.result;
+                            if(cursor){
+                                lib.videos.push(cursor.value);
+                                cursor.continue();
+                            }
+                            else{
+                                lib.videos.sort(function(a,b){
+                                    return parseInt(b.time)-parseInt(a.time);
+                                });
+                                var clickcapt=function(){
+                                    var current=this.parentNode.querySelector('.videonode.active');
+                                    if(current&&current!=this){
+                                        current.classList.remove('active');
+                                    }
+                                    if(this.classList.toggle('active')){
+                                        playButton.show();
+                                        deleteButton.show();
+                                        saveButton.show();
+                                    }
+                                    else{
+                                        playButton.hide();
+                                        deleteButton.hide();
+                                        saveButton.hide();
+                                    }
+                                };
+                                var staritem=function(){
+                                    this.parentNode.classList.toggle('starred');
+                                    var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
+                                    if(this.parentNode.classList.contains('starred')){
+                                        this.parentNode.link.starred=true;
+                                    }
+                                    else{
+                                        this.parentNode.link.starred=false;
+                                    }
+                                    store.put(this.parentNode.link);
+                                }
+                                var createNode=function(video,before){
+                                    var node=ui.create.div('.videonode.menubutton.large',clickcapt);
+                                    node.link=video;
+                                    var nodename1=ui.create.div('.menubutton.videoavatar',node);
+                                    nodename1.setBackground(video.name1,'character');
+                                    if(video.name2){
+                                        var nodename2=ui.create.div('.menubutton.videoavatar2',node);
+                                        nodename2.setBackground(video.name2,'character');
+                                    }
+                                    var date=new Date(video.time);
+                                    var str=date.getFullYear()+'.'+(date.getMonth()+2)+'.'+(date.getDay()+1)+' '+
+                                        date.getHours()+':';
+                                    var minutes=date.getMinutes();
+                                    if(minutes<10){
+                                        str+='0';
+                                    }
+                                    str+=minutes;
+                                    ui.create.div('.caption',video.name[0],node);
+                                    ui.create.div('.text',str+'<br>'+video.name[1],node);
+                                    if(video.win){
+                                        ui.create.div('.victory','胜',node);
+                                    }
+
+                                    if(before){
+                                        page.insertBefore(node,page.firstChild);
+                                    }
+                                    else{
+                                        page.appendChild(node);
+                                    }
+                                    ui.create.div('.video_star','★',node,staritem);
+                                    if(video.starred){
+                                        node.classList.add('starred');
+                                    }
+                                }
+                                for(var i=0;i<lib.videos.length;i++){
+                                    createNode(lib.videos[i]);
+                                }
+                                ui.create.videoNode=createNode;
+                                var importVideoNode=ui.create.div('.config.switcher.pointerspan',
+                                '<span class="underlinenode slim ">导入录像...</span>',function(){
+                                    this.nextSibling.classList.toggle('hidden');
+                                },page);
+                                importVideoNode.style.marginLeft='12px';
+                                importVideoNode.style.marginTop='3px';
+                                var importVideo=ui.create.div('.config.hidden',page);
+                                importVideo.style.whiteSpace='nowrap';
+                                importVideo.style.marginBottom='80px';
+                                importVideo.style.marginLeft='13px';
+                                importVideo.style.width='calc(100% - 30px)';
+                                importVideo.innerHTML='<input type="file" style="width:calc(100% - 40px)">'+
+                                '<button style="width:40px">确定</button>';
+                                importVideo.lastChild.onclick=function(){
+                                    var fileToLoad = importVideo.firstChild.files[0];
+                                    var fileReader = new FileReader();
+                                    fileReader.onload = function(fileLoadedEvent)
+                                    {
+                                        var data = fileLoadedEvent.target.result;
+                                        if(!data) return;
+                                        try{
+                                            data=JSON.parse(lib.init.decode(data));
+                                        }
+                                        catch(e){
+                                            console.log(e);
+                                            alert('导入失败');
+                                            return;
+                                        }
+                                        var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
+                                        var videos=lib.videos.slice(0);
+                                        for(var i=0;i<videos.length;i++){
+                                            if(videos[i].starred){
+                                                videos.splice(i--,1);
+                                            }
+                                        }
+                                        for(var deletei=0;deletei<5;deletei++){
+                                            if(videos.length>=parseInt(lib.config.video)&&videos.length){
+                                                var toremove=videos.pop();
+                                                lib.videos.remove(toremove);
+                                                store.delete(toremove.time);
+                                                for(var i=0;i<page.childNodes.length;i++){
+                                                    if(page.childNodes[i].link==toremove){
+                                                        page.childNodes[i].remove();
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            else{
+                                                break;
+                                            }
+                                        }
+                                        for(var i=0;i<lib.videos.length;i++){
+                                            if(lib.videos[i].time==data.time){
+                                                alert('录像已存在');
+                                                return;
+                                            }
+                                        }
+                                        lib.videos.unshift(data);
+                                        store.put(data);
+                                        createNode(data,true);
+                                    };
+                                    fileReader.readAsText(fileToLoad, "UTF-8");
+                                }
+
+                                playButton.listen(function(){
+                                    var current=this.parentNode.querySelector('.videonode.active');
+                                    if(current){
+                                        game.playVideo(current.link.time,current.link.mode);
+                                    }
+                                });
+                                deleteButton.listen(function(){
+                                    var current=this.parentNode.querySelector('.videonode.active');
+                                    if(current){
+                                        lib.videos.remove(current.link);
+                                        var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
+                                        store.delete(current.link.time);
+                                        current.remove();
+                                    }
+                                });
+                                saveButton.listen(function(){
+                                    var current=this.parentNode.querySelector('.videonode.active');
+                                    if(current){
+                                        game.export(lib.init.encode(JSON.stringify(current.link)),
+                                        '流星夜 - 录像 - '+current.link.name[0]+' - '+current.link.name[1]);
+                                    }
+                                });
+
+                                ui.updateVideoMenu=function(){
+                                    var active=start.firstChild.querySelector('.active');
+                                    if(active){
+                                        active.classList.remove('active');
+                                        active.link.remove();
+                                    }
+                                    node.classList.add('active');
+                                    rightPane.appendChild(page);
+                                    playButton.style.display='';
+                                    deleteButton.style.display='';
+                                    saveButton.style.display='';
+                                }
+                            }
+                        };
+                    }());
+                    (function(){
                         var norow2=function(){
                             var node=currentrow1;
                             if(!node) return false;
@@ -37865,225 +38085,6 @@ smoothAvatar:function(player,vice){
                             pre.innerHTML='';
                         });
                     }());
-                    (function(){
-                        var page=ui.create.div('');
-                        var node=ui.create.div('.menubutton.large','战绩',start.firstChild,clickMode);
-                        node.type='rec';
-                        node.link=page;
-                        page.style.paddingBottom='10px';
-                        var reset=function(){
-                            if(this.innerHTML=='重置'){
-                                this.innerHTML='确定';
-                                var that=this;
-                                setTimeout(function(){
-                                    that.innerHTML='重置';
-                                },1000);
-                            }
-                            else{
-                                this.parentNode.previousSibling.remove();
-                                this.parentNode.remove();
-                                lib.config.gameRecord[this.parentNode.link]={data:{}};
-                                game.saveConfig('gameRecord',lib.config.gameRecord);
-                            }
-                        }
-                        for(var i=0;i<lib.config.all.mode.length;i++){
-                            if(!lib.config.gameRecord[lib.config.all.mode[i]]) continue;
-                            if(lib.config.gameRecord[lib.config.all.mode[i]].str){
-                                ui.create.div('.config.indent',lib.translate[lib.config.all.mode[i]],page).style.marginBottom='-5px';
-                                var item=ui.create.div('.config.indent',lib.config.gameRecord[lib.config.all.mode[i]].str+'<span>重置</span>',page);
-                                item.style.height='auto';
-                                item.lastChild.addEventListener('click',reset);
-                                item.lastChild.classList.add('pointerdiv');
-                                item.link=lib.config.all.mode[i];
-                            }
-                        }
-                    }());
-                    (function(){
-                        if(!window.indexedDB||window.nodb) return;
-                        var page=ui.create.div('');
-                        var node=ui.create.div('.menubutton.large','录像',start.firstChild,clickMode);
-                        node.type='video';
-                        node.link=page;
-
-                        var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
-                        lib.videos=[];
-                        store.openCursor().onsuccess=function(e){
-                            var cursor=e.target.result;
-                            if(cursor){
-                                lib.videos.push(cursor.value);
-                                cursor.continue();
-                            }
-                            else{
-                                lib.videos.sort(function(a,b){
-                                    return parseInt(b.time)-parseInt(a.time);
-                                });
-                                var clickcapt=function(){
-                                    var current=this.parentNode.querySelector('.videonode.active');
-                                    if(current&&current!=this){
-                                        current.classList.remove('active');
-                                    }
-                                    if(this.classList.toggle('active')){
-                                        playButton.show();
-                                        deleteButton.show();
-                                        saveButton.show();
-                                    }
-                                    else{
-                                        playButton.hide();
-                                        deleteButton.hide();
-                                        saveButton.hide();
-                                    }
-                                };
-                                var staritem=function(){
-                                    this.parentNode.classList.toggle('starred');
-                                    var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
-                                    if(this.parentNode.classList.contains('starred')){
-                                        this.parentNode.link.starred=true;
-                                    }
-                                    else{
-                                        this.parentNode.link.starred=false;
-                                    }
-                                    store.put(this.parentNode.link);
-                                }
-                                var createNode=function(video,before){
-                                    var node=ui.create.div('.videonode.menubutton.large',clickcapt);
-                                    node.link=video;
-                                    var nodename1=ui.create.div('.menubutton.videoavatar',node);
-                                    nodename1.setBackground(video.name1,'character');
-                                    if(video.name2){
-                                        var nodename2=ui.create.div('.menubutton.videoavatar2',node);
-                                        nodename2.setBackground(video.name2,'character');
-                                    }
-                                    var date=new Date(video.time);
-                                    var str=date.getFullYear()+'.'+(date.getMonth()+2)+'.'+(date.getDay()+1)+' '+
-                                        date.getHours()+':';
-                                    var minutes=date.getMinutes();
-                                    if(minutes<10){
-                                        str+='0';
-                                    }
-                                    str+=minutes;
-                                    ui.create.div('.caption',video.name[0],node);
-                                    ui.create.div('.text',str+'<br>'+video.name[1],node);
-                                    if(video.win){
-                                        ui.create.div('.victory','胜',node);
-                                    }
-
-                                    if(before){
-                                        page.insertBefore(node,page.firstChild);
-                                    }
-                                    else{
-                                        page.appendChild(node);
-                                    }
-                                    ui.create.div('.video_star','★',node,staritem);
-                                    if(video.starred){
-                                        node.classList.add('starred');
-                                    }
-                                }
-                                for(var i=0;i<lib.videos.length;i++){
-                                    createNode(lib.videos[i]);
-                                }
-                                ui.create.videoNode=createNode;
-                                var importVideoNode=ui.create.div('.config.switcher.pointerspan',
-                                '<span class="underlinenode slim ">导入录像...</span>',function(){
-                                    this.nextSibling.classList.toggle('hidden');
-                                },page);
-                                importVideoNode.style.marginLeft='12px';
-                                importVideoNode.style.marginTop='3px';
-                                var importVideo=ui.create.div('.config.hidden',page);
-                                importVideo.style.whiteSpace='nowrap';
-                                importVideo.style.marginBottom='80px';
-                                importVideo.style.marginLeft='13px';
-                                importVideo.style.width='calc(100% - 30px)';
-                                importVideo.innerHTML='<input type="file" style="width:calc(100% - 40px)">'+
-                                '<button style="width:40px">确定</button>';
-                                importVideo.lastChild.onclick=function(){
-                                    var fileToLoad = importVideo.firstChild.files[0];
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent)
-                                    {
-                                        var data = fileLoadedEvent.target.result;
-                                        if(!data) return;
-                                        try{
-                                            data=JSON.parse(lib.init.decode(data));
-                                        }
-                                        catch(e){
-                                            console.log(e);
-                                            alert('导入失败');
-                                            return;
-                                        }
-                                        var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
-                                        var videos=lib.videos.slice(0);
-                                        for(var i=0;i<videos.length;i++){
-                                            if(videos[i].starred){
-                                                videos.splice(i--,1);
-                                            }
-                                        }
-                                        for(var deletei=0;deletei<5;deletei++){
-                                            if(videos.length>=parseInt(lib.config.video)&&videos.length){
-                                                var toremove=videos.pop();
-                                                lib.videos.remove(toremove);
-                                                store.delete(toremove.time);
-                                                for(var i=0;i<page.childNodes.length;i++){
-                                                    if(page.childNodes[i].link==toremove){
-                                                        page.childNodes[i].remove();
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            else{
-                                                break;
-                                            }
-                                        }
-                                        for(var i=0;i<lib.videos.length;i++){
-                                            if(lib.videos[i].time==data.time){
-                                                alert('录像已存在');
-                                                return;
-                                            }
-                                        }
-                                        lib.videos.unshift(data);
-                                        store.put(data);
-                                        createNode(data,true);
-                                    };
-                                    fileReader.readAsText(fileToLoad, "UTF-8");
-                                }
-
-                                playButton.listen(function(){
-                                    var current=this.parentNode.querySelector('.videonode.active');
-                                    if(current){
-                                        game.playVideo(current.link.time,current.link.mode);
-                                    }
-                                });
-                                deleteButton.listen(function(){
-                                    var current=this.parentNode.querySelector('.videonode.active');
-                                    if(current){
-                                        lib.videos.remove(current.link);
-                                        var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
-                                        store.delete(current.link.time);
-                                        current.remove();
-                                    }
-                                });
-                                saveButton.listen(function(){
-                                    var current=this.parentNode.querySelector('.videonode.active');
-                                    if(current){
-                                        game.export(lib.init.encode(JSON.stringify(current.link)),
-                                        '无名杀 - 录像 - '+current.link.name[0]+' - '+current.link.name[1]);
-                                    }
-                                });
-
-                                ui.updateVideoMenu=function(){
-                                    var active=start.firstChild.querySelector('.active');
-                                    if(active){
-                                        active.classList.remove('active');
-                                        active.link.remove();
-                                    }
-                                    node.classList.add('active');
-                                    rightPane.appendChild(page);
-                                    playButton.style.display='';
-                                    deleteButton.style.display='';
-                                    saveButton.style.display='';
-                                }
-                            }
-                        };
-                    }());
 
 
                     for(var i in lib.help){
@@ -38296,6 +38297,7 @@ smoothAvatar:function(player,vice){
             characterDialog2:function(filter){
                 var list=[];
                 for(var i in lib.character){
+                    console.log(i);
                     if(lib.character[i][4].contains('minskin')) continue;
                     if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
                         if(lib.config.mode=='boss') continue;
@@ -38455,7 +38457,10 @@ smoothAvatar:function(player,vice){
                     }
                 }
                 else{
+                    // 自由选将的武将在这里！
+                    // 但是我不会设置！
                     for(var i in lib.character){
+                        //console.log(i);
                         if(lib.character[i][4].contains('minskin')) continue;
                         if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
                             if(lib.config.mode=='boss') continue;

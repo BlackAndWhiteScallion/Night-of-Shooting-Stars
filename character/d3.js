@@ -17,8 +17,215 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 			skill:{
 				shijianliushi:{
-					audio:"ext:d3:true",
+					fixed:true,
+					group:['shijianliushi2'],
+					global:'shijianliushi3',
+					audio:1,
+					filter:function(event,player){
+						return !_status.connectMode;
+					},
+					content:function(){
+					}
 				},
+				// 游戏开始时，介绍游戏模式和胜利条件 
+				shijianliushi2:{
+					direct:true,
+					trigger:{global:'gameStart'},
+					global:'shijianliushi_silence',
+					filter:function(event,player){
+						return !_status.connectMode;
+					},
+					content:function(){
+						var clear=function(){
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+						};
+						var clear2=function(){
+							ui.auto.show();
+							ui.arena.classList.remove('only_dialog');
+						};
+						var step1=function(){
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">欢迎来到东方流星夜！<br>我是新手导师子规！');
+							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							ui.create.control('老师好！',step2);
+						}
+						var step2=function(){
+							clear();
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你现在所在的是'+lib.translate[get.mode()]+'模式！</div></div>');
+							if (get.mode() == 'versus'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">对决模式中，两队玩家互相对抗并暴揍。</div></div>');
+							} else if (get.mode() == 'identity'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">异变模式中，玩家们一方试图造成异变，另一方试图停止她们。</div></div>');
+							} else if (get.mode() == 'old_identity'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">身份模式是三国杀同名模式复刻。</div></div>');
+							} else if (get.mode() == 'stg'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你为什么选我闯关啊！<br>闯关模式中，玩家单人连续击坠多名角色来试图突破关卡。</div></div>');
+							} else if (get.mode() == 'boss'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">挑战模式中，三名玩家合作挑战一名BOSS角色。</div></div>');
+							} else if (get.mode() == 'chess'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">其实……我也不知道战棋模式是什么……</div></div>');
+							}
+							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							ui.create.control('这模式要怎么玩？',step3);
+						};
+						var step3=function(){
+							clear();
+							ui.create.dialog('');
+							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							if (get.mode() == 'versus'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">很简单啊，<br>只要把敌对方揍趴就行了！。</div></div>');
+							} else if (get.mode() == 'identity'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你的身份是'+lib.translate[game.me.identity+'2']+'。</div></div>');
+								if (game.me.identity == 'fan'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要找出黑幕来，然后<br><b>把她锤爆！</b></div></div>');
+								} else if (game.me.identity == 'zhu'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你要么反杀所有自机，<br>要么完成你的异变！</div></div>');
+								} else if (game.me.identity == 'zhong'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你要守住黑幕，<br>并反杀所有自机！</div></div>');
+								} else if (game.me.identity == 'nei'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要在游戏结束前<br>想办法完成异变！</div></div>');
+								}
+							} else if (get.mode() == 'old_identity'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你的身份是'+lib.translate[game.me.identity+'2']+'。</div></div>');
+								if (game.me.identity == 'fan'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要打爆黑幕！</div></div>');
+								} else if (game.me.identity == 'zhu'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要不被自机打爆！</div></div>');
+								} else if (game.me.identity == 'zhong'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要祈祷黑幕不被打爆！</div></div>');
+								} else if (game.me.identity == 'nei'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要打爆其他所有人！</div></div>');
+								}
+							} else if (get.mode() == 'stg'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">来一个打爆一个就行了！</div></div>');
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你有三次复活机会（右上角可以查看）</div></div>');
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">还有一些特殊规则也在右上角查看</div></div>');
+							} else if (get.mode() == 'boss'){
+								if (game.me.identity == 'zhu'){
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要把所有盟军角色<br>打进重整状态。</div></div>');
+								} else {
+									ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你们需要合作打爆boss。</div></div>');
+								}
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">盟军角色坠机后会重整：<br>重整完毕后满血复活<br>重整时间在右上可以查看。</div></div>');
+							} else if (get.mode() == 'chess'){
+								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">额……你自己探索吧！加油！</div></div>');
+							}
+							ui.create.control('知道了',step4);
+						};
+						var step4=function(){
+							clear();
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">有问题的话，<br>可以在你的出牌阶段问我问题！');
+							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							ui.create.control('嗯嗯',step5())
+						};
+						var step5=function(){
+							clear();
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">这局牌打完之后，<br>我会在[场景]的[对战练习]等你哟。<br><br>图鉴模式里有详细规则介绍的。<br>但是如果需要临时抱佛脚，<br>只要用自由选将选择我就行了！<br>哪一个模式都行！</div></div>');
+							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							ui.create.control('谢谢老师！',function(){
+								clear();
+								clear2();
+								game.resume();
+							})
+						};
+						game.pause();
+						step1();
+					},
+				},
+				shijianliushi3:{
+					enable:'phaseUse',
+					filter:function(event,player){
+						return !_status.connectMode && player == game.me;
+					},
+					content:function(){
+						'step 0'
+						event.list = ['牌和技能要怎么用，怎么查看？','灵力值是什么？','符卡技怎么用？','异变/异变牌是什么？','明置身份有什么用？','技能牌是什么？','体系特殊事项？','老师我喜欢你！'];
+						player.chooseControlList(event.list,'想问老师什么问题？');
+						'step 1'
+						if (result.index == 0){
+							game.me.storage.jieshuo = ['牌和技能的描述可以在<br>卡牌/角色身上右键单击<br>或悬空1秒查看<br>双击角色还可以看到<br>角色简介，能换皮肤！','牌在需要用的时候，点一下，<br>如果有目标就选目标，<br>然后点确定就行了。',
+							'技能也类似：<br>需要使用的时候是会跳选择的。','出牌阶段使用的技能，<br>会出现一个触发用按钮<br>就像这个问答的按钮！'];
+						} else if (result.index == 1){
+							game.me.storage.jieshuo = ['灵力值是流星夜的核心体系！<br> 就是每个人身上那条绿色的星星。','灵力值的作用很多：<br>你的攻击范围等于你的灵力<br>强化牌时需要消耗灵力<br>发动符卡时需要消耗灵力',
+							'加灵力的方式也不少：<br>牌堆里所有在下方有<br>“灵力：+1”的牌都是会加灵力的','如果你准备和结束阶段都没灵力<br>回合结束后，你会获得1点！<br>(这个设置可以关闭)'];
+						} else if (result.index == 2){
+							game.me.storage.jieshuo = ['符卡技！<br>在准备阶段消耗标注量的灵力，<br>然后获得描述里的技能<br>直到回合结束！','要发动符卡必须要灵力<b>大于</b>描述<br>中的点数。<br>（3）就要4点灵力才能发动。',
+							'符卡技发动还有一些注意事项：<br>符卡发动中，防止角色获得灵力。<br>角色灵力变成0时，符卡结束。','符卡技中的标签也是有效果的：<br>永续：到自己回合开始才结束<br>瞬发：可以在要用的时候再发动<br>限定：一局游戏只能发动一次<br>终语：可以在决死状态使用<br>极意：无限时间，但是一旦结束就立即坠机'];
+						} else if (result.index == 3){
+							game.me.storage.jieshuo = ['异变牌，就是代表有异变发动了！','异变牌上有<b>胜利条件</b>和<b>异变效果</b>。','胜利条件，只要达成了<br>你就游戏胜利了。<br>异变效果是，像技能一样，<br>赋予你的角色的效果。',
+							'注意，<br>异变牌上的胜利条件和效果在<br><b>异变牌暗置</b>时是不生效的。<br>比如路人身份获得后。','异变模式中，可以随时在右上角<br>查看场上有哪些明置异变牌。'];
+						} else if (result.index == 4){
+							game.me.storage.jieshuo = ['异变模式中，所有角色的身份都是暗的！<br>所以，出牌阶段，你可以明置身份牌！','每个身份牌的明置有不同效果：<br>黑幕：获得一张明置异变牌<br>异变：令一名角色摸一张牌<br>自机：令一名角色选择，弃一张或明置身份<br>路人：获得一张暗置异变牌。',
+							'没事，路人的暗置异变牌<br>可以在出牌阶段内明置的。','顺便，计算阵营时，没有明置身份的角色是没有阵营的。'];
+						} else if (result.index == 5){
+							game.me.storage.jieshuo = ['技能牌是一种特殊牌！<br>技能牌有自己的牌堆，<br>并且没有花色点数种类属性。','技能牌获得后，进入技能牌区内。<br>像装备牌一样，持有技能牌的玩家，<br>可以任意使用技能牌上的技能。',
+							'技能牌最多只能带3张<br>多了的话需要弃到3张。'];
+						} else if (result.index == 6){
+							game.me.storage.jieshuo = ['流星夜里有不少与三国杀不同，<br>但是也不足以专门划出来介绍呢……','拼点完了之后，<br>拼点双方各摸一张牌！<br>毕竟突然没牌了是坏文明？',
+							'装备区里什么东西都可以装<br>就是最多装三张。','强化：使用时，消耗灵力，<br>牌获得额外效果!','属性：牌上的新标签。<br>包括攻击，防御，支援，控场<br>并没有实际效果。','追加效果：游戏牌上的额外效果，<br>不计入牌的使用<br>也不消耗这张牌。',
+							'<b>禁忌牌：<br>牌堆里每种只有一张的，<br>效果独一无二，还带追加效果的<br>无比丧心病狂的卡牌！</b>'];
+						} else if (result.index == 7){
+							game.me.storage.jieshuo = ['QwQ？哎哎哎？','额……','那个那个……<br>如果你真的喜欢我的话!<br>就，就给我500万！<br>///w///'];
+						}
+						'step 2'
+						var clear=function(){
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+						};
+						var clear2=function(){
+							ui.auto.show();
+							ui.arena.classList.remove('only_dialog');
+						};
+						var step1=function(){
+							if (!game.me.storage.jieshuo || !game.me.storage.jieshuo[0]) game.me.storage.jieshuo = ['没事，不急，慢慢来！'],
+							//ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]);
+							console.log(game.me.storage.jieshuo);
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]+'</div></div>');
+							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							ui.dialog.open();
+							ui.create.control('继续',function(){
+								clear();
+								game.me.storage.jieshuo.remove(game.me.storage.jieshuo[0]);
+								if (game.me.storage.jieshuo.length){
+									step1();
+								} else {
+									game.resume();
+								}
+							});
+						}
+						game.pause();
+						step1();
+					}
+				},
+				shijianliushi4:{
+
+				},
+				shijianliushi5:{
+
+				},
+				/*
+				shijianliushi_silence:{
+					audio:1,
+					enable:'phaseUse',
+					filter:function(event,player){
+						return player == game.me && lib.config.new_tutorial;
+					},
+					filterTarget:function(card,player,target){
+						return target.hasSkill('shijianliushi');
+					},
+					content:function(){
+						target.removeSkill('shijianliushi');
+						game.trySkillAudio('shijianliushi',target,true,1);
+						/*
+						var count = 5;
+						for (var i in lib.skill){
+							target.addSkill(lib.skill[i]);
+							count --;
+							if (count == 0) break;
+						}
+						
+					},
+				},*/
 				xinjianfuka1:{
 					spell:["xinjianfuka2"],
 					cost:4,
@@ -322,6 +529,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				
 				shijianliushi:"时逝",
 				shijianliushi_info:"这个技能组我过几天再写吧。",
+				shijianliushi3:'老师，我有问题！',
+				shijianliushi_silence:'子规闭嘴！',
+				shijianliushi_audio1:'!@#$#*@%(%*@！',
 				xinjianfuka1:"新建符卡１",
 				xinjianfuka1_info:"符卡技（4）<font color=\"black\"><b>应该是个很厉害的大招吧</b></font>",
 				xinjianfuka2:"新建符卡１",

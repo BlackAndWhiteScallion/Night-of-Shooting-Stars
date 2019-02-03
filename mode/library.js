@@ -187,8 +187,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        lib.init.onfree();
 	    },
 	    brawl:{
+	    	new:{
+	    		name:'写在前面',
+	    		mode:'',
+	    		intro:['','','','','','','',''],
+	    		showcase:function(init){
+	    		},
+	    	},
 	    	help:{
-	    		name:'请读这里',
+	    		name:'使用须知',
 	    		mode:'',
 	    		intro:['欢迎来到东方流星夜！',
 	    				'东方流星夜是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏。',
@@ -217,14 +224,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'覆盖完毕后，记得重启流星夜app！',
 	    				'',
 	    				'<u>更新注释：</u>',
-	    				'最后的更新冲刺了！',
-	    				'',
-	    				'<u>特殊事项：</u>',
-	    				'没有名字的角色没有技能',
-	    				'皆杀异变牌没有“无视胜利条件”的效果',
 	    				'',
 	    				'<u>已知bug列表：</u>',
-	    				'强化牌时使用住口会导致强化效果不生效',
+	    				'强化牌的效果有时候保持的时间比较长',
+	    				'皆杀异变牌不会无效胜利条件',
+	    				'永琳（和紫妈）观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了',
+	    				'在图鉴里翻来翻去有时候会出现显示bug',
 	    				],
 	    		showcase:function(init){
 	    			
@@ -296,22 +301,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					dialog.style.width = "100%";
 					dialog.style.height = "100%";
 					dialog.add([list,'character'],false);
-					var buttons=ui.create.buttons(list,'character');
 					/*
+					var buttons=ui.create.buttons(list,'character');
                     for(var i=0;i<buttons.length;i++){
-                    	/*
                         buttons[i].classList.add('noclick');
-                        buttons[i].listen(banCharacter);
+                        //buttons[i].listen(banCharacter);
                         buttons[i].node.hp.style.transition='all 0s';
                         buttons[i].node.hp._innerHTML=buttons[i].node.hp.innerHTML;
-						if(mode!='mode_banned'){
-							buttons[i].updateBanned=updateBanned;
-						}
 						
-						ui.click.charactercard(buttons[i].node.name,buttons[i]);
+						//ui.click.charactercard(buttons[i].node.name,buttons[i]);
                     }
-                    dialog.add(buttons);
-					*/
+                    */
+                    //dialog.add(buttons);
 					this.appendChild(dialog);
 					dialog.noopen=true;
 	            },
@@ -395,12 +396,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	},
 	        },
 	        download:{
-	        	name:'更多资源',
+	        	name:'联系制作组',
 	        	intro:[
+	        		'你玩流星夜觉得开心吗？觉得不开心吗？觉得制作组是傻逼吗？自己也想要做吗？那么…………',
 	                '欢迎大家光临雾雨魔法店！',
+	                '官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜总会</a>',
+	                '实卡淘宝链接：<a href = "https://item.taobao.com/item.htm?spm=a2126o.11854294.0.0.19cf4831lNX5xr&id=586815026235">游家桌游店</a>',
 	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA">雾雨家的魔法店吧</a>',
 	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com">雾雨魔法店的仓库</a>',
-	                '官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜总会</a>',
 	                '无论是聊天，看漫画，反映问题，还是想提出建议，都可以到以上任意一个地方去发表意见，我们会看到并尊重你的每一个意见。',
 	            ],
 	        	showcase:function(init){
@@ -481,7 +484,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	mode:'',
 	        	intro:[
 	        	'第一，感谢ZUN和上海爱丽丝幻乐团。只希望，玩这个游戏的大家也能感受到幻想乡的魅力。',
-	        	'然后，感谢无名杀的各位开发者和维护者，提供了如此漂亮的一个平台。',
+	        	'然后，感谢无名杀的各位开发者和维护者，提供了如此靓丽的平台。',
 	        	'接着，感谢魔法店里陪着我们走到现在的大家。',
 	        	'最后，感谢你，玩这个游戏的玩家，的支持。',
 	        	'我们衷心希望，你能在这里玩的开心。',
