@@ -2006,16 +2006,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			alter:true,
 			mod:{
 				canBeDiscarded:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
 				},
 				cardDiscardable:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
 				},
 				cardGainable:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
 				},
 				canBeGained:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=player) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
 				},
 			},
 		},

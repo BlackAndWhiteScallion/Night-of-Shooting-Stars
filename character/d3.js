@@ -116,7 +116,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							clear();
 							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">有问题的话，<br>可以在你的出牌阶段问我问题！');
 							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
-							ui.create.control('嗯嗯',step5())
+							ui.create.control('嗯嗯',step5);
 						};
 						var step5=function(){
 							clear();
@@ -126,7 +126,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								clear();
 								clear2();
 								game.resume();
-							})
+							});
 						};
 						game.pause();
 						step1();
@@ -147,7 +147,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'技能也类似：<br>需要使用的时候是会跳选择的。','出牌阶段使用的技能，<br>会出现一个触发用按钮<br>就像这个问答的按钮！'];
 						} else if (result.index == 1){
 							game.me.storage.jieshuo = ['灵力值是流星夜的核心体系！<br> 就是每个人身上那条绿色的星星。','灵力值的作用很多：<br>你的攻击范围等于你的灵力<br>强化牌时需要消耗灵力<br>发动符卡时需要消耗灵力',
-							'加灵力的方式也不少：<br>牌堆里所有在下方有<br>“灵力：+1”的牌都是会加灵力的','如果你准备和结束阶段都没灵力<br>回合结束后，你会获得1点！<br>(这个设置可以关闭)'];
+							'加灵力的方式也不少：<br>牌堆里所有在下方有<br>“灵力：+1”的牌都是会加灵力的','如果你的灵力降到0的话<br>你不能造成任何伤害！','但是没关系<br>如果你准备和结束阶段都没灵力<br>回合结束后，你会获得1点！<br>(这个设置可以关闭)'];
 						} else if (result.index == 2){
 							game.me.storage.jieshuo = ['符卡技！<br>在准备阶段消耗标注量的灵力，<br>然后获得描述里的技能<br>直到回合结束！','要发动符卡必须要灵力<b>大于</b>描述<br>中的点数。<br>（3）就要4点灵力才能发动。',
 							'符卡技发动还有一些注意事项：<br>符卡发动中，防止角色获得灵力。<br>角色灵力变成0时，符卡结束。','符卡技中的标签也是有效果的：<br>永续：到自己回合开始才结束<br>瞬发：可以在要用的时候再发动<br>限定：一局游戏只能发动一次<br>终语：可以在决死状态使用<br>极意：无限时间，但是一旦结束就立即坠机'];
@@ -162,7 +162,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							'技能牌最多只能带3张<br>多了的话需要弃到3张。'];
 						} else if (result.index == 6){
 							game.me.storage.jieshuo = ['流星夜里有不少与三国杀不同，<br>但是也不足以专门划出来介绍呢……','拼点完了之后，<br>拼点双方各摸一张牌！<br>毕竟突然没牌了是坏文明？',
-							'装备区里什么东西都可以装<br>就是最多装三张。','强化：使用时，消耗灵力，<br>牌获得额外效果!','属性：牌上的新标签。<br>包括攻击，防御，支援，控场<br>并没有实际效果。','追加效果：游戏牌上的额外效果，<br>不计入牌的使用<br>也不消耗这张牌。',
+							'装备区里什么东西都可以装<br>就是最多装三张。','异变模式中，<br>击坠角色奖励是：<br>获得1点灵力，摸一张技能牌<br>无视双方身份和阵营哟。','强化：使用时，消耗灵力，<br>牌获得额外效果!','属性：牌上的新标签。<br>包括攻击，防御，支援，控场<br>并没有实际效果。','追加效果：游戏牌上的额外效果，<br>不计入牌的使用<br>也不消耗这张牌。',
 							'<b>禁忌牌：<br>牌堆里每种只有一张的，<br>效果独一无二，还带追加效果的<br>无比丧心病狂的卡牌！</b>'];
 						} else if (result.index == 7){
 							game.me.storage.jieshuo = ['QwQ？哎哎哎？','额……','那个那个……<br>如果你真的喜欢我的话!<br>就，就给我500万！<br>///w///'];

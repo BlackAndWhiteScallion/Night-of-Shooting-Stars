@@ -11651,6 +11651,7 @@
                                     directh=false;
                                 } else {
                                     if (event.invisible) directh = false;
+                                    event.dialog.add([hs,'blank']);
                                 }
                             }
                         }

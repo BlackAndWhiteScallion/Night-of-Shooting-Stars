@@ -8,8 +8,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			meribel:['female','0',3,['xijian','rumeng'],[],[],'1'],
 		},
 		characterIntro:{
-            renko:'从幻想乡外界进来的女高中生，秘封俱乐部成员之一。为了通过世界的缝隙而穿越去其他世界而行动着。<b>画师：An2a</b>',
-            meribel:'从幻想乡外界进来的女高中生，秘封俱乐部成员之一。似乎能够看见和感觉到世界的缝隙？<b>画师：An2a</b>',
+            renko:'从幻想乡外界进来的女高中生，秘封俱乐部成员之一。为了通过世界的缝隙而穿越去其他世界而行动着。<br><b>画师：An2a</b>',
+            meribel:'从幻想乡外界进来的女高中生，秘封俱乐部成员之一。似乎能够看见和感觉到世界的缝隙？<br><b>画师：An2a</b>',
 		},       
 		perfectPair:{
 		},
@@ -42,11 +42,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		for (var i = 1; i <= trigger.num; i ++){
             			if (ui.cardPile.childNodes.length == 0){
 							var card = get.cards(1);
-                            ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
+                            //ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
             			}
             			cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
             		}
-            		player.gain(cards);
+            		player.gain(cards, 'draw2');
             		player.$draw(cards,'nobroadcast');
             	},
             },
