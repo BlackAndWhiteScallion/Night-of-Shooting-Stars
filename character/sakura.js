@@ -303,7 +303,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             shuanggui3:{
                 audio:2,
-                trigger:{global:'loselili'},
+                trigger:{global:'loseliliBefore'},
                 forced:true,
                 filter:function(event,player){
                     return event.player.hasSkill('shuanggui4');
@@ -1747,7 +1747,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shiqu2:{
                 mark:true,
                 intro:'可以与蓝py',
-                trigger:{player:'loselili'},
+                trigger:{player:'loseliliBefore'},
                 filter:function(event,player){
                     var players = game.filterPlayer();
                     for (var i = 0; i < players.length; i ++){
@@ -1815,7 +1815,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             tianhugongzhu_2:{
                 audio:2,
-                trigger:{player:'loselili'},
+                trigger:{player:'loseliliBefore'},
                 forced:true,
                 filter:function(event,player){
                     return player.hp > event.num;

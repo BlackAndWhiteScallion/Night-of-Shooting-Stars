@@ -132,6 +132,7 @@ window.noname_asset_list=[
     'image/character/shigure.jpg',
     'image/character/kanade.jpg',
     'image/character/satone.jpg',
+    'image/character/nero.jpg',
     'image/mode/boss/character/boss_reimu.jpg',
     'image/mode/boss/character/boss_reimu2.jpg',
     'image/mode/boss/character/boss_nianshou.jpg',
