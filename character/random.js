@@ -1410,7 +1410,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                   },
                   check:function(player){
-                  	return player.getHandcardLimit() - player.countCards('h') > 1 || player.lili > 3;
+                  	return player.lili > 3;
                   },
 			},
 			ADA2:{

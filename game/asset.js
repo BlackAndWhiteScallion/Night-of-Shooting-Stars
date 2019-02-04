@@ -15,6 +15,7 @@ window.noname_asset_list=[
     'image/background/tianjie.jpg',
     'image/background/tiangou.jpg',
     'image/background/yuji.jpg',
+    'image/background/nero.jpg',
     'image/card/baka.png',
     'image/card/bailou.png',
     'image/card/bingyu.png',
@@ -164,6 +165,7 @@ window.noname_asset_list=[
     'audio/background/reimu.mp3',
     'audio/background/marisa.mp3',
     'audio/background/boss.mp3',
+    'audio/background/nero.mp3',
     'audio/card/female/bingyu.mp3',
     'audio/card/female/caifang.mp3',
     'audio/card/female/danmakucraze.mp3',
@@ -288,4 +290,5 @@ window.noname_skin_list={
     aya:2,
     eiki:2,
     yuuka:1,
+    komachi:2,
 };

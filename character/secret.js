@@ -47,7 +47,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             			cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
             		}
             		player.gain(cards, 'draw2');
-            		player.$draw(cards,'nobroadcast');
             	},
             },
             sihuan:{

@@ -1883,9 +1883,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     for (var i = 3; i > 0; i--){
                         if (ui.cardPile.childNodes.length == 0){
                             var card = get.cards(1);
-                            ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
+                            //ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
                         }
-                        cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
+                        cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-1]);
                     }
                     event.cards=cards; 
                     var switchToAuto=function(){
