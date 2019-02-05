@@ -2173,11 +2173,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				player.node.identity.classList.remove('guessing');
     				// 黑幕和路人拿异变牌
     				if (player.identity=="zhu" || player.identity == "nei"){
+    					var num;
+    					if (player.identity == 'zhu') num = Math.floor(Math.random()*(libincident.length-1));
+    					else num = Math.floor(Math.random()*(libincident.length));
     					player.chooseButton(['选择异变',[libincident,'vcard']],true).set('filterButton',function(button){
     						return true;
     					}).set('ai',function(button){
     						return button.link[2] == libincident[_status.event.num]; 
-    					}).set('num',Math.floor(Math.random()*(libincident.length-1)));
+    					}).set('num', num);
     				// 异变：令一名角色抽牌	
     				} else if (player.identity=="zhong"){
     					player.chooseTarget('异变明置效果：令一名角色摸一张牌',function(card,player,target){

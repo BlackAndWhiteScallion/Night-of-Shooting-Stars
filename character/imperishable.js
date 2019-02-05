@@ -299,7 +299,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       usable:1,
                       audio:2,
                       filter:function(event,player){
-                            return (get.position(event.card)=='d'&&get.itemtype(event.card)=='card'&&player.lili>0);
+                        if(event.parent.parent.name!='phaseUse') return false;
+                        return (get.position(event.card)=='d'&&get.itemtype(event.card)=='card'&&player.lili>0);
                       },
                       content:function(){
                          'step 0'
@@ -1541,7 +1542,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       cost:1,
                       group:'yongye_die',
                       spell:['yongye1','yongye2','yongye3','yongye4'],
-                      infinte:true,
+                      infinite:true,
                       trigger:{player:'phaseBegin'},
                       filter:function(event,player){
                           return player.lili > lib.skill.yongye.cost;

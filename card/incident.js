@@ -245,6 +245,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return !game.dead || game.dead.length == 0;
     			},
     			content:function(){
+    				player.$skill('花映胜利', null, null, true);
     				game.over(true);
     			},
     		},
@@ -347,10 +348,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.draw(3);
 				},
+				ai:{
+					threaten:10,
+				},
     		},
     		death_win:{
     			skillAnimation:true,
-    			trigger:{global:'die'},
+    			trigger:{global:'dieAfter'},
     			filter:function(event,player){
     				return game.filterPlayer().length == 1;
     			},
@@ -375,7 +379,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			imperishable_normal_info:'<u>一名角色失去牌后，若其没有技能牌，其摸一张技能牌。</u>',
 			imperishable_win_bg:'永',
 			imperishable_win:'【永夜】异变胜利',
-			imperishable_win_info:'异变发动后的第7个回合开始',
+			imperishable_win_info:'异变发动后的至少第7个你的回合开始时。',
 			phantasmagoria:'花映',
 			phantasmagoria_info:'<u>胜利条件：</u>牌堆洗牌时，没有角色坠机。<br/><u>异变效果：</u>一名角色的结束阶段，其获得1点灵力。',
 			phantasmagoria_normal:'【花映】异变效果',
@@ -389,13 +393,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			sb_normal:'【文花】异变效果',
 			sb_normal_info:'<u>一回合一次，你可以将一张牌当作【突击采访】使用 。</u>',
 			baka:'笨蛋',
-			baka_info:'<u>胜利条件：</u>你击坠角色后，且已击坠过其以外的角色。<br/><u>异变效果：</u>所有数字视为⑨进制。',
+			baka_info:'<u>胜利条件：</u>你击坠角色后，已击坠过其以外的角色。<br/><u>异变效果：</u>所有数字视为⑨进制。',
 			baka_normal:'【笨蛋】效果',
 			baka_normal_info:'<u>所有数字视为⑨进制。</u>',
 			death:'皆杀',
 			death_info:'<u>胜利条件：</u>所有其他角色坠机。<br/><u>异变效果：</u>所有其他角色的胜利条件无效；你的其他胜利条件无效；你击坠角色后，摸三张牌。',
 			death_normal:'【皆杀】异变效果',
-			death_normal_info:'所有其他角色的胜利条件无效；你的其他胜利条件无效；你击坠角色后，摸三张牌。',
+			death_normal_info:'【皆杀】以外的所有胜利条件无效；你击坠角色后，摸三张牌。',
 		},
 		list:[
 			//["diamond",1,'sakura'],

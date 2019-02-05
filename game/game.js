@@ -1261,11 +1261,11 @@
                         item:{
                             // wood:'木纹',
                             // music:'音乐',
-                            official:'原版',
-                            // new:'新版',
-                            // feicheng:'废城',
-                            liusha:'流沙',
-                            ol:'手杀',
+                            liusha:'春花',
+                            new:'夏树',
+                            official:'秋叶',
+                            ol:'冬雪',
+                            feicheng:'星空',
                             custom:'自定',
                             default:'默认',
                         },
@@ -27682,6 +27682,17 @@ smoothAvatar:function(player,vice){
         // 这里是游戏结束的设置
         over:function(result){
             game.saveConfig('new_tutorial',true);
+
+            // 如果有人有皆杀，游戏不结束
+            var p = game.filterPlayer();
+            for (var i = 0; i < p.length; i ++){
+                if (p[i].storage._tanpai){
+                    for (var j = 0; j < p[i].storage._tanpai.length; j ++){
+                        if (p[i].storage._tanpai[j].name == 'death' && p.length > 1) return ;
+                    }
+                }
+            }
+
             if(_status.over) return;
             var i,j,k,num,table,tr,td,dialog;
             _status.over=true;

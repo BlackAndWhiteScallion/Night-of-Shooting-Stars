@@ -1097,11 +1097,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     player.chooseControl('弃牌','扣灵力','技能无效','扣上限',function(){
-                        var player=_status.event.player;
-                        var trigger=_status.event.getTrigger();
-                        if(get.attitude(player,trigger.player)<0){
-                            return '弃牌';
-                        }
+                        var num = Math.floor(Math.random()*3);
+                        if (num == 0) return '弃牌';
+                        if (num == 1) return '扣灵力';
+                        if (num == 2) return '扣上限';
+                        return '弃牌';
                     }).set('prompt','想要和'+get.translation(trigger.player)+'怎么玩呢？');
                     'step 1'
                     if (result.bool){
@@ -1111,7 +1111,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             if (trigger.player.getCards('e')) list.push('装备区');
                             if (trigger.player.getCards('j')) list.push('技能牌区');
                             player.chooseControl(list,true,function(){
-                                return '手牌区';
+                                return list[Math.floor(Math.random()*list.length)];
                             }).set('prompt','想要撕掉'+get.translation(trigger.player)+'哪里的所有牌呢？');
                         } else if (result.control == '扣灵力'){
                             trigger.player.lili = 1;
@@ -1124,6 +1124,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         } else if (result.control == '技能无效'){
                             trigger.player.addTempSkill('fengyin');
                         }
+                        trigger.player.update();
                     }
                     'step 2'
                     if (result.bool){

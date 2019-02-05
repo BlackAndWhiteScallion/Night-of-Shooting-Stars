@@ -2653,7 +2653,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				player.chooseToUse(function(card){
 						return card.name == 'lingbi' || card.name == 'bingyu';
-					},'可以使用一张牌');
+					},'你有可以在准备阶段使用的牌，是否使用？');
 			},
 		},
 	},

@@ -1067,7 +1067,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			honglian:{
 				audio:2,
-				group:['honglian_2'],
 				trigger:{
 					player:'phaseBegin',
 				},
@@ -1079,8 +1078,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if(result.targets.length){
 						player.logSkill('honglian',result.targets);
+						player.addTempSkill('honglian_2');
 						result.targets[0].addTempSkill('honglian_3', 'phaseBegin');
 					}
+				},
+				ai:{
+					threaten:1,
 				},
 			},
 			honglian_2:{
@@ -1106,7 +1109,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				mark:true,
 			},
 			sbrs_liansuo:{
-				group:['sbrs_liansuo_2'],
 				trigger:{
 					player:'phaseBegin',
 				},
@@ -1119,7 +1121,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(result.targets){
 						player.logSkill('sbrs_liansuo', result.targets);
 						result.targets[0].addTempSkill('sbrs_liansuo_4');
+						player.addTempSkill('sbrs_liansuo_2');
 					}
+				},
+				ai:{
+					threaten:1,
 				},
 			},
 			sbrs_liansuo_2:{
@@ -1128,11 +1134,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.sbrs_liansuo=false;
 				},*/
 				forced:true,
-				popup:false,
 				filter:function(event,player){
 					if(event.player.hasSkill('sbrs_liansuo_4')){
 						if (event.getParent(2).name == 'discardPlayerCard' || event.getParent().name == 'gain' || event.getParent().name == 'gainPlayerCard'){
-							console.log(event.getParent().name);
 							return true;
 						}
 					}
@@ -1151,9 +1155,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			sbrs_liansuo_4:{
 				mark:true,
-				trigger:{target:'useCardToBefore'},
+				trigger:{target:'useCardToBegin'},
 				filter:function(event,player){
-					return event.getParent().name == 'sbrs_liansuo_2';
+					return event.getParent().getParent().name == 'sbrs_liansuo_2';
 				},
 				content:function(){
 					'step 0'
@@ -1188,6 +1192,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					player.loselili(lib.skill.explosion.cost);
 					player.turnOver();
+				},
+				ai:{
+					threaten:2,
 				},
 			},
 			explosion_2:{
@@ -1409,8 +1416,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       	player.draw(num);
                       }
                   },
-                  check:function(player){
-                  	return player.lili > 3;
+                  check:function(){
+                  	return true;
                   },
 			},
 			ADA2:{
@@ -1479,9 +1486,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             selectCard:1,
                             audio:2,
                             popname:true,
-  							content:function(){
+  							content:function(event,player){
   								for(var i=0;i<ui.skillPile.childNodes.length;i++){
-		                          if (ui.skillPile.childNodes[i].name == result.links[2]){
+		                          if (ui.skillPile.childNodes[i].name == event.getParent().getParent()._result.links[0][2]){
 		                            player.gain(ui.skillPile.childNodes[i]);
 		                            break;
 		                          } else if (i == ui.skillPile.childNodes.length -1){
@@ -1579,6 +1586,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sbrs_liansuo_info:'准备阶段，你可以指定一名角色：本回合一次，该角色因弃置或获得而失去牌后，你视为对其距离X以内的所有角色使用一张【轰！】；目标角色可以弃置一张非基本牌来抵消该【轰！】（X为你的灵力）。',
 			sbrs_liansuo_2:'莲锁',
 			sbrs_liansuo_3:'莲锁',
+			sbrs_liansuo_4:'莲锁（无效）',
 			explosion:'EXPLOSIONNNNN！',
 			explosion_info:'符卡技（4）跳过你的出牌阶段，然后对一名角色造成2点弹幕伤害，2点灵击伤害，并弃置其装备区内所有牌。',
 			explosion_2:'EXPLOSIONNNNN！',
@@ -1598,6 +1606,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			AestusDomusAurea:'招荡的黄金剧场',
 			AestusDomusAurea_info:'符卡技（2）【永续】准备阶段，你将手牌数补至手牌上限；出牌阶段，你可以弃置一张手牌，声明一种技能牌，然后获得之；符卡结束时，你可以消耗1点灵力，令符卡不结束。',
 			ADA2:'招荡的黄金剧场',
+			ADA2_backup:'招荡的黄金剧场',
 			ADA3:'招荡的黄金剧场',
 			ADA3_audio1:'Encore!',
 			ADA3_audio2:'表演还没有结束呢！',
