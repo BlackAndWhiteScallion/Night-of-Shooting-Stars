@@ -725,7 +725,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 group:['huanzang_1','huanzang_2'],
                 trigger:{target:'useCardToBegin'},
                 filter:function(event,player){
-                    if (!event.card) return false;
+                    if (!get.suit(event.card) && !get.number(event.card)) return false;
                     if(event.targets&&event.targets.length>1) return false;
                     if (event.player == player) return false;
                     return player.countCards('he',{suit:get.suit(event.card)}) || player.countCards('he', {number:get.number(event.card)});
@@ -733,10 +733,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
-                    player.chooseToDiscard(get.prompt('huanzang'), true,function(card){
+                    player.chooseToDiscard(get.prompt('huanzang'),function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }).set('ai',function(card){
-                        if(_status.event.eff>0){
+                        if(_status.event.eff<0){
                             return 7-get.value(card);
                         }
                         return 0;
@@ -842,6 +842,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filter:function(event,player){
                     if (_status.currentPhase!=player) return false;
                     for(var i=0;i<event.cards.length;i++){
+                        if (get.type(event.cards[i]) == 'equip' && event.getParent().name == 'useCard') continue;
                         if(get.position(event.cards[i])==ui.discardPile){
                             return true;
                         }

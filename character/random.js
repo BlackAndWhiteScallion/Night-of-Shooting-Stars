@@ -1213,7 +1213,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.logSkill('explosion',result.targets);
 						result.targets[0].damage(2);
 						result.targets[0].damage(2,'thunder');
-						player.discard(player.getCards('e'));
+						result.targets[0].discard(result.targets[0].getCards('e'));
 						trigger.cancel();
 					}
 				}

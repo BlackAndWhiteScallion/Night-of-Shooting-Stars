@@ -9191,6 +9191,8 @@
             equip3:'道具',
             equip4:'宝具',
             equip5:'宝物',
+            luanwu:'乱武',
+            luanwu_info:'出牌阶段，对所有其他角色使用；目标各选择一项：对与其最近的角色使用一张【轰！】，或失去1点体力。',
             zero:'零',
             one:'一',
             two:'二',
@@ -13712,7 +13714,7 @@
                         game.log(player,'坠机')
                     }
                     event.cards=player.getCards('hej');
-                    event.playerCards=player.getCards('he');
+                    event.playerCards=player.getCards('hej');
                     if(event.cards.length){
                         player.$throw(event.cards,1000);
                         game.log(player,'弃置了',event.cards,logvid);
@@ -28491,6 +28493,7 @@ smoothAvatar:function(player,vice){
             }
             return game.delay(time,time2);
         },
+        // 这里是选择牌后检测的位置。应该是只要点牌之后就会进行的。
         check:function(event){
             var i,j,range;
             if(event==undefined) event=_status.event;
@@ -28498,6 +28501,7 @@ smoothAvatar:function(player,vice){
             var ok=true,auto=true;
             var player=event.player;
 			var auto_confirm=lib.config.auto_confirm;
+            // 看呢。 如果没选完就后续全部不进行然后继续。
             if(!event.filterButton&&!event.filterCard&&!event.filterTarget&&(!event.skill||!event._backup)){
                 if(event.choosing){
                     _status.imchoosing=true;
@@ -28505,8 +28509,10 @@ smoothAvatar:function(player,vice){
                 return;
             }
 			player.node.equips.classList.remove('popequip');
+            // 这里是choosebutton
             if(event.filterButton){
                 var dialog=event.dialog;
+                // range是选择卡牌数量
                 range=get.select(event.selectButton);
                 var selectableButtons=false;
                 if(range[0]!=range[1]||range[0]>1) auto=false;
@@ -28550,7 +28556,10 @@ smoothAvatar:function(player,vice){
                     custom.add.button();
                 }
             }
+            // 这里是filtercard，对choosecard生效
+            // ……也就是说，就在这一块了吧。但是并没有看到无视判定牌的地方，所以……可能是另一个函数里的问题？
             if(event.filterCard){
+                // 如果选择了取消，取消选择卡
                 if(ok==false){
                     game.uncheck('card');
                 }
@@ -28563,6 +28572,7 @@ smoothAvatar:function(player,vice){
                         event._cardChoice=[];
                         firstCheck=true;
                     }
+                    // 如果事件是玩家的，并且是出牌阶段选择使用牌
                     if(event.isMine()&&event.name=='chooseToUse'&&event.parent.name=='phaseUse'&&!event.skill&&
                         !event._targetChoice&&!firstCheck&&window.Map&&!lib.config.compatiblemode){
                         event._targetChoice=new Map();
@@ -28581,6 +28591,7 @@ smoothAvatar:function(player,vice){
                     var selectableCards=false;
                     if(range[0]!=range[1]||range[0]>1) auto=false;
                     for(i=0;i<cards.length;i++){
+                        // nochess似乎是检测这张牌能不能选的
                         var nochess=true;
                         if(!lib.filter.cardAiIncluded(cards[i])){
                             nochess=false;
@@ -28604,6 +28615,7 @@ smoothAvatar:function(player,vice){
                                     event._cardChoice.push(cards[i]);
                                 }
                             }
+                            // 如果上限是-1的话，就是必须全选，如果就会全选
                             else if(range[1]==-1){
                                 cards[i].classList.add('selected');
                                 cards[i].updateTransform(true);
@@ -28633,6 +28645,7 @@ smoothAvatar:function(player,vice){
                             ok=false;
                         }
                     }
+                    // 如果是在手机上选装备牌，给你跳个栏。
 					if(lib.config.popequip&&get.is.phoneLayout()&&
 						typeof event.position=='string'&&event.position.indexOf('e')!=-1&&
 						player.node.equips.querySelector('.card.selectable')){
@@ -28644,6 +28657,7 @@ smoothAvatar:function(player,vice){
                     custom.add.card();
                 }
             }
+            // 然后检测目标（需要选择目标的技能）
             if(event.filterTarget){
                 if(ok==false){
                     game.uncheck('target');
@@ -28835,6 +28849,7 @@ smoothAvatar:function(player,vice){
             else if(_status.event.multitarget){
                 _status.multitarget=true;
             }
+            // 如果事件是玩家视角的（不过并没有selected啥的，所以选择应该是在上方检测。）
             if(event.isMine()){
                 if(game.chess&&game.me&&get.config('show_distance')){
                     for(var i=0;i<game.players.length;i++){
@@ -39724,17 +39739,20 @@ smoothAvatar:function(player,vice){
 
                     var tr,td,added=false;
                     var list = [];
-                    for(var i=0;i<game.filterPlayer().length;i++){
-                        if (game.filterPlayer()[i].storage._tanpai){
+                    var players = game.filterPlayer();
+                    for(var i=0;i<players.length;i++){
+                        if (players[i].storage._tanpai){
                             added=true;
                             tr=ui.create.div(table);
                             td=ui.create.div(tr);
-                            td.innerHTML=get.translation(game.filterPlayer()[i]);
+                            td.innerHTML=get.translation(players[i]);
                             //tr=ui.create.div(table);
                             td=ui.create.div(tr); 
                             //td.innerHTML=get.translation(game.filterPlayer()[i].storage._tanpai[0].name+'_info');
-                            td.innerHTML=get.translation(game.filterPlayer()[i].storage._tanpai[0]);
-                            list.push(game.filterPlayer()[i].storage._tanpai[0]);
+                            for (var j = 0; j < game.players[i].storage._tanpai.length; j ++){
+                                td.innerHTML+=get.translation(players[i].storage._tanpai[j]);
+                                list.push(players[i].storage._tanpai[j]);
+                            }
                         }
                     }
 
@@ -42795,7 +42813,8 @@ smoothAvatar:function(player,vice){
                 if(_status.clicked) return;
                 if(ui.intro) return;
                 _status.clicked=true;
-                if(this.parentNode&&(this.parentNode.classList.contains('judges')||this.parentNode.classList.contains('marks'))){
+                //if(this.parentNode&&(this.parentNode.classList.contains('judges')||this.parentNode.classList.contains('marks'))){
+                if(this.parentNode&&this.parentNode.classList.contains('marks')){
                     var rect=this.getBoundingClientRect();
                     ui.click.touchpop();
                     ui.click.intro.call(this,{

@@ -36,7 +36,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         frequent:true,
                         filter:function(event, player){
                               if (player.hasSkill('yechong1')) return true;
-                              if (player.getStat().skill.yingguang>=1) return false;
+                              //if (player.getStat().skill.yingguang>=1) return false;
                               //if (player.getStat('skill')['yingguang'] >= 1) return false;
                               //if (get.skillCount('yingguang') >= 1) return false;
                               return true;
@@ -75,6 +75,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               game.addVideo('thrownhighlight2');
                               ui.arena.classList.remove('thrownhighlight');
+                              if (!player.hasSkill('yechong1')) player.addTempSkill('fenyin');
                         },
                         ai:{
                               threaten:1.4,
@@ -568,7 +569,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                   },
                   liuxing_shun:{
-                    audio:2,
+                    audio:0,
                     trigger:{player:'phaseEnd'},
                     forced:true,
                     filter:function(event,player){
@@ -598,7 +599,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     selectCard:1,
                     viewAs:{name:'sha'},
                     filterCard:true,
-                    prompt:'将一张牌当【轰！】使用或打出',
+                    prompt:'将一张手牌当【轰！】使用或打出',
                     check:function(card){return 4-get.value(card)},
                     ai:{
                       skillTagFilter:function(player){
@@ -693,6 +694,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             return target.hasSkill('kaiyun');
                           },
                           forced:true,
+                          position:'hej',
                           ai2:function(target){
                             return get.attitude(_status.event.player,target);
                           }
@@ -970,7 +972,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       'step 0'
-                      var next=player.chooseToDiscard('为使用月亮的力量而弃置一张牌吧');
+                      var next=player.chooseToDiscard('hej','为使用月亮的力量而弃置一张牌吧');
                         next.ai=function(card){
                             return 9-get.value(card);
                         };

@@ -1043,17 +1043,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 trigger:{global:'shaBefore'},
                 filter:function(event,player){
-                    if (event.target == player) return player.countCards('he') > 1;
-                    if (player.countCards('he') < 1 || event.target.countCards('he') < 1) return false; 
+                    if (event.target == player) return player.countCards('hej') > 1;
+                    if (player.countCards('hej') < 1 || event.target.countCards('hej') < 1) return false; 
                     return player.lili >= event.target.lili;
                 },
                 content:function(){
                     'step 0'
-                    player.discardPlayerCard(trigger.target,'he',true);
+                    player.discardPlayerCard(trigger.target,'hej',true);
                     'step 1'
                     if (result.bool){
                         trigger.target.draw();
-                        player.discardPlayerCard(player,'he',true);
+                        player.discardPlayerCard(player,'hej',true);
                     }
                     'step 2'
                     if (result.bool){
@@ -1499,14 +1499,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             fanhundie:{
                 audio:1,
-                cost:0,
+                cost:1,
                 spell:['fanhundie2'],
                 trigger:{player:['phaseBegin','dying']},
                 filter:function(event,player){
-                    return player.lili-1 > player.maxHp-player.hp;
+                    return player.lili > lib.skill.fanhundie.cost;
                 },
                 content:function(){
-                    player.loselili(player.maxHp-player.hp+1);
+                    player.loselili(lib.skill.fanhundie.cost);
                     player.turnOver();
                 },
             },
@@ -1519,7 +1519,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    event.num=1+player.maxHp-player.hp;
+                    event.num=player.maxHp-player.hp;
                     "step 1"
                     player.chooseTarget(get.prompt('fanhundie'),[1,1],function(card,player,target){
                         return target.countCards('hej')>0;
@@ -1538,8 +1538,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.target.discard(result.links);
                         if (event.target.getCards('h').contains(result.links[0]) && num == 1) event.target.loseHp();
                     }
-                    if(event.num>1){
+                    if(event.num>1 && player.lili > 1){
                         event.num--;
+                        player.loselili();
                         event.goto(1);
                     }
                 },
@@ -1708,6 +1709,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return true;
                 },
                 selectCard:1,
+                position:'hej',
                 check:function(card){
                     return 5-get.useful(card);
                 },

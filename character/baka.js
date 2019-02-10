@@ -228,6 +228,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         usable:1,
                         filterCard:true,
                         selectCard:1,
+                        position:'hej',
                         discard:false,
                         prepare:'give',
                         filterTarget:function(card,player,target){

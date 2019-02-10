@@ -70,6 +70,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.delay();
 				}
 			}
+						// 这里是新手向导w
+			// 或许可以换到图鉴那儿去？ 或者过程中切到图鉴那里。
+			// 反正是要设置的。就是不是现在。
 			"step 2"
 			if(!lib.config.new_tutorial){
 				_status.new_tutorial=true;
@@ -84,23 +87,26 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.arena.classList.remove('only_dialog');
 				};
 				var step1=function(){
-					ui.create.dialog('欢迎来到无名杀，是否进入新手向导？');
-					game.saveConfig('new_tutorial',true);
-					ui.dialog.add('<div class="text center">跳过后，你可以在选项-其它中重置新手向导');
+					ui.create.dialog('欢迎来到东方流星夜！<br>这是第一次来到幻想乡吗？');
+					//game.saveConfig('new_tutorial',true);
 					ui.auto.hide();
-					ui.create.control('跳过向导',function(){
+					ui.create.control('怎么可能',function(){
 						clear();
 						clear2();
-						game.resume();
+						ui.create.dialog('欢迎回来！<br>祝你在幻想乡玩的愉快！');
+						ui.dialog.add('<div class="text center">你可以在左上角的选项-其它中重置新手向导');
+						setTimeout(function(){
+							game.resume();
+						}, 2500);
 					});
-					ui.create.control('继续',step2);
+					ui.create.control('是的',step2);
 				}
 				var step2=function(){
 					if(!lib.config.phonelayout){
 						clear();
 						ui.create.dialog('如果你在使用手机，可能会觉得按钮有点小'+
 						'，将布局改成移动可以使按钮变大');
-						ui.dialog.add('<div class="text center">你可以在选项-外观-布局中更改此设置');
+						ui.dialog.add('<div class="text center">此设置可以随时在选项-外观-布局中变更。');
 						var lcontrol=ui.create.control('使用移动布局',function(){
 							if(lib.config.phonelayout){
 								ui.control.firstChild.firstChild.innerHTML='使用移动布局';
@@ -113,7 +119,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								lib.init.layout('mobile');
 							}
 						});
-						ui.create.control('继续',step3);
+						ui.create.control('就这样吧！',step3);
 					}
 					else{
 						step3();
@@ -124,7 +130,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						clear();
 						ui.create.dialog('触屏模式中，下划可以显示菜单，上划可以切换托管，双指单击可以暂停');
 						ui.dialog.add('<div class="text center">你可以在选项-通用-中更改手势设置');
-						ui.create.control('继续',step4);
+						ui.create.control('没问题！',step4);
 					}
 					else{
 						step4();
@@ -132,21 +138,29 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				};
 				var step4=function(){
 					clear();
-					ui.window.classList.add('noclick_important');
+					//ui.window.classList.add('noclick_important');
 					ui.click.configMenu();
 					ui.control.classList.add('noclick_click_important');
 					ui.control.style.top='calc(100% - 105px)';
-					ui.create.control('在菜单中，可以进行各项设置',function(){
+					var text = ui.create.dialog('在菜单中，可以调整各种各样的设置。<br> 模式设置，体系设置，角色皮肤，禁止角色，游戏布局，应有尽有的哟！');
+					ui.create.control('按这里继续哟',function(){
+						ui.click.configMenu();
 						ui.click.menuTab('选项');
-						ui.controls[0].replace('如果你感到游戏较卡，可以开启流畅模式',function(){
-							ui.controls[0].replace('在技能一栏中，可以设置自动发动或双将禁配的技能',function(){
-								ui.click.menuTab('武将');
-								ui.controls[0].replace('在武将或卡牌一栏中，单击武将/卡牌可以将其禁用',function(){
-									ui.click.menuTab('战局');
-									ui.controls[0].replace('在战局中可以输入游戏命令，或者管理录像',function(){
-										ui.click.menuTab('帮助');
-										ui.controls[0].replace('在帮助中，可以检查更新和下载素材',function(){
-											ui.click.configMenu();
+						text = ui.create.dialog('如果你感到游戏较卡，可以开启流畅模式，或者下降游戏速度。<br> 在[特效]选项中也可以选择游戏中表现哪些特效。');
+						ui.controls[0].replace('知道了',function(){
+							ui.click.configMenu();
+							ui.click.menuTab('选项');
+							text = ui.create.dialog('在[外观]中可以设置游戏的背景图，配色主题，和布局。<br>在[显示]中可以选择游戏中显示哪些按键和信息。<br>在[音效]中可以调整音量大小和角色及卡牌的音效。');
+							ui.controls[0].replace('知道了知道了',function(){
+								ui.click.configMenu();
+								ui.click.menuTab('角色');
+								text = ui.create.dialog('在角色或卡牌一栏中，单击角色/卡牌可以将其禁用，在角色/卡牌上悬空或右键可以查看描述，双击角色可以查看角色简介，和切换角色皮肤。');
+								ui.controls[0].replace('这选项可真多',function(){
+										ui.click.configMenu();
+										ui.click.menuTab('其他');
+										text = ui.create.dialog('在[其他]中可以检查更新，下载素材，查看你的战绩，和观看游戏录像。');
+										ui.controls[0].replace('好了能玩了没',function(){
+											//ui.click.configMenu();
 											ui.window.classList.remove('noclick_important');
 											ui.control.classList.remove('noclick_click_important');
 											ui.control.style.top='';
@@ -156,25 +170,30 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								});
 							});
 						});
-					})
 				};
 				var step5=function(){
 					clear();
-					ui.create.dialog('如果还有其它问题，欢迎来到百度无名杀吧进行交流');
-					ui.create.control('完成',function(){
+					ui.create.dialog('如果还有其它问题，在图鉴模式里可以找到更多的帮助<br>顺便，游戏中的绝大部分界面都是可以往下划的哟？');
+					ui.create.control('所以能玩了没',function(){
 						clear();
 						clear2();
-						game.resume();
+						ui.create.dialog('那么就到此了！<br>祝你在幻想乡玩的愉快！');
+						ui.dialog.add('<div class="text center">你可以在左上角的选项-其它中重置新手向导');
+						setTimeout(function(){
+							game.resume();
+						}, 2500);
 					})
 				};
 				game.pause();
 				step1();
+				game.saveConfig('show_splash','always');
 			}
 			else{
 				if(!_status.connectMode){
 					game.showChangeLog();
 				}
 			}
+			// 然后新手向导结束……
 			"step 3"
 			if(typeof _status.new_tutorial=='function'){
 				_status.new_tutorial();
@@ -999,12 +1018,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 					}
+					if (!lib.config.new_tutorial){
+						list = ["reimu","marisa","sakuya","youmu"];
+					}
 					if(game.me.special_identity){
 						dialog.setCaption('选择角色（'+get.translation(game.me.special_identity)+'）');
 						game.me.node.identity.firstChild.innerHTML=get.translation(game.me.special_identity+'_bg');
 					}
 					else{
-						dialog.setCaption('选择角色');
+						dialog.setCaption('选择角色（'+get.translation(game.me.identity+'2')+'）');
 						game.me.setIdentity();
 					}
 					if(!event.chosen.length){
@@ -1161,6 +1183,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.maxHp++;
 						game.me.update();
 					}
+					event.list.randomSort();
+					if (!lib.config.new_tutorial) event.list[0] = 'zigui';
 					for(var i=0;i<game.players.length;i++){
 						if(game.players[i]!=game.zhu&&game.players[i]!=game.me){
 							event.ai(game.players[i],event.list.splice(0,get.config('choice_'+game.players[i].identity)),null,event.list)
@@ -1332,7 +1356,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					var next=game.zhu.chooseButton(true);
 					next.set('selectButton',(lib.configOL.double_character?2:1));
-					next.set('createDialog',['选择角色',[list,'character']]);
+					next.set('createDialog',['选择角色（黑幕）',[list,'character']]);
 					next.set('callback',function(player,result){
 						player.init(result.links[0],result.links[1]);
 					});
@@ -1398,9 +1422,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								}
 							}
 							var str='选择角色';
-							if(game.players[i].special_identity){
-								str+='（'+get.translation(game.players[i].special_identity)+'）';
-							}
+							//if(game.players[i].special_identity){
+								str+='（'+get.translation(game.players[i].identity+'2')+'）';
+							//}
 							list.push([game.players[i],[str,[event.list.randomRemove(num+num3),'character']],selectButton,true]);
 						}
 					}

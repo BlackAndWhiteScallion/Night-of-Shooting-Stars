@@ -60,8 +60,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	filterCard:function(){
             		return true;
             	},
-            	prompt:'弃置一张牌发动【似幻】？',
+                position:'hej',
+            	prompt:'选择一张牌发动【似幻】？',
             	discard:false,
+                lose:false,
             	content:function(){
             		'step 0'
             		var list = [];

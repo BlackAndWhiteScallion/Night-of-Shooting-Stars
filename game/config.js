@@ -85,6 +85,7 @@ window.config={
 	card_font:'xinwei',
 	show_statusbar_ios:'off',
 	show_statusbar_android:false,
+	show_log:'left',
 	show_name:true,
 	show_replay:false,
 	show_round_menu:true,
@@ -137,16 +138,16 @@ window.config={
 	customcardpile:{},
 	addedpile:{},
 
-	mode:'identity',
+	mode:'old_identity',
 	mode_config:{
 		global:{
-			player_number:7,
+			player_number:5,
 			auto_identity:'off',
 			double_character:false,
 			save_progress:true,
-			free_choose:true,
+			free_choose:false,
 			swap:true,
-			change_identity:true,
+			change_identity:false,
 			battle_number:3,
 			double_hp:'pingjun',
 		},

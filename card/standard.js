@@ -422,6 +422,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.draw();
 				target.chooseCardTarget({
 					selectCard:1,
+					position:'hej',
 					filterTarget:function(card,player,target){
 						return player != target;
 					},

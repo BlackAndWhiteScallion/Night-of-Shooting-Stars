@@ -790,16 +790,108 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            }
 	        },
-	        /*
 	        pubg:{
-	        	name:'吃鸡',
-	        	mode:'old_identity',
+	        	name:'吃鸡模式',
+	        	mode:'identity',
 	        	intro:[
-	        		'所有角色各自为营，所有其他角色坠机为胜利。',
-	        		'击坠角色摸两张牌并获得1点灵力',
+	        		'游戏开始时，所有角色获得一张【皆杀】异变牌。',
+	        		'简单来说，所有角色的胜利条件仅为击坠所有其他角色，且所有角色击坠角色后，摸3张牌，获得1点灵力，摸一张技能牌。',
+	        		'额外的，牌堆里加入了3张专属禁忌牌。',
 	        	],
+	        	init:function(){
+	        		lib.card.luanwu={
+						filterTarget:function(card,player,target){
+							return target!=player;
+						},
+						audio:true,
+						fullskin:true,
+						type:'jinji',
+						enable:true,
+						selectTarget:-1,
+						content:function(){
+							"step 0"
+							target.chooseToUse('乱武：使用一张轰！或失去一点体力',{name:'sha'},function(card,player,target){
+								if(player==target) return false;
+								if(!player.canUse('sha',target)) return false;
+								if(get.distance(player,target)<=1) return true;
+								if(game.hasPlayer(function(current){
+									return current!=player&&get.distance(player,current)<get.distance(player,target);
+								})){
+									return false;
+								}
+								return true;
+							});
+							"step 1"
+							if(result.bool==false) target.loseHp();
+						},
+						ai:{
+							order:1,
+							value:5,
+							useful:2,
+							result:{
+								player:function(player){
+									if(lib.config.mode=='identity'&&game.zhu.isZhu&&player.identity=='fan'){
+										if(game.zhu.hp==1&&game.zhu.countCards('h')<=2) return 1;
+									}
+									var num=0;
+									var players=game.filterPlayer();
+									for(var i=0;i<players.length;i++){
+										var att=get.attitude(player,players[i]);
+										if(att>0) att=1;
+										if(att<0) att=-1;
+										if(players[i]!=player&&players[i].hp<=3){
+											if(players[i].countCards('h')==0) num+=att/players[i].hp;
+											else if(players[i].countCards('h')==1) num+=att/2/players[i].hp;
+											else if(players[i].countCards('h')==2) num+=att/4/players[i].hp;
+										}
+										if(players[i].hp==1) num+=att*1.5;
+									}
+									if(player.hp==1){
+										return -num;
+									}
+									if(player.hp==2){
+										return -game.players.length/4-num;
+									}
+									return -game.players.length/3-num;
+								}
+							}
+						},
+	        		};
+				},
+				showcase:function(init){
+	                var node=this;
+					var card=game.createCard('luanwu');
+                    card.style.left='calc(50% - 52px)';
+                    card.style.top='68px';
+                    card.style.position='absolute';
+                    card.style.margin=0;
+                    card.style.zIndex=2;
+                    card.style.opacity=0;
+                    node.appendChild(card);
+                    ui.refresh(card);
+                    card.style.opacity=1;
+	            },
+	            content:{
+	            	cardPile:function(list){
+						var num=3;
+						if(num<=0) return list;
+						while(num--){
+							var suit=['heart','spade','club','diamond'].randomGet();
+							var number=Math.ceil(Math.random()*13);
+							list.push([suit,number,'luanwu']);
+						}
+						return list;
+					},
+	            	gameStart:function(){
+	                	var players = game.players;
+	                	for (var i = 0; i < players.length; i ++){
+	                		players[i].identityShown = true;
+	                		//players[i].setIdentity(players[i].identity);
+	                		players[i].addIncident(game.createCard('death'));
+	                	}
+	                }
+	            },
 	        },
-	        */
 	        scene:{
 	            name:'创建场景',
 	            content:{

@@ -653,6 +653,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						*/
 					}
+					/*
 					else if(player.identity=='zhong'&&Math.random()<0.5){
 						var choice=0;
 						for(var i=0;i<list.length;i++){
@@ -667,6 +668,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							player.init(list[choice]);
 						}
 					}
+					*/
 					else{
 						if(get.config('double_character')){
 							player.init(list[0],list[1]);
