@@ -4766,7 +4766,7 @@
                     },
                     auto_mark_identity:{
                         name:'自动标记身份',
-                        init:true,
+                        init:false,
                         intro:'根据角色的出牌行为自动标记可能的身份',
                     },
                     ban_weak:{
@@ -5152,14 +5152,14 @@
                     },
                     versus_mode:{
                         name:'游戏模式',
-                        init:'three',
+                        init:'two',
                         item:{
-                            standard:'自由',
-                            three:'统率',
-                            jiange:'剑阁',
-                            siguo:'四国',
-                            // one:'<span style="display:inline-block;width:100%;text-align:center">1v1</span>',
+                            standard:'自由设定',
+                            //jiange:'剑阁',
+                            //siguo:'四国',
+                            //one:'<span style="display:inline-block;width:100%;text-align:center">1v1</span>',
                             two:'<span style="display:inline-block;width:100%;text-align:center">2v2</span>',
+                            three:'3v3统率',
                             four:'<span style="display:inline-block;width:100%;text-align:center">4v4</span>'
                         },
                         restart:true,
@@ -27683,8 +27683,7 @@ smoothAvatar:function(player,vice){
         },
         // 这里是游戏结束的设置
         over:function(result){
-            game.saveConfig('new_tutorial',true);
-
+            "step 0"
             // 如果有人有皆杀，游戏不结束
             var p = game.filterPlayer();
             for (var i = 0; i < p.length; i ++){
@@ -27694,306 +27693,287 @@ smoothAvatar:function(player,vice){
                     }
                 }
             }
-
             if(_status.over) return;
-            var i,j,k,num,table,tr,td,dialog;
-            _status.over=true;
-            ui.control.show();
-            ui.clear();
-            game.stopCountChoose();
-			if(ui.time3){
-				clearInterval(ui.time3.interval);
-			}
-            if (lib.backgroundmusicURL) lib.config.background_music = lib.backgroundmusicURL;
-            if(game.layout=='long2'&&!game.chess){
-                ui.arena.classList.add('choose-character');
-                ui.me.hide();
-                ui.mebg.hide()
-                ui.autonode.hide();
-                if(lib.config.radius_size!='off'){
-                    ui.historybar.style.borderRadius='0 0 0 4px';
+            "step 1"
+            if (!lib.config.new_tutorial){
+                lib.init.onfree();
+                game.delay();
+                game.saveConfig('new_tutorial',true);
+                var clear=function(){
+                    ui.dialog.close();
+                    while(ui.controls.length) ui.controls[0].close();
+                };
+                var clear2=function(){
+                    ui.auto.show();
+                    ui.arena.classList.remove('only_dialog');
+                };
+                var step1=function(){
+                    ui.auto.hide();
+                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">恭喜你打完你的第一局游戏！<br>感觉怎么样？');
+                    ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+                    ui.create.control('还挺不错的',step2);
                 }
-            }
-            if(game.online){
-                var dialog=ui.create.dialog();
-                dialog.content.innerHTML=result;
-                dialog.forcebutton=true;
-                var result2=arguments[1];
-                if(result2==true){
-                    dialog.content.firstChild.innerHTML='战斗胜利';
+                var step2=function(){
+                    clear();
+                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">流星夜还有很多好玩的模式！<br>全新的异变模式，<br>3人组队打BOSS的挑战模式，<br>1人连续无双的闯关模式，<br>2v2 3v3 和4v4的对决模式，<br>还有好几个小场景。');
+                    ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+                    ui.create.control('东西可真多',step3);
                 }
-                else if(result2==false){
-                    dialog.content.firstChild.innerHTML='战斗失败';
+                var step3=function(){
+                    clear();
+                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">不过不用急，先慢慢来。<br>感觉不熟的话，多玩几把身份局<br>也没什么大不了的。<br>游戏人数可以在左上角设置哟。');
+                    ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+                    ui.create.control('好的老师！',step4);
                 }
-                ui.update();
-                dialog.add(ui.create.div('.placeholder'));
-                for(var i=0;i<game.players.length;i++){
-                    var hs=game.players[i].getCards('h');
-                    if(hs.length){
-                        dialog.add('<div class="text center">'+get.translation(game.players[i])+'</div>');
-                        dialog.addSmall(hs);
+                var step4=function(){
+                    clear();
+                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">如果还不太懂，或者想练习角色，<br>欢迎来【场景】→【对战练习】！<br>如果哪个模式不熟的话，<br>可以在那模式用自由选将召唤我！');
+                    ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+                    ui.create.control('谢谢，再见！',step5);
+                }
+                var step5=function(){
+                    clear();
+                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">祝你在幻想乡玩的愉快！');
+                    ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+                    setTimeout(function(){
+                        clear();
+                        clear2();
+                        game.resume();
+                        game.over(result);
+                    },2000);
+                };
+                game.pause();
+                step1();
+            } else {
+                var i,j,k,num,table,tr,td,dialog;
+                _status.over=true;
+                ui.control.show();
+                ui.clear();
+                game.stopCountChoose();
+    			if(ui.time3){
+    				clearInterval(ui.time3.interval);
+    			}
+                if (lib.backgroundmusicURL) lib.config.background_music = lib.backgroundmusicURL;
+                if(game.layout=='long2'&&!game.chess){
+                    ui.arena.classList.add('choose-character');
+                    ui.me.hide();
+                    ui.mebg.hide()
+                    ui.autonode.hide();
+                    if(lib.config.radius_size!='off'){
+                        ui.historybar.style.borderRadius='0 0 0 4px';
                     }
                 }
-                dialog.add(ui.create.div('.placeholder.slim'));
+                if(game.online){
+                    var dialog=ui.create.dialog();
+                    dialog.content.innerHTML=result;
+                    dialog.forcebutton=true;
+                    var result2=arguments[1];
+                    if(result2==true){
+                        dialog.content.firstChild.innerHTML='战斗胜利';
+                    }
+                    else if(result2==false){
+                        dialog.content.firstChild.innerHTML='战斗失败';
+                    }
+                    ui.update();
+                    dialog.add(ui.create.div('.placeholder'));
+                    for(var i=0;i<game.players.length;i++){
+                        var hs=game.players[i].getCards('h');
+                        if(hs.length){
+                            dialog.add('<div class="text center">'+get.translation(game.players[i])+'</div>');
+                            dialog.addSmall(hs);
+                        }
+                    }
+                    dialog.add(ui.create.div('.placeholder.slim'));
+                    if(lib.config.background_audio){
+                        if(result2===true){
+                            game.playAudio('effect','win');
+                        }
+                        else if(result2===false){
+                            game.playAudio('effect','lose');
+                        }
+                        else{
+                            game.playAudio('effect','tie');
+                        }
+                    }
+                    if(!ui.exit){
+                       ui.create.exit();
+                    }
+                    if(ui.giveup){
+                        ui.giveup.remove();
+                        delete ui.giveup;
+                    }
+                    if(game.servermode){
+                        ui.exit.firstChild.innerHTML='返回房间';
+                        setTimeout(function(){
+                            ui.exit.firstChild.innerHTML='退出房间';
+                            _status.roomtimeout=true;
+                            lib.config.reconnect_info[2]=null;
+                            game.saveConfig('reconnect_info',lib.config.reconnect_info);
+                        },10000);
+                    }
+                    if(ui.tempnowuxie){
+                        ui.tempnowuxie.close();
+                        delete ui.tempnowuxie;
+                    }
+                    if(ui.auto) ui.auto.hide();
+                    if(ui.wuxie) ui.wuxie.hide();
+                    if(game.getIdentityList){
+                        for(var i=0;i<game.players.length;i++){
+                            game.players[i].setIdentity();
+                        }
+                    }
+                    return;
+                }
                 if(lib.config.background_audio){
-                    if(result2===true){
+                    if(result===true){
                         game.playAudio('effect','win');
                     }
-                    else if(result2===false){
+                    else if(result===false){
                         game.playAudio('effect','lose');
                     }
                     else{
                         game.playAudio('effect','tie');
                     }
                 }
-                if(!ui.exit){
-                   ui.create.exit();
+                var resultbool=result;
+                if(typeof resultbool!=='boolean'){
+                    resultbool=null;
                 }
-                if(ui.giveup){
-                    ui.giveup.remove();
-                    delete ui.giveup;
+                if(result===true) result='战斗胜利';
+                if(result===false) result='战斗失败';
+                if(result==undefined) result='战斗结束';
+                dialog=ui.create.dialog(result);
+                dialog.forcebutton=true;
+                if(game.addOverDialog){
+                    game.addOverDialog(dialog,result);
                 }
-                if(game.servermode){
-                    ui.exit.firstChild.innerHTML='返回房间';
-                    setTimeout(function(){
-                        ui.exit.firstChild.innerHTML='退出房间';
-                        _status.roomtimeout=true;
-                        lib.config.reconnect_info[2]=null;
-                        game.saveConfig('reconnect_info',lib.config.reconnect_info);
-                    },10000);
-                }
-                if(ui.tempnowuxie){
-                    ui.tempnowuxie.close();
-                    delete ui.tempnowuxie;
-                }
-                if(ui.auto) ui.auto.hide();
-                if(ui.wuxie) ui.wuxie.hide();
-                if(game.getIdentityList){
-                    for(var i=0;i<game.players.length;i++){
-                        game.players[i].setIdentity();
-                    }
-                }
-                return;
-            }
-            if(lib.config.background_audio){
-                if(result===true){
-                    game.playAudio('effect','win');
-                }
-                else if(result===false){
-                    game.playAudio('effect','lose');
-                }
-                else{
-                    game.playAudio('effect','tie');
-                }
-            }
-            var resultbool=result;
-            if(typeof resultbool!=='boolean'){
-                resultbool=null;
-            }
-            if(result===true) result='战斗胜利';
-            if(result===false) result='战斗失败';
-            if(result==undefined) result='战斗结束';
-            dialog=ui.create.dialog(result);
-            dialog.forcebutton=true;
-            if(game.addOverDialog){
-                game.addOverDialog(dialog,result);
-            }
-            if(typeof _status.coin=='number'&&!_status.connectMode){
-                var coeff=Math.random()*0.4+0.8;
-                var added=0;
-                var betWin=false;
-                if(result=='战斗胜利'){
-                    if(_status.betWin){
-                        betWin=true;
-                        _status.coin+=10;
-                    }
-                    _status.coin+=20;
-                    if(_status.additionalReward){
-                        _status.coin+=_status.additionalReward();
-                    }
-                    switch(lib.config.mode){
-                        case 'identity':{
-                            switch(game.me.identity){
-                                case 'zhu':case 'zhong':case 'mingzhong':
-                                    if(get.config('enhance_zhu')){
-                                        added=10;
-                                    }
-                                    else{
-                                        added=20;
-                                    }
-                                    break;
-                                case 'fan':
-                                    if(get.config('enhance_zhu')){
-                                        added=16;
-                                    }
-                                    else{
-                                        added=8;
-                                    }
-                                    break;
-                                case 'nei':
-                                    added=40;
-                                    break;
+                if(typeof _status.coin=='number'&&!_status.connectMode){
+                    var coeff=Math.random()*0.4+0.8;
+                    var added=0;
+                    var betWin=false;
+                    if(result=='战斗胜利'){
+                        if(_status.betWin){
+                            betWin=true;
+                            _status.coin+=10;
+                        }
+                        _status.coin+=20;
+                        if(_status.additionalReward){
+                            _status.coin+=_status.additionalReward();
+                        }
+                        switch(lib.config.mode){
+                            case 'identity':{
+                                switch(game.me.identity){
+                                    case 'zhu':case 'zhong':case 'mingzhong':
+                                        if(get.config('enhance_zhu')){
+                                            added=10;
+                                        }
+                                        else{
+                                            added=20;
+                                        }
+                                        break;
+                                    case 'fan':
+                                        if(get.config('enhance_zhu')){
+                                            added=16;
+                                        }
+                                        else{
+                                            added=8;
+                                        }
+                                        break;
+                                    case 'nei':
+                                        added=40;
+                                        break;
+                                }
+                                added=added*(game.players.length+game.dead.length)/8;
+                                break;
                             }
-                            added=added*(game.players.length+game.dead.length)/8;
-                            break;
+                            case 'guozhan':
+                                if(game.me.identity=='ye'){
+                                    added=8;
+                                }
+                                else{
+                                    added=5/get.totalPopulation(game.me.identity);
+                                }
+                                added=added*(game.players.length+game.dead.length);
+                                break;
+                            case 'versus':
+                                if(_status.friend){
+                                    added=5*(game.players.length+_status.friend.length);
+                                }
+                                break;
+                            default:
+                                added=10;
                         }
-                        case 'guozhan':
-                            if(game.me.identity=='ye'){
-                                added=8;
-                            }
-                            else{
-                                added=5/get.totalPopulation(game.me.identity);
-                            }
-                            added=added*(game.players.length+game.dead.length);
-                            break;
-                        case 'versus':
-                            if(_status.friend){
-                                added=5*(game.players.length+_status.friend.length);
-                            }
-                            break;
-                        default:
-                            added=10;
                     }
-                }
-                else{
-                    added=10;
-                }
-                if(lib.config.mode=='chess'&&_status.mode=='combat'&&get.config('additional_player')){
-                    added=2;
-                }
-                _status.coin+=added*coeff;
-                if(_status.coinCoeff){
-                    _status.coin*=_status.coinCoeff;
-                }
-                _status.coin=Math.ceil(_status.coin);
-                dialog.add(ui.create.div('','获得'+_status.coin+'金'));
-                if(betWin){
-                    game.changeCoin(20);
-                    dialog.content.appendChild(document.createElement('br'));
-                    dialog.add(ui.create.div('','（下注赢得10金）'));
-                }
-                game.changeCoin(_status.coin);
-            }
-            if(get.mode()=='versus'&&_status.ladder){
-                var mmr=_status.ladder_mmr;
-                mmr+=10-get.rank(game.me.name,true)*2;
-                if(result=='战斗胜利'){
-                    mmr=20+Math.round(mmr);
-                    if(mmr>40){
-                        mmr=40;
+                    else{
+                        added=10;
                     }
-                    else if(mmr<10){
-                        mmr=10;
+                    if(lib.config.mode=='chess'&&_status.mode=='combat'&&get.config('additional_player')){
+                        added=2;
                     }
-                    dialog.add(ui.create.div('','获得 '+mmr+' 积分'));
+                    _status.coin+=added*coeff;
+                    if(_status.coinCoeff){
+                        _status.coin*=_status.coinCoeff;
+                    }
+                    _status.coin=Math.ceil(_status.coin);
+                    dialog.add(ui.create.div('','获得'+_status.coin+'金'));
+                    if(betWin){
+                        game.changeCoin(20);
+                        dialog.content.appendChild(document.createElement('br'));
+                        dialog.add(ui.create.div('','（下注赢得10金）'));
+                    }
+                    game.changeCoin(_status.coin);
                 }
-                else{
-                    mmr=-30+Math.round(mmr/2);
-                    if(mmr>-20){
-                        mmr=-20;
-                    }
-                    else if(mmr<-35){
-                        mmr=-35;
-                    }
-                    if(lib.storage.ladder.current<900){
-                        mmr=Math.round(mmr/4);
-                    }
-                    else if(lib.storage.ladder.current<1400){
-                        mmr=Math.round(mmr/2);
-                    }
-                    else if(lib.storage.ladder.current<2000){
-                        mmr=Math.round(mmr/1.5);
-                    }
-                    else if(lib.storage.ladder.current>2500){
-                        mmr=Math.round(mmr*1.5);
-                    }
-                    dialog.add(ui.create.div('','失去 '+(-mmr)+' 积分'));
-                }
-                if(_status.ladder_tmp){
-                    lib.storage.ladder.current+=40;
-                    delete _status.ladder_tmp;
-                }
-                lib.storage.ladder.current+=mmr;
-                if(lib.storage.ladder.top<lib.storage.ladder.current){
-                    lib.storage.ladder.top=lib.storage.ladder.current;
-                }
-                game.save('ladder',lib.storage.ladder);
-                if(ui.ladder&&game.getLadderName){
-                    ui.ladder.innerHTML=game.getLadderName(lib.storage.ladder.current);
-                }
-            }
-            //if(true){
-                if(game.players.length){
-                    table=document.createElement('table');
-                    tr=document.createElement('tr');
-                    tr.appendChild(document.createElement('td'));
-                    td=document.createElement('td');
-                    td.innerHTML='伤害';
-                    tr.appendChild(td);
-                    td=document.createElement('td');
-                    td.innerHTML='受伤';
-                    tr.appendChild(td);
-                    td=document.createElement('td');
-                    td.innerHTML='摸牌';
-                    tr.appendChild(td);
-                    td=document.createElement('td');
-                    td.innerHTML='出牌';
-                    tr.appendChild(td);
-                    td=document.createElement('td');
-                    td.innerHTML='击坠';
-                    tr.appendChild(td);
-                    table.appendChild(tr);
-                    for(i=0;i<game.players.length;i++){
-                        tr=document.createElement('tr');
-                        td=document.createElement('td');
-                        td.innerHTML=get.translation(game.players[i]);
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.players[i].stat.length;j++){
-                            if(game.players[i].stat[j].damage!=undefined) num+=game.players[i].stat[j].damage;
+                if(get.mode()=='versus'&&_status.ladder){
+                    var mmr=_status.ladder_mmr;
+                    mmr+=10-get.rank(game.me.name,true)*2;
+                    if(result=='战斗胜利'){
+                        mmr=20+Math.round(mmr);
+                        if(mmr>40){
+                            mmr=40;
                         }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.players[i].stat.length;j++){
-                            if(game.players[i].stat[j].damaged!=undefined) num+=game.players[i].stat[j].damaged;
+                        else if(mmr<10){
+                            mmr=10;
                         }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.players[i].stat.length;j++){
-                            if(game.players[i].stat[j].gain!=undefined) num+=game.players[i].stat[j].gain;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.players[i].stat.length;j++){
-                            for(k in game.players[i].stat[j].card){
-                                num+=game.players[i].stat[j].card[k];
-                            }
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.players[i].stat.length;j++){
-                            if(game.players[i].stat[j].kill!=undefined) num+=game.players[i].stat[j].kill;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        table.appendChild(tr);
+                        dialog.add(ui.create.div('','获得 '+mmr+' 积分'));
                     }
-                    dialog.add(ui.create.div('.placeholder'));
-                    dialog.content.appendChild(table);
+                    else{
+                        mmr=-30+Math.round(mmr/2);
+                        if(mmr>-20){
+                            mmr=-20;
+                        }
+                        else if(mmr<-35){
+                            mmr=-35;
+                        }
+                        if(lib.storage.ladder.current<900){
+                            mmr=Math.round(mmr/4);
+                        }
+                        else if(lib.storage.ladder.current<1400){
+                            mmr=Math.round(mmr/2);
+                        }
+                        else if(lib.storage.ladder.current<2000){
+                            mmr=Math.round(mmr/1.5);
+                        }
+                        else if(lib.storage.ladder.current>2500){
+                            mmr=Math.round(mmr*1.5);
+                        }
+                        dialog.add(ui.create.div('','失去 '+(-mmr)+' 积分'));
+                    }
+                    if(_status.ladder_tmp){
+                        lib.storage.ladder.current+=40;
+                        delete _status.ladder_tmp;
+                    }
+                    lib.storage.ladder.current+=mmr;
+                    if(lib.storage.ladder.top<lib.storage.ladder.current){
+                        lib.storage.ladder.top=lib.storage.ladder.current;
+                    }
+                    game.save('ladder',lib.storage.ladder);
+                    if(ui.ladder&&game.getLadderName){
+                        ui.ladder.innerHTML=game.getLadderName(lib.storage.ladder.current);
+                    }
                 }
-                if(game.dead.length){
-                    table=document.createElement('table');
-                    table.style.opacity='0.5';
-                    if(game.players.length==0){
+                //if(true){
+                    if(game.players.length){
+                        table=document.createElement('table');
                         tr=document.createElement('tr');
                         tr.appendChild(document.createElement('td'));
                         td=document.createElement('td');
@@ -28012,300 +27992,370 @@ smoothAvatar:function(player,vice){
                         td.innerHTML='击坠';
                         tr.appendChild(td);
                         table.appendChild(tr);
-                    }
-                    for(i=0;i<game.dead.length;i++){
-                        tr=document.createElement('tr');
-                        td=document.createElement('td');
-                        td.innerHTML=get.translation(game.dead[i]);
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.dead[i].stat.length;j++){
-                            if(game.dead[i].stat[j].damage!=undefined) num+=game.dead[i].stat[j].damage;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.dead[i].stat.length;j++){
-                            if(game.dead[i].stat[j].damaged!=undefined) num+=game.dead[i].stat[j].damaged;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.dead[i].stat.length;j++){
-                            if(game.dead[i].stat[j].gain!=undefined) num+=game.dead[i].stat[j].gain;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.dead[i].stat.length;j++){
-                            for(k in game.dead[i].stat[j].card){
-                                num+=game.dead[i].stat[j].card[k];
+                        for(i=0;i<game.players.length;i++){
+                            tr=document.createElement('tr');
+                            td=document.createElement('td');
+                            td.innerHTML=get.translation(game.players[i]);
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.players[i].stat.length;j++){
+                                if(game.players[i].stat[j].damage!=undefined) num+=game.players[i].stat[j].damage;
                             }
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.dead[i].stat.length;j++){
-                            if(game.dead[i].stat[j].kill!=undefined) num+=game.dead[i].stat[j].kill;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        table.appendChild(tr);
-                    }
-                    dialog.add(ui.create.div('.placeholder'));
-                    dialog.content.appendChild(table);
-                }
-                if(game.additionaldead&&game.additionaldead.length){
-                    table=document.createElement('table');
-                    table.style.opacity='0.5';
-                    for(i=0;i<game.additionaldead.length;i++){
-                        tr=document.createElement('tr');
-                        td=document.createElement('td');
-                        td.innerHTML=get.translation(game.additionaldead[i]);
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.additionaldead[i].stat.length;j++){
-                            if(game.additionaldead[i].stat[j].damage!=undefined) num+=game.additionaldead[i].stat[j].damage;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.additionaldead[i].stat.length;j++){
-                            if(game.additionaldead[i].stat[j].damaged!=undefined) num+=game.additionaldead[i].stat[j].damaged;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.additionaldead[i].stat.length;j++){
-                            if(game.additionaldead[i].stat[j].gain!=undefined) num+=game.additionaldead[i].stat[j].gain;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.additionaldead[i].stat.length;j++){
-                            for(k in game.additionaldead[i].stat[j].card){
-                                num+=game.additionaldead[i].stat[j].card[k];
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.players[i].stat.length;j++){
+                                if(game.players[i].stat[j].damaged!=undefined) num+=game.players[i].stat[j].damaged;
                             }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.players[i].stat.length;j++){
+                                if(game.players[i].stat[j].gain!=undefined) num+=game.players[i].stat[j].gain;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.players[i].stat.length;j++){
+                                for(k in game.players[i].stat[j].card){
+                                    num+=game.players[i].stat[j].card[k];
+                                }
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.players[i].stat.length;j++){
+                                if(game.players[i].stat[j].kill!=undefined) num+=game.players[i].stat[j].kill;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            table.appendChild(tr);
                         }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        td=document.createElement('td');
-                        num=0;
-                        for(j=0;j<game.additionaldead[i].stat.length;j++){
-                            if(game.additionaldead[i].stat[j].kill!=undefined) num+=game.additionaldead[i].stat[j].kill;
-                        }
-                        td.innerHTML=num;
-                        tr.appendChild(td);
-                        table.appendChild(tr);
+                        dialog.add(ui.create.div('.placeholder'));
+                        dialog.content.appendChild(table);
                     }
-                    dialog.add(ui.create.div('.placeholder'));
-                    dialog.content.appendChild(table);
-                }
-            //}
-            dialog.add(ui.create.div('.placeholder'));
+                    if(game.dead.length){
+                        table=document.createElement('table');
+                        table.style.opacity='0.5';
+                        if(game.players.length==0){
+                            tr=document.createElement('tr');
+                            tr.appendChild(document.createElement('td'));
+                            td=document.createElement('td');
+                            td.innerHTML='伤害';
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            td.innerHTML='受伤';
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            td.innerHTML='摸牌';
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            td.innerHTML='出牌';
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            td.innerHTML='击坠';
+                            tr.appendChild(td);
+                            table.appendChild(tr);
+                        }
+                        for(i=0;i<game.dead.length;i++){
+                            tr=document.createElement('tr');
+                            td=document.createElement('td');
+                            td.innerHTML=get.translation(game.dead[i]);
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.dead[i].stat.length;j++){
+                                if(game.dead[i].stat[j].damage!=undefined) num+=game.dead[i].stat[j].damage;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.dead[i].stat.length;j++){
+                                if(game.dead[i].stat[j].damaged!=undefined) num+=game.dead[i].stat[j].damaged;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.dead[i].stat.length;j++){
+                                if(game.dead[i].stat[j].gain!=undefined) num+=game.dead[i].stat[j].gain;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.dead[i].stat.length;j++){
+                                for(k in game.dead[i].stat[j].card){
+                                    num+=game.dead[i].stat[j].card[k];
+                                }
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.dead[i].stat.length;j++){
+                                if(game.dead[i].stat[j].kill!=undefined) num+=game.dead[i].stat[j].kill;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            table.appendChild(tr);
+                        }
+                        dialog.add(ui.create.div('.placeholder'));
+                        dialog.content.appendChild(table);
+                    }
+                    if(game.additionaldead&&game.additionaldead.length){
+                        table=document.createElement('table');
+                        table.style.opacity='0.5';
+                        for(i=0;i<game.additionaldead.length;i++){
+                            tr=document.createElement('tr');
+                            td=document.createElement('td');
+                            td.innerHTML=get.translation(game.additionaldead[i]);
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.additionaldead[i].stat.length;j++){
+                                if(game.additionaldead[i].stat[j].damage!=undefined) num+=game.additionaldead[i].stat[j].damage;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.additionaldead[i].stat.length;j++){
+                                if(game.additionaldead[i].stat[j].damaged!=undefined) num+=game.additionaldead[i].stat[j].damaged;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.additionaldead[i].stat.length;j++){
+                                if(game.additionaldead[i].stat[j].gain!=undefined) num+=game.additionaldead[i].stat[j].gain;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.additionaldead[i].stat.length;j++){
+                                for(k in game.additionaldead[i].stat[j].card){
+                                    num+=game.additionaldead[i].stat[j].card[k];
+                                }
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            td=document.createElement('td');
+                            num=0;
+                            for(j=0;j<game.additionaldead[i].stat.length;j++){
+                                if(game.additionaldead[i].stat[j].kill!=undefined) num+=game.additionaldead[i].stat[j].kill;
+                            }
+                            td.innerHTML=num;
+                            tr.appendChild(td);
+                            table.appendChild(tr);
+                        }
+                        dialog.add(ui.create.div('.placeholder'));
+                        dialog.content.appendChild(table);
+                    }
+                //}
+                dialog.add(ui.create.div('.placeholder'));
 
-            var clients=game.players.concat(game.dead);
-            for(var i=0;i<clients.length;i++){
-                if(clients[i].isOnline2()){
-                    clients[i].send(game.over,dialog.content.innerHTML,game.checkOnlineResult(clients[i]));
+                var clients=game.players.concat(game.dead);
+                for(var i=0;i<clients.length;i++){
+                    if(clients[i].isOnline2()){
+                        clients[i].send(game.over,dialog.content.innerHTML,game.checkOnlineResult(clients[i]));
+                    }
                 }
-            }
 
-            dialog.add(ui.create.div('.placeholder'));
+                dialog.add(ui.create.div('.placeholder'));
 
-            for(var i=0;i<game.players.length;i++){
-                if(!_status.connectMode&&game.players[i].isUnderControl(true)&&game.layout!='long2') continue;
-                var hs=game.players[i].getCards('h');
-                if(hs.length){
-                    dialog.add('<div class="text center">'+get.translation(game.players[i])+'</div>');
-                    dialog.addSmall(hs);
-                }
-            }
-            dialog.add(ui.create.div('.placeholder.slim'));
-            game.addVideo('over',null,dialog.content.innerHTML);
-            var vinum=parseInt(lib.config.video);
-            if(!_status.video&&vinum&&game.getVideoName&&window.indexedDB&&_status.videoInited){
-                var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
-                var videos=lib.videos.slice(0);
-                for(var i=0;i<videos.length;i++){
-                    if(videos[i].starred){
-                        videos.splice(i--,1);
+                for(var i=0;i<game.players.length;i++){
+                    if(!_status.connectMode&&game.players[i].isUnderControl(true)&&game.layout!='long2') continue;
+                    var hs=game.players[i].getCards('h');
+                    if(hs.length){
+                        dialog.add('<div class="text center">'+get.translation(game.players[i])+'</div>');
+                        dialog.addSmall(hs);
                     }
                 }
-                for(var deletei=0;deletei<5;deletei++){
-                    if(videos.length>=vinum){
-                        var toremove=videos.pop();
-                        lib.videos.remove(toremove);
-                        store.delete(toremove.time);
+                dialog.add(ui.create.div('.placeholder.slim'));
+                game.addVideo('over',null,dialog.content.innerHTML);
+                var vinum=parseInt(lib.config.video);
+                if(!_status.video&&vinum&&game.getVideoName&&window.indexedDB&&_status.videoInited){
+                    var store=lib.db.transaction(['video'],'readwrite').objectStore('video');
+                    var videos=lib.videos.slice(0);
+                    for(var i=0;i<videos.length;i++){
+                        if(videos[i].starred){
+                            videos.splice(i--,1);
+                        }
                     }
-                    else{
-                        break;
+                    for(var deletei=0;deletei<5;deletei++){
+                        if(videos.length>=vinum){
+                            var toremove=videos.pop();
+                            lib.videos.remove(toremove);
+                            store.delete(toremove.time);
+                        }
+                        else{
+                            break;
+                        }
                     }
+                    var me=game.me||game.players[0];
+                    if(!me) return;
+                    var newvid={
+                        name:game.getVideoName(),
+                        mode:lib.config.mode,
+                        video:lib.video,
+                        win:result=='战斗胜利',
+                        name1:me.name1||me.name,
+                        name2:me.name2,
+                        time:lib.getUTC(new Date())
+                    };
+                    var modecharacters=lib.characterPack['mode_'+get.mode()];
+                    if(modecharacters){
+                        if(get.mode()=='guozhan'){
+                            if(modecharacters[newvid.name1]){
+                                if(newvid.name1.indexOf('gz_shibing')==0){
+                                    newvid.name1=newvid.name1.slice(3,11);
+                                }
+                                else{
+                                    newvid.name1=newvid.name1.slice(3);
+                                }
+                            }
+                            if(modecharacters[newvid.name2]){
+                                if(newvid.name2.indexOf('gz_shibing')==0){
+                                    newvid.name2=newvid.name2.slice(3,11);
+                                }
+                                else{
+                                    newvid.name2=newvid.name2.slice(3);
+                                }
+                            }
+                        }
+                        else{
+                            if(modecharacters[newvid.name1]){
+                                newvid.name1=get.mode()+'::'+newvid.name1;
+                            }
+                            if(modecharacters[newvid.name2]){
+                                newvid.name2=get.mode()+'::'+newvid.name2;
+                            }
+                        }
+                    }
+    				if(newvid.name1&&newvid.name1.indexOf('subplayer_')==0){
+    					newvid.name1=newvid.name1.slice(10,newvid.name1.lastIndexOf('_'));
+    				}
+    				if(newvid.name2&&newvid.name2.indexOf('subplayer_')==0){
+    					newvid.name1=newvid.name2.slice(10,newvid.name1.lastIndexOf('_'));
+    				}
+                    lib.videos.unshift(newvid);
+                    store.put(newvid);
+                    ui.create.videoNode(newvid,true);
                 }
-                var me=game.me||game.players[0];
-                if(!me) return;
-                var newvid={
-                    name:game.getVideoName(),
-                    mode:lib.config.mode,
-                    video:lib.video,
-                    win:result=='战斗胜利',
-                    name1:me.name1||me.name,
-                    name2:me.name2,
-                    time:lib.getUTC(new Date())
-                };
-                var modecharacters=lib.characterPack['mode_'+get.mode()];
-                if(modecharacters){
-                    if(get.mode()=='guozhan'){
-                        if(modecharacters[newvid.name1]){
-                            if(newvid.name1.indexOf('gz_shibing')==0){
-                                newvid.name1=newvid.name1.slice(3,11);
-                            }
-                            else{
-                                newvid.name1=newvid.name1.slice(3);
-                            }
-                        }
-                        if(modecharacters[newvid.name2]){
-                            if(newvid.name2.indexOf('gz_shibing')==0){
-                                newvid.name2=newvid.name2.slice(3,11);
-                            }
-                            else{
-                                newvid.name2=newvid.name2.slice(3);
-                            }
-                        }
-                    }
-                    else{
-                        if(modecharacters[newvid.name1]){
-                            newvid.name1=get.mode()+'::'+newvid.name1;
-                        }
-                        if(modecharacters[newvid.name2]){
-                            newvid.name2=get.mode()+'::'+newvid.name2;
-                        }
-                    }
+                // _status.auto=false;
+                if(ui.auto){
+                    // ui.auto.classList.remove('glow');
+                    ui.auto.hide();
                 }
-				if(newvid.name1&&newvid.name1.indexOf('subplayer_')==0){
-					newvid.name1=newvid.name1.slice(10,newvid.name1.lastIndexOf('_'));
-				}
-				if(newvid.name2&&newvid.name2.indexOf('subplayer_')==0){
-					newvid.name1=newvid.name2.slice(10,newvid.name1.lastIndexOf('_'));
-				}
-                lib.videos.unshift(newvid);
-                store.put(newvid);
-                ui.create.videoNode(newvid,true);
-            }
-            // _status.auto=false;
-            if(ui.auto){
-                // ui.auto.classList.remove('glow');
-                ui.auto.hide();
-            }
-            if(ui.wuxie) ui.wuxie.hide();
-            if(ui.giveup){
-                ui.giveup.remove();
-                delete ui.giveup;
-            }
+                if(ui.wuxie) ui.wuxie.hide();
+                if(ui.giveup){
+                    ui.giveup.remove();
+                    delete ui.giveup;
+                }
 
-            if(lib.config.test_game&&!_status.connectMode){
-                if(lib.config.test_game!='single'){
-                    switch(lib.config.mode){
-                        case 'identity':game.saveConfig('mode','guozhan');break;
-                        case 'guozhan':game.saveConfig('mode','versus');break;
-                        case 'versus':game.saveConfig('mode','boss');break;
-                        case 'boss':game.saveConfig('mode','chess');break;
-                        case 'chess':game.saveConfig('mode','stone');break;
-                        case 'stone':game.saveConfig('mode','identity');break;
-                    }
-                }
-                setTimeout(game.reload,500);
-            }
-            if(game.controlOver){
-                game.controlOver();return;
-            }
-            if(!_status.brawl){
-                if(lib.config.mode=='boss'){
-                    ui.create.control('再战',function(){
-                        var pointer=game.boss;
-                        var map={boss:game.me==game.boss,links:[]};
-                        for(var iwhile=0;iwhile<10;iwhile++){
-                            pointer=pointer.nextSeat;
-                            if(pointer==game.boss){
-                                break;
-                            }
-                            if(!pointer.side){
-                                map.links.push(pointer.name);
-                            }
+                if(lib.config.test_game&&!_status.connectMode){
+                    if(lib.config.test_game!='single'){
+                        switch(lib.config.mode){
+                            case 'identity':game.saveConfig('mode','guozhan');break;
+                            case 'guozhan':game.saveConfig('mode','versus');break;
+                            case 'versus':game.saveConfig('mode','boss');break;
+                            case 'boss':game.saveConfig('mode','chess');break;
+                            case 'chess':game.saveConfig('mode','stone');break;
+                            case 'stone':game.saveConfig('mode','identity');break;
                         }
-                        game.saveConfig('continue_name_boss',map);
-                        game.saveConfig('mode',lib.config.mode);
-                        localStorage.setItem(lib.configprefix+'directstart',true);
-                        game.reload();
-                    });
+                    }
+                    setTimeout(game.reload,500);
                 }
-                else if(lib.config.mode=='versus'){
-                    if(_status.mode=='standard'||_status.mode=='three'){
+                if(game.controlOver){
+                    game.controlOver();return;
+                }
+                if(!_status.brawl){
+                    if(lib.config.mode=='boss'){
                         ui.create.control('再战',function(){
-                            game.saveConfig('continue_name_versus'+(_status.mode=='three'?'_three':''),{
-                                friend:_status.friendBackup,
-                                enemy:_status.enemyBackup,
-                                color:_status.color
-                            });
+                            var pointer=game.boss;
+                            var map={boss:game.me==game.boss,links:[]};
+                            for(var iwhile=0;iwhile<10;iwhile++){
+                                pointer=pointer.nextSeat;
+                                if(pointer==game.boss){
+                                    break;
+                                }
+                                if(!pointer.side){
+                                    map.links.push(pointer.name);
+                                }
+                            }
+                            game.saveConfig('continue_name_boss',map);
                             game.saveConfig('mode',lib.config.mode);
                             localStorage.setItem(lib.configprefix+'directstart',true);
                             game.reload();
                         });
                     }
+                    else if(lib.config.mode=='versus'){
+                        if(_status.mode=='standard'||_status.mode=='three'){
+                            ui.create.control('再战',function(){
+                                game.saveConfig('continue_name_versus'+(_status.mode=='three'?'_three':''),{
+                                    friend:_status.friendBackup,
+                                    enemy:_status.enemyBackup,
+                                    color:_status.color
+                                });
+                                game.saveConfig('mode',lib.config.mode);
+                                localStorage.setItem(lib.configprefix+'directstart',true);
+                                game.reload();
+                            });
+                        }
+                    }
+                    else if(!_status.connectMode&&get.config('continue_game')&&!ui.continue_game&&!_status.brawl){
+                        ui.continue_game=ui.create.control('再战',game.reloadCurrent);
+                    }
                 }
-                else if(!_status.connectMode&&get.config('continue_game')&&!ui.continue_game&&!_status.brawl){
-                    ui.continue_game=ui.create.control('再战',game.reloadCurrent);
+                if(!ui.restart){
+    				if(game.onlineroom&&typeof game.roomId=='number'){
+    					ui.restart=ui.create.control('restart',function(){
+    						game.broadcastAll(function(){
+    							if(ui.exit){
+    								ui.exit.stay=true;
+    								ui.exit.firstChild.innerHTML='返回房间';
+    							}
+    						});
+    						game.saveConfig('tmp_owner_roomId',game.roomId);
+    						setTimeout(game.reload,100);
+    					});
+    				}
+    				else{
+                    	ui.restart=ui.create.control('restart',game.reload);
+                	}
+    			}
+                if(ui.tempnowuxie){
+                    ui.tempnowuxie.close();
+                    delete ui.tempnowuxie;
                 }
-            }
-            if(!ui.restart){
-				if(game.onlineroom&&typeof game.roomId=='number'){
-					ui.restart=ui.create.control('restart',function(){
-						game.broadcastAll(function(){
-							if(ui.exit){
-								ui.exit.stay=true;
-								ui.exit.firstChild.innerHTML='返回房间';
-							}
-						});
-						game.saveConfig('tmp_owner_roomId',game.roomId);
-						setTimeout(game.reload,100);
-					});
-				}
-				else{
-                	ui.restart=ui.create.control('restart',game.reload);
-            	}
-			}
-            if(ui.tempnowuxie){
-                ui.tempnowuxie.close();
-                delete ui.tempnowuxie;
-            }
 
-            if(ui.revive){
-                ui.revive.close();
-                delete ui.revive;
-            }
-            if(ui.swap){
-                ui.swap.close();
-                delete ui.swap;
-            }
-            for(var i=0;i<lib.onover.length;i++){
-                lib.onover[i](resultbool);
-            }
-            if(game.addRecord){
-                game.addRecord(resultbool);
-            }
-            if(window.isNonameServer){
-                lib.configOL.gameStarted=false;
-                game.saveConfig('pagecfg'+window.isNonameServer,[lib.configOL,game.roomId,_status.onlinenickname,_status.onlineavatar]);
-                game.reload();
+                if(ui.revive){
+                    ui.revive.close();
+                    delete ui.revive;
+                }
+                if(ui.swap){
+                    ui.swap.close();
+                    delete ui.swap;
+                }
+                for(var i=0;i<lib.onover.length;i++){
+                    lib.onover[i](resultbool);
+                }
+                if(game.addRecord){
+                    game.addRecord(resultbool);
+                }
+                if(window.isNonameServer){
+                    lib.configOL.gameStarted=false;
+                    game.saveConfig('pagecfg'+window.isNonameServer,[lib.configOL,game.roomId,_status.onlinenickname,_status.onlineavatar]);
+                    game.reload();
+                }
             }
         },
         loop:function(){
@@ -46025,10 +46075,13 @@ smoothAvatar:function(player,vice){
         skillInfoTranslation:function(name){
             var str=lib.translate[name+'_info'];
             if(!str) return '';
-            return str;
-            // return str.replace(/锁定技/g,'<span class="yellowtext">锁定技</span>').
-            //  replace(/限定技/g,'<span class="yellowtext">限定技</span>').
-            //  replace(/觉醒技/g,'<span class="greentext">觉醒技</span>').
+            //return str;
+            return str.replace(/锁定技/g,'<span class="bluetext">锁定技</span>').
+             replace(/限定技/g,'<span class="firetext">限定技</span>').
+             replace(/觉醒技/g,'<span style="color:#800080">觉醒技</span>').
+             replace(/一回合一次/g,'<span class="greentext">一回合一次</span>').
+             replace(/一回合两次/g,'<span class="greentext">一回合两次</span>').
+             replace(/符卡技/g,'<span class="firetext">符卡技</span>');
             //  replace(/主将技/g,'<span class="bluetext">主将技</span>').
             //  replace(/副将技/g,'<span class="bluetext">副将技</span>').
             //  replace(/阵法技/g,'<span class="bluetext">阵法技</span>').

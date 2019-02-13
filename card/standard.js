@@ -1408,7 +1408,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			viewAsFilter:function(player){
 				if(!player.num('he',{color:'red'})) return false;
 			},
-			prompt:'将一张红色手牌当闪打出',
+			position:'he',
+			prompt:'将一张红色牌当没中使用或打出',
 			check:function(){return 1},
 			ai:{
 				respondShan:true,
@@ -1433,7 +1434,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			viewAsFilter:function(player){
 				if(!player.num('he',{color:'black'})) return false;
 			},
-			prompt:'将一张黑色牌当杀使用或打出',
+			prompt:'将一张黑色牌当轰！使用或打出',
 			check:function(card){return 4-ai.get.value(card)},
 			ai:{
 				skillTagFilter:function(player){

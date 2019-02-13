@@ -1001,6 +1001,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					delete event.swapnochoose;
 					var dialog;
+					if (!lib.config.new_tutorial){
+						list = ["reimu","marisa","sakuya","youmu"];
+					}
 					if(event.swapnodialog){
 						dialog=ui.dialog;
 						event.swapnodialog(dialog,list);
@@ -1017,9 +1020,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								addSetting(dialog);
 							}
 						}
-					}
-					if (!lib.config.new_tutorial){
-						list = ["reimu","marisa","sakuya","youmu"];
 					}
 					if(game.me.special_identity){
 						dialog.setCaption('选择角色（'+get.translation(game.me.special_identity)+'）');

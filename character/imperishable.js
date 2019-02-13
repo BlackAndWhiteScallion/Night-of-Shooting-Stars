@@ -75,7 +75,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               game.addVideo('thrownhighlight2');
                               ui.arena.classList.remove('thrownhighlight');
-                              if (!player.hasSkill('yechong1')) player.addTempSkill('fenyin');
+                              if (!player.hasSkill('yechong1')) player.addTempSkill('fengyin');
                         },
                         ai:{
                               threaten:1.4,
@@ -896,6 +896,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     filter:function(event,player){
                       return event.getParent().getParent().name == 'huanshi';
                     },
+                    prompt:'幻视：你可以将一张牌当作一种防御牌使用',
                     check:function(){
                       return true;
                     },

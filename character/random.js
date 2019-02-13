@@ -1136,7 +1136,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				filter:function(event,player){
 					if(event.player.hasSkill('sbrs_liansuo_4')){
-						if (event.getParent(2).name == 'discardPlayerCard' || event.getParent().name == 'gain' || event.getParent().name == 'gainPlayerCard'){
+						if (event.getParent(2).name == 'discardPlayerCard' || event.getParent().name == 'gain' || event.getParent(2).name == 'gainPlayerCard'){
 							return true;
 						}
 					}

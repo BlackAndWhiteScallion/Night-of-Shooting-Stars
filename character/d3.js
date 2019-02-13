@@ -120,33 +120,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						};
 						var step5=function(){
 							clear();
-							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">这局牌打完之后，<br>我会在[场景]的[对战练习]等你哟。<br><br>图鉴模式里有详细规则介绍的。<br>但是如果需要临时抱佛脚，<br>只要用自由选将选择我就行了！<br>哪一个模式都行！</div></div>');
-							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
-							ui.create.control('谢谢老师！',function(){
-								clear();
-								clear2();
-								game.resume();
-							});
+							clear2();
+							game.resume();
 						};
 						game.pause();
-						step1();
+						if (!lib.config.new_tutorial){
+							step1();
+						} else {
+							step2();
+						}
 					},
 				},
 				shijianliushi3:{
+					direct:true,
 					enable:'phaseUse',
 					filter:function(event,player){
 						return !_status.connectMode && player == game.me;
 					},
 					content:function(){
 						'step 0'
-						event.list = ['牌和技能要怎么用，怎么查看？','灵力值是什么？','符卡技怎么用？','异变/异变牌是什么？','明置身份有什么用？','技能牌是什么？','体系特殊事项？','老师我喜欢你！'];
+						ui.arena.classList.add('only_dialog');
+						event.list = ['牌和技能要怎么用，怎么查看？','那些绿色的星星是什么？','符卡技怎么用？','异变/异变牌是什么？','明置身份有什么用？','技能牌是什么？','体系特殊事项？','老师我喜欢你！'];
 						player.chooseControlList(event.list,'想问老师什么问题？');
 						'step 1'
 						if (result.index == 0){
 							game.me.storage.jieshuo = ['牌和技能的描述可以在<br>卡牌/角色身上右键单击<br>或悬空1秒查看<br>双击角色还可以看到<br>角色简介，能换皮肤！','牌在需要用的时候，点一下，<br>如果有目标就选目标，<br>然后点确定就行了。',
 							'技能也类似：<br>需要使用的时候是会跳选择的。','出牌阶段使用的技能，<br>会出现一个触发用按钮<br>就像这个问答的按钮！'];
 						} else if (result.index == 1){
-							game.me.storage.jieshuo = ['灵力值是流星夜的核心体系！<br> 就是每个人身上那条绿色的星星。','灵力值的作用很多：<br>你的攻击范围等于你的灵力<br>强化牌时需要消耗灵力<br>发动符卡时需要消耗灵力',
+							game.me.storage.jieshuo = ['每个人身上的绿色的星星<br>就是<b>灵力值</b>啦！','灵力值是流星夜的核心体系！<br> 就是每个人身上那条绿色的星星。','灵力值的作用很多：<br>你的攻击范围等于你的灵力<br>强化牌时需要消耗灵力<br>发动符卡时需要消耗灵力',
 							'加灵力的方式也不少：<br>牌堆里所有在下方有<br>“灵力：+1”的牌都是会加灵力的','如果你的灵力降到0的话<br>你不能造成任何伤害！','但是没关系<br>如果你准备和结束阶段都没灵力<br>回合结束后，你会获得1点！<br>(这个设置可以关闭)'];
 						} else if (result.index == 2){
 							game.me.storage.jieshuo = ['符卡技！<br>在准备阶段消耗标注量的灵力，<br>然后获得描述里的技能<br>直到回合结束！','要发动符卡必须要灵力<b>大于</b>描述<br>中的点数。<br>（3）就要4点灵力才能发动。',
@@ -179,7 +180,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var step1=function(){
 							if (!game.me.storage.jieshuo || !game.me.storage.jieshuo[0]) game.me.storage.jieshuo = ['没事，不急，慢慢来！'],
 							//ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]);
-							console.log(game.me.storage.jieshuo);
 							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]+'</div></div>');
 							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 							ui.dialog.open();
@@ -195,6 +195,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 						game.pause();
 						step1();
+						ui.arena.classList.remove('only_dialog');
 					}
 				},
 				shijianliushi4:{
@@ -528,12 +529,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				wingedtiger_die:'在此，施撒所有的诅咒将会永世伴随着妳们，妾身就是有着如此之大的怨念啊！',
 				
 				shijianliushi:"时逝",
-				shijianliushi_info:"这个技能组我过几天再写吧。",
+				//shijianliushi_info:"这个技能组我过几天再写吧。",
 				shijianliushi3:'老师，我有问题！',
 				shijianliushi_silence:'子规闭嘴！',
 				shijianliushi_audio1:'!@#$#*@%(%*@！',
 				xinjianfuka1:"新建符卡１",
-				xinjianfuka1_info:"符卡技（4）<font color=\"black\"><b>应该是个很厉害的大招吧</b></font>",
+				//xinjianfuka1_info:"符卡技（4）<font color=\"black\"><b>应该是个很厉害的大招吧</b></font>",
 				xinjianfuka2:"新建符卡１",
 				zhisibuyu:"至死不渝",
 				zhisibuyu_info:"当你使用【轰！】或法术牌指定一名角色为目标时，你可以令该角色选择一项：令你获得其一张牌，然后此牌对其无效；或不能对之使用牌。",

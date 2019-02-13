@@ -395,7 +395,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	},
 	        },
 	        download:{
-	        	name:'联系制作组',
+	        	name:'联系制作',
 	        	intro:[
 	        		'你玩流星夜觉得开心吗？觉得不开心吗？觉得制作组是傻逼吗？自己也想要做吗？那么…………',
 	                '欢迎大家光临雾雨魔法店！',
