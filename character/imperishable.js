@@ -314,7 +314,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           });
                           'step 1'
                           if (result.targets){
-                            if (results.targets[0].name == 'mokou'){
+                            if (result.targets[0].name == 'mokou'){
                               game.trySkillAudio('jiehuo',result.targets[0],true,3);
                             }
                               result.targets[0].gain(trigger.card);

@@ -1815,7 +1815,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 trigger:{player:'loseliliBefore'},
                 filter:function(event,player){
-                    console.log(event);
+                    if (event.getParent().name == 'shiqu2') return false;
                     var players = game.filterPlayer();
                     for (var i = 0; i < players.length; i ++){
                         if (players[i].hasSkill('shiqu2') && players[i] != player) return true;
@@ -1827,7 +1827,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.chooseTarget(get.prompt('shiqu'),1,function(card,player,target){
                             return target != player && target.hasSkill('shiqu2');
                         }).set('ai',function(target){
-                            return get.attitude(_status.event.player,target);
+                            return get.attitude(_status.event.player,target) && target.lili > _status.event.player.lili;
                         });
                     'step 1'
                     if (result.bool && result.targets.length){
@@ -1836,6 +1836,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         result.targets[0].addTempSkill('shiqu2',{player:'phaseBegin'});
                         trigger.cancel();
                     }
+                },
+                check:function(event,player){
+                    return true;
                 },
             },
             tianhugongzhu:{
@@ -2338,6 +2341,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shiqu_info:'一回合一次，出牌阶段，你可以重铸一张牌；若该牌有灵力，你可以令一名角色获得等量的灵力；若如此做，直到你的准备阶段：你或其需要消耗灵力时，可以改为由对方消耗灵力。',
             shiqu_audio1:'先说清楚，这可不是什么结婚宣言啊？',
             shiqu_audio2:'是谁把我们妖狐的印象污染成了容易暴走的理性蒸发的疯怪啊……',
+            shiqu2:'式取',
             shiqu2_bg:'式',
             tianhugongzhu:'天狐公主 -illusion-',
             tianhugongzhu_info:'符卡技（3）<永续>准备阶段，你指定一名其他角色，与其各回复1点体力；该角色需要消耗灵力时，可以改为失去等量的体力值。',
