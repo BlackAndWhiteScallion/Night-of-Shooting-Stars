@@ -1362,6 +1362,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             filterCard:function(card,player){
                                 return true;
                             },
+                            audio:2,
                             position:'he',
                             selectCard:2,
                             audio:2,
@@ -1453,7 +1454,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 onremove:function(player){
 					ui.backgroundMusic.src = lib.assetURL+'audio/background/'+player.storage.ADA[0]+'.mp3';
 					lib.config.background_music = player.storage.ADA[0];
-					ui.background.style.backgroundImage= player.storage.ADA[1];
+					ui.background.style.backgroundImage = player.storage.ADA[1];
                 },
                 chooseButton:{
                     dialog:function(){
@@ -1600,8 +1601,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			tianze_info:'锁定技，你受到弹幕伤害后，对伤害来源造成等量灵力伤害；你成为红桃辅助牌的目标时，须消耗1点灵力，然后回复1点体力。',
 			nero:'尼禄',
 			muqi:'幕启',
-			muqi_audio1:'没有余做不到的事情！',
-			muqi_audio2:'唔姆！',
+			muqi_backup_audio1:'没有事情是余做不到的！',
+			muqi_backup_audio2:'唔姆！',
+			muqi_backup_audio3:'余是不是很厉害！',
 			muqi_info:'你可以将两张牌当作一种基本牌，或本回合没有使用过的一种法术牌使用/打出。',
 			AestusDomusAurea:'招荡的黄金剧场',
 			AestusDomusAurea_info:'符卡技（2）【永续】准备阶段，你将手牌数补至手牌上限；出牌阶段，你可以弃置一张手牌，声明一种技能牌，然后获得之；符卡结束时，你可以消耗1点灵力，令符卡不结束。',

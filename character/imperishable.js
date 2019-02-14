@@ -314,6 +314,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           });
                           'step 1'
                           if (result.targets){
+                            if (results.targets[0].name == 'mokou'){
+                              game.trySkillAudio('jiehuo',result.targets[0],true,3);
+                            }
                               result.targets[0].gain(trigger.card);
                               result.targets[0].$gain2(trigger.card);
                           }
@@ -1620,7 +1623,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       var cards = player.getCards('he');
                        player.$throw(cards);
                           for (var i = 0; i < cards.length; i ++){
-                             result.cards[i].discard();
+                             cards[i].discard();
                           }
                           game.log(get.translation(player)+'重铸了'+get.translation(cards));
                           player.draw(cards.length);
@@ -1807,8 +1810,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yechong_info:'符卡技（2）无视【萤光】中的“一回合一次”；结束阶段，你弃置所有角色各一张牌；然后，对所有以此法失去技能牌，且牌数不小于你的角色造成1点灵击伤害。',
                   yechong_audio1:'蠢符「夜虫风暴」~',
                   yechong_audio2:'那么，用星星把你淹死吧？',
-                  yechong1_audio1:'',
-                  yechong_audio2:'',
+                  yechong1_audio1:'风暴来了！',
+                  yechong1_audio2:'虫虫咬她们！',
                   wriggle_die:'用杀虫剂是犯规啦！',
                   mystia:'米斯蒂亚',
                   shiming:'失明',
@@ -1826,6 +1829,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   jiehuo_info:'一回合一次，一名角色的出牌阶段，一张牌因你使用/打出进入弃牌堆时，可以消耗1点灵力，令一名角色获得之。',
                   jiehuo_audio1:'这是这张牌的正确使用方式，知道了吗？',
                   jiehuo_audio2:'这是下次考试的知识点，一定要记住。',
+                  jiehuo_audio3:'慧音辛苦了，不要忘记休息啊。',
                   richuguo:'日出国的天子',
                   richuguo_info:'符卡技（3）<限定><永续>你可以弃置三张不同的类型的牌来代替符卡消耗；准备阶段，你可以指定一名角色，重置其体力值，灵力值，和手牌数；你进入决死状态时，重置此符卡技。',
                   richuguo_audio1:'「日出国之天子」！',
@@ -1861,6 +1865,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   liuxing_shun:'流星（顺手牵羊）',
                   liuxing_shun_audio1:'这就稍微借我一下吧？',
                   liuxing_shun_audio2:'等到我死了我就还给你！',
+                  liuxing_shun_audio3:'真是的，告诉你多少遍了，我已经没有值钱东西可以拿了啊……',
+                  liuxing_shun_audio4:'黑白老鼠又来了啊……',
                   xingchen:'星尘',
                   xingchen_info:'若你的手牌数等于体力值：你可以将一张手牌当作【轰！】使用/打出；以此法使用的【轰！】不计次数。',
                   xingchen_audio1:'先打再说！',
@@ -1890,9 +1896,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   huanshi:'幻视',
                   huanshi_2:'幻视',
                   huanshi_info:'一回合一次，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；一名角色成为此牌的目标后，其可将一张牌当做一种防御牌打出。若如此做，你的扣置牌无效且你亮出此牌；若此牌不为此防御牌的合法目标，则你对其使用此牌。',
+                  huanshi_audio1:'你也一同陷入狂乱吧！',
+                  huanshi_audio2:'来，看着我的眼睛——',
                   zhenshi:'真实之月（隐形满月）',
                   zhenshi_1:'真实之月（隐形满月）',
                   zhenshi_info:'符卡技（1）【永续】你攻击范围内角色成为攻击牌的唯一目标时，你可以弃置一张牌，将包括其的至多3名角色牌扣置并洗混；来源明置一张：将目标转移给明置的角色；然后将这些牌调整为原状态。',
+                  zhenshi_audio1:'散符「真实之月(Invisible Full Moon)」！',
+                  zhenshi_audio2:'真实和虚假的区别，你分的出来吗？',
+                  reisen_die:'啊啊，要被师匠骂了',
                   kaguya:'辉夜',
                   nanti:'难题',
                   nanti_audio1:'这些难题可已经劝退了无数的人哟。',
@@ -1921,7 +1932,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   tianwen_audio2:'所谓星空，也只不过是试验场罢了。',
                   tianwen_skill:'天文秘葬法',
                   tianwen_info:'符卡技（X）（X为任意值，至少为1）准备阶段，你可以观看牌堆顶的2X张牌，以任意顺序置于牌堆顶，然后进行两次判定：你获得其中一张，该牌的效果视为与另一张相同，直到回合结束。',
-                  eirin_die:'哎，我也没力气永远陪你们跳舞的。',
+                  eirin_die:'哎，陪你们跳舞就陪到这里了吧。',
                   mokou:'妹红',
                   yuhuo:'狱火',
                   yuhuo_2:'狱火',

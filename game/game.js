@@ -27740,6 +27740,7 @@ smoothAvatar:function(player,vice){
                         clear2();
                         game.resume();
                         game.over(result);
+                        return ;
                     },2000);
                 };
                 game.pause();
@@ -46081,7 +46082,15 @@ smoothAvatar:function(player,vice){
              replace(/觉醒技/g,'<span style="color:#800080">觉醒技</span>').
              replace(/一回合一次/g,'<span class="greentext">一回合一次</span>').
              replace(/一回合两次/g,'<span class="greentext">一回合两次</span>').
-             replace(/符卡技/g,'<span class="firetext">符卡技</span>');
+             //replace(/符卡技/g,'<span class="firetext">符卡技</span>').
+             replace(/符卡技（X）/g,'<span class="firetext">符卡技（X）</span>').
+             replace(/符卡技（0）/g,'<span class="firetext">符卡技（0）</span>').
+             replace(/符卡技（1）/g,'<span class="firetext">符卡技（1）</span>').
+             replace(/符卡技（2）/g,'<span class="firetext">符卡技（2）</span>').
+             replace(/符卡技（3）/g,'<span class="firetext">符卡技（3）</span>').
+             replace(/符卡技（4）/g,'<span class="firetext">符卡技（4）</span>');
+             //replace(/符卡技*）/g,'<span class="firetext">符卡技*）</span>');
+             //replace(/符卡技*)/g,'<span class="firetext">符卡技*)</span>');
             //  replace(/主将技/g,'<span class="bluetext">主将技</span>').
             //  replace(/副将技/g,'<span class="bluetext">副将技</span>').
             //  replace(/阵法技/g,'<span class="bluetext">阵法技</span>').

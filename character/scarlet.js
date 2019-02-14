@@ -663,6 +663,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.loselili();
                         result.targets[0].addSkill('qishu2');
                         result.targets[0].storage.qishu = player.storage.qishu;
+                        if (result.targets[0].name == 'patchouli') game.trySkillAudio('qishu',player,true,3);
                         player.skip(player.storage.qishu);
                         delete player.storage.qishu;
                     } else {
@@ -1186,7 +1187,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             qiyao_info:'准备阶段，你可以选择任意项：跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张牌；跳过摸牌阶段，视为使用一种法术牌；跳过出牌阶段，将一张牌当作法术牌使用；你不能以此法使用同名牌。',
             qiyao3:'七曜',
             qiyao_audio1:'就稍微用点手段吧。',
-            qiyao_audio2:'无趣。',
+            qiyao_audio2:'怎么就这么点法术牌呢……',
             qiyao_audio3:'……',
             phaseUse_qiyao:'跳过出牌阶段，将一张牌当作一种法术牌使用',
             phaseDraw_qiyao:'跳过摸牌阶段，视为使用一种法术牌',
@@ -1207,6 +1208,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             qishu_info:'准备阶段，你可以消耗1点灵力，并跳过一个阶段，然后指定一名其他角色；若如此做，回合结束后，该角色获得1点灵力，并进行一个以此法跳过的阶段。',
             qishu_audio1:'我、我来给你帮忙啦！',
             qishu_audio2:'这种事情我还是做得到的！',
+            qishu_audio3:'帕秋莉大人~~您要的红茶~',
             anye:'暗夜',
             anye_info:'锁定技，一回合一次，回合外，你成为法术牌的目标后，若你本回合在此牌前成为过牌的目标，该牌对你无效。',
             anye_audio1:'不行！',
@@ -1235,9 +1237,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mingyun:'命运',
             mingyun2:'命运',
             mingyun_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以：摸X张牌，并将等量牌置于牌堆顶（X为攻击范围），然后，直到结束阶段：一名角色使用其手牌指定唯一目标时，若该牌不是以此法使用，其取消目标并判定：若判定牌可以对目标使用，其将判定牌对目标使用。',
+            mingyun_audio1:'你的命运可是掌握在我的手心中哦',
+            mingyun_audio2:'嗯……无论怎么摆，好像对你来说都不是好事呢？',
             feise:'绯色幻想乡',
             feise2:'绯色幻想乡',
             feise_info:'符卡技（4）<永续><u>你的第一回合开始时，若灵力足够：须发动此符卡；</u>你和与你同阵营的角色攻击范围+3；其他角色的结束阶段，若其对其以外的角色使用过牌，你可以：对其造成1点弹幕伤害。',
+            feise_audio1:'「紅色の幻想郷」！',
+            feise_audio2:'在如此鲜红的月亮下，我真的会杀掉你哦？',
+            remilia_die:'唔唔唔……',
             flandre:'芙兰朵露',
             kuangyan:'狂宴',
             kuangyan_audio1:'嗯？捏一下这个，你就会爆炸吗？',

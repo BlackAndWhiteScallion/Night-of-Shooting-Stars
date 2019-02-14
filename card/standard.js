@@ -368,9 +368,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			filterTarget:function(card,player,target){
 				return (target.num('hej') != 0);
-
 			},
 			content:function(){
+				if (player.name == 'marisa'){
+					game.trySkillAudio('liuxing_shun',player,true,Math.ceil(2*Math.random()));
+					if (target.name == 'alice'){
+						game.trySkillAudio('liuxing_shun', target, true, 3);
+					}
+					if (target.name == 'patchouli'){
+						game.trySkillAudio('liuxing_shun', target, true, 4);
+					}
+				}
 				if(target.num('hej')){
 					player.gainPlayerCard('hej',target,true);
 				}
@@ -478,6 +486,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			modTarget:true,
 			content:function(){
+				if (target.name == 'cirno') target.say('我是最强的！');
 				if (player.storage._enhance){
 					for(var i=0;i<player.storage._enhance;i++){
     					target.gain(ui.skillPile.childNodes[0],'draw2');
@@ -620,6 +629,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				"step 0"
+				if (player.name == 'aya') player.say('啊呀呀，今天你的胖次是什么颜色的呢？');
 				var controls=[];
 				if (player.storage.enhance){
 					controls.push('展示手牌并明置身份');
@@ -1141,6 +1151,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			fullskin:true,
 			type:'equip',
 			subtype:'equip5',
+			onLose:function(){
+				player.say('我的胖次！变态！');
+			},
 			ai:{
 				basic:{
 					equipValue:2

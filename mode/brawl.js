@@ -860,7 +860,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				showcase:function(init){
 	                var node=this;
-					var card=game.createCard('luanwu');
+					var card=game.createCard('death');
                     card.style.left='calc(50% - 52px)';
                     card.style.top='68px';
                     card.style.position='absolute';
