@@ -47266,7 +47266,8 @@ smoothAvatar:function(player,vice){
                             }
                         }
                         if(lib.translate[name+'_info']){
-                            var placetext=uiintro.add('<div class="text" style="display:inline">'+lib.translate[name+'_info']+'</div>');
+                            var placetext=uiintro.add('<div class="text" style="display:inline">'+get.skillInfoTranslation(name)+'</div>');
+                            //var placetext=uiintro.add('<div class="text" style="display:inline">'+lib.translate[name+'_info']+'</div>');
                             if(lib.translate[name+'_info'].indexOf('<div class="skill"')!=0){
                                 uiintro._place_text=placetext;
                             }

@@ -612,7 +612,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_maoyu:['male','2',2,[],['hiddenboss','bossallowed']],
 				stg_yousei:['female','1',1,[],['hiddenboss','bossallowed']],
 				stg_maid:['female','2',1,['saochu'],['hiddenboss','bossallowed']],
-				stg_bookshelf:['female','5',5,['juguang'],['hiddenboss','bossallowed']],
+				stg_bookshelf:['female','3',5,['juguang'],['hiddenboss','bossallowed']],
 				stg_bat:['female','1',1,[],['hiddenboss','bossallowed']],
 				//stg_bunny:['female','2',2,[],['hiddenboss','bossallowed']],
 			}
@@ -966,7 +966,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				init:function(){
-					lib.init.layout('newlayout');
+					//lib.init.layout('newlayout');
 					_status.additionalReward=function(){
 						return 500;
 					}
@@ -2067,6 +2067,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					});
 					"step 1"
 					if(result.bool){
+						player.loselili();
 						player.logSkill('juguang',result.targets);
 						player.useCard({name:'sha'},result.targets[0],false);
 					}
@@ -2496,7 +2497,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			saochu:'扫除',
 			saochu_info:'锁定技，你的手牌上限+1；结束阶段：若你有牌，弃置一张牌；然后，无论是否弃置了牌，摸一张牌。',
 			juguang:'聚光',
-			juguang_info:'锁定技，跳过你的所有阶段，视为使用一张【轰！】；你的装备上限+1。',
+			juguang_info:'锁定技，跳过你的所有阶段，消耗1点灵力，视为使用一张【轰！】；你的装备上限+2。',
 			xixue:'吸血',
 			xixue_info:'锁定技，你造成伤害后：令蕾米莉亚获得1点灵力；然后若其灵力等于上限，令其摸一张牌。',
 			revive_boss:'阶段切换！',
@@ -2557,6 +2558,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			gungirs_audio1:'神枪「冈格尼尔」!',
 			gungirs_audio2:'诸神之王的神器，必中的永恒之枪……尝尝它的力量吧？',
 			gungirs_info:'符卡技（0）<极意> 符卡发动时，你创建并装备一张【冈格尼尔】；你失去装备区内的【冈格尼尔】后，创建一张【冈格尼尔】并装备之。',
+		
+			boss_chiyan:'红雾异变',
+			boss_chiyan_info:'幻想乡被红雾包围了，去找出元凶吧！<br><br> 关卡数：6 <br><br> 复活机会：3       第3关和第5关后追加1次。',
 		},
 		get:{
 			rawAttitude:function(from,to){
