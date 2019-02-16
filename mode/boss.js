@@ -426,6 +426,58 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fellow.setIdentity('zhong');
 				game.addVideo('setIdentity',fellow,'zhong');
 			},
+			addRecord:function(bool){
+				if(typeof bool=='boolean'){
+					if (!lib.config.gameRecord.boss) lib.config.gameRecord["boss"] = {data:{}};
+					var data=lib.config.gameRecord.boss.data;
+					var identity=game.me.identity;
+					var name = game.boss.name;
+					if(!data[name]){
+						if (name == 'boss_nianshou'){
+							data[name] = [0];
+						}
+						data[name]=[0,0,0,0];
+					}
+					if (name == 'boss_nianshou'){
+						data[name][0] = _status.damageCount;
+					} else {
+						if(bool){
+							if (identity == 'cai'){
+								data[name][2]++;
+							} else {
+								data[name][0]++;
+							}
+						}
+						else{
+							if (identity == 'cai'){
+								data[name][3]++;
+							} else {
+								data[name][1]++;
+							}
+						}
+					}
+					var list = [];
+					for(var i in lib.character){
+						var info=lib.character[i];
+						if(info[4].contains('boss')){
+							list.push(i);
+						}
+					}
+					var str='';
+					for(var i=0;i<list.length;i++){
+						if(data[list[i]]){
+							if (list[i] == 'boss_nianshou'){
+								str+= lib.translate[list[i]] + ': <br> 最高伤害：'+ data[list[i]][0] + '<br>';
+							}
+							else {
+								str+=lib.translate[list[i]] + ': <br> 魔王：'+data[list[i]][0]+'胜 '+data[list[i]][1]+'负<br> 盟军：'+data[list[i]][2]+'胜  '+data[list[i]][3]+'负 <br>';
+							}
+						}
+					}
+					lib.config.gameRecord.boss.str=str;
+					game.saveConfig('gameRecord',lib.config.gameRecord);
+				}
+			},
 			changeBoss:function(name,player){
 				if(!player){
 					if(game.additionaldead){
@@ -1149,7 +1201,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		translate:{
 			zhu:'魔王',
-			cai:'盟',
+			cai:'盟军',
 			zhong:'从',
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',

@@ -3721,145 +3721,6 @@
             }
         },
         extensionMenu:{
-            cardpile:{
-                enable:{
-                    name:'开启',
-                    init:false,
-                    restart:true,
-                },
-                intro:{
-                    name:'将杀闪等牌在牌堆中的比例维持在与军争牌堆相同，防止开启扩展包后被过多地稀释',
-                    clear:true,
-                    nopointer:true,
-                },
-                sha:{
-                    name:'杀',
-                    init:'1',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                huosha:{
-                    name:'火杀',
-                    init:'1',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                leisha:{
-                    name:'雷杀',
-                    init:'1',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                shan:{
-                    name:'闪',
-                    init:'1',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                tao:{
-                    name:'桃',
-                    init:'0',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                jiu:{
-                    name:'酒',
-                    init:'0',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                wuxie:{
-                    name:'无懈可击',
-                    init:'0.5',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                nanman:{
-                    name:'南蛮入侵',
-                    init:'0',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                wanjian:{
-                    name:'万箭齐发',
-                    init:'0',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                guohe:{
-                    name:'过河拆桥',
-                    init:'0',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                shunshou:{
-                    name:'顺手牵羊',
-                    init:'0',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                tiesuo:{
-                    name:'铁索连环',
-                    init:'0',
-                    item:{
-                        '1':'补充全部',
-                        '0.5':'补充一半',
-                        '0':'不补充'
-                    }
-                },
-                hide:{
-                    name:'隐藏此扩展',
-                    clear:true,
-                    onclick:function(){
-                        if(this.firstChild.innerHTML=='隐藏此扩展'){
-                            this.firstChild.innerHTML='此扩展将在重启后隐藏';
-                            lib.config.hiddenPlayPack.add('cardpile');
-                            if(!lib.config.prompt_hidepack){
-                                alert('隐藏的扩展包可通过选项-其它-重置隐藏内容恢复');
-                                game.saveConfig('prompt_hidepack',true);
-                            }
-                        }
-                        else{
-                            this.firstChild.innerHTML='隐藏此扩展';
-                            lib.config.hiddenPlayPack.remove('cardpile');
-                        }
-                        game.saveConfig('hiddenPlayPack',lib.config.hiddenPlayPack);
-                    }
-                },
-            },
             boss:{
                 enable:{
                     name:'开启',
@@ -3922,47 +3783,6 @@
                         else{
                             this.firstChild.innerHTML='隐藏此扩展';
                             lib.config.hiddenPlayPack.remove('boss');
-                        }
-                        game.saveConfig('hiddenPlayPack',lib.config.hiddenPlayPack);
-                    }
-                },
-            },
-            wuxing:{
-                enable:{
-                    name:'开启',
-                    init:false,
-                    restart:true,
-                },
-                intro:{
-                    name:'每名角色和部分卡牌在游戏开始时随机获得一个属性',
-                    clear:true,
-                    nopointer:true,
-                },
-                num:{
-                    name:'带属性卡牌',
-                    init:'0.3',
-                    item:{
-                        '0.1':'10%',
-                        '0.2':'20%',
-                        '0.3':'30%',
-                        '0.5':'50%',
-                    }
-                },
-                hide:{
-                    name:'隐藏此扩展',
-                    clear:true,
-                    onclick:function(){
-                        if(this.firstChild.innerHTML=='隐藏此扩展'){
-                            this.firstChild.innerHTML='此扩展将在重启后隐藏';
-                            lib.config.hiddenPlayPack.add('wuxing');
-                            if(!lib.config.prompt_hidepack){
-                                alert('隐藏的扩展包可通过选项-其它-重置隐藏内容恢复');
-                                game.saveConfig('prompt_hidepack',true);
-                            }
-                        }
-                        else{
-                            this.firstChild.innerHTML='隐藏此扩展';
-                            lib.config.hiddenPlayPack.remove('wuxing');
                         }
                         game.saveConfig('hiddenPlayPack',lib.config.hiddenPlayPack);
                     }
@@ -22496,6 +22316,9 @@ throwDice:function(num){
             zhuSkill:{},
             unequip:{
                 mark:true,
+                intro:{
+                    content:'装备全部无效',
+                },
                 init:function(player){
                     player.removeEquipTrigger();
                     player.update();

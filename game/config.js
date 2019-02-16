@@ -60,7 +60,7 @@ window.config={
 	hiddenModePack:[],
 	hiddenCharacterPack:[],
 	hiddenCardPack:[],
-	hiddenPlayPack:[],
+	hiddenPlayPack:['boss'],
 	hiddenBackgroundPack:[],
 	customBackgroundPack:[],
 	favouriteCharacter:['marisa'],

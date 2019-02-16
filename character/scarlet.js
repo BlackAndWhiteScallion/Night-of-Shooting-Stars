@@ -235,6 +235,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filter:function(event,player){
                     if(player.countCards('he')==0) return false;
                     if(player == event.target) return false;
+                    if(event.targets.contains(player)) return false;
                     return get.distance(player,event.target,'attack')<=1 && lib.filter.targetEnabled(event.card,event.player,player);
                 },
                 content:function(){
@@ -253,8 +254,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 1"
                     if(result.cards){
                         //player.logskill(event.name, result.targets);
-                        trigger.targets[0].gain(result.cards);
-                        trigger.targets.remove(trigger.targets[0]);
+                    trigger.target.gain(result.cards,player);
+                    player.$give(result.cards,trigger.target);
+                        trigger.targets.remove(trigger.target);
                         //trigger.targets.push(player);
                         trigger.target=player;
                     }

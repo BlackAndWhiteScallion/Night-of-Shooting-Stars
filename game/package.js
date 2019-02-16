@@ -19,6 +19,7 @@ window.noname_package={
     play:{
         boss:'诸神降临',
         cardpile:'牌堆补充',
+        coin:'金币系统',
     },
     mode:{
         library:'图鉴',

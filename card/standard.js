@@ -2021,16 +2021,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			alter:true,
 			mod:{
 				canBeDiscarded:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;
 				},
 				cardDiscardable:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;
 				},
 				cardGainable:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;
 				},
 				canBeGained:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&&_status.currentPhase!=target) return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;
 				},
 			},
 		},
@@ -2704,7 +2704,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		penglaiyao_info:'结束阶段，你失去2点灵力。',
 		*/
 		pantsu:'蓝白胖次',
-		pantsu_info:'锁定技，其他角色不能弃置或获得你的【蓝白胖次】以外的牌。',
+		pantsu_info:'锁定技，你的弃牌阶段外，你的【蓝白胖次】以外的牌不能被弃置或获得。',
 		laevatein:'莱瓦丁',
 		laevatein_info:'锁定技，出牌阶段，你对每名角色使用的第一张【轰！】不算次数。',
 		gungnir:'冈格尼尔',

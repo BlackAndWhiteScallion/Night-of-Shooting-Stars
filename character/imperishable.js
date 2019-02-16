@@ -526,7 +526,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                         list.push('lilidamage');
                       }
-                      player.chooseControl(list).set('prompt',get.translation(player)+'对你发动了【梦想封印】!');
+                      player.chooseControl(list).set('prompt',get.translation(player)+'对'+get.translation(trigger.target)+'发动了【梦想封印】!');
                       'step 1'
                       if (result.control != 'lilidamage'){
                         if (trigger.target.countCards('hej')){

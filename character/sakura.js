@@ -2255,7 +2255,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             zhenhun:'镇魂',
             zhenhun_info:'一名角色的结束阶段，你可以选择一项：1. 获得其本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其一张明置牌。',
             zhenhun_audio1:'这是献给你的镇魂曲。',
-            zhenhun_audio2:'……别这样看我啦，我不会一把大火烧死你的。',
+            zhenhun_audio2:'……别这样看我啦，我不会一把大火烧死你的。<br> 至于掉所有人血的话……',
             lunasa_die:'呜咕咕咕咕……',
             merlin:'梅露兰',
             mingguan:'冥管',

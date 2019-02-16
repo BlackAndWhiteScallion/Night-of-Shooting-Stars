@@ -613,7 +613,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_yousei:['female','1',1,[],['hiddenboss','bossallowed']],
 				stg_maid:['female','2',1,['saochu'],['hiddenboss','bossallowed']],
 				stg_bookshelf:['female','3',5,['juguang'],['hiddenboss','bossallowed']],
-				stg_bat:['female','1',1,[],['hiddenboss','bossallowed']],
+				stg_bat:['female','1',1,['xixue'],['hiddenboss','bossallowed']],
 				//stg_bunny:['female','2',2,[],['hiddenboss','bossallowed']],
 			}
 		},
@@ -640,6 +640,41 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fellow.identity='zhong';
 				fellow.setIdentity('zhong');
 				game.addVideo('setIdentity',fellow,'zhong');
+			},
+			addRecord:function(bool){
+				if(typeof bool=='boolean'){
+					if (!lib.config.gameRecord.stg) lib.config.gameRecord["stg"] = {data:{}};
+					var data=lib.config.gameRecord.stg.data;
+					var name = _status.bosschoice.name;
+					if(!data[name]){
+						data[name]=[0,0,0,0];
+					}
+					if(bool){
+						data[name][0]++;
+						if (data[name][1] == 0 || data[name][1] > game.phaseNumber){
+							data[name][1] = game.phaseNumber;
+							data[name][2] = game.me.storage.fuhuo;
+						}
+					}
+					else{
+						data[name][3]++;
+					}
+					var list = [];
+					for(var i in lib.character){
+						var info=lib.character[i];
+						if(info[4].contains('boss')){
+							list.push(i);
+						}
+					}
+					var str='';
+					for(var i=0;i<list.length;i++){
+						if(data[list[i]]){
+							str+=lib.translate[list[i]] + ': <br> 通关次数：'+data[list[i]][0]+'  最快纪录：'+data[list[i]][1]+'回合   剩余残机：'+data[list[i]][2]+'    挑战失败次数：'+ data[list[i]][3]+'<br>';
+						}
+					}
+					lib.config.gameRecord.stg.str=str;
+					game.saveConfig('gameRecord',lib.config.gameRecord);
+				}
 			},
 			changeBoss:function(name,player){
 				if(!player){
@@ -1042,6 +1077,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				skillAnimation:true,
 				trigger:{player:'dieBefore'},
 				direct:true,
+				locked:true,
+				fixed:true,
 				filter:function(event,player){
 					return game.me.storage.reskill && game.me.storage.reskill.length > 0;
 				},
@@ -1361,8 +1398,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.event.player=game.me;
 					_status.event.step=0;
 					_status.roundStart=game.me;
-					game.phaseNumber=0;
-					game.roundNumber=0;
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
 					if(game.bossinfo){
 						game.bossinfo.loopType=1;
 					}
@@ -1460,8 +1497,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.event.player=game.me;
 					_status.event.step=0;
 					_status.roundStart=game.me;
-					game.phaseNumber=0;
-					game.roundNumber=0;
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
 					if(game.bossinfo){
 						game.bossinfo.loopType=1;
 					}
@@ -1551,7 +1588,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.storage.dialog = [
 							['reimu','这家人屋里都不安窗户的吗？','而且从外面看的时候<br>感觉有这么大吗？','',
 							'书房？（红白？）','','我那里就算年中无休<br>也一个参拜客也没有哦','','说起来在这么暗的屋子里<br>能读书吗？',
-							'','所以说～我才不是夜盲症什么的','切，才不是想说这个呢','你就是这里的主人吗？','','放出的雾太多了，<br>很令人困扰啊'],
+							'','所以说～我才不是夜盲症什么的','切，才不是想说这个呢','你就是这里的主人吗？','','放出的雾太多了，<br>很令人困扰啊',''],
 							['patchouli','那边的红白！','不准在我的书房里捣乱','','这里的书价值能比得上<br>你家神社５年份的香火钱呢','',
 							'嘛你的神社<br>也就只有那种程度的价值了','','我可不是像你一样的<br>夜盲症患者','','你找大小姐有什么事？','',
 							'那么，<br>就绝对不可以让你去见大小姐了','end'],
@@ -1573,8 +1610,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.event.player=game.me;
 					_status.event.step=0;
 					_status.roundStart=game.me;
-					game.phaseNumber=0;
-					game.roundNumber=0;
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
 					if(game.bossinfo){
 						game.bossinfo.loopType=1;
 					}
@@ -1654,7 +1691,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.storage.dialog = [
 							['reimu','','你—<br>看上去不是这里的主人呢','','（看样子如果说是去打倒她的的话<br>她就不会让我过了呢）','',
 							'被软禁了吗？','','那问不暗的你也行啦','在这一带放出大雾的<br>是你们对吧？','那个很烦人啊<br>你们有什么目的？','',
-							'我可不喜欢那样<br>能请你们住手么？','','那就叫她出来','','我要是在这里大闹一场的话<br>她会不会出来呢？'],
+							'我可不喜欢那样<br>能请你们住手么？','','那就叫她出来','','我要是在这里大闹一场的话<br>她会不会出来呢？',''],
 							['sakuya','啊—没法继续扫除了！','这不是会惹大小姐生气吗！！','','怎么回事？<br>是大小姐的客人吗？','',
 							'不让你过去的哦','大小姐很少见人的','','大小姐喜欢暗的地方','','阳光很碍事啊<br>大小姐就喜欢昏昏暗暗的','',
 							'这个请你去和大小姐商量','','喂，我没有理由让主人<br>遇到危险的对吧？','','但是，<br>你是见不到大小姐的',
@@ -1680,8 +1717,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.event.player=game.me;
 					_status.event.step=0;
 					_status.roundStart=game.me;
-					game.phaseNumber=0;
-					game.roundNumber=0;
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
 					if(game.bossinfo){
 						game.bossinfo.loopType=1;
 					}
@@ -1789,11 +1826,61 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					_status.event.player=game.me;
 					_status.event.step=0;
 					_status.roundStart=game.me;
-					game.phaseNumber=0;
-					game.roundNumber=0;
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
 					if(game.bossinfo){
 						game.bossinfo.loopType=1;
 					}
+				}
+			},
+			chiyan_win:{
+				trigger:{player:'dieBefore'},
+				direct:true,
+				content:function(){
+					game.boss.hide();
+					var clear=function(){
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+					};
+					var clear2=function(){
+						ui.auto.show();
+						ui.arena.classList.remove('only_dialog');
+					};
+					var step1=function(){
+						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">就这样，红雾异变的黑幕被击退了。<br>没过几天，红雾就从幻想乡<br>彻底的散去了。<br>恭喜你闯关成功！');
+						ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
+						ui.create.control('……魔理沙？',step2);
+						ui.create.control('呼……累死人了',step3);
+					}
+					var step2=function(){
+						clear();
+						if (game.me.name == 'marisa'){
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你不就魔理沙吗？<br>我可不是你哟。</div></div>');
+						} else {
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">我是魔理沙，<br>但也不是魔理沙（笑）。</div></div>');
+						}
+						ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
+						ui.create.control('额……',step3);
+					};
+					var step3=function(){
+						clear();
+						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">总之呢，作为通关奖励<br></div></div>');
+						ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
+						ui.create.control('不错不错',step4);
+					};
+					var step4=function(){
+						clear();
+						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">还会继续更新更多关卡的<br>还请你多多期待哟？</div></div>');
+						ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
+						ui.create.control('好的！',step5);
+					};
+					var step5=function(){
+						clear();
+						clear2();
+						game.resume();
+					};
+					game.pause();
+					step1();
 				}
 			},
 			/////////////////////////////// 这里开始是正经的角色技能 ////////////////////////////////////////////////////
@@ -1813,7 +1900,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addBossFellow(6,'stg_maid',2);
 					game.addBossFellow(2,'stg_maid',2);
 					game.boss.addSkill('jicai');
-					lib.skill['jicai'].cost = 1;
+					lib.skill['jicai'].cost = 0;
 					game.boss.useSkill('jicai');
 					lib.skill['jicai'].infinite = true;
 				},	
@@ -2020,6 +2107,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.addSkill('feise');
 					lib.skill['feise'].cost = 0;
 					player.useSkill('feise');
+					player.addSkill('chiyan_win');
 					player.addIncident(game.createCard('scarlet','zhenfa',''));
 					player.removeSkill('scarlet_win');
 					lib.skill['feise'].infinite = true;
@@ -2083,23 +2171,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				trigger:{player:'shaBegin'},
+				group:'stg_needle_2',
 				forced:true,
 				filter:function(){
 					return true;
 				},
 				content:function(){
 					trigger.target.addTempSkill('fengyin','shaAfter');
-					trigger.target.addTempSkill('unequip','shaAfter');
 				},
+			},
+			stg_needle_2:{
+				trigger:{player:'phaseDrawBegin'},
+				forced:true,
+				content:function(){
+					trigger.num++;
+				},
+				ai:{
+					threaten:1.3
+				}
 			},
 			stg_yinyangyu_skill:{
 				init:function(player){
 					player.addSkill('mengxiang');
 				},
-				enable:'chooseToUse',
-				usable:1,
+				enable:['chooseToUse','chooseToRespond'],
 				hiddenCard:function(player,name){
-                    return name == 'shan' || name == 'tao';
+                    return name == 'shan';
                 },
                 filter:function(event,player){
                     return player.countCards('he') > 0;
@@ -2129,15 +2226,34 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                             },
                             position:'he',
                             selectCard:1,
-                            usable:1,
                             popname:true,
                             viewAs:{name:links[0][2]},
+                            onuse:function(result,player){
+                    			player.addTempSkill('stg_yinyangyu_duang');
+                			},
                         }
                     },
                     prompt:function(links,player){
                         return '将一张非基本牌当作'+get.translation(links[0][2])+'使用/打出';
                     }
                 },
+                ai:{
+                	save:true,
+                	skillTagFilter:function(player){
+                        return player.countCards('he')>0;
+                    },
+                },
+			},
+			stg_yinyangyu_duang:{
+				trigger:{source:'damageBegin'},
+				forced:true,
+				filter:function(event,player){
+					return event.card&&event.card.name=='sha'&&event.cards&&
+						event.cards.length==1&&event.cards[0].name=='stg_yinyangyu';
+				},
+				content:function(){
+					trigger.num++;
+				}
 			},
 			stg_bagua_skill:{
 				init:function(player){
@@ -2362,6 +2478,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						players[i].addTempSkill('fengyin');
 						players[i].addTempSkill('unequip');
 						player.discardPlayerCard(players[i],'hej',[1,1],true);
+						players[i].addTempSkill('lunadial2');
 					}
 				},
 				onremove:function(player){
@@ -2370,6 +2487,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for (var i = 0; i < players.length; i++){
 						players[i].removeSkill('fengyin');
 						players[i].removeSkill('unequip');
+						players[i].removeSkill('lunadial2');
 					}
 				},
 			},
@@ -2502,10 +2620,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			xixue_info:'锁定技，你造成伤害后：令蕾米莉亚获得1点灵力；然后若其灵力等于上限，令其摸一张牌。',
 			revive_boss:'阶段切换！',
 			stg_needle:'封魔针',
-			stg_needle_info:'锁定技，你的手牌上限+1；你使用【轰！】指定目标后，目标的技能和装备技能无效，直到结算完毕。',
+			stg_needle_info:'锁定技，你的摸牌数和手牌上限+1；你使用【轰！】指定目标后，目标的技能无效，直到结算完毕。',
 			stg_yinyangyu:'鬼神阴阳玉',
 			stg_yinyangyu_skill:'鬼神阴阳玉',
-			stg_yinyangyu_info:'一回合一次，你可以将一张非基本牌（可以为此牌）当作一种基本牌使用/打出；你将此牌当作的【轰！】造成弹幕伤害时，该伤害+1。',
+			stg_yinyangyu_info:'你可以将一张非基本牌（可以为此牌）当作一种基本牌使用/打出；你将此牌当作的【轰！】造成弹幕伤害时，该伤害+1。',
+			//stg_yinyangyu_info:'你可以将一张非基本牌当作一种基本牌使用/打出。',
 			stg_missile:'魔法飞弹',
 			stg_missile_skill:'魔法飞弹',
 			stg_missile_info:'结束阶段，若你本回合使用过【轰！】，你可以视为使用一张【轰！】。',
@@ -2515,7 +2634,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			masterspark:'极限火花',
 			masterspark_info:'符卡技（0）你使用【轰！】指定目标后，将灵力值消耗至1：若如此做，该【轰！】造成伤害时，该伤害+X（X为消耗灵力量）。',
 			fengmo:'封魔阵',
-			fengmo_info:'符卡技（2）符卡发动时，弃置所有其他角色各一张牌；其他角色的技能和装备技能无效。',
+			fengmo_info:'符卡技（2）符卡发动时，弃置所有其他角色各一张牌；其他角色不能使用/打出手牌，技能和装备技能无效。',
 			stg_watch:'血月时针',
 			stg_watch_skill:'血月时针',
 			stg_watch_info:'【时静】中的“3”视为“4”；你造成伤害后，防止你的灵力和体力扣减，直到回合结束。',
