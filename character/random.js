@@ -12,6 +12,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			megumin:['female','4',3,['honglian','sbrs_liansuo','explosion']],
 			satone:['female','2',3,['guyin','tianze']],
 			nero:['female','2',4,['muqi','AestusDomusAurea']],
+			kurumi:['female','2',3,['kedan','shishu','shishi']],
 		},
 		characterIntro:{
 			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
@@ -1332,7 +1333,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			muqi:{
 				audio:2,
 				group:'muqi2',
-				enable:['chooseToUse','chooseToRespond'],
+				enable:'chooseToUse',
 				init:function(player){
 					player.storage.muqi = [];
 					player.node.framebg.dataset.auto='gold';
@@ -1535,6 +1536,290 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 			},
+			kedan:{
+				audio:2,
+				group:['kedan2','kedan3'],
+				enable:'chooseToUse',
+				init:function(player){
+					player.storage.kedan = [];
+				},
+				filter:function(event,player){
+                    return player.countCards('he')>1;
+                },
+                chooseButton:{
+                    dialog:function(){
+                        var list = [];
+                        for (var i in lib.card){
+                            if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                            if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if(lib.card[i].type == 'jinji'){
+                                list.add(i);
+                            }
+                        }
+                        for(var i=0;i<list.length;i++){
+                            list[i]=[get.type(list[i]),'',list[i]];
+                        }
+                        return ui.create.dialog([list,'vcard']);
+                    },
+                    filter:function(button,player){
+                    	return _status.event.getParent().filterCard({name:button.link[2]},player) && !player.storage.kedan.contains(button.link[2]);
+                        //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
+                    },
+                    check:function(button){
+                        var player=_status.event.player;
+                        return get.value({name:button.link[2]}) - 5;
+                    },
+                    backup:function(links,player){
+                        return {
+                            filterCard:function(card,player){
+                                return get.bonus(card) && get.bonus(card) > 0;
+                            },
+                            audio:2,
+                            position:'he',
+                            selectCard:1,
+                            audio:2,
+                            popname:true,
+                            viewAs:{name:links[0][2]},
+                            onuse:function(result,player){
+                            	if (get.type(result.card.name) == 'jinji') player.storage.kedan.push(result.card.name);
+                            },
+                        }
+                    },
+                    prompt:function(links,player){
+                        return '将一张牌当作'+get.translation(links[0][2])+'使用';
+                    },
+                },
+                ai:{
+                    order:4,
+                    result:{
+                        player:function(player){
+                            return 1;
+                        }
+                    },
+                    threaten:1,
+                }
+			},
+			kedan2:{
+				direct:true,
+				trigger:{global:'phaseAfter'},
+				content:function(){
+					player.storage.kedan = [];
+				}
+			},
+			kedan3:{
+				trigger:{player:'useCard'},
+				filter:function(event,player){
+					return get.type(event.card) == 'jinji' && !player.hasSkill('kedan4');
+				},
+				content:function(){
+					'step 0'
+					player.chooseTarget('选择一名角色成为'+get.translation(trigger.card)+'的唯一目标',function(card,player,target){
+						return player.canUse({name:trigger.card.name},target,false);
+					}).set('ai',function(target){
+						return get.effect(target,{name:trigger.card.name},_status.event.player);
+					});
+					"step 1"
+					if(result.bool){
+						player.logSkill(event.name,result.targets);
+						trigger.target=result.targets[0];
+						trigger.targets = [];
+						trigger.targets.push(result.targets[0]);
+					}
+					else{
+						event.finish();
+					}
+					"step 2"
+					trigger.untrigger();
+					player.addTempSkill('kedan4', 'useCardAfter');
+					trigger.trigger('useCard');
+					game.delay();
+				},
+				prompt:'是否改变禁忌牌的目标？',
+			},
+			kedan4:{
+			},
+			shishu:{
+				audio:2,
+				group:['shishu2','shishu3','shishu4'],
+				trigger:{player:'phaseEnd'},
+				filter:function(event,player){
+					var players = game.filterPlayer();
+					var num = 0;
+					var ej = false;
+					for (var i = 0; i < players.length; i ++){
+						if (players[i] == player) continue;
+						num += players[i].hp;
+						if (!players[i].countCards('e',{bonus:0})) ej = true;
+						if (players[i].countCards('e') > players[i].countCards('e',{bonus:0})) ej = true;
+					}
+					return num < player.storage.shishu && (ej || player.storage.shishu3);
+				},
+				content:function(){
+					'step 0'
+					var players = game.filterPlayer();
+					var num = 0;
+					for (var i = 0; i < players.length; i ++){
+						if (players[i] == player) continue;
+						num += players[i].hp;
+					}
+					event.num = num;
+					event.num -= player.storage.shishu;
+					'step 1'
+					if (event.num == 0) event.finish();
+					var ej = false;
+					var players = game.filterPlayer();
+					for (var i = 0; i < players.length; i ++){
+						if (players[i] == player) continue;
+						num += players[i].hp;
+						if (!players[i].countCards('e',{bonus:0})) ej = true;
+						if (players[i].countCards('e')> players[i].countCards('e',{bonus:0})) ej = true;
+					}
+					var list = [];
+					if (player.storage.shishu3) list.push('翻弃牌堆');
+					if (ej) list.push('从场上抢');
+					if (!list[0]) event.finish();
+
+					player.chooseControl(list,function(event,player){
+						if (list['从场上抢']) return '从场上抢';
+						return '翻弃牌堆';
+					});
+					'step 2'
+					if (result.control == '从场上抢'){
+						player.chooseTarget('选择一个倒霉人，抢她一张有灵力的牌',function(card,player,target){
+							if(player==target) return false;
+							return !target.countCards('e',{bonus:0}) || target.countCards('e')> target.countCards('e',{bonus:0});
+						}).set('ai',function(target){
+							return -get.attitude(player,target);
+						});
+					} else {
+						player.chooseCardButton(player.storage.shishu3,'捡回一张牌',1,true).ai=function(button){
+	                        var val=get.value(button.link);
+	                        if(val<0) return -10;
+	                        return val;
+	                    }
+					}
+					'step 3'
+					if (result.links){
+						player.gain(result.links)._triggered=null;
+	                    for(var i=0;i<result.links.length;i++){
+	                        ui.discardPile.remove(result.links[i]);
+	                        player.storage.shishu3.remove(result.links[i]);
+	                        player.syncStorage('shishu3');
+	                    }
+					} else if (result.bool){
+						player.gainPlayerCard(result.target,1,'ej',true).set('filterButton',function(button){
+							return get.bonus(button.link) > 0;
+						});
+					}
+					event.num --;
+					if (event.num > 0) event.goto(1);
+				},
+			},
+			shishu2:{
+				direct:true,
+				trigger:{player:'phaseBeginStart'},
+				content:function(){
+					var players = game.filterPlayer();
+					var num = 0;
+					for (var i = 0; i < players.length; i ++){
+						if (players[i] == player) continue;
+						num += players[i].hp;
+					}
+					player.storage.shishu = num;
+				},
+			},
+			shishu3:{
+				intro:{
+					content:'cards'
+				},
+ 				trigger:{global:'loseEnd'},
+                direct:true,
+                filter:function(event,player){
+                    if (_status.currentPhase!=player) return false;
+                    for(var i=0;i<event.cards.length;i++){
+                    	if(get.type(event.cards[i]) == 'equip' && event.getParent().name == 'useCard' && event.getParent().card.name == event.cards[i].name) continue;
+                        if(get.type(event.cards[i]) != 'jinji' && !get.bonus(event.cards[i]) > 0) continue;
+                        if(get.position(event.cards[i])=='d'){
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                content:function(){
+                    for (var i = 0; i < trigger.cards.length; i ++){
+                    	if (get.type(trigger.cards[i]) != 'jinji' && !get.bonus(trigger.cards[i]) > 0) continue;
+                        if (!player.storage.shishu3) player.storage.shishu3 = [trigger.cards[i]];
+                        else player.storage.shishu3.push(trigger.cards[i]); 
+                    }
+                    player.markSkill('shishu3');
+                    player.syncStorage('shishu3');
+                },   
+			},
+			shishu4:{
+				direct:true,
+				trigger:{player:'turnAfter'},
+				content:function(){
+					delete player.storage.shishu3;
+					player.syncStorage('shishu3');
+					player.unmarkSkill('shishu3');
+				}
+			},
+			shishi:{
+				audio:2,
+                cost:4,
+                spell:['shishi1','shishi2'],
+                roundi:true,
+                trigger:{player:'phaseBeginStart'},
+                check:function(event,player){
+                    return false;
+                },
+                filter:function(event,player){
+                    return player.lili > lib.skill.shishi.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.shishi.cost);
+                    player.turnOver();
+                },
+			},
+			shishi1:{
+				audio:2,
+				trigger:{player:['changeHpBefore','changeliliBefore']},
+				filter:function(event,player){
+					return event.num < 0;
+				},
+				content:function(){
+					trigger.cancel();
+				},
+				mod:{
+					targetInRange:function(card,player,target,now){
+						if(card.name=='sha') return true;
+					},
+					cardUsable:function(card,player,num){
+						if(card.name=='sha') return Infinity;
+					}
+				},
+			},
+			shishi2:{
+				audio:2,
+				trigger:{source:'dieAfter'},
+				forced:true,
+				filter:function(event,player){
+					//return !player.hasSkill('lianpo2');
+					return true;
+				},
+				content:function(){
+					player.addSkill('shishi3');
+					player.insertPhase();
+				}
+			},
+			shishi3:{
+				direct:true,
+				trigger:{player:'turnOverBefore'},
+				content:function(){
+					player.removeSkill('shishi3');
+					trigger.cancel();
+				},
+			},
 		},
 		translate:{
 			kanade:'奏',
@@ -1581,7 +1866,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			huanrao_4:'环绕',
 			huanrao_4_sha:'环绕',
 			huanrao_audio1:'妖精小姐，帮一下忙啦~',
-			huanrao_audio2:'',
+			huanrao_audio2:'来来来，来一起玩了啊~',
 			sliver_arrow:'白银之箭',
 			sliver_arrow_info:'符卡技（4）你可以跳过出牌阶段和弃牌阶段；若如此做，你弃置一名角色X张牌（X为你的手牌数）：若你以此法弃置了其所有牌，对其造成1点弹幕伤害和1点灵击伤害。',
 			silver_arrow_audio1:'我的箭会贯穿你！',
@@ -1606,20 +1891,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			honglian_info:'准备阶段，你可以选择一名角色；若如此做，你于本回合内对其造成伤害后，仅限一次地可以视为对所有与其距离X以内的角色使用一张【轰！】（X为你的灵力值）。',
 			honglian_2:'红链',
 			honglian_3:'红链',
-			honglian_audio1:'',
-			honglian_audio2:'',
+			honglian_audio1:'艺术就是爆炸！',
+			honglian_audio2:'一切都是为了爆发！',
 			sbrs_liansuo:'莲锁',
 			sbrs_liansuo_info:'准备阶段，你可以指定一名角色：本回合一次，该角色因弃置或获得而失去牌后，你视为对其距离X以内的所有角色使用一张【轰！】；目标角色可以弃置一张非基本牌来抵消该【轰！】（X为你的灵力）。',
-			sbrs_liansuo_audio1:'',
-			sbrs_liansuo_audio2:'',
+			sbrs_liansuo_audio1:'别想跑掉！',
+			sbrs_liansuo_audio2:'什么东西不爆炸一次怎么能行！',
 			sbrs_liansuo_2:'莲锁',
 			sbrs_liansuo_3:'莲锁',
 			sbrs_liansuo_4:'莲锁（无效）',
 			explosion:'EXPLOSIONNNNN！',
 			explosion_info:'符卡技（4）跳过你的出牌阶段，然后对一名角色造成2点弹幕伤害，2点灵击伤害，并弃置其装备区内所有牌。',
 			explosion_2:'EXPLOSIONNNNN！',
-			explosion_audio1:'',
-			explosion_audio2:'',
+			explosion_audio1:'EXPLOSIONNNNN！',
+			explosion_audio2:'EXPPLOSSSSSIIIIIIOOOOOOONNNNN！',
 			satone:'七宫',
 			guyin:'孤樱',
 			guyin_2:'孤樱',
@@ -1628,13 +1913,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			tianze:'天则',
 			tianze2:'天则',
 			tianze_info:'锁定技，你受到弹幕伤害后，对伤害来源造成等量灵击伤害；你成为红桃辅助牌的目标时，须消耗1点灵力，然后回复1点体力。',
-			satone_die:'',
+			satone_die:'咕咕咕……',
 			nero:'尼禄',
 			muqi:'幕启',
 			muqi_backup_audio1:'没有事情是余做不到的！',
 			muqi_backup_audio2:'唔姆！',
 			muqi_backup_audio3:'余是不是很厉害！',
-			muqi_info:'你可以将两张牌当作一种基本牌，或本回合没有使用过的一种法术牌使用/打出。',
+			muqi_info:'你可以将两张牌当作一种基本牌，或本回合没有使用过的一种法术牌使用。',
 			AestusDomusAurea:'招荡的黄金剧场',
 			AestusDomusAurea_info:'符卡技（2）【永续】准备阶段，你将手牌数补至手牌上限；出牌阶段，你可以弃置一张手牌，声明一种技能牌，然后获得之；符卡结束时，你可以消耗1点灵力，令符卡不结束。',
 			ADA2:'招荡的黄金剧场',
@@ -1643,6 +1928,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ADA3_audio1:'Encore!',
 			ADA3_audio2:'表演还没有结束呢！',
 			nero_die:'',
+			kurumi:'狂三',
+			kedan:'刻弹',
+			kedan_info:'你可以将一张有灵力的牌当作一种禁忌牌使用，一回合一种禁忌牌名限一次；你使用禁忌牌时，可以将目标改为“一名角色”。',
+			shishu:'时溯',
+			shishu3:'本回合进入弃牌堆的有灵力/禁忌牌',
+			shishu_info:'结束阶段，你可以获得场上或本回合进入弃牌堆的至多Ｘ张有灵力的牌或禁忌牌（Ｘ为本回合其他角色扣减的体力总值）。',
+			shishi:'食时之城',
+			shishi_info:'符卡技（4）<永续>防止你扣减体力或灵力；你的攻击范围和使用【轰！】的次数限制视为无限；结束阶段，若你本回合击坠过角色，你于回合结束后进行一个额外的回合，该回合内符卡不结束。',
 		},
 	};
 });

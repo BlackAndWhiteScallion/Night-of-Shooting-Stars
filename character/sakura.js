@@ -1628,7 +1628,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
-                            if(lib.card[i].type == 'trick' && event.filterCard({name:i},player,event)){
+                            if(lib.card[i].type == 'trick'){
                                 list.add(i);
                             }
                         }
@@ -1636,6 +1636,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             list[i]=[get.type(list[i]),'',list[i]];
                         }
                         return ui.create.dialog([list,'vcard']);
+                    },
+                    filter:function(button,player){
+                        return _status.event.getParent().filterCard({name:button.link[2]},player);
+                        //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
                     },
                     check:function(button){
                         var player=_status.event.player;
@@ -2192,7 +2196,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             letty:'蕾蒂',
             shuangjiang:'霜降',
             shuangjiang_info:'结束阶段，你可以对本回合成为过牌的目标，且没有使用/打出过牌的所有角色造成1点灵击伤害。',
-            shuangjiang_audio1:'下次，记得穿厚一些哟。',
+            shuangjiang_audio1:'冬天来了！……阿嚏！',
             shuangjiang_audio2:'怎么，这就觉得太冷了吗？',
             baofengxue:'暴风雪之眼',
             baofengxue2:'暴风雪之眼',
@@ -2200,7 +2204,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             baofengxue_audio1:'这是我新的符卡！',
             baofengxue_audio2:'感受一下自然的力量吧！',
             baofengxue_info:'符卡技（2）你使用一张牌时，可以令其他角色不能使用/打出与之相同花色的牌，直到结束阶段；【霜降】中的“一名”视为“所有”',
-            letty_die:'冬天可不会就这么结束的哟。',
+            letty_die:'（擦鼻涕）这种天气算哪门子的冬天啊。',
             chen:'橙',
             mingdong:'鸣动',
             mingdong2:'鸣动',
@@ -2225,8 +2229,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             huanfa_audio1:'表演正在准备中，请稍微片刻。',
             huanfa_audio2:'嗯？已经等不及了么？',
             mocai:'魔彩',
-            mocai_audio1:'帮她一把吧，上海。',
-            mocai_audio2:'别让她倒了，蓬莱。',
+            mocai_audio1:'上海，该开始表演啦。',
+            mocai_audio2:'哎，蓬莱把【没中】拿哪儿去了？',
             mocai_info:'你攻击范围内的一名角色成为攻击牌的目标后，你可以选择一项：将一张“手办”置于其区域内；或弃置一张“手办”，观看技能牌堆顶的三张牌，并将其中一张交给目标。',
             hanghourai:'上吊的蓬莱人形',
             hanghourai_audio1:'诅咒「上吊的蓬莱人偶」!',
@@ -2280,6 +2284,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             huanzou_audio1:'这是献给你的幻奏曲。',
             huanzou_audio2:'不客气哟。',
             huanzou_info:'一名角色因使用，打出，或在自己回合内弃置而失去一张明置牌时，你可以令其摸一张牌。',
+            lyrica_die:'下次我带姐姐一起来！',
             hezou:'棱镜协奏曲',
             hezou_2:'棱镜协奏曲',
             hezou_skill:'棱镜协奏曲',

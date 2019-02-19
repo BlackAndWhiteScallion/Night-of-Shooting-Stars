@@ -3724,7 +3724,7 @@
             boss:{
                 enable:{
                     name:'开启',
-                    init:false,
+                    init:true,
                     restart:true,
 					onswitch:function(bool){
 						if(bool){
@@ -3760,7 +3760,7 @@
 					}
 				},
                 intro:{
-                    name:'将挑战模式的角色添加到其它模式',
+                    name:'将已通关的闯关模式的一些角色追加到其他模式中。',
                     clear:true,
                     nopointer:true,
                 },
@@ -24694,6 +24694,10 @@ throwDice:function(num){
                         ui.backgroundMusic.src=lib.config.background_music_src;
                     }
                 }
+                if (music == 'music_default'){
+                    ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
+                    ui.backgroundMusic.currentTime = [137, 693, 1338, 1970, 2715, 3463].randomGet();
+                }
                 else{
                     ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
                 }
@@ -37472,7 +37476,7 @@ smoothAvatar:function(player,vice){
                                 for(var i=0;i<lib.videos.length;i++){
                                     createNode(lib.videos[i]);
                                 }
-                                ui.create.videoNode=createNode;
+                                
                                 var importVideoNode=ui.create.div('.config.switcher.pointerspan',
                                 '<span class="underlinenode slim ">导入录像...</span>',function(){
                                     this.nextSibling.classList.toggle('hidden');
@@ -37536,7 +37540,7 @@ smoothAvatar:function(player,vice){
                                     };
                                     fileReader.readAsText(fileToLoad, "UTF-8");
                                 }
-
+                                ui.create.videoNode=createNode;
                                 playButton.listen(function(){
                                     var current=this.parentNode.querySelector('.videonode.active');
                                     if(current){
@@ -41283,7 +41287,7 @@ smoothAvatar:function(player,vice){
 
                 if(_status.connectMode) return uiintro;
                 uiintro.add('<div class="text center">轮数 <span style="font-family:xinwei">'+game.roundNumber+'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">'+game.shuffleNumber+'</div>');
-                uiintro.add('<div class="text center">弃牌堆</div>');
+                uiintro.add('<div class="text center">弃牌堆</div>' + ui.discardPile.childNodes.length +'');
                 if(ui.discardPile.childNodes.length){
                     var list=[];
                     for(var i=0;i<ui.discardPile.childNodes.length;i++){

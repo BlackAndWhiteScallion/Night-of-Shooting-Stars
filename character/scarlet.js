@@ -27,13 +27,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			heiguan:{
     			audio:2,
     			trigger:{player:'phaseUseBegin'},
-    			//prompt:'选择一些灵力小于你，并且相邻的角色，和他们依次拼点：若你赢，视为对其使用一张【轰！】；若没赢，你须选择：消耗1点灵力，或取消其他目标并结束出牌阶段。',
+    			prompt:'选择一些灵力小于你，并且相邻的角色，和她们依次拼点：若你赢，咬她一口！；若你没赢，额，你须选择：消耗1点灵力，或取消其他目标并结束出牌阶段。',
     			filter:function(event,player){
     				return player.countCards('h')>0;
     			},
     			content:function(){
     				"step 0"
-    				player.chooseTarget(get.prompt('heiguan'),[1,8],function(card,player,target){
+    				player.chooseTarget('是谁看起来更好咬一些呢……',[1,8],function(card,player,target){
                         var range = false;
     					for (var i=0; i<ui.selected.targets.length;i++){
 							if (get.distance(ui.selected.targets[i],target)<=1) range = true; 						
@@ -131,7 +131,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     		},
             xingmai:{
                 audio:2,
-                enable:['chooseToUse','chooseToRespond'],
+                enable:'chooseToUse',
                 hiddenCard:function(player,name){
                     return name == 'shan';
                 },
@@ -144,14 +144,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
-                            if(lib.card[i].type == 'basic' && event.filterCard({name:i},player,event)){
+                            if(lib.card[i].type == 'basic'){
                                 list.add(i);
                             }
                         }
                         for(var i=0;i<list.length;i++){
                             list[i]=[get.type(list[i]),'',list[i]];
                         }
+                        console.log(list);
                         return ui.create.dialog([list,'vcard']);
+                    },
+                    filter:function(button,player){
+                        console.log(button);
+                        return _status.event.getParent().filterCard({name:button.link[2]},player);
+                        //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
                     },
                     check:function(button){
                         var player=_status.event.player;
@@ -177,6 +183,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             popname:true,
                             viewAs:{name:links[0][2]},
                             onuse:function(result,player){
+                                player.removeSkill('xingmai');
+                                player.addSkill('xingmai2');
+                            },
+                            onrespond:function(result,player){
                                 player.removeSkill('xingmai');
                                 player.addSkill('xingmai2');
                             },
@@ -240,7 +250,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    var next=player.chooseCard('你可以发动"地转",把目标转移给你。');
+                    var next=player.chooseCard('你可以地转，把'+get.translation(trigger.card)+'的目标从'+get.translation(trigger.target)+'转移给你。');
                     next.set('ai',function(card){
                                 var player=_status.event.player;
                                 var trigger=_status.event.getTrigger();
@@ -736,7 +746,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
-                    player.chooseToDiscard(get.prompt('huanzang'),function(card){
+                    player.chooseToDiscard('你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }).set('ai',function(card){
                         if(_status.event.eff<0){
@@ -766,7 +776,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseToDiscard(get.prompt('huanzang'),function(card){
+                    player.chooseToDiscard('你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }, true).set('ai',function(card){
                         return 0;
@@ -792,7 +802,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    var next=player.chooseToDiscard(get.prompt('huanzang'),'he',function(card){
+                    var next=player.chooseToDiscard('你可以用一把与'+get.translation(trigger.responded.cards[0])+'相同花色/点数的飞刀把它砍断','he',function(card){
                         return (get.suit(card) == get.suit(trigger.responded.cards[0]) || get.number(card) == get.number(trigger.responded.cards[0]));
                     }, true);
                     next.set('ai',function(card){
@@ -815,6 +825,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 intro:{
                     content:'cards'
                 },
+                prompt:'是否把今天用出去的飞刀捡起来？',
                 filter:function(event,player){
                     return player.lili > 0 && player.storage.shijing;
                 },
@@ -823,7 +834,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     event.num = 3 - player.countCards('h');
                     if (player.countCards('e',{name:'stg_watch'})) event.num++;
                     if (event.num < 0) event.finish();
-                    player.chooseCardButton(player.storage.shijing,'获得'+event.num+'张牌',[1,event.num],true).ai=function(button){
+                    player.chooseCardButton(player.storage.shijing,'捡回'+event.num+'张牌',[1,event.num],true).ai=function(button){
                         var val=get.value(button.link);
                         if(val<0) return -10;
                         return val;
@@ -845,8 +856,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 filter:function(event,player){
                     if (_status.currentPhase!=player) return false;
                     for(var i=0;i<event.cards.length;i++){
-                        if (get.type(event.cards[i]) == 'equip' && event.getParent().name == 'useCard') continue;
-                        if(get.position(event.cards[i])==ui.discardPile){
+                        if(get.type(event.cards[i]) == 'equip' && event.getParent().name == 'equip') continue;
+                        if(get.position(event.cards[i])=='d'){
                             return true;
                         }
                     }
@@ -920,6 +931,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 check:function(event,player){
                     return -get.attitude(player, event.player) && get.attitude(player, event.target);
                 },
+                prompt:'要不要让那个垃圾感受一下The World的力量？',
             },
             mingyun:{
                 audio:2,
@@ -931,14 +943,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     "step 0"
                     var num = player.getAttackRange();
+                    player.draw(num);
                     if (num != 0){
-                        player.chooseCardButton(num,true,get.cards(num),'按顺序将卡牌置于牌堆顶（先选择的在上）').set('ai',function(button){
-                            return get.value(button.link);
+                        player.chooseCard(num,'he',true,'按顺序将卡牌置于牌堆顶（先选择的在上）').set('ai',function(card){
+                            return get.value(card);
                         });
                     }
-                      'step 1'
-                      if(result.bool){
-                        var list=result.links.slice(0);
+                    'step 1'
+                    if(result.bool){
+                        var list=result.cards;
                         while(list.length){
                           ui.cardPile.insertBefore(list.pop(),ui.cardPile.firstChild);
                         }
@@ -950,6 +963,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (event.name == 'damage') return true;
                     return player.getAttackRange() > 2;
                 },
+                prompt:'要不要看看今天发牌姬带来了什么？',
             },
             mingyun2:{
                 trigger:{global:'useCardToBegin'},
@@ -1001,7 +1015,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return event.player!=player&&event.player.hasSkill('feise4');
                 },
                 content:function(){
-                    player.line(trigger.player,'red');
+                    player.line(trigger.player,'fire');
                     trigger.player.damage();
                 },
                 check:function(event,player){
@@ -1033,6 +1047,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             feise4:{},
             kuangyan:{
                 audio:2,
+                intro:{
+                    content:'锁定技',
+                },
                 group:['kuangyan2'],
                 trigger:{player:['phaseUseBegin','damageEnd']},
                 filter:function(event,player){
@@ -1059,6 +1076,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 3'
                     lib.skill['kuangyan'].forced = true;
+                    player.markSkill('kuangyan');
                 },
                 check:function(){
                     return true;
@@ -1070,6 +1088,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 direct:true,
                 content:function(){
                     lib.skill['kuangyan'].forced = false;
+                    player.unmarkSkill('kuangyan');
                 }
             },
             zhihou:{
@@ -1156,31 +1175,31 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			heiguan:'黑棺',
 			heiguan_info:'出牌阶段开始时，你可以指定灵力值小于你的任意名连续角色；你与这些角色各依次拼点；若你赢，视为你对其使用一张“轰！”；否则，你选择一项：取消其他目标并结束该阶段，或消耗1点灵力。',
 			heiguan_audio1:'是这样吗？',
-            heiguan_audio2:'破道九十，黑棺！',
+            heiguan_audio2:'破道十，黑棺！',
             gain_lili:'获得灵力',
 			end_phase:'结束出牌阶段',
 			yuezhi:'月之阴暗面',
 			yuezhi_info:'符卡技（2）<永续>你攻击范围内的所有其他角色的攻击范围视为0。',
-            yuezhi_audio1:'别以为就这样结束了！',
-            yuezhi_audio2:'隐隐透出浑浊的纹章，桀骜不驯张狂的才能；潮涌·否定·麻痹·一瞬，阻碍长眠。爬行的铁之公主，不断自残的泥制人偶，结合·反弹·延伸至地面，知晓自身的无力吧！',
+            yuezhi_audio1:'我可是可以很厉害的啊！',
+            yuezhi_audio2:'隐隐透出浑浊的纹章，桀骜不——呜，咬到舌头了……',
             rumia_die:'看来是这样呢。',
             meiling:'美铃',
             xingmai:'星脉',
             xingmai2:'星脉',
-            xingmai_info:'你可以将一张“轰！”当作一种基本牌使用或打出；然后，调换描述中“一张‘轰！’”与“一种基本牌”的位置。',
+            xingmai_info:'你可以将一张“轰！”当作一种基本牌使用；然后，调换描述中“一张‘轰！’”与“一种基本牌”的位置。',
             xingmai2_info:'你可以将一种基本牌当作一张“轰！”使用或打出；然后，调换描述中“一张‘轰！’”与“一种基本牌”的位置。',
-            xingmai_audio1:'Zzzz……',
-            xingmai_audio2:'早睡早起方能……还是晚起好了……',
+            xingmai_backup_audio1:'Zzzz……',
+            xingmai_backup_audio2:'早睡早起方能……方能睡回笼觉……',
             xingmai2_audio1:'啊？什么时候开始打架的？',
             xingmai2_audio2:'元气弹！',
             dizhuan:'地转',
             dizhuan_info:'你攻击范围内的一名其他角色成为“轰！”的目标时，你可以弃置一张牌，然后将目标转移给你；你受到以此法转移的牌造成的弹幕伤害后，获得1点灵力。',
-		    dizhuang_audio1:'你的对手在这里！',
+		    dizhuang_audio1:'啊？有敌人？',
             dizhuang_audio2:'你在往哪里打呢！',
             jicai:'极彩风暴',
             jicai_info:'符卡技（2）<永续>你使用/打出牌时，可以弃置场上一张与之相同花色的牌。',
             jicai_audio1:'华符「极彩风暴」！',
-            jicai_audio2:'哈啊——————————————————————————————',
+            jicai_audio2:'哈啊————————————————',
             jicai2_audio1:'木大木大木大！',
             jicai2_audio2:'欧拉欧拉欧拉欧拉欧拉！',
             meiling_die:'好吧好吧……还是你强一些呢。',
@@ -1189,22 +1208,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             qiyao_info:'准备阶段，你可以选择任意项：跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张牌；跳过摸牌阶段，视为使用一种法术牌；跳过出牌阶段，将一张牌当作法术牌使用；你不能以此法使用同名牌。',
             qiyao3:'七曜',
             qiyao_audio1:'就稍微用点手段吧。',
-            qiyao_audio2:'怎么就这么点法术牌呢……',
-            qiyao_audio3:'……',
+            qiyao_audio2:'我记得明明有更多法术牌的啊……？',
+            qiyao_audio3:'……（哈欠）',
             phaseUse_qiyao:'跳过出牌阶段，将一张牌当作一种法术牌使用',
             phaseDraw_qiyao:'跳过摸牌阶段，视为使用一种法术牌',
             phaseDiscard_qiyao:'跳过弃牌阶段并消耗1点灵力，强化你本回合使用的所有法术牌',
             riyin:'日阴',
             riyin2:'日阴',
             riyin_info:'一名角色成为牌的目标后，若该角色本回合在此牌前成为过牌的目标，你可以将一张牌当作【请你住口！】使用。',
-            riyin2_audio1:'不行。',
-            riyin2_audio2:'请你安静下来。',
+            riyin2_audio1:'嘘——',
+            riyin2_audio2:'请你安静一点。',
             xianzhe:'贤者之石',
             xianzhe2:'贤者之石',
             xianzhe_info:'符卡技（1）你的法术牌视为拥有“强化（-1）：可以为此牌额外指定一名目标；此牌不能成为【魔法障壁】的目标。”',
             xianzhe_audio1:'火水木金土符「贤者之石」。',
             xianzhe_audio2:'见识一下真正的魔法吧。',
-            patchouli_die:'只是今天哮喘发作了而已……',
+            patchouli_die:'今天只是哮喘发作了而已……',
             koakuma:'小恶魔',
             qishu:'奇术',
             qishu_info:'准备阶段，你可以消耗1点灵力，并跳过一个阶段，然后指定一名其他角色；若如此做，回合结束后，该角色获得1点灵力，并进行一个以此法跳过的阶段。',
@@ -1213,7 +1232,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             qishu_audio3:'帕秋莉大人~~您要的红茶~',
             anye:'暗夜',
             anye_info:'锁定技，一回合一次，回合外，你成为法术牌的目标后，若你本回合在此牌前成为过牌的目标，该牌对你无效。',
-            anye_audio1:'不行！',
+            anye_audio1:'嘘——',
             anye_audio2:'不要这么喧哗呀……呜咕……',
             koakuma_die:'帕秋莉大人~~~~',
             sakuya:'咲夜',
@@ -1240,7 +1259,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mingyun2:'命运',
             mingyun_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以：摸X张牌，并将等量牌置于牌堆顶（X为攻击范围），然后，直到结束阶段：一名角色使用其手牌指定唯一目标时，若该牌不是以此法使用，其取消目标并判定：若判定牌可以对目标使用，其将判定牌对目标使用。',
             mingyun_audio1:'你的命运可是掌握在我的手心中哦',
-            mingyun_audio2:'嗯……无论怎么摆，好像对你来说都不是好事呢？',
+            mingyun_audio2:'…………喂，等下，这什么牌啊！',
             feise:'绯色幻想乡',
             feise2:'绯色幻想乡',
             feise_info:'符卡技（4）<永续><u>你的第一回合开始时，若灵力足够：须发动此符卡；</u>你和与你同阵营的角色攻击范围+3；其他角色的结束阶段，若其对其以外的角色使用过牌，你可以：对其造成1点弹幕伤害。',

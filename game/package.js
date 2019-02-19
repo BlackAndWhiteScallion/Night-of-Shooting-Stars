@@ -17,7 +17,7 @@ window.noname_package={
         skill:'技能',
     },
     play:{
-        boss:'诸神降临',
+        boss:'闯关角色',
         cardpile:'牌堆补充',
         coin:'金币系统',
     },
@@ -47,6 +47,7 @@ window.noname_package={
         phantasmagoria:'花映异变',
         sb:'文花异变',
         baka:'笨蛋异变',
+        stg_scarlet:'红魔乡',
     },
     music:{
         music_default:'默认',

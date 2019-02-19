@@ -573,6 +573,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   liuxing_shun:{
                     audio:0,
+                    group:'liuxing_unlili',
                     trigger:{player:'phaseEnd'},
                     forced:true,
                     filter:function(event,player){
@@ -589,6 +590,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          if (result.bool && result.targets){
                             player.useCard({name:'shunshou'},result.targets[0],false);
                          }
+                    },
+                  },
+                  liuxing_unlili:{
+                    direct:true,
+                    trigger:{player:'loseliliBefore'},
+                    filter:function(event,player){
+                      return event.getParent().getParent().getParent().name == 'liuxing_shun';
+                    },
+                    content:function(){
+                      trigger.cancel();
                     },
                   },
                   xingchen:{
@@ -706,7 +717,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if(result.targets&&result.targets[0]){
                           result.targets[0].gain(result.cards,player);
                           player.$give(result.cards.length,result.targets[0]);
-                          result.targets[0].say('哦嘞，这个是给我的？');  
+                          result.targets[0].say('只要998，保证你出SSR——');  
                         }
                         for(var i=0;i<ui.skillPile.childNodes.length;i++){
                           if (ui.skillPile.childNodes[i].name == 'shenyou'){
@@ -1920,7 +1931,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   kaguya_die:'=w=明天晚上再见！',
                   eirin:'永琳',
                   zhaixing:'摘星',
-                  zhaixing_audio1:'哈哈，吃药还是做不到这个程度的。',
+                  zhaixing_audio1:'等【星】实装了，我就真的可以摘【星】了呢。',
                   zhaixing_audio2:'就算是星星，我也可以摘下来给你。',
                   zhaixing_info:'结束阶段，你可以观看牌堆顶，或技能牌堆顶的X张牌（X为你本回合使用的牌花色数）；你将其中一张交给一名角色，其余按任意顺序置于该牌堆顶或底。',
                   lanyue:'揽月',

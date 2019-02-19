@@ -8,7 +8,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		damage:{
 			ai:{
 				result:{
-					target:-1.5
+					target:-1
 				},
 				tag:{
 					damage:1
@@ -68,7 +68,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		sha:{
 			audio:true,
 			fullskin:true,
-			nature:['thunder','fire'],
 			type:'basic',
 			subtype:'attack',
 			enable:true,
@@ -767,7 +766,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				var cards = [];
 				for(var i=0;i<ui.discardPile.childNodes.length;i++){
                     var currentcard=ui.discardPile.childNodes[i];
-                    currentcard.vanishtag.length=0;
                     if(get.info(currentcard).vanish||currentcard.storage.vanish){
                         currentcard.remove();
                         continue;
@@ -775,8 +773,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     if (currentcard.name != 'simen') cards.push(currentcard);
                 }
                 cards.randomSort();
+                var deckcards = [];
                 for(var i = 0; i < ui.cardPile.childNodes.length;i++){
-                	ui.discardPile.appendChild(ui.cardPile.childNodes[i]);
+                	deckcards.push(ui.cardPile.childNodes[i]);
+                }
+                for (var i = 0; i < deckcards.length; i ++){
+                	ui.discardPile.appendChild(deckcards[i]);
                 }
                 for(var i=0;i<cards.length;i++){
                     ui.cardPile.appendChild(cards[i]);
@@ -1391,14 +1393,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				check:function(card){return 3-get.value(card)}
 		},
 		louguan_skill:{
-			trigger:{player:'useCardtoBefore'},
+			trigger:{player:'useCard'},
 			forced:true,
 			priority:10,
 			filter:function(event){
 				return event.card.name=='sha';
 			},
 			content:function(){
-				trigger.target.addTempSkill('unequip', 'useCardAfter');
+				for (var i = 0; i < trigger.targets.length; i ++){
+					trigger.targets[i].addTempSkill('unequip', 'useCardAfter');
+				}
 			},
 		},
 		bailou_skill:{
@@ -1906,7 +1910,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:2,
 			trigger:{target:'useCardToBefore'},
 			filter:function(event,player){
-				return event.card.subtype == 'attack';
+				return get.subtype(event.card) == 'attack';
 				//return event.card.name == 'sha';
 			},
 			content:function(){
@@ -2609,7 +2613,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						list.add(i);
 					}
     			}
-				player.chooseButton(['选择不让使用打出的牌',[list,'vcard']]).set('filterButton',function(button){
+				player.chooseButton(['选择不让使用打出的牌',[list,'vcard']], true).set('filterButton',function(button){
     					return true;
     				}).set('ai',function(button){
     					var rand=_status.event.rand*2;
@@ -2663,6 +2667,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			direct:true,
 			trigger:{player:'phaseBegin'},
 			filter:function(event,player){
+				if (player.hasSkill('kedan')) return true;
 				return player.countCards('h',{name:'bingyu'}) > 0|| player.countCards('h',{name:'lingbi'}) > 0;
 			},
 			content:function(){

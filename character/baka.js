@@ -209,6 +209,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               if (player.lili > 0) player.loselili();
                               target.recover();
+                              if (target.name == 'cirno'){
+                                    game.trySkillAudio('zhufu',target,true,3);
+                              }
                         },
                         ai:{
                               order:9,
@@ -237,7 +240,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               "step 0"
                               target.gain(cards,player);
-                              player.chooseBool(get.prompt('zhiyue')).set('choice',player.lili>2);
+                              if (target.name == 'cirno'){
+                                    game.trySkillAudio('zhiyue',player,true,3);
+                              }
+                              if (player.lili > 0) player.chooseBool(get.prompt('zhiyue')).set('choice',player.lili>2);
                               'step 1'
                               if(result.bool){
                                     player.loselili();
@@ -274,7 +280,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   jidong_audio2:'接好这个大冰块！',
                   jidong_info:'锁定技，准备阶段，你可以展示一名角色的一张牌；其不能使用/打出该牌，除非将之当作【轰！】使用，直到结束阶段。',
                   bingbi:'冰壁',
-                  bingbi_audio1:'哈哈！你中我的圈套啦！',
+                  bingbi_audio1:'哈哈！笨蛋！',
                   bingbi_audio2:'哈哈哈！我是无敌的！无敌的！',
                   bingbi_info:'一回合一次，你成为一名角色的【轰！】的目标后，可以打出一张【轰！】，令之对你无效；然后摸X张牌（X为其本回合对你使用的牌数量）。',
                   perfect:'完美冻结',
@@ -285,12 +291,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   cirno_die:'我还会回来的！',
                   daiyousei:'大妖精',
                   zhufu:'祝福',
-                  zhufu_audio1:'祝你早日康复——♪',
+                  zhufu_audio1:'祝你早日康复——',
                   zhufu_audio2:'下次要注意一点的说——♪',
+                  zhufu_audio3:'琪露诺酱真是的，不是叫你小心一点了吗！',
                   zhufu_info:'一回合一次，出牌阶段，你可以消耗1点灵力，令一名体力值不大于你的角色回复1点体力；若你的灵力值为1，“一名”视为“所有”。',
                   zhiyue:'织月',
                   zhiyue_audio1:'这是送给你的——♪',
-                  zhiyue_audio2:'祝你武运昌盛——♪',
+                  zhiyue_audio2:'祝你武运昌盛——',
+                  zhiyue_audio3:'琪露诺酱什么时候才能照顾好自己啊……',
                   zhiyue_info:'一回合一次，出牌阶段，你可以交给一名其他角色一张牌；然后，你可以消耗1点灵力，摸一张牌。',
                   daiyousei_die:'呜——',
             },

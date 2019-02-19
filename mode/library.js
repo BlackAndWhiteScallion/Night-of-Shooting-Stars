@@ -313,9 +313,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'<u>更新注释：</u>',
 	    				'<br>',
 	    				'<u>已知bug列表：</u>',
-	    				'强化牌的效果有时候保持的时间比较长',
-	    				'永琳（和紫妈）观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了',
-	    				'在图鉴里翻来翻去有时候会出现显示bug',
+	    				'永琳，紫妈，梅莉，还有莉格露观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了',
 	    				],
 	    		showcase:function(init){
 	    			
@@ -374,7 +372,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        characterview:{
 	            name:'角色牌',
 	            mode:'',
-	            intro:'关闭，打开，和查看角色简介在左上角的选项/角色进行。',
+	            intro:'关闭，打开，查看角色简介，和切换角色皮肤在左上角的选项/角色进行。（在游戏中双击角色也可以查看角色简介和切换角色皮肤哟。）',
 	            showcase:function(init){
 	            	if (init){
 		            	var i;
@@ -610,7 +608,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'',
 	        	'',
 	        	'各个角色的画师可以在角色简介内找到。',
-	        	'游戏BGM：<a href="https://www.bilibili.com/video/av30877"> 东方连奏Pianoforte - Shiraha </a>',
+	        	'游戏BGM：東方紅魔月譚 ～ Scarlet Devil Fantasic Rhapsody 【まぐなむおーぱす】',
 	        	'红月异变BGM：「artificial」 【THE OTHER FLOWER】',
 	        	'散樱异变BGM：「桜風」 【森羅万象】',
 	        	'永夜异变BGM：「輝夜」 【凋叶棕】',
