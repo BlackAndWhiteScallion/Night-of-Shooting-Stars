@@ -1014,13 +1014,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_chiyan2x';
+					game.me.storage.stage = 'boss_chiyan5x';
 					game.me.storage.fuhuo = 2;
 					game.me.storage.unskill = ['yuezhi'];
 					game.me.storage.musicchange=['music_default',397];
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
-					//game.me.addSkill('finalspark');
+					game.me.addSkill('finalspark');
 					game.me.addSkill('handcard_max');
 				},
 				gameDraw:function(player){
@@ -1950,6 +1950,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
                   	});
+                  	if (!target) target = player;
                   	if (target){
                   		target.equip(game.createCard('stg_goldbook'));
                   		target.equip(game.createCard('stg_waterbook'));
@@ -1992,6 +1993,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
                   	});
+                  	if (!target) target = player;
                   	if (target){
                   		target.equip(game.createCard('stg_goldbook'));
                   		target.equip(game.createCard('stg_dirtbook'));
@@ -2039,6 +2041,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
                   	});
+                  	if (!target) target = player;
                   	if (target){
                   		target.equip(game.createCard('stg_woodbook'));
                   		target.equip(game.createCard('stg_waterbook'));
@@ -2065,12 +2068,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				cost:0,
 				spell:['perfectSquare1','perfectSquare2'],
 				init:function(player){
-					player.equip(game.createCard('stg_watch'));
-                      player.equip(game.createCard('stg_deck'));
-                      player.removeSkill('privateSquare');
-                      player.removeSkill('doll');
-                      player.useSkill('perfectSquare');
-                      player.addSkill('handcard_max');
+					  player.equip(game.createCard('stg_watch'));
+	                  player.equip(game.createCard('stg_deck'));
+	                  player.removeSkill('privateSquare');
+	                  player.removeSkill('doll');
+	                  player.useSkill('perfectSquare');
+	                  player.addSkill('handcard_max');
 				},
 				content:function(){
                       player.loselili(lib.skill.perfectSquare.cost);

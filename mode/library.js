@@ -6,13 +6,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        syncMenu:true,
 	    },
 	    start:function(){
-			ui.auto.hide();
-			if(lib.config.background_music!='music_off'){
-                ui.backgroundMusic.src=lib.assetURL+'audio/background/library.mp3';
-            }
-            var today = new Date();
-            if(today.getMonth() == 3) ui.backgroundMusic.src=lib.assetURL+'audio/background/signature.mp3';
-			
+			ui.auto.hide();			
 	        if(!lib.storage.scene){
 	            lib.storage.scene={};
 	        }
@@ -270,6 +264,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            var directStage=lib.storage.directStage;
 	            game.save('directStage');
 	            clickStart(directStage);
+	        }
+	        if(lib.config.background_music!='music_off'){
+	        	lib.config.background_music = 'library';
+                ui.backgroundMusic.src=lib.assetURL+'audio/background/library.mp3';
+                ui.backgroundMusic.currentTime = 0;
+            }
+            var today = new Date();
+            if(today.getMonth() == 3){
+            	lib.config.background_music = 'signature';
+            	ui.backgroundMusic.src=lib.assetURL+'audio/background/signature.mp3';
 	        }
 	        lib.init.onfree();
 	    },

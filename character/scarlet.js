@@ -952,6 +952,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if(result.bool){
                         var list=result.cards;
+                        player.lose(list,ui.special);
+                        game.log(get.translation(player)+'将'+list.length+'张牌置于牌堆顶');
                         while(list.length){
                           ui.cardPile.insertBefore(list.pop(),ui.cardPile.firstChild);
                         }

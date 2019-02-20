@@ -1757,7 +1757,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			shishu4:{
 				direct:true,
-				trigger:{player:'turnAfter'},
+				trigger:{player:'phaseAfter'},
 				content:function(){
 					delete player.storage.shishu3;
 					player.syncStorage('shishu3');
