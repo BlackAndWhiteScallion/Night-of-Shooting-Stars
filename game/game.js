@@ -45931,7 +45931,7 @@ smoothAvatar:function(player,vice){
                 }
                 else{
                     str2=get.translation(str.name);
-                    if (str == game.me) str2 = '你';
+                    if (str == game.me) str2 = '你(' + get.translation(str.name) + ')';
                 }
                 if(str2=='杀'){
                     if(str.nature=='fire'){
