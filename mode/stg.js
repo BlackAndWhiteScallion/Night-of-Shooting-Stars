@@ -1020,7 +1020,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.musicchange=['music_default',397];
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
-					game.me.addSkill('finalspark');
+					//game.me.addSkill('finalspark');
 					game.me.addSkill('handcard_max');
 				},
 				gameDraw:function(player){
