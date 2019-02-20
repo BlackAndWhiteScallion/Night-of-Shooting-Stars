@@ -1,5 +1,5 @@
 window.noname_update={
-    version:'0.75',
+    version:'0.76',
     update:'0.70',
     changeLog:[
         '更新成功！',
@@ -12,7 +12,7 @@ window.noname_update={
         // 'game/source.js',
         // 'game/pressure.js',
         // 'game/asset.js',
-         'card/*',
+        // 'card/*',
         // 'card/standard.js',
         // 'card/gwent.js',
         // 'card/gujian.js',

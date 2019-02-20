@@ -284,6 +284,7 @@ window.noname_skin_list={
     merlin:2,
     youmu:2,
     yuyuko:3,
+    ran:2,
     yukari:1,
     reimu:2,
     wriggle:2,

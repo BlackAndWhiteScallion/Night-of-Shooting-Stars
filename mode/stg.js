@@ -1014,7 +1014,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_chiyan5x';
+					game.me.storage.stage = 'boss_chiyan2x';
 					game.me.storage.fuhuo = 2;
 					game.me.storage.unskill = ['yuezhi'];
 					game.me.storage.musicchange=['music_default',397];
