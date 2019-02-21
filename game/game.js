@@ -21169,7 +21169,8 @@ throwDice:function(num){
                 },
                	discard:function(bool){
 					if(!this.destroyed){
-						ui.discardPile.appendChild(this);
+                        if (this.type == 'delay') ui.skillPile.appendChild(this);
+						else ui.discardPile.appendChild(this);
 					}
 					this.fix();
 					this.classList.remove('glow');
@@ -22525,10 +22526,12 @@ throwDice:function(num){
             },
             chuwai:{
                 init:function(player){
-                    player.isOut() == true;
+                    player.classList.add('out');
+                    player.hide();
                 },
                 onremove:function(player){
-                    player.isOut() == false;
+                    player.classList.remove('out');
+                    player.show();
                 },
                 mod:{
                     cardEnabled:function(){
@@ -22546,7 +22549,12 @@ throwDice:function(num){
                     content:'视为不在游戏内'
                     // 那么应该使用game.player.isOut()之类的么？
                 },
-                group:['undist','mianyi']
+                group:['undist','mianyi'],
+                trigger:{player:'phaseBefore'},
+                content:function(){
+                    trigger.cancel();
+                    player.phaseSkipped=true;
+                },
             },
             mingzhi:{
                 intro:{
@@ -37660,7 +37668,7 @@ smoothAvatar:function(player,vice){
                                         case '摸牌':target.draw(num);break;
                                         case '弃牌':target.discard(target.getCards('he').randomGets(num));break;
                                         case '横置':target.link();break;
-                                        case '翻面':target.turnOver();break;
+                                        case '加灵':target.gainlili(num, 'nosource');break;
                                         case '复活':target.revive(target.maxHp);break;
                                         case '换人':{
                                             if(_status.event.isMine()){
@@ -37721,7 +37729,7 @@ smoothAvatar:function(player,vice){
                         var nodedraw=ui.create.div('.menubutton','摸牌',row1,clickrow1);
                         var nodediscard=ui.create.div('.menubutton','弃牌',row1,clickrow1);
                         var nodelink=ui.create.div('.menubutton','横置',row1,clickrow1);
-                        var nodeturnover=ui.create.div('.menubutton','翻面',row1,clickrow1);
+                        var nodeturnover=ui.create.div('.menubutton','加灵',row1,clickrow1);
                         var noderevive=ui.create.div('.menubutton','复活',row1,clickrow1);
                         var nodereplace=ui.create.div('.menubutton','换人',row1,clickrow1);
                         if(lib.config.mode!='identity'&&lib.config.mode!='guozhan'){

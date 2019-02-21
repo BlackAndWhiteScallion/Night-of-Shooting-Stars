@@ -2462,15 +2462,22 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				'step 0'
-				var cards = [];
-				var hand = player.get('h');
-				for (var i = 0; i < hand.length; i++){
-					if (hand[i].name == 'jingxia') cards.push(hand[i]);
-				}
-				player.chooseCardButton('当作【潜行】放入技能牌区？',cards);
+                player.chooseCard('弃置一张【惊吓派对】，摸一张【潜行】','h',function(card){
+                    return card.name == 'jingxia';
+                }).set('ai',function(card){
+                    return 1;
+                });
 				'step 1'
-				if(result.links&&result.links.length){
-					player.addJudge('qianxing',result.links[0]);
+				if(result.bool){
+					player.discard(result.cards[0]);
+					for(var i=0;i<ui.skillPile.childNodes.length;i++){
+                          if (ui.skillPile.childNodes[i].name == 'shenyou'){
+                            player.gain(ui.skillPile.childNodes[i]);
+                            break;
+                          } else if (i == ui.skillPile.childNodes.length -1){
+                              result.targets[0].say('没找到【潜行】');                      
+                          }
+                        }
 					player.logSkill('_jingxia');
 				}
 			},
@@ -2820,7 +2827,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		jingxia:'惊吓派对',
 		_jingxia:'惊吓派对',
 		jingxia_bg:'潜',
-		jingxia_info:'出牌阶段，对所有其他角色使用：与目标各拼点：若你赢，对其造成1点灵击伤害。</br> <u>追加效果：出牌阶段，可以将此牌当作【潜行】置入技能牌区。</u>',
+		jingxia_info:'出牌阶段，对所有其他角色使用：与目标各拼点：若你赢，对其造成1点灵击伤害。</br> <u>追加效果：出牌阶段，可以弃置此牌，摸一张【潜行】技能牌。</u>',
 	},
 	list:[
 		["spade",2,"sha"],

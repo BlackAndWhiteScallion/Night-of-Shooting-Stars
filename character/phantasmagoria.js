@@ -79,25 +79,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       content:function(){
                           var choice = [];
                           if (player.num('hej') != 0){
-                              choice.push('lose_card');
+                              choice.push('消耗1点灵力，弃置1张牌');
                           }
                           if (player.lili != player.maxlili){
-                              choice.push('gain_card');
+                              choice.push('获得1点灵力，摸一张牌');
                           }
                           'step 0'
                           player.chooseControl(choice).set('ai',function(){
                               if (player.lili < 5){
-                                  return 'gain_card'; 
+                                  return '获得1点灵力，摸一张牌'; 
                               } else {
-                                  return 'lose_card';
+                                  return '消耗1点灵力，弃置1张牌';
                               }
-                              return 'gain_lili';
+                              return '获得1点灵力，摸一张牌';
                           });
                           'step 1'
-                          if (result.control == 'gain_card'){
+                          if (result.control == '获得1点灵力，摸一张牌'){
                               player.gainlili();
                               player.draw();
-                          } else if (result.control == 'lose_card') {
+                          } else if (result.control == '消耗1点灵力，弃置1张牌') {
                               player.chooseToDiscard(1,true,'hej');
                               player.loselili();
                           }

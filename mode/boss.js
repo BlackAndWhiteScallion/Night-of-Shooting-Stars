@@ -435,8 +435,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(!data[name]){
 						if (name == 'boss_nianshou'){
 							data[name] = [0];
+						} else {
+							data[name]=[0,0,0,0];
 						}
-						data[name]=[0,0,0,0];
 					}
 					if (name == 'boss_nianshou'){
 						data[name][0] = _status.damageCount;
@@ -459,7 +460,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var list = [];
 					for(var i in lib.character){
 						var info=lib.character[i];
-						if(info[4].contains('boss')){
+						if(info[4].contains('boss') || info[4].contains('hiddenboss')){ 
 							list.push(i);
 						}
 					}

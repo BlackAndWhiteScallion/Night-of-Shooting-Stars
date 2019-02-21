@@ -340,7 +340,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 dialog.addAuto(content);
                             }
                             else{
-                                return '共有'+get.cnNumber(content.length)+'张';
+                                return '共有'+get.cnNumber(content.length)+'张‘手办’';
                             }
                         }
                     },
@@ -1003,7 +1003,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
                             }
                         }
-                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                        if(card.name != 'sha' && list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
                     },
                     cardUsable:function(card,player){
                         var players = game.filterPlayer();
@@ -1013,7 +1013,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
                             }
                         }
-                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                        if(card.name != 'sha' && list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
                     },
                     cardRespondable:function(card,player){
                         var players = game.filterPlayer();
@@ -1023,7 +1023,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
                             }
                         }
-                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                        if(card.name != 'sha' && list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
                     },
                     cardSavable:function(card,player){
                         var players = game.filterPlayer();
@@ -1033,7 +1033,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 for (var j = 0; j < players[i].storage.mingzhi.length; j++) list.push(players[i].storage.mingzhi[j].name);
                             }
                         }
-                        if(list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
+                        if(card.name != 'sha' && list.contains(card.name)&&_status.event.skill!='mingguan_viewAs') return false;
                     },
                 },
                 ai:{
@@ -1913,7 +1913,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt') return get.attitude(player,event.player) < 0;
                     if (get.type(card) == 'equip' || get.subtype(card) == 'support') return get.attitude(player,event.player) > 0;
                     */
-                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name},player);
+                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name},player, player);
                     return false;
                 },
                 content:function(){
@@ -2168,6 +2168,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 forced:true,
                 trigger:{player:'phaseBegin'},
                 content:function(){
+                    'step 0'
                     player.chooseTarget([1,1],get.prompt('mengjing'),function(card,player,target){
                         return target != player;
                     },true).set('ai',function(target){
@@ -2185,7 +2186,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 onremove:function(player){
-                    var players = game.filterPlayer();
+                    var players = game.players;
                     for (var i = 0; i < players.length; i ++){
                         players[i].removeSkill('chuwai');
                     }
@@ -2225,6 +2226,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             chen_die:'蓝大人不会放过你的！',
             alice:'爱丽丝',
             huanfa:'幻法',
+            huanfa_bg:'手',
             huanfa_info:'弃牌阶段开始时，若“手办”数小于场上角色数，你可以将一至两张手牌扣置于角色牌上，称为“手办”，并摸等量张牌。',
             huanfa_audio1:'表演正在准备中，请稍微片刻。',
             huanfa_audio2:'嗯？已经等不及了么？',

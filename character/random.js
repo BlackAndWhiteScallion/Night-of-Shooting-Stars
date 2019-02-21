@@ -621,40 +621,39 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					"step 0"
-					event.cards=player.getCards('hej');
+					player.chooseCardTarget({
+						prompt:'将一张牌交给一名其他角色，令【轰！】本回合对其无效',
+						filterCard:function(card,player){
+							return true;
+						},
+						position:'hej',
+						filterTarget:function(card,player,target){
+							if(player==target) return false;
+							return true;
+						},
+						ai1:function(card){
+							if(_status.event.check) return 0;
+							return 6-get.value(card);
+						},
+						ai2:function(target){
+							return get.attitude(player, target);
+						},
+					});
 					"step 1"
-					if(event.cards.length>0){
-						player.chooseCardButton('给出一张牌',true,event.cards,1).set('ai',function(button){
-							if(ui.selected.buttons.length==0) return 1;
-							return 0;
-						});
-					}
-					"step 2"
-					if(result.bool){
-						event.cards.remove(result.links[0]);
-						event.togive=result.links.slice(0);
-						player.chooseTarget('将'+get.translation(result.links)+'交给一名其他角色',function(card,player,target){
-							return player!=target;
-						  }).set('ai',function(target){
-						  	return get.attitude(player, target) - target.hp;
-						});
-					}
-					"step 3"
 					if(result.targets){
-						result.targets[0].gain(event.togive,'draw');
+						result.targets[0].gain(result.cards[0],'draw');
 						player.line(result.targets[0],'green');
 						player.logSkill('kc_yuzhi',result.targets[0]);
-						game.log(result.targets[0],'获得了'+get.cnNumber(event.togive.length)+'张牌');
-						result.targets[0].addTempSkill('kc_yuzhi_3', 'phaseBegin');
+						game.log(result.targets[0],'获得了'+get.cnNumber(result.cards[0].length)+'张牌');
+						result.targets[0].addTempSkill('kc_yuzhi_3');
 					}
 				},
 			},
 			kc_yuzhi_3:{
 				audio:2,
-				unique:true,
 				mark:true,
 				intro:{
-					content:'成为',
+					content:'本回合免疫【轰！】',
 				},
 				onremove:true,
 				trigger:{target:'shaBefore'},

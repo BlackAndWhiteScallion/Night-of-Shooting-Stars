@@ -188,7 +188,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (game.hasPlayer(function(current){
                         if (lib.card[event.card.name].notarget == true) return false;
                         return player.canUse(event.card, current);
-                    }))
+                    })){
+                        list.push('使用这张牌');
+                    }
             		player.chooseControl(list,function(event,player){
             			if (get.type(card) == 'equip') return '使用这张牌';
             			return '将这张牌交给一名角色';
@@ -227,7 +229,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	content:function(){
             		if (player.maxlili < 5) player.gainMaxlili();
             		player.gainlili();
-            	}
+            	},
+                onremove:function(player){
+                    lib.skill['mengjing'].cost = 4;
+                },
             },
             rumeng_2:{
             	trigger:{player:'phaseBeginStart'},
@@ -235,10 +240,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		return player.maxlili > 4;
             	},
             	content:function(){
-            		player.addSkill('mengjing');
+                    lib.skill['mengjing'].cost = 0;
+                    player.addSkill('mengjing');
             		player.useSkill('mengjing');
             		player.maxlili -= 4;
-            		player.update();
+                    player.update();
             		player.removeSkill('rumeng');
             	},
                 check:function(event,player){
@@ -285,7 +291,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
         	xijian_audio2:'啊，原来是这张啊。',
         	xijian_audio3:'啊，谢谢你梅莉！',
         	rumeng:'如梦',
-        	rumeng_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之门】；你以此技能以外的效果获得灵力时，增加1点灵力上限并获得1点灵力（上限至多为5）；你可以扣减4点灵力上限，然后无视消耗发动【梦境与现实的诅咒】；符卡结束时，失去此技能。',
+        	rumeng_2:'如梦（梦境与现实的诅咒）',
+            rumeng_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之门】；你以此技能以外的效果获得灵力时，增加1点灵力上限并获得1点灵力（上限至多为5）；你可以扣减4点灵力上限，然后无视消耗发动【梦境与现实的诅咒】；符卡结束时，失去此技能。',
         	meribel_die:'嗯……？这是哪里？莲子？',
         	dshift_audio1:'撒，该是时候进入幻想了！',
         },

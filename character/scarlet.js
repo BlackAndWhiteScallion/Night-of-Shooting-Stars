@@ -575,6 +575,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 viewAsFilter:function(player){
                     return player.countCards('he')>0;
                 },
+                position:'he',
                 viewAs:{name:'wuxie'},
                 prompt:'将一张牌当魔法障壁使用',
                 selectCard:1,

@@ -152,6 +152,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                   },
                   shiming_2:{
+                    mark:true,
+                    intro:{
+                      content:'我是谁 我在哪',
+                    },
                     silent:true,
                     popup:false,
                       enable:'chooseToUse',
@@ -584,7 +588,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.chooseTarget('今天要去偷谁的东西呢？',function(card,player,target){
                             return player.canUse('shunshou', target);
                          }).set('ai',function(target){
-                            return -get.attitude(player,target) && target.countCards('hej');
+                            return get.effect(target,{name:'shunshou'},_status.event.player);
                          });
                          'step 1'
                          if (result.bool && result.targets){
