@@ -227,7 +227,7 @@
 	height: 16px;
 	line-height: 16px;
 	pointer-events: none;
-	opacity: 0.6;
+	/* opacity: 0.6; */
 }
 #window:not(.nopointer) .menubg.charactercard .menubutton:not(.ava):not(.intro):not(.unselectable),
 #window:not(.nopointer) .menubg.charactercard>.ava>.avatars>div{

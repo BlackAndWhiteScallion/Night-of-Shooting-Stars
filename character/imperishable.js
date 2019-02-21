@@ -707,6 +707,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                       'step 0'
                         player.chooseCardTarget({
+                          prompt:'交给帝一张牌，摸一张【神佑】，然后本回合不能对你和她以外的人用牌',
                           selectCard:1,
                           filterTarget:function(card,player,target){
                             return target.hasSkill('kaiyun');
@@ -744,7 +745,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   kaiyun_3:{
                     mod:{
                         playerEnabled:function(card,player,target){
-                          if(player!=target || !target.hasSkill('kaiyun_4')) return false;
+                          if (target != player && !target.hasSkill('kaiyun_4')) return false;
                         }
                       }
                   },
