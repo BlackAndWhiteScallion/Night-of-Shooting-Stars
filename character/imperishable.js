@@ -1321,6 +1321,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if ((player.lili - target.lili)/2 > (target.hp - player.hp)) choice = '体力';
                         else choice = '灵力';
                       } else choice = '灵力';
+                      if (!list.contains(choice)) choice = list[0];
                       if (list.length == 0) event.finish();
                       else target.chooseControl(function(){
                               return _status.event.choice;
@@ -1531,7 +1532,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       'step 0'
-                      player.chooseCard('he',[1,player.countCards('he')],'破晓：可以重铸任意张牌',true).set('ai',function(card){
+                      player.chooseCard('hej',[1,player.countCards('hej')],'破晓：可以重铸任意张牌',true).set('ai',function(card){
                             return 7-get.value(card);
                         });
                       'step 1'

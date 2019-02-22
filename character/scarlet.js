@@ -250,7 +250,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    var next=player.chooseCard('你可以地转，把'+get.translation(trigger.card)+'的目标从'+get.translation(trigger.target)+'转移给你。');
+                    var next=player.chooseCard('hej', '你可以地转，把'+get.translation(trigger.card)+'的目标从'+get.translation(trigger.target)+'转移给你。');
                     next.set('ai',function(card){
                                 var player=_status.event.player;
                                 var trigger=_status.event.getTrigger();

@@ -144,7 +144,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					} else if (result.control == '摸一张牌，交给当前回合角色一张牌'){
 						player.draw();
 						if (trigger.player != player){
-							player.chooseCard('交给'+get.translation(trigger.player)+'一张手牌',true).set('ai',function(card){
+							player.chooseCard('hej','交给'+get.translation(trigger.player)+'一张牌',true).set('ai',function(card){
 								return 5-get.value(card);
 							});
 						}
