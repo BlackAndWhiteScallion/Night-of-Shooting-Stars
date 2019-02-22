@@ -886,7 +886,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.chooseTarget(function(card,player,target){
                               return player.canUse(event.fakecard,target,true);
                           },true,'选择'+get.translation(card.name)+'的目标').set('ai',function(target){
-                              return get.effect(target,card,player,player);
+                              return get.effect(target,event.fakecard,_status.event.player);
                           });
                       } else {
                           event.finish();
@@ -1339,11 +1339,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                     },
                     ai:{
-                      order:8.5,
+                      order:10,
                       result:{
                           target:function(player,target){
-                            if (player.hp > target.hp || player.lili > target.hp) return get.attitude(player,target);
-                            return -get.attitude(player,target);
+                            var num = 0;
+                            if (player.hp <= target.hp) num --;
+                            if (player.lili <= target.lili) num --;
+                            if (num == -2) return -1;
+                            else return 2;
                           }
                         },
                       threaten:1.5,

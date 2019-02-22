@@ -49,7 +49,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (players[i] == player) players.remove(players[i]);
                         else if (!(!players[i].storage.shuang && players[i].storage._mubiao)) players.remove(players[i]);
                     }
-                    player.chooseTarget(players.num,('霜降：是否对这些角色各造成1点灵击伤害'),function(card,player,target){
+                    player.chooseTarget(players.length,('霜降：是否对所有亮的角色各造成1点灵击伤害'),function(card,player,target){
                             return players.contains(target);
                           }).set('ai',function(target){
                               return -get.attitude(_status.event.player,target);
@@ -1955,11 +1955,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     var cards=[];
                     for (var i = 3; i > 0; i--){
-                        if (ui.cardPile.childNodes.length == 0){
-                            var card = get.cards(1);
+                        if (ui.cardPile.childNodes.length < i){
+                            var card = get.cards(i);
                             //ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
                         }
-                        cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-1]);
+                        cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
                     }
                     event.cards=cards; 
                     var switchToAuto=function(){
@@ -2011,7 +2011,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.top=[];
                         event.bottom=[];
                         event.status=true;
-                        event.dialog=ui.create.dialog('按顺序选择置于牌堆顶的牌（先选择的在上）',cards);
+                        event.dialog=ui.create.dialog('牌堆底的牌（底部从右到左）<br>按顺序选择置于牌堆顶的牌（先选择的在上）',cards);
                         for(var i=0;i<event.dialog.buttons.length;i++){
                             event.dialog.buttons[i].classList.add('pointerdiv');
                         }

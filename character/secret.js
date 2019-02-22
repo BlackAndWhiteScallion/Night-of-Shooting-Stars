@@ -96,6 +96,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.control){
                     	if (event.list[result.index] == '灵力值视为5，直到回合结束'){
                     		player.addTempSkill('sihuan_1');
+                            event.control = 'sihuan_1';
                     	} else if (event.list[result.index] == '弃置有异变牌的一名角色一张牌'){
                     		player.addTempSkill('sihuan_2');
                     		event.control = 'sihuan_2';
@@ -106,6 +107,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							});
                     	} else if (event.list[result.index] == '摸一张技能牌和一张【灵涌】'){
                     		player.addTempSkill('sihuan_3');
+                            event.control = 'sihuan_3';
                     		for(var i=0;i<ui.skillPile.childNodes.length;i++){
 			                  if (ui.skillPile.childNodes[i].name == 'lingyong'){
 			                    player.gain(ui.skillPile.childNodes[i]);
@@ -126,7 +128,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     	}
                     }
                     'step 2'
-                    if (event.control && event.control == 'sihuan_4') player.discard(cards[0]);
+                    if (event.control && event.control != 'sihuan_4') player.discard(cards);
                     if (result.targets){
                     	if (event.control == 'sihuan_2'){
                     		player.discardPlayerCard(result.targets[0],'hej',true);
