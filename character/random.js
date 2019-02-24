@@ -131,17 +131,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					var list = [];
 					if (trigger.player.lili<trigger.player.maxlili){
-						list.push('当前回合角色恢复灵力');
+						list.push(get.translation(trigger.player)+'恢复灵力');
 					}
-					list.push('交给当前回合角色一张牌');
+					list.push('摸一张牌，交给'+get.translation(trigger.player)+'一张牌');
 					player.chooseControl(list,function(event,player){
 						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return '当前回合角色恢复灵力';
 						return '摸一张牌，交给当前回合角色一张牌';
 					});
 					'step 1'
-					if (result.control == '当前回合角色恢复灵力'){
+					if (result.control == get.translation(trigger.player)+'恢复灵力'){
 						trigger.player.gainlili();
-					} else if (result.control == '摸一张牌，交给当前回合角色一张牌'){
+					} else if (result.control == '摸一张牌，交给'+get.translation(trigger.player)+'一张牌'){
 						player.draw();
 						if (trigger.player != player){
 							player.chooseCard('hej','交给'+get.translation(trigger.player)+'一张牌',true).set('ai',function(card){
@@ -1420,7 +1420,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       //console.log(player.getHandcardLimit());
                       //console.log(player.countCards('h'));
                       var num = player.getHandcardLimit() - player.countCards('h');
-                      if (num > 0){
+                      if (!player.countCards('h')){
+                      	player.draw(player.getHandcardLimit());
+                      }
+                      else if (num > 0){
                       	player.draw(num);
                       }
                   },

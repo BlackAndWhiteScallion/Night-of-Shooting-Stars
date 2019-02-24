@@ -1502,9 +1502,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if (result.bool && result.links.length){
                         game.log(get.translation(targets[0])+'重铸了'+get.translation(result.links));
                         targets[0].$throw(result.links);
-                        for (var i = 0; i < result.links.length; i ++){
-                          result.links[0].discard();
-                        }
+                        targets[0].lose(result.links);
                         targets[0].draw(result.links.length);
                       }
                     },
@@ -1541,8 +1539,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           var suits = [];
                           for (var i = 0; i < result.cards.length; i ++){
                             if (get.suit(result.cards[i]) && suits.contains(get.suit(result.cards[i]))) suit.push(get.suit(result.cards[i]))
-                            result.cards[i].discard();
                           }
+                          player.lose(result.cards);
                           game.log(get.translation(trigger.player)+'重铸了'+get.translation(result.cards));
                           player.draw(result.cards.length);
                           if (suits.length == 4){
@@ -1637,14 +1635,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     audio:2,
                     trigger:{player:'phaseUseBegin'},
                     filter:function(event,player){
-                      return player.lili <= 3 && player.countCards('he');
+                      return player.lili <= 3 && player.countCards('hej');
                     },
                     content:function(){
-                      var cards = player.getCards('he');
+                      var cards = player.getCards('hej');
                        player.$throw(cards);
-                          for (var i = 0; i < cards.length; i ++){
-                             cards[i].discard();
-                          }
+                       player.lose(cards);
                           game.log(get.translation(player)+'重铸了'+get.translation(cards));
                           player.draw(cards.length);
                     },

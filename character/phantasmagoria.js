@@ -457,7 +457,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         'step 1'
                         if (result.bool&&result.cards.length){
                             trigger.player.$throw(result.cards);
-                            result.cards[0].discard();
+                            trigger.player.lose(result.cards[0]);
                             game.log(get.translation(trigger.player)+'重铸了'+get.translation(result.cards[0]));
                             trigger.player.draw();
                         }

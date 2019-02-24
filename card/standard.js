@@ -1812,7 +1812,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						if(target.countCards('h')==0) return 0;
 						if(player.countCards('h')<=1) return 0;
 						if(player.lili<=2) return 0;
-						return get.attitude(player,target);
+						return -1;
 					}
 				},
 			}
@@ -2471,7 +2471,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(result.bool){
 					player.discard(result.cards[0]);
 					for(var i=0;i<ui.skillPile.childNodes.length;i++){
-                          if (ui.skillPile.childNodes[i].name == 'shenyou'){
+                          if (ui.skillPile.childNodes[i].name == 'qianxing'){
                             player.gain(ui.skillPile.childNodes[i]);
                             break;
                           } else if (i == ui.skillPile.childNodes.length -1){

@@ -21169,7 +21169,7 @@ throwDice:function(num){
                 },
                	discard:function(bool){
 					if(!this.destroyed){
-                        if (this.type == 'delay') ui.skillPile.appendChild(this);
+                        if (get.type(this) == 'delay') ui.skillPile.appendChild(this);
 						else ui.discardPile.appendChild(this);
 					}
 					this.fix();

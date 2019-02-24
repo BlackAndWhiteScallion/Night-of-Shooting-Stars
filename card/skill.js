@@ -319,7 +319,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'phaseEnd'},
 				content:function(){
 					player.addSkill('qianxing_skill2');
-					
+				},
+				onremove:function(player){
+					player.removeSkill('qianxing_skill2');
 				},
 			},
 			qianxing_skill2:{
