@@ -14533,6 +14533,7 @@
                     },this.playerid,str);
                 },
                 say:function(str){
+                    //var dialog=ui.create.dialog('hidden');
                     var dialog=ui.create.dialog('hidden');
                     dialog.classList.add('static');
                     dialog.add('<div class="text" style="word-break:break-all;display:inline">'+str+'</div>');
@@ -14571,6 +14572,7 @@
                     setTimeout(function(){
                         dialog.delete();
                     },2500);
+                    //for (var i = 0; i < ui.dialog.length; i ++) console.log(ui.dialog[i]);
                     var info=[get.translation(this.name)||this.nickname,str];
                     lib.chatHistory.push(info);
                     if(_status.addChatEntry){
@@ -42760,6 +42762,10 @@ smoothAvatar:function(player,vice){
                 if(_status.justdragged) return;
                 _status.clicked=true;
                 var custom=_status.event.custom;
+                // 如果一个按钮持有show，就跳出角色简介出来
+                if (this.classList.contains('character') && this.classList.contains('show')){
+                    ui.click.charactercard(this.link,null,null,true,this);
+                }
                 if(custom.replace.button){
                     custom.replace.button(this);
                     return;

@@ -614,6 +614,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   wujian:'无间之狭间',
                   wujian_skill:'无间之狭间',
                   wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；你以此法令一名角色的灵力变成0后，获得其场上一张牌。',
+                  wujian_audio1:'地狱「无间之狭间」！',
+                  wujian_audio2:'地狱游览单程票！只要998！',
                   komachi_die:'被暴打可真的不能叫放松啊。',
                 eiki:'映姬',
                 huiwu:'悔悟',

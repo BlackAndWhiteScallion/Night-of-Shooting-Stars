@@ -370,7 +370,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				cshx0:{
-					audio:"ext:d3:2",
+					audio:2,
 					forced:true,
 					direct:true,
 					trigger:{
@@ -405,7 +405,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				"ye’sbian":{
-					audio:0,
+					audio:2,
 					trigger:{player:'damageEnd',source:'damageEnd'},
 					filter:function(event, player){
 						if(event._notrigger.contains(event.player)||event.nature == 'thunder') return false;
@@ -433,7 +433,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				"schrÖdinger":{
-					audio:0,
+					audio:2,
 					trigger:{
 						player:'dieBegin',
 					},
@@ -449,7 +449,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				"schrÖdinger_2":{
-					audio:'ext:d3:2',
+					audio:2,
 					trigger:{
 						global:'dieAfter',
 					},

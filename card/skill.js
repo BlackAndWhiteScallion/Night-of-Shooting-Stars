@@ -337,10 +337,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				content:function(){
 					player.removeSkill('qianxing_skill2');
-					for (var i = 0; i <= player.num('j'); i ++){
-						var card=player.get('j',i);
-						if(card&&card.name == ('qianxing')){
-							player.discard(card);
+					var cards = player.getCards('e');
+					for (var i = 0; i <= cards.length; i ++){
+						if(cards[i]&&cards[i].name == 'qianxing'){
+							player.discard(cards[i]);
 							break;
 						}
 					}
@@ -366,8 +366,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		translate:{
 			skill:'技能牌',
-			qicheng:'？？',
-			qicheng_bg:'骑',
+			//qicheng:'？？',
+			//qicheng_bg:'骑',
 			qicheng_info:'你是怎么摸到这张牌的？',
 			ziheng:'制衡',
 			ziheng_bg:'制',
@@ -396,7 +396,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			qianxing:'潜行',
 			qianxing_bg:'潜',
 			qianxing_skill:'潜行',
-			qianxing_info:'结束阶段，你可以令你获得以下效果直到你的准备阶段：若你有【潜行】，你不能成为攻击牌的目标；准备阶段，弃置此牌。',
+			qianxing_info:'结束阶段，你可以令你获得以下效果：若你有【潜行】，你不能成为攻击牌的目标；准备阶段，弃置此牌。',
 			qianxing_skill2:'潜',
 			lingyong:'灵涌',
 			lingyong_info:'锁定技，你造成的伤害不会因没有灵力而防止；你的攻击范围至少为2。',

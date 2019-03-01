@@ -23,12 +23,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            game.save('stage',lib.storage.stage);
 	        }
 	        var dialog=ui.create.dialog('hidden');
-	        //dialog.classList.add('fixed');
+	        dialog.classList.add('fixed');
 	        dialog.classList.add('scroll1');
 	        dialog.classList.add('scroll2');
 	        dialog.classList.add('fullwidth');
 	        dialog.classList.add('fullheight');
-	        //dialog.classList.add('noupdate');
+	        dialog.classList.add('noupdate');
 	        dialog.classList.add('character');
 	        dialog.contentContainer.style.overflow='visible';
 	        dialog.style.overflow='hidden';
@@ -296,11 +296,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'',
 	    				'<u>程序使用须知：</u>',
 	    				'1. 使用刷新键（f5）可以重置游戏。',
-	    				'2.左上的“选项”可以更改很多游戏相关的设置，包括并不限于：',
+	    				'2.左上的[选项]可以更改很多游戏相关的设置，包括并不限于：',
 	    				'<t>游戏模式的人数，身份分配，牌局的布局，卡牌的样式，打开关闭角色，和游戏录像。',
 	    				'记得多多探索一下，没准有奇怪的东西！',
 	    				'3. 在牌局中双击角色可以查看角色简介，也可以换皮肤和听配音（虽然没有配音）。',
-	    				'3.1 在左上的选项/角色里双击角色牌也可以看到简介。',
+	    				'3.1 在左上的[选项-角色]里双击角色牌也可以看到简介。',
 	    				'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
 	    				'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
 	    				],
@@ -312,8 +312,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		mode:'',
 	    		intro:['更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://coding.net/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
-	    				'安卓手机端更新，请点选项按钮，然后在<b>选项—选项—其他—重新下载游戏</b>来进行更新。会保留所有设置的。',
-	    				'素材更新在<b>选项—其他—更新—检查素材更新</b>看到。',
+	    				'安卓手机端更新，请点选项按钮，然后在<b>[选项—选项—其他—重新下载游戏]</b>来进行更新。会保留所有设置的。',
+	    				'素材更新在<b>[选项—其他—更新—检查素材更新]</b>看到。',
 	    				'用手机来解压覆盖也可以，所需要拖到的文件夹在：(默认SD卡)/android/data/com.widget.noname1',
 	    				'覆盖完毕后，记得重启流星夜app！',
 	    				'',
@@ -338,6 +338,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		'<u>灵力值</u>:（角色下的绿色星星，或者蓝圆圈）',
 	        		'游戏的核心系统，各种消耗和启动符卡都需要用。',
 	        		'玩家的<u>攻击范围</u>等于灵力值；<u>灵击伤害</u>指对灵力值造成的伤害。',
+	        		'',
 	        		'<u>强化</u>：持有“强化：描述”的牌通过消耗标注量的灵力可以强化，结算时追加描述里的效果',
 	        		'',
 	        		'<u>追加效果</u>：这牌有追加的效果。使用追加效果不算使用牌。',
@@ -358,34 +359,155 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	name:'游戏模式',
 	        	mode:'',
 	        	intro:[
-	        		'规则图文介绍可以在<a href="game/guide.pdf">这里</a>读到',
-	        		'模式介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
-	        		'',
-	        		'<u><b>异变模式：</u></b> 游戏人数：2~8人，推荐人数为7人',
-	        		'黑幕与异变身份为一方；自机身份为一方，且与黑幕为对立阵营；每个路人身份玩家为单独一方',
-	        		'游戏开始时，每名玩家的身份暗置，随机玩家执行第一个回合',
-	        		'每名玩家可以在出牌阶段明置自己的身份；身份明置时，根据身份执行效果：',
-	        		'黑幕：获得一张异变牌并明置',
-	        		'异变：令一名角色摸一张牌',
-	        		'自机：令一名其他角色选择一项：弃置一张牌，或明置身份',
-	        		'路人：获得一张异变牌并暗置；可以在出牌阶段明置异变牌',
-	        		'',
-	        		'<u>胜利条件：</u>',
-	        		'黑幕：击坠所有自机',
-	        		'异变：黑幕获得胜利',
-	        		'自机：击坠黑幕',
-	        		'路人：无',
-	        		'特殊的，游戏结束时，存活的路人玩家不算游戏失败',
-	        		'<u>异变牌：</u>任何持有异变牌的玩家可以通过异变牌的效果获得胜利；异变牌只有明置才有效果；异变胜利时，所有与其同阵营的玩家也获得胜利',
+	        		'每个模式都在左上角的[选项——开始]里可以进行各种设置！',
 	        		],
 	        	showcase:function(init){
-	        		
+	        		if (init){
+	        			var style2={position:'relative',display:'block',left:10,top:0,marginBottom:'6px',padding:0,width:'100%'};
+	        			var line2=ui.create.div(style2,this);
+	        			line2.style.lineHeight='50px';
+	        			var dialog=ui.create.dialog('hidden',line2);
+						dialog.style.left = "0px";
+						dialog.style.top = "0px";
+						dialog.style.width = "100%";
+						dialog.style.height = "100%";
+						dialog.addText('请在上方点击你想要了解的模式。');
+						dialog.classList.add('fixed');
+	        			dialog.noopen=true;
+	        			this.appendChild(dialog);
+	        			var incident=ui.create.node('button','异变模式',line2,function(){
+	        				var i = ['<u><b>异变模式：</u></b> 游戏人数：4~8人，推荐人数为7人',
+				        		'黑幕与异变身份为一方；自机身份为一方，且与黑幕为对立阵营；每个路人身份玩家为单独一方',
+				        		'游戏开始时，每名玩家的身份暗置，随机玩家执行第一个回合',
+				        		'每名玩家可以在出牌阶段明置自己的身份；身份明置时，根据身份执行效果：',
+				        		'黑幕：获得一张异变牌并明置',
+				        		'异变：令一名角色摸一张牌',
+				        		'自机：令一名其他角色选择一项：弃置一张牌，或明置身份',
+				        		'路人：获得一张异变牌并暗置；可以在出牌阶段明置异变牌',
+				        		'',
+				        		'<u>胜利条件：</u>',
+				        		'黑幕：击坠所有自机',
+				        		'异变：黑幕获得胜利',
+				        		'自机：击坠黑幕',
+				        		'路人：无',
+				        		'特殊的，游戏结束时，存活的路人玩家不算游戏失败。路人玩家胜利时，其他玩家也不算游戏失败。',
+				        		'',
+				        		'<u>异变牌：</u>任何持有异变牌的玩家可以通过异变牌的效果获得胜利；异变牌只有明置才有效果；异变胜利时，所有与其同阵营的玩家也获得胜利'];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var identity=ui.create.node('button','身份模式',line2,function(){
+	        				var i = ['<u><b>身份模式：</u></b> 游戏人数：4~8人，推荐人数为8人',
+	        					'身份模式是三国杀的同名模式的复刻，并没有什么区别。',
+	        					'主公 → 黑幕',
+	        					'忠臣 → 异变',
+	        					'反贼 → 自机',
+	        					'内奸 → 路人',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var versus=ui.create.node('button','对决模式',line2,function(){
+	        				var i = ['<u><b>对决模式：</u></b>',
+	        						'对决模式是各式两队对战小模式的总称。 这些小模式可以在左上角<b>开始—对决</b>进行设置，或使用“自由设定”模式来自行调整。',
+	        						'游戏内预置模式共包括三种：',
+	        						'',
+	        						'<u> 2v2 </u>',
+	        						'两队各两名玩家，一号位和四号位VS二号位和三号位。',
+	        						'双方的胜利条件均为对方全部坠机。',
+	        						'由一号位开始游戏，且一号位起手少摸一张牌。',
+	        						'2v2 专属设置：',
+	        						'<b>替补模式:</b> 选角色时从5选1改为8选2；第一个选的角色坠机后，换成替补角色继续游戏；一方坠机两名角色后失败。',
+	        						'<b>末位换牌：</b>四号位起手可以把所有手牌弃掉，重新摸4张。',
+	        						'',
+	        						'<u> 3v3 </u>',
+	        						'两队各三名玩家。选将方式为游戏开始时，双方从同一个将池中轮流选将，然后从选出来的中选三个。',
+	        						'双方的胜利条件均为击坠对方主帅。',
+	        						'回合顺序为双方轮流，然后由主帅选择己方进行回合的角色。',
+	        						'<b>注：玩家方的所有角色全部由玩家操控。</b>',
+	        						'',
+	        						'<u> 4v4 </u>',
+	        						'两队各四名玩家，位置为交叉分配。',
+	        						'双方的胜利条件均为击坠对方主帅。',
+	        						'选将为按位置依次选将，然后由随机一名角色开始游戏。',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var boss=ui.create.node('button','挑战模式',line2,function(){
+	        				var i = ['<u><b>挑战模式：</u></b>',
+	        						'挑战模式下，三名玩家组队成为盟军挑战一名大魔王BOSS玩家！',
+	        						'大魔王的胜利条件为所有盟军坠机。 盟军的胜利条件为大魔王坠机。',
+	        						'',
+	        						'<u>回合顺序</u>',
+	        						'回合顺序有两种：',
+	        						'1. 由大魔王开始回合，然后大魔王在每一名盟军角色的回合结束后，进行一个回合。',
+	        						'（大魔王 → 盟军1 → 大魔王 → 盟军2 → 大魔王 → 盟军3 → 大魔王）',
+	        						'2. 由大魔王开始回合，然后三名盟军依次进行回合。',
+	        						'（大魔王 → 盟军1 → 盟军2 → 盟军3 → 大魔王）',
+	        						'',
+	        						'<u>重整</u>',
+	        						'一名盟军角色坠机后，在大魔王的N个回合后会复活，然后重新加入游戏。',
+	        						'默认的重整时间为5个回合。有些大魔王的重整时间不一样。',
+	        						'',
+	        						'<u>阶段切换</u>',
+	        						'有的大魔王有多阶段技能。阶段转换条件在技能上标注出来的。',
+	        						'条件达成导致阶段切换时，终止所有结算，当前回合立即结束，然后进入大魔王的回合。',
+	        						'并且，阶段切换后，回合顺序会变成第二种。',
+	   								'',
+	   								'<u>提示</u>',
+	   								'在右上角，可以用[手牌]键查看你队友的手牌；用[重整]键查看队友还有多久复活；用[换人]键将主视角切换为另外一名队友。',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var stg=ui.create.node('button','闯关模式',line2,function(){
+	        				var i = ['<u><b>闯关模式：</u></b>',
+	        						'选择出你的自机角色，欺负小怪，连续打关，找出最后的黑幕并击破她吧！',
+	        						'',
+	        						'玩家的胜利条件为击坠最后一个BOSS，通过最后一个小关。 失败条件为自己坠机。',
+	        						'一个大关最多有6个小关，最少只有1小关。',
+	        						'',
+	        						'<u>专属装备</u>',
+	        						'每一个大关会限定一些自机角色。这些自机角色在游戏开始时，可以选择一张属于她的专属装备。',
+	        						'这张专属装备不能被弃置或获得。 并且，使用不同的专属装备会让玩家获得不同的符卡。',
+	        						'使用[自由选自机]来选出这些角色以外的角色来闯关的话，不会有专属装备。',
+	        						'',
+	        						'<u>复活机会</u>',
+	        						'玩家在坠机时，如果还剩复活机会，会消耗1个，然后弃置所有牌，摸4张牌，体力回复至满，灵力调整为2，继续游戏。',
+	        						'没有复活机会的情况下坠机就是游戏失败咯。',
+	        						'玩家初始的复活机会数量，和击坠哪些BOSS会获得更多的复活机会，在大关介绍上有写。',
+	        						'在游戏中，可以随时用右上的[残机]键查看剩余复活次数。',
+	        						'',
+	        						'<u>击坠和通关奖励</u>',
+	        						'任何角色坠机后，击坠那名角色的来源获得1点灵力，并摸一张牌。',
+	        						'玩家通过一个小关后，玩家回复1点体力，并摸一张技能牌。 并且，牌堆会完全重置。',
+	        						'',
+	        						'<u>敌人增援</u>',
+	        						'在玩家的回合开始时，如果场上敌人的数量小于2，会出现下一个敌人。',
+	        						'这些敌人会继续出现，直到BOSS角色出现为止。',
+	        						'即使小怪在场上，击坠BOSS角色依然是成功通关，所以不用太介意。',
+	        						'',
+	        						'<u>BOSS阶段转换</u>',
+	        						'有些BOSS在坠机时，会进入下一个阶段：',
+	        						'BOSS将体力值回复至上限，灵力调整为5，然后立即获得并启动符卡技。这些符卡技均视为持有<极意>标签。',
+	        						'有些BOSS甚至有两个阶段，请一定小心。',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var tafang=ui.create.node('button','战棋模式',line2,function(){
+	        				var i = ['<u><b>战棋……模式？</u></b>',
+	        						'其实，即使是我也不知道战棋模式是怎么玩的……',
+	        						'不过，据说战棋模式里有一些特别厉害的东西？',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	        		}
 	        	},
 	        },
 	        characterview:{
 	            name:'角色牌',
 	            mode:'',
-	            intro:'关闭，打开，查看角色简介，和切换角色皮肤在左上角的选项/角色进行。（在游戏中双击角色也可以查看角色简介和切换角色皮肤哟。）',
+	            intro:[
+	            '单击角色可以查看角色简介，和切换角色皮肤，并可以收藏，禁用，打开角色。',
+	            '（在游戏中，或左上[选项-角色]中 双击角色也可以查看角色简介和切换角色皮肤哟。）',
+	            ],
 	            showcase:function(init){
 	            	if (init){
 		            	var i;
@@ -399,18 +521,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
 						dialog.add([list,'character'],false);
-						/*
-						var buttons=ui.create.buttons(list,'character');
-	                    for(var i=0;i<buttons.length;i++){
-	                        buttons[i].classList.add('noclick');
-	                        //buttons[i].listen(banCharacter);
-	                        buttons[i].node.hp.style.transition='all 0s';
-	                        buttons[i].node.hp._innerHTML=buttons[i].node.hp.innerHTML;
-							
-							//ui.click.charactercard(buttons[i].node.name,buttons[i]);
+	                    for (var i = 0; i < dialog.buttons.length; i ++){
+	                    	dialog.buttons[i].classList.add('show');
 	                    }
-	                    */
-	                    //dialog.add(buttons);
 						this.appendChild(dialog);
 						dialog.noopen=true;
 	            	}
@@ -426,10 +539,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		            	var list=[];
 						event.list=list;
 		            	var dialog=ui.create.dialog('hidden');
-						//var dialog=this;
 						dialog.classList.add('fixed');
-						//dialog.classList.add('bosscharacter');
-						//dialog.classList.add('withbg');
 						dialog.style.left = "0px";
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
@@ -455,10 +565,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		            	var list=[];
 						event.list=list;
 		            	var dialog=ui.create.dialog('hidden');
-						//var dialog=this;
 						dialog.classList.add('fixed');
-						//dialog.classList.add('bosscharacter');
-						//dialog.classList.add('withbg');
 						dialog.style.left = "0px";
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
@@ -508,8 +615,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		if (init){
 		        		var node = this;
 		        		this.style.height=(parseInt(this.style.height.substr(0,this.style.height.length-2))-this.offsetTop)+'px';
-		        		//this.
-	                    //var page=ui.create.div('');
 	                    for(var i=0;i<lib.config.all.mode.length;i++){
                             if(!lib.config.gameRecord[lib.config.all.mode[i]]) continue;
                             if(lib.config.gameRecord[lib.config.all.mode[i]].str){
@@ -522,7 +627,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                                 item.link=lib.config.all.mode[i];
                             }
                         }
-                     //node.appendChild(page);
                  	}
 	        	},
 	        },

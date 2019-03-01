@@ -678,7 +678,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						list.push(i);
 					}
 					list.randomSort();
-					var dialog=ui.create.dialog('选择参战角色','hidden');
+					var dialog=ui.create.dialog('选择3名参战角色','hidden');
 					dialog.classList.add('fixed');
 					ui.window.appendChild(dialog);
 					dialog.classList.add('bosscharacter');
