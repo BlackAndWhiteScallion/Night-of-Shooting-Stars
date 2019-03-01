@@ -112,6 +112,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            showcase.style.padding='0px';
 	            showcase.style.width='100%';
 	            showcase.style.display='block'
+	            showcase.style.overflow='scroll';
 	            showcase.action=info.showcase;
 	            showcase.link=name;
 	            if(info.fullshow){
@@ -301,6 +302,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'3. 在牌局中双击角色可以查看角色简介，也可以换皮肤和听配音（虽然没有配音）。',
 	    				'3.1 在左上的选项/角色里双击角色牌也可以看到简介。',
 	    				'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
+	    				'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
 	    				],
 	    		showcase:function(init){
 	        	},
@@ -310,14 +312,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		mode:'',
 	    		intro:['更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://coding.net/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
-	    				'安卓手机端更新，请点选项按钮，然后在选项—选项—其他—重新下载游戏来进行更新。会保留所有设置的。素材更新在选项—其他—更新—检查素材更新看到。',
-	    				'手动更新也可以，所需要拖到的文件夹在：android/data/com.widget.noname1',
+	    				'安卓手机端更新，请点选项按钮，然后在<b>选项—选项—其他—重新下载游戏</b>来进行更新。会保留所有设置的。',
+	    				'素材更新在<b>选项—其他—更新—检查素材更新</b>看到。',
+	    				'用手机来解压覆盖也可以，所需要拖到的文件夹在：(默认SD卡)/android/data/com.widget.noname1',
 	    				'覆盖完毕后，记得重启流星夜app！',
 	    				'',
 	    				'<u>更新注释：</u>',
 	    				'<br>',
 	    				'<u>已知bug列表：</u>',
-	    				'永琳，紫妈，梅莉，还有莉格露观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了',
+	    				'1. 永琳，紫妈，梅莉，还有莉格露观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了。',
+	    				'2. 永琳使用符卡效果有时候会卡住，有时候可以通过暂停来解决，有时候就是卡死了。因原因不明，碰到的话请一定向制作组反馈情况。',
+	    				'3. 在[对称]布局下，玩家视角无法主动弃置技能牌，也不能查看自己的技能牌。',
 	    				],
 	    		showcase:function(init){
 	    			
@@ -327,19 +332,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	name:'规则帮助',
 	        	mode:'',
 	        	intro:[
-	        		'规则图文介绍可以在<a href="game/guide.pdf">幻想乡最速体系介绍</a>读到',
-	        		'详细的资源可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
+	        		'规则图文介绍可以在<a href="game/guide.pdf">幻想乡最速体系介绍</a>读到    详细的资源可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
 	        		'',
 	        		'《东方流星夜！》的新系统：',
 	        		'<u>灵力值</u>:（角色下的绿色星星，或者蓝圆圈）',
 	        		'游戏的核心系统，各种消耗和启动符卡都需要用。',
 	        		'玩家的<u>攻击范围</u>等于灵力值；<u>灵击伤害</u>指对灵力值造成的伤害。',
 	        		'<u>强化</u>：持有“强化：描述”的牌通过消耗标注量的灵力可以强化，结算时追加描述里的效果',
+	        		'',
 	        		'<u>追加效果</u>：这牌有追加的效果。使用追加效果不算使用牌。',
+	        		'',
 	        		'<u>符卡技</u>：游戏的核心技能系统。',
 	        		'符卡技在玩家回合开始时，灵力大于标注量时，通过消耗标注量的灵力启动。',
 	        		'启动后，玩家持有符卡技描述中的技能，并且<u>不能获得灵力</u>，直到符卡结束。',
 	        		'<u>符卡结束时机</u>：1.当前回合结束；2. 灵力值变化为0',
+	        		'',
 	        		'<u>符卡标签</u>：<br><u><永续></u>符卡结束时机1改为你的下个回合开始时；<br><u><瞬发></u>你可以在需要使用符卡描述技能时，发动符卡并立即使用（正常发动条件生效）;',
 	        		'<u><限定></u>一局游戏只能启动一次；<br><u><终语></u>在决死状态可以启动（正常发动条件生效）；<br><u><极意></u>删除符卡结束时机1，符卡结束时，立即坠机',
 	        		],
@@ -353,6 +360,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	intro:[
 	        		'规则图文介绍可以在<a href="game/guide.pdf">这里</a>读到',
 	        		'模式介绍全部可以在<a href="http://liuxingye.666forum.com/f5-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
+	        		'',
 	        		'<u><b>异变模式：</u></b> 游戏人数：2~8人，推荐人数为7人',
 	        		'黑幕与异变身份为一方；自机身份为一方，且与黑幕为对立阵营；每个路人身份玩家为单独一方',
 	        		'游戏开始时，每名玩家的身份暗置，随机玩家执行第一个回合',
@@ -361,6 +369,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		'异变：令一名角色摸一张牌',
 	        		'自机：令一名其他角色选择一项：弃置一张牌，或明置身份',
 	        		'路人：获得一张异变牌并暗置；可以在出牌阶段明置异变牌',
+	        		'',
 	        		'<u>胜利条件：</u>',
 	        		'黑幕：击坠所有自机',
 	        		'异变：黑幕获得胜利',
@@ -370,7 +379,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		'<u>异变牌：</u>任何持有异变牌的玩家可以通过异变牌的效果获得胜利；异变牌只有明置才有效果；异变胜利时，所有与其同阵营的玩家也获得胜利',
 	        		],
 	        	showcase:function(init){
-
+	        		
 	        	},
 	        },
 	        characterview:{
@@ -494,6 +503,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        record:{
 	        	name:'你的战绩',
 	        	intro:[''],
+	        	fullshow:true,
 	        	showcase:function(init){
 	        		if (init){
 		        		var node = this;

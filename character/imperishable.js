@@ -392,6 +392,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         frequent:true,
                         content:function(){
                               'step 0'
+                              player.storage.richuguo=false;
                               player.chooseTarget([1,1],get.prompt('richuguo'),true,function(card,player,target){
                                 return true;
                               }).ai=function(target){
@@ -977,8 +978,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.turnOver();
                       },
                     check:function(event,player){
-                      //return player.lili > 3 && player.countCards('hej') > 3;
-                      return true;
+                      return player.lili > 3 && player.countCards('hej') > 3;
+                      //return true;
                     },
                   },
                   zhenshi_1:{
@@ -1491,6 +1492,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         targets[0].showCards(result.cards);
                         game.log(get.translation(targets[0])+'成功回答了难题！');
                         player.gain(result.cards);
+                        targets[0].$give(result.cards,player);
                         player.discard(cards);
                       } else {
                         game.log(get.translation(targets[0])+'没有回答出难题。');
@@ -1501,9 +1503,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 3'
                       if (result.bool && result.links.length){
                         game.log(get.translation(targets[0])+'重铸了'+get.translation(result.links));
-                        targets[0].$throw(result.links);
-                        targets[0].lose(result.links);
-                        targets[0].draw(result.links.length);
+                        targets[0].recast(result.links);
                       }
                     },
                     check:function(card){
@@ -1535,14 +1535,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         });
                       'step 1'
                       if (result.bool && result.cards.length){
-                          player.$throw(result.cards);
                           var suits = [];
                           for (var i = 0; i < result.cards.length; i ++){
                             if (get.suit(result.cards[i]) && suits.contains(get.suit(result.cards[i]))) suit.push(get.suit(result.cards[i]))
                           }
-                          player.lose(result.cards);
-                          game.log(get.translation(trigger.player)+'重铸了'+get.translation(result.cards));
-                          player.draw(result.cards.length);
+                          player.recast(result.cards);
                           if (suits.length == 4){
                               player.addSkill('poxiao_2');
                           }
@@ -1567,7 +1564,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       group:'yongye_die',
                       spell:['yongye1','yongye2','yongye3','yongye4'],
                       infinite:true,
-                      trigger:{player:'phaseBegin'},
+                      trigger:{player:'phaseBeginStart'},
                       filter:function(event,player){
                           return player.lili > lib.skill.yongye.cost;
                       },
@@ -1639,11 +1636,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       var cards = player.getCards('hej');
-                       player.$throw(cards);
-                       player.lose(cards);
-                          game.log(get.translation(player)+'重铸了'+get.translation(cards));
-                          player.draw(cards.length);
+                      player.recast(cards);
                     },
+                    prompt:'是否重铸所有牌？',
                   },
                   yongye3:{
                     audio:2,
@@ -1654,7 +1649,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       player.gain(ui.skillPile.childNodes[0],'draw2');
-                      player.gain(ui.skillPile.childNodes[0],'draw2');
+                      player.gain(ui.skillPile.childNodes[1],'draw2');
                     }
                   },
                   yongye4:{
@@ -1805,12 +1800,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             event.goto(0);
                         }
                         'step 2'
-                        player.loselili(player.lili);
                         if (player.hp < 1){
                             player.recover(1-player.hp);
                             player.update();
                         }
                         if (player.countCards('h') < 3) player.draw(3 - player.countCards('h'));
+                        player.loselili(player.lili);
                     },
                   },
             },
@@ -1932,7 +1927,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yongye:'永夜归返',
                   yongye2:'永夜归返',
                   yongye_die:'永夜归返',
-                  yongye_info:'符卡技（1）<极意><终语>结束阶段，消你耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
+                  yongye_info:'符卡技（1）<极意><终语>结束阶段，你消耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
                   kaguya_die:'=w=明天晚上再见！',
                   eirin:'永琳',
                   zhaixing:'摘星',

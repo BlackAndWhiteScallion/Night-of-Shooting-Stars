@@ -135,8 +135,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					list.push('摸一张牌，交给'+get.translation(trigger.player)+'一张牌');
 					player.chooseControl(list,function(event,player){
-						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return '当前回合角色恢复灵力';
-						return '摸一张牌，交给当前回合角色一张牌';
+						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return get.translation(trigger.player)+'恢复灵力';
+						return '摸一张牌，交给'+get.translation(trigger.player)+'一张牌';
 					});
 					'step 1'
 					if (result.control == get.translation(trigger.player)+'恢复灵力'){
@@ -805,27 +805,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 				filter:function (event,player){
-					player.countUsed()>2;
+					return player.countUsed()>2;
 				},
 				content:function(){
 					'step 0'
 					player.chooseTarget('令一名角色收回一张装备牌',function(card,player,target){
-						return (player!=target&&target.getCards('e'));
+						return target.countCards('e');
 					})
 					'step 1'
-					if(result.targets.length)return;
-					var target1 = result.targets[0];
-					target.choosePlayerCard(target1,'e',true);
+					if(result.targets){
+						event.target = result.targets[0];
+						player.choosePlayerCard(event.target,'e',true);
+					}
 					'step 2'
-					if(result.links)return;
-					target1.gain(result.links,'gain2');
-					player.chooseTarget('选择弃置的位置',function(card,player,target){
-						return (player!=target&&target.getCards('ej'));
-					})
+					if(result.bool){
+						event.target.gain(result.links,'gain2');
+						player.chooseTarget('弃置场上一张牌',function(card,player,target){
+							return target.countCards('ej');
+						});
+					}
 					'step 3'
-					if(result.targets.length)return;
-					var target2 = result.targets[0];
-					player.discardPlayerCard(target2,'ej',true);
+					if(result.bool){
+						player.discardPlayerCard(result.targets[0],'ej',true);
+					}
 				},
 			},
 			huanrao:{
@@ -898,14 +900,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return player.storage.huanrao.contains(card);
 				},
 				viewAs:{name:"sha"},
-				prompt:"将【环绕】牌当【杀】使用",
+				prompt:"将【环绕】牌当【轰！】使用",
 				sub:true,
 			},
 			sliver_arrow:{
 				audio:2,
 				spell:["sliver_arrow_2"],
 				cost:4,
-				audio:"ext:d3:true",
+				audio:2,
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > lib.skill.sliver_arrow.cost;
@@ -931,11 +933,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return (player!=target&&target.getCards('e'));
 					})
 					'step 1'
-					if(result.targets.length)return;
-					var target = result.targets[0];
-					target.addTempSkill('sliver_arrow_3');
-					player.discardPlayerCard(target,'he',Math.min(target.countCards('he'),player.countCards('h')),true);
-					target.removeSkill('sliver_arrow_3');
+					if (result.bool){
+						var target = result.targets[0];
+						target.addTempSkill('sliver_arrow_3');
+						player.discardPlayerCard(target,'he',Math.min(target.countCards('hej'),player.countCards('h')),true);
+						target.removeSkill('sliver_arrow_3');
+					}
 					"step 2"
 					//player.skip('phaseUse');
 					player.skip('phaseDiscard');
@@ -943,19 +946,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			sliver_arrow_3:{
-				audio:2,
-				trigger:{target:'loseEnd'},
+				trigger:{player:'loseEnd'},
 				forced:true,
 				filter:function(event,player){
-					if(event.player.countCards('he')) return false;
+					if(player.countCards('hej')) return false;
 					for(var i=0;i<event.cards.length;i++){
-						if(event.cards[i].original=='h'||event.cards[i].original=='e') return true;
+						if(event.cards[i].original) return true;
 					}
 					return false;
 				},
 				content:function(){
-					trigger.player.damage();
-					trigger.player.damage('thunder');
+					player.damage();
+					player.damage('thunder');
 				},
 			},
 			hongxi:{
@@ -1357,7 +1359,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return ui.create.dialog([list,'vcard']);
                     },
                     filter:function(button,player){
-                    	return _status.event.getParent().filterCard({name:button.link[2]},player) && !player.storage.muqi.contains(button.link[2]);
+                    	return _status.event.getParent().filterCard({name:button.link[2]},player) && !player.storage.muqi.contains(button.link[2]) && player.getCardUsable(button.link[2]);
                         //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
                     },
                     check:function(button){
@@ -1858,11 +1860,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zuoshibao_2:'佐世保的时雨',
 			arisa:'亚里沙',
 			yaowu:'妖舞',
-			yaowu_info:'结束阶段，若你本回合使用过三张或更多的牌，你可以令一名角色收回其装备区内一张牌；若如此做，你弃置场上一张牌。',
+			yaowu_info:'结束阶段，若你本回合使用过三张或更多的牌，你可以令一名角色收回其装备区内一张牌；若如此做，你可以弃置场上一张牌。',
 			yaowu_audio1:'对空射击！',
 			yaowu_audio2:'Caladbolg！',
 			huanrao:'环绕',
-			huanrao_info:'出牌阶段限一次，你可以将一张牌当【灵光一闪】使用；若如此做，你本回合只能将以此法获得的牌当【杀】使用。',
+			huanrao_info:'出牌阶段限一次，你可以将一张牌当【灵光一闪】使用；你以此法获得的牌本回合只能当【轰！】使用。',
 			huanrao_2:'环绕',
 			huanrao_3:'环绕',
 			huanrao_4:'环绕',
@@ -1871,8 +1873,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			huanrao_audio2:'来来来，来一起玩了啊~',
 			sliver_arrow:'白银之箭',
 			sliver_arrow_info:'符卡技（4）你可以跳过出牌阶段和弃牌阶段；若如此做，你弃置一名角色X张牌（X为你的手牌数）：若你以此法弃置了其所有牌，对其造成1点弹幕伤害和1点灵击伤害。',
-			silver_arrow_audio1:'我的箭会贯穿你！',
-			silver_arrow_audio2:'看招，白银之箭！',
+			sliver_arrow_audio1:'我的箭会贯穿你！',
+			sliver_arrow_audio2:'看招，白银之箭！',
 			arisa_die:'你可真强呢……',
 			yudachi:'夕立',
 			yudachi_die:'-转圈学狗叫<br />-poi!poi!poi!',

@@ -27,7 +27,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			heiguan:{
     			audio:2,
     			trigger:{player:'phaseUseBegin'},
-    			prompt:'选择一些灵力小于你，并且相邻的角色，和她们依次拼点：若你赢，咬她一口！；若你没赢，额，你须选择：消耗1点灵力，或取消其他目标并结束出牌阶段。',
+    			prompt2:'选择一些灵力小于你，并且相邻的角色，和她们依次拼点：若你赢，咬她一口！；若你没赢，额，你须选择：消耗1点灵力，或取消其他目标并结束出牌阶段。',
     			filter:function(event,player){
     				return player.countCards('h')>0;
     			},
@@ -62,7 +62,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     				}
     				"step 3"
     				if(result.bool){
-    					player.useCard({name:'sha'},event.current);
+    					player.useCard({name:'sha'},event.current, false);
     					event.goto(2);
     				} else {
     					var choice = ['end_phase'];
@@ -151,12 +151,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         for(var i=0;i<list.length;i++){
                             list[i]=[get.type(list[i]),'',list[i]];
                         }
-                        console.log(list);
                         return ui.create.dialog([list,'vcard']);
                     },
                     filter:function(button,player){
-                        console.log(button);
-                        return _status.event.getParent().filterCard({name:button.link[2]},player);
+                        return _status.event.getParent().filterCard({name:button.link[2]},player) && player.getCardUsable(button.link[2]);
                         //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
                     },
                     check:function(button){
@@ -932,7 +930,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 check:function(event,player){
                     return -get.attitude(player, event.player) && get.attitude(player, event.target);
                 },
-                prompt:'要不要让那个垃圾感受一下The World的力量？',
+                prompt:'要不要使用The World的力量？',
             },
             mingyun:{
                 audio:2,
@@ -966,7 +964,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (event.name == 'damage') return true;
                     return player.getAttackRange() > 2;
                 },
-                prompt:'要不要看看今天发牌姬带来了什么？',
+                prompt2:'要不要看看今天发牌姬带来了什么？',
             },
             mingyun2:{
                 trigger:{global:'useCardToBegin'},

@@ -261,6 +261,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     }
                 },
+                prompt:'是否发动【式获】喵？',
             },
             shuanggui:{
                 audio:2,
@@ -372,6 +373,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.draw(result.cards.length);
                     }
                 },
+                prompt:'是否准备一些人偶？',
             },
             mocai:{
                 audio:2,
@@ -534,6 +536,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.goto(1);
                     }
                 },
+                prompt:'春天来了！春天来了！',
             },
             mengya:{
                 audio:2,
@@ -586,7 +589,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(event,player){
                     'step 0'
-                    player.chooseCard(get.prompt('shenxuan'),'h',function(card){
+                    player.chooseCard('选择今天的乐谱明置吧？','h',function(card){
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){
@@ -607,7 +610,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             return 1;
                         }
                     }
-                }
+                },
             },
             shenxuan_viewAs:{
                 enable:'phaseUse',
@@ -949,7 +952,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(event,player){
                     'step 0'
-                    player.chooseCard(get.prompt('mingguan'),'h',function(card){
+                    player.chooseCard('把演奏的曲目明置出来吧？','h',function(card){
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){
@@ -1052,15 +1055,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.discardPlayerCard(trigger.target,'hej',true);
+                    player.choosePlayerCard(trigger.target,'hej',true);
                     'step 1'
                     if (result.bool){
-                        trigger.target.draw();
-                        player.discardPlayerCard(player,'hej',true);
+                        trigger.target.recast(result.cards[0]);
+                        player.choosePlayerCard(trigger.target,'hej',true);
                     }
                     'step 2'
                     if (result.bool){
-                        player.draw();
+                        trigger.target.recast(result.cards[0]);
                         player.logSkill(event.name,result.targets);
                         if (!trigger.targets.contains(player)){
                             trigger.targets.remove(trigger.target);
@@ -1084,7 +1087,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(event,player){
                     'step 0'
-                    player.chooseCard(get.prompt('mingjian'),'h',function(card){
+                    player.chooseCard('明置出今天演奏的东西吧……','h',function(card){
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){
@@ -1134,6 +1137,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         game.trySkillAudio('mingjian',player,true,3);
                     }
                 },
+                prompt:'把乐谱明置出来给别人去演奏吧？',
                 ai:{
                     order:function(skill,player){
                         return 1;
@@ -1273,6 +1277,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 check:function(event,player){
                     return get.attitude(player,event.player) > 0;
                 },
+                prompt:function(event){
+                    return '是否让'+get.translation(event.player)+'摸一张牌？';
+                },
             },
             huanzou2:{
                 audio:'huanzou',
@@ -1291,6 +1298,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 check:function(event,player){
                     return get.attitude(player,event.player) > 0;
                 },
+                prompt:function(event){
+                    return '是否让'+get.translation(event.player)+'摸一张牌？';
+                },
             },
             yishan:{
                 audio:2,
@@ -1302,7 +1312,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    player.chooseTarget(get.prompt('yishan'),function(card,player,target){
+                    player.chooseTarget('要斩断哪个倒霉人？',function(card,player,target){
                         if(player==target) return false;
                         return player.canUse({name:'sha'},target,false);
                     }).set('ai',function(target){
@@ -1781,7 +1791,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.draw(); 
+                    player.recast(cards[0]); 
                     if (get.bonus(cards[0]) > 0){
                         player.chooseTarget('令一名角色获得'+get.bonus(cards[0])+'点灵力',1,function(card,player,target){
                             return true;
@@ -1802,7 +1812,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     }
                 },
-                discard:true,
+                discard:false,
+                lose:false,
                 ai:{
                     basic:{
                         order:1

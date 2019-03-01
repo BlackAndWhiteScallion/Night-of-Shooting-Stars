@@ -152,16 +152,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			trigger:{player:'phaseDrawEnd'},
     			content:function(){
     				"step 0"
-    				player.chooseToDiscard('hej');
+    				player.chooseCard('hej');
     				"step 1"
     				if(result.bool){
-    					player.draw();
+    					player.recast(result.cards);
     				}
     			}
 			},
 			shengdun_skill:{
     			filter:function(event,player){
-    				return event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack')&&event.player.countCards('h')&&player.countCards('h');
+    				return event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack')&&event.player.countCards('h')&&player.countCards('h')&&event.player!=player;
     			},
     			logTarget:'player',
     			check:function(event,player){
@@ -209,7 +209,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			qusan_skill:{
     			filter:function(event,player){
-    				return event.card&&(get.type(event.card)=='trick')&&event.player.countCards('h')&&player.countCards('h');
+    				return event.card&&(get.type(event.card)=='trick')&&event.player.countCards('h')&&player.countCards('h')&&event.player!=player;
     			},
     			logTarget:'player',
     			check:function(event,player){
@@ -308,11 +308,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			
 			},
 			lianji_skill:{
-				trigger:{player:'shaBegin'},
-				usable:1,
-				forced:true,
-				content:function(){
-					player.getStat().card.sha--;
+				mod:{
+					cardUsable:function(card,player,num){
+						if(card.name=='sha') return num ++;
+					}
 				},
 			},
 			qianxing_skill:{
@@ -377,11 +376,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			shengdun:'圣盾',
 			shengdun_bg:'盾',
 			shengdun_skill:'圣盾',
-			shengdun_info:'你成为攻击牌的目标后，可以与来源拼点；若你赢，弃置此牌，该牌对你无效。',
+			shengdun_info:'你成为其他角色的攻击牌的目标后，可以与来源拼点；若你赢，弃置此牌，该牌对你无效。',
 			qusan:'驱散',
 			qusan_bg:'散',
 			qusan_skill:'驱散',
-			qusan_info:'你成为法术牌的目标后，可以并与来源拼点；若你赢，弃置此牌，该牌对你无效。',
+			qusan_info:'你成为其他角色的法术牌的目标后，可以与来源拼点；若你赢，弃置此牌，该牌对你无效。',
 			shenyou:'神佑',
 			shenyou_bg:'神',
 			shenyou_skill_1:'神佑（抵伤）',
