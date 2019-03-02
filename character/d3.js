@@ -491,24 +491,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					content:function (event,player){
 						if(event.triggername=='phaseUseBegin'){
 							'step 0'
-							var list = [];
+							event.list = [];
 							var players = game.filterPlayer();
 							for (var i = 0; i < players.length; i ++){
 								var skills = players[i].getSkills(true)
 								for(var j = 0;j < skills.length;j++){
 									if (lib.skill[players[i].skills[j]] && lib.skill[players[i].skills[j]].spell){
-										list.push(players[i].skills[j]);
+										event.list.push(players[i].skills[j]);
 									}
 								}
 							}
-							'step 0'
+							'step 1'
 							player.awakenSkill('wt_feihu');
 							player.storage.wt_feihu=true;
-							if(list.length==0)return false;
-							player.chooseControl(list).set('prompt','选择获得一项技能');
-							'step 1'
+							if(event.list.length==0)return false;
+							player.chooseControl(event.list).set('prompt','选择获得一项技能');
+							'step 2'
 							player.addSkill(result.control);
-							if(list.length<4){
+							if(event.list.length<4){
 								game.trySkillAudio('wt_feihu',player,true,1);
 							} else if(Math.random()<0.75){
 								game.trySkillAudio('wt_feihu',player,true,2);
