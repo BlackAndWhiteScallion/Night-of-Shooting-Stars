@@ -300,7 +300,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			audio:2,
     			trigger:{player:'damageEnd'},
     			filter:function(event,player){
-    				return event.source.countCards('ej') && event.nature != 'thunder';
+    				return event.source && event.source.countCards('ej') && event.nature != 'thunder';
     			},
     			content:function(){
     				player.discardPlayerCard('ej',trigger.source,true);
@@ -338,7 +338,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.removeSkill('qianxing_skill2');
 					var cards = player.getCards('e');
-					for (var i = 0; i <= cards.length; i ++){
+					for (var i = 0; i < cards.length; i ++){
 						if(cards[i]&&cards[i].name == 'qianxing'){
 							player.discard(cards[i]);
 							break;

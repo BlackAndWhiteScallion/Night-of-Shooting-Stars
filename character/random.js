@@ -1548,7 +1548,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.storage.kedan = [];
 				},
 				filter:function(event,player){
-                    return player.countCards('he')>1;
+                    return player.countCards('he',function(card){
+								return get.bonus(card) > 0;	
+							})
                 },
                 chooseButton:{
                     dialog:function(){
@@ -1651,10 +1653,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var num = 0;
 					var ej = false;
 					for (var i = 0; i < players.length; i ++){
-						if (players[i] == player) continue;
-						num += players[i].hp;
-						if (!players[i].countCards('e',{bonus:0})) ej = true;
-						if (players[i].countCards('e') > players[i].countCards('e',{bonus:0})) ej = true;
+						if (players[i] != player) num += players[i].hp;
+						if (players[i].countCards('e',function(card){
+							return get.bonus(card) > 0;	
+						})) ej = true;
 					}
 					return num < player.storage.shishu && (ej || player.storage.shishu3);
 				},
@@ -1667,21 +1669,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						num += players[i].hp;
 					}
 					event.num = num;
-					event.num -= player.storage.shishu;
+					player.storage.shishu -= event.num;
 					'step 1'
-					if (event.num == 0) event.finish();
+					if (event.num <= 0) event.finish();
 					var ej = false;
 					var players = game.filterPlayer();
 					for (var i = 0; i < players.length; i ++){
-						if (players[i] == player) continue;
-						num += players[i].hp;
-						if (!players[i].countCards('e',{bonus:0})) ej = true;
-						if (players[i].countCards('e')> players[i].countCards('e',{bonus:0})) ej = true;
+						if (players[i] != player) num += players[i].hp;
+						if (players[i].countCards('e',function(card){
+							return get.bonus(card) > 0;	
+						})) ej = true;
 					}
 					var list = [];
 					if (player.storage.shishu3) list.push('翻弃牌堆');
 					if (ej) list.push('从场上抢');
-					if (!list[0]) event.finish();
+					if (list.length == 0) event.finish();
 
 					player.chooseControl(list,function(event,player){
 						if (list['从场上抢']) return '从场上抢';
@@ -1689,13 +1691,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 					'step 2'
 					if (result.control == '从场上抢'){
+						event.control = 1;
 						player.chooseTarget('选择一个倒霉人，抢她一张有灵力的牌',function(card,player,target){
-							if(player==target) return false;
-							return !target.countCards('e',{bonus:0}) || target.countCards('e')> target.countCards('e',{bonus:0});
+							return target.countCards('e',function(card){
+								return get.bonus(card) > 0;	
+							});
 						}).set('ai',function(target){
 							return -get.attitude(player,target);
 						});
-					} else {
+					} else if (result.control == '翻弃牌堆'){
+						event.control = 2;
 						player.chooseCardButton(player.storage.shishu3,'捡回一张牌',1,true).ai=function(button){
 	                        var val=get.value(button.link);
 	                        if(val<0) return -10;
@@ -1703,25 +1708,31 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 	                    }
 					}
 					'step 3'
-					if (result.links){
-						player.gain(result.links)._triggered=null;
-	                    for(var i=0;i<result.links.length;i++){
-	                        ui.discardPile.remove(result.links[i]);
-	                        player.storage.shishu3.remove(result.links[i]);
-	                        player.syncStorage('shishu3');
-	                    }
-					} else if (result.bool){
-						player.gainPlayerCard(result.target,1,'ej',true).set('filterButton',function(button){
-							return get.bonus(button.link) > 0;
-						});
+					if (event.control == 2) {
+						if (result.links){
+							player.gain(result.links)._triggered=null;
+		                    for(var i=0;i<result.links.length;i++){
+		                        ui.discardPile.remove(result.links[i]);
+		                        player.storage.shishu3.remove(result.links[i]);
+		                        player.syncStorage('shishu3');
+		                    }
+	                	}
 					}
+					if (event.control == 1){
+						if (result.targets){
+							player.gainPlayerCard(result.targets[0],1,'e',true).set('filterButton',function(button){
+								return get.bonus(button.link) > 0;
+							});
+						}
+					}
+					'step 4'
 					event.num --;
 					if (event.num > 0) event.goto(1);
 				},
 			},
 			shishu2:{
 				direct:true,
-				trigger:{player:'phaseBeginStart'},
+				trigger:{player:'phaseBefore'},
 				content:function(){
 					var players = game.filterPlayer();
 					var num = 0;
@@ -1787,12 +1798,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			shishi1:{
 				audio:2,
-				trigger:{player:['changeHpBefore','changeliliBefore']},
+				direct:true,
+				trigger:{player:['damageBefore','loseHpBefore','loseliliBefore']},
 				filter:function(event,player){
-					return event.num < 0;
+					return event.num > 0;
 				},
 				content:function(){
-					trigger.cancel();
+					trigger.num = 0;
+					//trigger.cancel();
 				},
 				mod:{
 					targetInRange:function(card,player,target,now){

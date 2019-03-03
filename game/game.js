@@ -13523,16 +13523,18 @@
                     player.update();
                 },
                 changeHp:function(){
+                    event.trigger('changeHp');
                     player.hp+=num;
                     if(player.hp>player.maxHp) player.hp=player.maxHp;
                     player.update();
                     if(event.popup!==false){
                         player.$damagepop(num,'water');
                     }
-                    event.trigger('changeHp');
+                    
                 },
                 // 复制一个changelili
                 changelili:function(){
+                    event.trigger('changelili');    // 然后是触发事件的地方
                     player.lili+=num;
                     if(player.lili>player.maxlili) player.lili=player.maxlili;
                     if(player.lili<0) player.lili = 0;
@@ -13540,7 +13542,6 @@
                     if(event.popup!==false){
                         player.$damagepop(num,'water'); // 这里改变的是颜色
                     }
-                    event.trigger('changelili');    // 然后是触发事件的地方
                 },
                 changeHujia:function(){
                     player.hujia+=num;

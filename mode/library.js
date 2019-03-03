@@ -31,7 +31,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        dialog.classList.add('noupdate');
 	        dialog.classList.add('character');
 	        dialog.contentContainer.style.overflow='visible';
-	        dialog.style.overflow='hidden';
+	        dialog.style.overflow='scroll';
 	        dialog.content.style.height='100%';
 	        dialog.contentContainer.style.transition='all 0s';
 	        if(!lib.storage.directStage) dialog.open();
@@ -105,6 +105,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	                intro+=info.intro;
 	            }
+	            var i = ui.create.div('.text center',intro);
+	            i.style.overflow='scroll';
 	            var today = new Date();
             	if(today.getMonth() == 3 && name == 'thanks') intro += '<br> 特殊BGM：資料室のお茶会 - key';
 	            var showcase=ui.create.div();
@@ -122,7 +124,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            else{
 	                node.nodes=[
 	                    //ui.create.div('.caption',caption),
-	                    ui.create.div('.text center',intro),
+	                    i,
 	                    showcase,
 	                ];
 	            }
@@ -279,21 +281,42 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        lib.init.onfree();
 	    },
 	    brawl:{
-	    	new:{
-	    		name:'写在前面',
-	    		mode:'',
-	    		intro:['','','','','','','',''],
-	    		showcase:function(init){
-	    		},
-	    	},
 	    	help:{
-	    		name:'使用须知',
+	    		name:'欢迎光临!',
 	    		mode:'',
-	    		intro:['欢迎来到东方流星夜！',
+	    		intro:[],
+	    		showcase:function(init){
+	    			var node=this;
+	    			if(init){
+	                    var player=ui.create.player(null,true);
+	                    player.node.avatar.style.backgroundSize='cover';
+	                    player.node.avatar.setBackgroundImage('image/character/akyuu.jpg');
+	                    player.node.name.innerHTML = '阿求';
+	                    player.node.avatar.show();
+	                    //player.style.left='calc(50% - 75px)';
+	                    player.style.left='0px';
+	                    player.style.top='0px';
+	                    player.node.count.remove();
+	                    player.node.hp.remove();
+	                    player.style.transition='all 0.5s';
+	                    node.appendChild(player);
+	                    node.playernode=player;
+
+	        			var dialog=ui.create.dialog('hidden');
+						dialog.style.left = "0px";
+						dialog.style.top = "0px";
+						dialog.style.width = "100%";
+						dialog.style.height = "100%";
+						dialog.classList.add('fixed');
+	        			dialog.noopen=true;
+						node.appendChild(dialog);
+						var i = ['欢迎来到东方流星夜！',
 	    				'东方流星夜是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏。',
 	    				'而流星夜的程序化，也就是你现在所在的游戏，是基于无名杀1.9.51版的大型魔改版mod。',
 	    				'对游戏的不解，在我这里是有大量的信息的：先读一下规则，模式介绍，如果还有不懂的，在更多资源里可以找到更多的帮助哟。',
 	    				'',
+	    				];
+	    				var j = [
 	    				'<u>程序使用须知：</u>',
 	    				'1. 使用刷新键（f5）可以重置游戏。',
 	    				'2.左上的[选项]可以更改很多游戏相关的设置，包括并不限于：',
@@ -303,19 +326,36 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'3.1 在左上的[选项-角色]里双击角色牌也可以看到简介。',
 	    				'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
 	    				'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
-	    				],
-	    		showcase:function(init){
+	    				]; 
+	                	dialog.addText('<div><div style="display:block;left:180px;text-align:left;font-size:16px">'+i.join('<br>'));
+	                	dialog.addText('<div><div style="display:block;top:140px;text-align:left;font-size:16px">'+j.join('<br>'));
+	                }
 	        	},
+	    	},
+	    	new:{
+	    		name:'写在前面',
+	    		mode:'',
+	    		intro:['','','','','','','',''],
+	    		showcase:function(init){
+	    		},
 	    	},
 	    	updatelog:{
 	    		name:'更新事宜',
 	    		mode:'',
-	    		intro:['更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://coding.net/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
+	    		intro:[	'更新方式有三种:',
+	    				'1: 下载更新程序包',
+	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://coding.net/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
-	    				'安卓手机端更新，请点选项按钮，然后在<b>[选项—选项—其他—重新下载游戏]</b>来进行更新。会保留所有设置的。',
-	    				'素材更新在<b>[选项—其他—更新—检查素材更新]</b>看到。',
-	    				'用手机来解压覆盖也可以，所需要拖到的文件夹在：(默认SD卡)/android/data/com.widget.noname1',
-	    				'覆盖完毕后，记得重启流星夜app！',
+	    				'手机端也可以使用这个更新方式，安卓手机所需要拖到的文件夹在：<b>(默认SD卡)/android/data/com.widget.noname1</b>',
+	    				'覆盖完毕后，需要重启流星夜程序！',
+	    				'',
+	    				'2. 游戏内更新，在<b>[选项-其他-更新]</b>下有多个更新选项',
+	    				'[检查游戏更新]是检查游戏的文件更新（需要把下方的更新地址换成github），有可能可以使用，也有可能不能使用。',
+	    				'[检查素材更新]是检查游戏新加的素材。 但是只能检查新加的素材，无法更新被覆盖的旧素材。',
+	    				'检查素材更新在电脑和手机端都可以进行。',
+	    				'',
+	    				'3. 手机端更新，可以在<b>[选项—选项—其他—重新下载游戏]</b>来进行更新。',
+	    				'这样会保留所有的设置，但是并不会更新素材。素材需要另外进行更新。',
 	    				'',
 	    				'<u>更新注释：</u>',
 	    				'<br>',

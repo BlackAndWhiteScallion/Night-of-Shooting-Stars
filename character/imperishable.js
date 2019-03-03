@@ -300,11 +300,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           }
                     },
                   jiehuo:{
-                      trigger:{player:'useCardAfter'},
+                      trigger:{player:['useCardAfter','respondAfter']},
                       usable:1,
                       audio:2,
                       filter:function(event,player){
-                        if(event.parent.parent.name!='phaseUse') return false;
+                        var i = event;
+                        var use = false;
+                        while (i.name != 'phaseLoop'){
+                          if (i.name == 'phaseUse'){
+                            use = true;
+                            break;
+                          } else {
+                            i = i.parent;
+                          }
+                        }
+                        if(!use) return false;
                         return (get.position(event.card)=='d'&&get.itemtype(event.card)=='card'&&player.lili>0);
                       },
                       content:function(){
@@ -1906,7 +1916,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   reisen:'铃仙',
                   huanshi:'幻视',
                   huanshi_2:'幻视',
-                  huanshi_info:'一回合一次，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；一名角色成为此牌的目标后，其可将一张牌当做一种防御牌打出。若如此做，你的扣置牌无效且你亮出此牌；若此牌不为此防御牌的合法目标，则你对其使用此牌。',
+                  huanshi_info:'一回合一次，出牌阶段，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；一名角色成为此牌的目标后，其可将一张牌当做一种防御牌打出。若如此做，你的扣置牌无效且你亮出此牌；若此牌不为此防御牌的合法目标，则你对其使用此牌。',
                   huanshi_audio1:'你也一同陷入狂乱吧！',
                   huanshi_audio2:'来，看着我的眼睛——',
                   zhenshi:'真实之月（隐形满月）',
