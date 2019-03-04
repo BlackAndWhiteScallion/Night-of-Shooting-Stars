@@ -12716,7 +12716,7 @@
                 recast:function(){
                     "step 0"
                     game.log(player,'重铸了',cards);
-                    player.lose(cards,event.position);
+                    player.lose(cards,event.position); 
                     if(event.animate!=false){
                         event.discardid=lib.status.videoId++;
                         game.broadcastAll(function(player,cards,id){
@@ -46045,7 +46045,7 @@ smoothAvatar:function(player,vice){
                 }
                 else{
                     str2=get.translation(str.name);
-                    if (str == game.me) str2 = '你(' + get.translation(str.name) + ')';
+                    if (str == game.me && !_status.connectMode) str2 = '你(' + get.translation(str.name) + ')';
                 }
                 if(str2=='杀'){
                     if(str.nature=='fire'){

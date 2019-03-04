@@ -109,22 +109,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					//next.autochoose=lib.filter.autoRespondShan;
 				}
 				"step 1"
-				if(result.bool==false){
+				if(event._result.bool == false || event._result.result.bool!=false){
 					event.trigger('shaHit');
 				}
-				else{
-					event.trigger('shaMiss');
-					event.responded=result;
-				}
 				"step 2"
-				if(result.bool==false&&!event.unhurt){
+				if((event._result.bool == false || event._result.result.bool!=false)&&!event.unhurt){
 					target.damage(get.nature(event.card));
 					event.result={bool:true}
 					event.trigger('shaDamage');
-				}
-				else{
-					event.result={bool:false}
-					event.trigger('shaUnhirt');
 				}
 			},
 			ai:{
@@ -208,6 +200,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			type:'basic',
 			subtype:'defense',
 			content:function(){
+				event.trigger('shaMiss');
+				event.responded={bool:true};
+				event.result={bool:false}
 			},
 			ai:{
 				basic:{
@@ -2044,7 +2039,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{source:'damageBefore'},
     		forced:true,
     		priority:15,
-    		intro:'防止所有角色造成的所有伤害',
+    		intro:{
+    			content:'防止所有角色造成的所有伤害',
+    		},
     		content:function(){
     			trigger.untrigger();
     			trigger.finish();

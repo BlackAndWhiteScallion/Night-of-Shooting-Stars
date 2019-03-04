@@ -35,7 +35,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           event.players=game.filterPlayer();
                           player.line(event.players,'black');
                           "step 1"
-                          event.current.chooseTarget([1,1],true,'弃置你上家或下家一张牌',function(card,player,target){
+                          event.current.chooseTarget([1,1],true,'弃置与你最近的一名角色一张牌',function(card,player,target){
                               if(player==target) return false;
                               if(get.distance(player,target)<=1) return true;
                               if(game.hasPlayer(function(current){

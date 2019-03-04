@@ -411,10 +411,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            name:'唯我独尊',
 	            mode:'old_identity',
 	            intro:[
-	                '牌堆中轰！的数量增加30%',
+	                '牌堆中【轰！】的数量增加30%',
 	                '游戏开始时，主公获得一枚战神标记',
-	                '拥有战神标记的角色杀造成的伤害+1',
-	                '受到轰！造成的伤害后战神印记将移到伤害来源的武将牌上'
+	                '拥有战神标记的角色【轰！】造成的伤害+1',
+	                '受到【轰！】造成的伤害后战神印记将移到伤害来源的武将牌上'
 	            ],
 	            showcase:function(init){
 	                var node=this;

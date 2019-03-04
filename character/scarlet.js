@@ -734,18 +734,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             huanzang:{
                 audio:2,
-                group:['huanzang_1','huanzang_2'],
+                group:['huanzang_1'],
                 trigger:{target:'useCardToBegin'},
                 filter:function(event,player){
                     if (!get.suit(event.card) && !get.number(event.card)) return false;
-                    if(event.targets&&event.targets.length>1) return false;
+                    if (event.targets&&event.targets.length>1) return false;
                     if (event.player == player) return false;
-                    return player.countCards('he',{suit:get.suit(event.card)}) || player.countCards('he', {number:get.number(event.card)});
+                    return player.countCards('he',function(card){
+                        return get.suit(card) == get.suit(event.card) || get.number(card) == get.number(event.card);
+                    });
                 },
                 content:function(){
                     'step 0'
                     var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
-                    player.chooseToDiscard('你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
+                    player.chooseToDiscard('he','你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }).set('ai',function(card){
                         if(_status.event.eff<0){
@@ -771,11 +773,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (event.card.name == 'shan') return false;
                     if (event.player == player) return false;
                     if(event.targets&&event.targets.length>1) return false;
-                    return (player.countCards('he',{suit:get.suit(event.card)}) || player.countCards('he', {number:get.number(event.card)}));
+                    return player.countCards('he',function(card){
+                        return get.suit(card) == get.suit(event.card) || get.number(card) == get.number(event.card);
+                    });
                 },
                 content:function(){
                     'step 0'
-                    player.chooseToDiscard('你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
+                    player.chooseToDiscard('he','你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }, true).set('ai',function(card){
                         return 0;
@@ -789,6 +793,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return -get.attitude(player, event.player);
                 },
             },
+            /*
             huanzang_2:{
                 audio:'huanzang',
                 trigger:{global:'shaMiss'},
@@ -818,6 +823,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return -get.attitude(player, event.player);
                 },
             },
+            */
             shijing:{
                 group:['shijing_mark', 'shijing_mark2'],
                 trigger:{player:'phaseEnd'},
@@ -826,7 +832,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 prompt:'是否把今天用出去的飞刀捡起来？',
                 filter:function(event,player){
-                    return player.lili > 0 && player.storage.shijing;
+                    if (player.lili == 0 || !player.storage.shijing) return false;
+                    if (player.countCards('e',{name:'stg_watch'})) return player.countCards('h') < 4;
+                    else return player.countCards('h') < 3;
                 },
                 content:function(){
                     'step 0'
@@ -943,6 +951,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 0"
                     var num = player.getAttackRange();
                     player.draw(num);
+                    if (player.countCards('h', 'sha') >= 3) game.trySkillAudio('mingyun',player,true,3);
                     if (num != 0){
                         player.chooseCard(num,'he',true,'按顺序将卡牌置于牌堆顶（先选择的在上）').set('ai',function(card){
                             return get.value(card);
@@ -950,14 +959,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 1'
                     if(result.bool){
-                        var list=result.cards;
-                        player.lose(list,ui.special);
-                        game.log(get.translation(player)+'将'+list.length+'张牌置于牌堆顶');
-                        while(list.length){
-                          ui.cardPile.insertBefore(list.pop(),ui.cardPile.firstChild);
-                        }
-                      }
+                        player.lose(result.cards);
+                        event.cards = result.cards;    
+                    }
                     "step 2"
+                    if (event.cards){
+                        for (var i = 0; i < event.cards.length; i ++){
+                            event.cards[i].fix();
+                        }
+                    }
+                    "step 3"
+                    if (event.cards){
+                        var list=event.cards;
+                        game.log(get.translation(player)+'将'+list.length+'张牌置于牌堆顶');
+                        for (var i = list.length -1; i >= 0; i --){
+                           ui.cardPile.insertBefore(list[i], ui.cardPile.firstChild);
+                        }
+                        player.update();
+                    }
+                    "step 4"
                     player.addTempSkill('mingyun2');
                 },
                 check:function(event,player){
@@ -971,6 +991,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 direct:true,
                 filter:function(event, player){
                     return !event.skill || event.skill != 'mingyun2';
+                    console.log(event);
                 },
                 content:function(){
                     "step 0"
@@ -1221,7 +1242,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             riyin2_audio2:'请你安静一点。',
             xianzhe:'贤者之石',
             xianzhe2:'贤者之石',
-            xianzhe_info:'符卡技（1）你的法术牌视为拥有“强化（-1）：可以为此牌额外指定一名目标；此牌不能成为【魔法障壁】的目标。”',
+            xianzhe_info:'符卡技（1）你的不可强化的法术牌视为拥有“强化（-1）”；你的牌的强化效果追加“此牌不能成为【请你住口！】的目标；你本回合使用的下一张牌结算后，视为对那张牌目标使用一张此牌。”',
             xianzhe_audio1:'火水木金土符「贤者之石」。',
             xianzhe_audio2:'见识一下真正的魔法吧。',
             patchouli_die:'今天只是哮喘发作了而已……',
@@ -1260,7 +1281,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mingyun2:'命运',
             mingyun_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以：摸X张牌，并将等量牌置于牌堆顶（X为攻击范围），然后，直到结束阶段：一名角色使用其手牌指定唯一目标时，若该牌不是以此法使用，其取消目标并判定：若判定牌可以对目标使用，其将判定牌对目标使用。',
             mingyun_audio1:'你的命运可是掌握在我的手心中哦',
-            mingyun_audio2:'…………喂，等下，这什么牌啊！',
+            mingyun_audio2:'只需要像这样轻轻一碰……',
+            mingyun_audio3:'…………喂，等下，这什么牌啊！',
             feise:'绯色幻想乡',
             feise2:'绯色幻想乡',
             feise_info:'符卡技（4）<永续><u>你的第一回合开始时，若灵力足够：须发动此符卡；</u>你和与你同阵营的角色攻击范围+3；其他角色的结束阶段，若其对其以外的角色使用过牌，你可以：对其造成1点弹幕伤害。',

@@ -2102,14 +2102,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				infinite:true,
 				cost:0,
+				trigger:{player:'phaseBegin'},
 				spell:['gungirs1'],
 				init:function(player){
-					player.equip(game.createCard('gungnir'));
-					player.useSkill('gungirs');
-					game.addBossFellow(2,'stg_bat',1);
-					game.addBossFellow(8,'stg_bat',1);
+					if (get.mode()=='stg'){
+						player.useSkill('gungirs');
+						game.addBossFellow(2,'stg_bat',1);
+						game.addBossFellow(8,'stg_bat',1);
+					}
 				},
 				content:function(){
+					player.equip(game.createCard('gungnir'));
 					player.turnOver();
 				},
 			},

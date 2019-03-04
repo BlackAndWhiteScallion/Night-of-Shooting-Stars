@@ -178,7 +178,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							ui.arena.classList.remove('only_dialog');
 						};
 						var step1=function(){
-							if (!game.me.storage.jieshuo || !game.me.storage.jieshuo[0]) game.me.storage.jieshuo = ['没事，不急，慢慢来！'],
+							if (!game.me.storage.jieshuo) game.me.storage.jieshuo = ['没事，不急，慢慢来！'];
 							//ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]);
 							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]+'</div></div>');
 							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
@@ -193,6 +193,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								}
 							});
 						}
+
 						game.pause();
 						step1();
 						ui.arena.classList.remove('only_dialog');

@@ -657,7 +657,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				onremove:true,
 				trigger:{target:'shaBefore'},
-				frequent:true,
+				forced:true,
 				filter:function(event,player){
 					//return event.card.subtype == 'attack';
 					return event.card.name == 'sha';
@@ -669,6 +669,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				check:function(){
 					return true;
 				},
+				ai:{
+					effect:{
+						target:function(card,player,target){
+							if(card.name=='sha') return 'zerotarget';
+						}
+					}
 			},
 			zuoshibaozhan:{
 				cost:2,
@@ -1681,13 +1687,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						})) ej = true;
 					}
 					var list = [];
-					if (player.storage.shishu3) list.push('翻弃牌堆');
+					if (player.storage.shishu3 && player.storage.shishu3.length > 0) list.push('翻弃牌堆');
 					if (ej) list.push('从场上抢');
 					if (list.length == 0) event.finish();
 
 					player.chooseControl(list,function(event,player){
 						if (list['从场上抢']) return '从场上抢';
-						return '翻弃牌堆';
+						if (list['翻弃牌堆']) return '翻弃牌堆';
+						return false;
 					});
 					'step 2'
 					if (result.control == '从场上抢'){
