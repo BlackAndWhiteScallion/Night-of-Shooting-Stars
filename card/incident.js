@@ -350,7 +350,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					threaten:2,
-					
 				},
     		},
     		death_win:{

@@ -27624,8 +27624,14 @@ smoothAvatar:function(player,vice){
         // 异变胜利要怎么游戏结束的设置
         // 联机时需要一个别的设置……
         incidentover:function(player){
-            // 如果有人有皆杀时游戏结束，如果是玩家就玩家赢，否则玩家失败。
+            // 如果是玩家胜利就是玩家胜利
             "step 0"
+            if (game.me == player){
+                game.over(true);
+                return;
+            }
+            // 如果有人有皆杀时游戏结束，如果是玩家就玩家赢，否则玩家失败。
+            "step 1"
             var p = game.filterPlayer();
             for (var i = 0; i < p.length; i ++){
                 if (p[i].storage._tanpai){
@@ -27641,7 +27647,7 @@ smoothAvatar:function(player,vice){
                     }
                 }
             }
-            "step 1"
+            "step 2"
             /*  联机时使用的游戏结束设置
             var clients=game.players.concat(game.dead);
             for(var i=0;i<clients.length;i++){
@@ -27650,7 +27656,7 @@ smoothAvatar:function(player,vice){
                 }
             }
             */
-            "step 2"
+            "step 3"
             // 当前模式：
             // 如果是异变模式，且胜利玩家的身份是路人，如果玩家就是路人的话判定胜利，否则判定平局
             var mode=get.mode();
@@ -47890,7 +47896,7 @@ smoothAvatar:function(player,vice){
                 }
             }
             var result=get.result(card,eventskill);
-            var result1=result.player,result2=result.target;
+            var result1=result.player, result2=result.target;
             if(typeof result1=='function') result1=result1(player,target,card);
             if(typeof result2=='function') result2=result2(player,target,card);
             if(typeof result1!='number') result1=0;

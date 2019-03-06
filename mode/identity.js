@@ -547,7 +547,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(game.players.length==1&&game.me.isAlive()){
 						game.over(true);
 					}
-					else{
+					else if (!game.me.isAlive()){
+						game.over(false);
+					} else {
 						game.over();
 					}
 				}
