@@ -2022,10 +2022,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			alter:true,
 			mod:{
 				canBeDiscarded:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard" && target != 'addJudge') return false;
 				},
 				cardDiscardable:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard" && target != 'addJudge') return false;
 				},
 				cardGainable:function(card,player,target,event){
 					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;

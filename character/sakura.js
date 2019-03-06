@@ -700,7 +700,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return '将一张【轰！】当作'+get.translation(links[0][2])+'使用';
                     },
                     ai:{
-                    order:6,
+                        order:6,
                         result:{
                             player:function(player){
                                 return 0.5;
@@ -1930,7 +1930,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt') return get.attitude(player,event.player) < 0;
                     if (get.type(card) == 'equip' || get.subtype(card) == 'support') return get.attitude(player,event.player) > 0;
                     */
-                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name},player, player);
+                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name}, player, player);
                     return false;
                 },
                 content:function(){
@@ -1944,7 +1944,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.cards = [];
                         event.cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-1]);
                         player.showCards(event.cards[0]);
-                        if (get.type(event.cards[0]) == 'basic' || get.type(event.cards[0]) == 'trick'){
+                        if (get.type(event.cards[0]) != 'equip'){
                             //if (!player.canUse(event.cards[0],current,false)) return false;
                             if (!lib.filter.targetEnabled2(event.cards[0],player,current)){
                                 player.discard(event.cards[0]);
@@ -2372,7 +2372,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             ran_die:'紫大人不会放过你的！',
             yukari:'紫',
             huanjing:'幻境',
-            huanjing_info:'一名角色的准备阶段，你可以弃置一张牌，然后展示牌堆底的牌；若为攻击牌或法术牌，将之对其使用；若为装备牌，将之置于其装备区内；否则，弃置之。',
+            huanjing_info:'一名角色的准备阶段，你可以弃置一张牌，然后展示牌堆底的牌；若该角色可以成为该牌的目标，将之对其使用；若为装备牌，将之置于其装备区内；否则，弃置之。',
             pileTop:'牌堆顶',
             pileBottom:'牌堆底',
             huanjing_audio1:'来，见识一下隙间的尽头吧？',

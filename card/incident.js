@@ -163,7 +163,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				player.$skill('红月胜利',null,null,true);
-    				game.over(true);
+    				game.incidentover(player);
     			}	
     		},
     		sakura_normal:{
@@ -188,7 +188,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				player.$skill('散樱胜利',null,null,true);
-    				game.over(true);
+    				game.incidentover(player);
     			}	
     		},
     		imperishable_normal:{
@@ -222,7 +222,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				player.markSkill('imperishable_win');
     				if (player.storage.imperishable_win == 7){
     					player.$skill('永夜胜利', null, null, true);
-    					game.over(true);
+    					game.incidentover(player);
     				};
     			},
     		},
@@ -246,7 +246,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				player.$skill('花映胜利', null, null, true);
-    				game.over(true);
+    				game.incidentover(player);
     			},
     		},
     		immaterial_normal:{
@@ -275,7 +275,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     }
     				if (num >= 8){
     				    player.$skill('萃梦胜利',null,null,true); 
-    					game.over(true);
+    					game.incidentover(player);
     				}
     			},
     		},
@@ -313,7 +313,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				}
     				if (win == true){
     					player.$skill('文花胜利',null,null,true);
-    					game.over(true);
+    					game.incidentover(player);
     				}
     			},
     		},
@@ -329,7 +329,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			skillAnimation:true,
     			/*
     			init:function(event,player){
-    				if (player.getStat('kill')) if (player.getStat('kill') > 1) game.over(true);
+    				if (player.getStat('kill')) if (player.getStat('kill') > 1) game.incidentover(player);
     			},
 				*/
     			filter:function(event,player){
@@ -337,7 +337,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				player.$skill('笨蛋胜利',null,null,true);
-    				game.over(true);
+    				game.incidentover(player);
     			},
     		},
     		death_normal:{
@@ -349,7 +349,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.draw(3);
 				},
 				ai:{
-					threaten:10,
+					threaten:2,
+					
 				},
     		},
     		death_win:{
@@ -359,7 +360,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return game.filterPlayer().length == 1;
     			},
     			content:function(){
-    				game.over(true);
+    				game.incidentover(player);
     			},
     		},
 		},
@@ -397,7 +398,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			baka_normal:'【笨蛋】效果',
 			baka_normal_info:'<u>所有数字视为⑨进制。</u>',
 			death:'皆杀',
-			death_info:'<u>胜利条件：</u>所有其他角色坠机。<br/><u>异变效果：</u>所有其他角色的胜利条件无效；你的其他胜利条件无效；你击坠角色后，摸三张牌。',
+			death_info:'<u>胜利条件：</u>所有其他角色坠机。<br/><u>异变效果：</u>所有其他角色不能胜利；你不能以【皆杀】以外的方式胜利；你击坠角色后，摸三张牌。',
 			death_normal:'【皆杀】异变效果',
 			death_normal_info:'【皆杀】以外的所有胜利条件无效；你击坠角色后，摸三张牌。',
 		},

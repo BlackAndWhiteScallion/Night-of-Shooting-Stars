@@ -296,12 +296,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    //player.style.left='calc(50% - 75px)';
 	                    player.style.left='0px';
 	                    player.style.top='0px';
+	                    player.style.zIndex = '10';
 	                    player.node.count.remove();
 	                    player.node.hp.remove();
 	                    player.style.transition='all 0.5s';
+	                    player.onclick = function(){
+	                    	 ui.arena.classList.add('only_dialog');
+	                    	 var dialog = ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">抱歉，我还没有准备好呢……<br>请继续等待吧。<br>那个，要茶吗？');
+							 ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+	                    	 ui.create.control('没事，不用急',function(){
+	                    	 	dialog.close();
+								while(ui.controls.length) ui.controls[0].close();
+								ui.arena.classList.remove('only_dialog');
+							});
+	                    };
 	                    node.appendChild(player);
 	                    node.playernode=player;
-
 	        			var dialog=ui.create.dialog('hidden');
 						dialog.style.left = "0px";
 						dialog.style.top = "0px";
@@ -312,15 +322,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						node.appendChild(dialog);
 						var i = ['欢迎来到东方流星夜！',
 	    				'东方流星夜是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏。',
-	    				'而流星夜的程序化，也就是你现在所在的游戏，是基于无名杀1.9.51版的大型魔改版mod。',
-	    				'对游戏的不解，在我这里是有大量的信息的：先读一下规则，模式介绍，如果还有不懂的，在更多资源里可以找到更多的帮助哟。',
-	    				'',
+	    				'而流星夜的程序化，也就是你现在所在的游戏，是基于无名杀1.9.51版的大型魔改。',
+	    				'对游戏的不解，在我这里有规则，模式介绍，卡牌查询。 如果还有不懂的，在[场景-对战练习]下找子规去练习吧，实战可是最快的学习方式哟。',
+	    				'祝你游玩愉快！',
 	    				];
 	    				var j = [
 	    				'<u>程序使用须知：</u>',
 	    				'1. 使用刷新键（f5）可以重置游戏。',
 	    				'2.左上的[选项]可以更改很多游戏相关的设置，包括并不限于：',
-	    				'<t>游戏模式的人数，身份分配，牌局的布局，卡牌的样式，打开关闭角色，和游戏录像。',
+	    				'<t>游戏模式的人数和身份分配（[选项-开始-异变]）',
+	    				'牌局的布局，卡牌的样式 ([选项-选项-外观-布局]和[选项-选项-外观-卡牌样式/卡背样式])，',
+	    				'和游戏录像。([选项-其他-录像])',
 	    				'记得多多探索一下，没准有奇怪的东西！',
 	    				'3. 在牌局中双击角色可以查看角色简介，也可以换皮肤和听配音（虽然没有配音）。',
 	    				'3.1 在左上的[选项-角色]里双击角色牌也可以看到简介。',
@@ -363,6 +375,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'1. 永琳，紫妈，梅莉，还有莉格露观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了。',
 	    				'2. 永琳使用符卡效果有时候会卡住，有时候可以通过暂停来解决，有时候就是卡死了。因原因不明，碰到的话请一定向制作组反馈情况。',
 	    				'3. 在[对称]布局下，玩家视角无法主动弃置技能牌，也不能查看自己的技能牌。',
+	    				'4. [场景-创建场景]后，第一次打开场景会导致游戏崩溃。第二次和之后不会出现问题。',
+	    				'5. 在[场景]的自创场景中，使用【魔导书塔】会装备10个魔导书而不是5个',
 	    				],
 	    		showcase:function(init){
 	    			
@@ -378,6 +392,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		'<u>灵力值</u>:（角色下的绿色星星，或者蓝圆圈）',
 	        		'游戏的核心系统，各种消耗和启动符卡都需要用。',
 	        		'玩家的<u>攻击范围</u>等于灵力值；<u>灵击伤害</u>指对灵力值造成的伤害。',
+	        		'使用持有"灵力：+1"的牌可以增加1点灵力。',
+	        		'在准备阶段，如果玩家没有灵力，在结束阶段，玩家会将灵力补到1。',
 	        		'',
 	        		'<u>强化</u>：持有“强化”的牌通过消耗标注量的灵力可以强化，结算时追加描述里的效果',
 	        		'',
@@ -390,6 +406,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		'',
 	        		'<u>符卡标签</u>：<br><u><永续></u>符卡结束时机1改为你的下个回合开始时；<br><u><瞬发></u>你可以在需要使用符卡描述技能时，发动符卡并立即使用（正常发动条件生效）;',
 	        		'<u><限定></u>一局游戏只能启动一次；<br><u><终语></u>在决死状态可以启动（正常发动条件生效）；<br><u><极意></u>删除符卡结束时机1，符卡结束时，立即坠机',
+	        		'',
+	        		'<u>技能牌</u>:',
+	        		'技能牌是一种新牌，处于它的独立牌堆。',
+	        		'技能牌与装备牌类似，摸到后可以任意使用上面的技能。',
+	        		'技能牌可以获得，弃置，但是不能用于转化，不能置于角色牌上。',
+	        		'技能牌可以重铸：重铸后摸一张技能牌。',
+	        		'技能牌同时可以持有3张。',
+	        		'',
+	        		'<u>其他元素：</u>',
+	        		'装备区可以装任意种任何牌，但是最多只能装3张。',
+	        		'判定区和延时锦囊已不复存在',
+	        		'牌都有【属性】（比如【轰！】是攻击属性），在牌的信息中有记载。',
+	        		'攻击范围内包括自己',
+	        		'拼点完毕后，拼点双方各摸一张牌',
 	        		],
 	        	showcase:function(init){
 
@@ -433,6 +463,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				        		'特殊的，游戏结束时，存活的路人玩家不算游戏失败。路人玩家胜利时，其他玩家也不算游戏失败。',
 				        		'',
 				        		'<u>异变牌：</u>任何持有异变牌的玩家可以通过异变牌的效果获得胜利；异变牌只有明置才有效果；异变胜利时，所有与其同阵营的玩家也获得胜利'];
+	        					'<u>击坠奖励：</u>一名角色击坠其他角色后，获得1点灵力，并摸一张技能牌。',
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
 	                    var identity=ui.create.node('button','身份模式',line2,function(){
@@ -486,6 +517,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        						'<u>重整</u>',
 	        						'一名盟军角色坠机后，在大魔王的N个回合后会复活，然后重新加入游戏。',
 	        						'默认的重整时间为5个回合。有些大魔王的重整时间不一样。',
+	        						'哦对了，盟军角色坠机后，其他盟军角色各可以摸一张牌。',
 	        						'',
 	        						'<u>阶段切换</u>',
 	        						'有的大魔王有多阶段技能。阶段转换条件在技能上标注出来的。',
@@ -527,14 +559,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        						'<u>BOSS阶段转换</u>',
 	        						'有些BOSS在坠机时，会进入下一个阶段：',
 	        						'BOSS将体力值回复至上限，灵力调整为5，然后立即获得并启动符卡技。这些符卡技均视为持有<极意>标签。',
-	        						'有些BOSS甚至有两个阶段，请一定小心。',
+	        						'有些BOSS甚至有两个阶段，请千万小心。',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
 	                    var tafang=ui.create.node('button','战棋模式',line2,function(){
 	        				var i = ['<u><b>战棋……模式？</u></b>',
-	        						'其实，即使是我也不知道战棋模式是怎么玩的……',
+	        						'其实，即使是我，也不知道战棋模式是怎么玩的……',
 	        						'不过，据说战棋模式里有一些特别厉害的东西？',
+	        						'你玩过了回来请一定要告诉我发生了什么！',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});

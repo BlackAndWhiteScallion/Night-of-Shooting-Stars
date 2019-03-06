@@ -17282,7 +17282,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     }
                 },
                 isMad:function(){
-                    return this.hasSkill('mad');
+                    return this.hasSkill('mad') || this.hasSkill('death_win');
                 },
                 goMad:function(end){
                     if(end){
@@ -18781,7 +18781,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 						func=null;
 						self=true;
 					}
-                    if(mode=='identity'){
+                    if(mode=='identity' || mode == 'old_identity'){
                         switch(player.identity){
                             case 'zhu':case 'zhong':case 'mingzhong':targets=game.filterPlayer(function(target){
                                 if(func&&!func(target)) return false;
@@ -22920,14 +22920,17 @@ throwDice:function(num){
             },
             // 本阶段已经成为过牌的目标啦
             _mubiao:{
-                trigger:{target:'useCardToAfter'},
+                trigger:{player:'useCardAfter'},
                 forced:true,
+                direct:true,
                 priority:-100,
                 content:function(){
-                    if (!player.storage._mubiao){
-                        player.storage._mubiao = 1;
-                    } else {
-                        player.storage._mubiao += 1;
+                    for (var i = 0; i < trigger.targets.length; i ++){
+                        if (!trigger.targets[i].storage._mubiao){
+                            trigger.targets[i].storage._mubiao = 1;
+                        } else {
+                            trigger.targets[i].storage._mubiao += 1;
+                        }
                     }
                 }               
             },
@@ -27618,6 +27621,60 @@ smoothAvatar:function(player,vice){
                 game.resume();
             }
         },
+        // 异变胜利要怎么游戏结束的设置
+        // 联机时需要一个别的设置……
+        incidentover:function(player){
+            // 如果有人有皆杀时游戏结束，如果是玩家就玩家赢，否则玩家失败。
+            "step 0"
+            var p = game.filterPlayer();
+            for (var i = 0; i < p.length; i ++){
+                if (p[i].storage._tanpai){
+                    for (var j = 0; j < p[i].storage._tanpai.length; j ++){
+                        if (p[i].storage._tanpai[j].name == 'death'){
+                            if (p.length > 1) return ;
+                            else {
+                                if (p[i] == game.me) game.over(true);
+                                else game.over();
+                                return ;
+                            }
+                        }
+                    }
+                }
+            }
+            "step 1"
+            /*  联机时使用的游戏结束设置
+            var clients=game.players.concat(game.dead);
+            for(var i=0;i<clients.length;i++){
+                if(clients[i].isOnline2()){
+                    clients[i].send(game.over,dialog.content.innerHTML,game.incidentoverOL(clients[i]));
+                }
+            }
+            */
+            "step 2"
+            // 当前模式：
+            // 如果是异变模式，且胜利玩家的身份是路人，如果玩家就是路人的话判定胜利，否则判定平局
+            var mode=get.mode();
+            if (mode == 'identity' && player.identity == 'nei'){
+                if (player == game.me) game.over(true);
+                else game.over();
+                return;
+            }
+            // 如果是异变模式，且玩家是路人，判定平局。
+            if (mode == 'identity' && game.me.identity == 'nei'){
+                game.over();
+                return;
+            }
+            // 如果胜利玩家的队友包括玩家，判定胜利，否则判定失败。
+            if (player.getFriends().contains(game.me)){
+                game.over(true);
+            } else {
+                game.over(false);
+            }
+            "step 4"
+        },
+        incidentoverOL:function(player){
+
+        },
         // 这里是游戏结束的设置
         over:function(result){
             "step 0"
@@ -27626,7 +27683,7 @@ smoothAvatar:function(player,vice){
             for (var i = 0; i < p.length; i ++){
                 if (p[i].storage._tanpai){
                     for (var j = 0; j < p[i].storage._tanpai.length; j ++){
-                        if (p[i].storage._tanpai[j].name == 'death' && p.length > 1) return ;
+                        if (p[i].storage._tanpai[j].name == 'death' && p.length > 1) return;
                     }
                 }
             }

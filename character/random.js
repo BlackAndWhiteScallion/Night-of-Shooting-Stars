@@ -674,7 +674,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						target:function(card,player,target){
 							if(card.name=='sha') return 'zerotarget';
 						}
-					}
+					},
+				},
 			},
 			zuoshibaozhan:{
 				cost:2,

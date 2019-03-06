@@ -325,7 +325,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			qianxing_skill2:{
 				mark:true,
-				intro:'不能成为攻击牌的目标',
+				intro:{
+					content:'不能成为攻击牌的目标',
+				},
 				mod:{
 					targetEnabled:function(card,player,target,now){
 						if(target.countCards('j',{name:'qianxing'})>0){
@@ -337,7 +339,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				content:function(){
 					player.removeSkill('qianxing_skill2');
-					var cards = player.getCards('e');
+					var cards = player.getCards('j');
 					for (var i = 0; i < cards.length; i ++){
 						if(cards[i]&&cards[i].name == 'qianxing'){
 							player.discard(cards[i]);

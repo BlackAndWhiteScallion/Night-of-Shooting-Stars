@@ -534,7 +534,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 0'
                       var list = [];
                       if (trigger.target.storage._tanpai){
-                          list.push('damage & discard');
+                          list.push('受到1点灵击伤害 并弃置一张牌');
                       } else {
                         if (trigger.target.countCards('hej')){
                           list.push('discard');
@@ -1334,9 +1334,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       } else choice = '灵力';
                       if (!list.contains(choice)) choice = list[0];
                       if (list.length == 0) event.finish();
-                      else target.chooseControl(function(){
+                      else target.chooseControl(list, function(){
                               return _status.event.choice;
-                            },true).set('choiceList',list).set('choice',choice);
+                            },true).set('choice',choice);
                       "step 1"
                       if(result.control){
                         if (result.control == '体力'){
@@ -1875,7 +1875,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mengxiang_audio2:'以博丽巫女之名，我会退治你这个异变！',
                   mengxiang1_audio1:'走你！',
                   mengxiang2_audio2:'下次异变之前，可要问问我的意见啊？',
-                  discard:'弃牌',
                   lilidamage:'受到1点灵击伤害',
                   reimu_die:'啊啊，肚子饿了，回去了回去了。',
                   marisa:'魔理沙',

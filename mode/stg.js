@@ -677,7 +677,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var str='';
 					for(var i=0;i<list.length;i++){
 						if(data[list[i]]){
-							str+=lib.translate[list[i]] + ': <br> 通关次数：'+data[list[i]][0]+'  最快纪录：'+data[list[i]][1]+'回合   剩余残机：'+data[list[i]][2]+'    挑战失败次数：'+ data[list[i]][3]+'<br>';
+							str+=lib.translate[list[i]] + ': <br> 通关次数：'+data[list[i]][0]+'  最快纪录：'+data[list[i]][1]+'回合   剩余残机：'+data[list[i]][2]+'<br>挑战失败次数：'+ data[list[i]][3]+'<br>';
 						}
 					}
 					lib.config.gameRecord.stg.str=str;
