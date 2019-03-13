@@ -900,7 +900,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            nostart:true,
 	            fullshow:true,
 	            template:{
-	                mode:'identity',
+	                mode:'old_identity',
 	                init:function(){
 	                    game.saveConfig('double_character',false,'identity');
 	                    _status.brawl.playerNumber=_status.brawl.scene.players.length;

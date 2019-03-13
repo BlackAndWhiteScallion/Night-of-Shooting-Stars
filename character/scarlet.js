@@ -262,6 +262,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 1"
                     if(result.cards){
                         //player.logskill(event.name, result.targets);
+                    if (trigger.target.name == 'sakuya') game.trySkillAudio('dizhuan',player,true,3);
+                    if (trigger.target.name == 'flandre') game.trySkillAudio('dizhuan',player,true,4);
                     trigger.target.gain(result.cards,player);
                     player.$give(result.cards,trigger.target);
                         trigger.targets.remove(trigger.target);
@@ -750,7 +752,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.chooseToDiscard('he','你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }).set('ai',function(card){
-                        if(_status.event.eff<0){
+                        if (get.subtype(card) == 'support') return -1;
+                        if(_status.event.eff>0){
                             return 7-get.value(card);
                         }
                         return 0;
@@ -862,8 +865,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 direct:true,
                 filter:function(event,player){
                     if (_status.currentPhase!=player) return false;
+                    if (player.equiping == true){
+                        if (player.countCards('e') < 3) return false;
+                    }
                     for(var i=0;i<event.cards.length;i++){
-                        if(get.type(event.cards[i]) == 'equip' && event.getParent().name == 'equip') continue;
                         if(get.position(event.cards[i])=='d'){
                             return true;
                         }
@@ -921,6 +926,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 0'
                     player.loselili();
                     trigger.cancel();
+                    if (trigger.target.name == 'remilia') game.trySkillAudio('world_skill',player,true,3);
+                    if (trigger.target.name == 'flandre') game.trySkillAudio('world_skill',player,true,4);
+                    if (trigger.target.name == 'meiling') game.trySkillAudio('world_skill',player,true,5);
                     player.chooseTarget(get.prompt('world'),function(card,player,target){
                         return target.countCards('hej');
                     }).set('ai',function(target){
@@ -1089,6 +1097,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(event.num<event.players.length){
                         var target=event.players[event.num];
                         player.discardPlayerCard(target,'hej',[1,1],true);
+                        if (target.name == 'remilia'){
+                            if (player.isTurnedOver()) game.trySkillAudio('kuangyan',player,true,3);
+                            else game.trySkillAudio('kuangyan',player,true,4);
+                        }
                         event.num++;
                         event.redo();
                     }
@@ -1218,6 +1230,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             dizhuan_info:'你攻击范围内的一名其他角色成为“轰！”的目标时，你可以弃置一张牌，然后将目标转移给你；你受到以此法转移的牌造成的弹幕伤害后，获得1点灵力。',
 		    dizhuang_audio1:'啊？有敌人？',
             dizhuang_audio2:'你在往哪里打呢！',
+            dizhuang_audio3:'别想动咲夜一下！',
+            dizhuang_audio4:'妹妹大人，请让一下！',
             jicai:'极彩风暴',
             jicai_info:'符卡技（2）<永续>你使用/打出牌时，可以弃置场上一张与之相同花色的牌。',
             jicai_audio1:'华符「极彩风暴」！',
@@ -1275,6 +1289,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             world_skill:'咲夜的世界',
             world_skill_audio1:'在我的世界里想要做什么呢。',
             world_skill_audio2:'你是勇气可嘉呢，还是单纯是个笨蛋呢？',
+            world_skill_audio3:'大小姐，你怎么回事啊？',
+            world_skill_audio4:'二小姐，不好意思。',
+            world_skill_audio5:'美铃你怎么又……唉，算了……',
             sakuya_die:'啊啊……我还是回去好了。',
             remilia:'蕾米莉亚',
             mingyun:'命运',
@@ -1293,6 +1310,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             kuangyan:'狂宴',
             kuangyan_audio1:'嗯？捏一下这个，你就会爆炸吗？',
             kuangyan_audio2:'这么就碎掉的话，一点也不好玩呢……',
+            kuangyan_audio3:'哈哈哈哈哈！姐姐大人！姐姐大人！',
+            kuangyan_audio4:'姐姐大人不喜欢一起玩吗……？',
             kuangyan_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以弃置攻击范围内的所有其他角色各一张牌；然后，对其中没有手牌的角色各造成1点弹幕伤害；你发动此技能后，此技能改为锁定技，直到一名角色坠机。',
             zhihou:'之后就一个人都没有了吗？',
             zhihou_info:'符卡技（X）<极意>（X 为你的体力值）你视为持有【皆杀】异变牌；你造成弹幕伤害后，选择一项：令受伤角色：1. 将灵力调整至1；2. 所有技能无效，直到结束阶段；3. 弃置其一个有牌的区域内所有牌；4. 扣减1点体力上限，直到此符卡结束。',

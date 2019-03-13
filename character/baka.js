@@ -38,6 +38,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     event.target.storage.jidong_2.push(result.cards[0]);
                                     event.target.markSkill('jidong_2');
                                     event.target.syncStorage('jidong_2');
+                                    if (event.target.name == 'daiyousei'){
+                                          game.trySkillAudio('jidong',player,true,3);
+                                    }
                                     if (get.position(result.cards[0]) == 'e'){
                                           var info=get.info(result.cards[0]);
                                           if(info.skills){
@@ -278,6 +281,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   jidong_2:'急冻',
                   jidong_audio1:'就像青蛙一样！',
                   jidong_audio2:'接好这个大冰块！',
+                  jidong_audio3:'大酱，你看！是青蛙！',
                   jidong_info:'锁定技，准备阶段，你可以展示一名角色的一张牌；其不能使用/打出该牌，除非将之当作【轰！】使用，直到结束阶段。',
                   bingbi:'冰壁',
                   bingbi_audio1:'哈哈！笨蛋！',

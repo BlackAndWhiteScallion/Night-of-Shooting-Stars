@@ -187,6 +187,7 @@
 	transition: all 0.3s;
 }
 .menubg.charactercard{
+	background:#666666;
 	width: 500px;
 	height: 300px;
 	left: calc(50% - 250px);
@@ -217,10 +218,10 @@
 	left: 105px;
 }
 .menubg.charactercard>.ava>.changeskin{
-	bottom: 6px;
-	left: 6px;
+	bottom: 8px;
+	left: 8px;
 	font-family: 'xinwei';
-	font-size: 16px;
+	font-size: 20px;
 	z-index: 2;
 	color: white;
 	text-shadow: black 0 0 2px;

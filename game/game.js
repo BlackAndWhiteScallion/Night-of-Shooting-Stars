@@ -599,6 +599,11 @@
                         init:true,
                         intro:'防止0灵力的角色造成的所有伤害',
                     },
+                    nei_end:{
+                        name:'路人胜利时游戏不结束',
+                        init:false,
+                        intro:'异变模式下，路人因异变胜利后，游戏不结束',
+                    },
                 },
             },
             appearence:{
@@ -10399,6 +10404,7 @@
                 },
                 chooseToDiscard:function(){
                     "step 0"
+                    //if (event.parent.name != 'phaseDiscard') console.log(event);
                     if(event.autochoose()){
                         event.result={
                             bool:true,
@@ -13785,7 +13791,8 @@
                     // 这里是替换装备的部分
                     // player.lose(player.get('e',{subtype:get.subtype(card)}),false);
                     if (player.num('e',{type:'equip'})>=player.maxequip){
-                        player.chooseToDiscard(1,{type:'equip'},'e',true);
+                        var num = player.num('e', {type:'equip'}) - player.maxequip + 1;
+                        player.chooseToDiscard('装备区达到上限，请弃置'+num+'张装备牌', num, {type:'equip'},'e',true);
                     }
                     "step 3"
                     if(player.isMin()){
@@ -13870,7 +13877,8 @@
                         }
                         // 多了就扔掉
                         if (player.num('j',{type:'delay'})>player.maxjudge){
-                            player.discardPlayerCard(player,'j',true);
+                            var num = player.num('j',{type:'delay'}) - player.maxjudge;
+                            player.chooseToDiscard('技能牌数量达到上限，请弃置'+num+'张技能牌',num, {type:'delay'},'j',true);
                         }
                         if(_status.discarded){
 							_status.discarded.remove(cards[0]);
@@ -38868,7 +38876,7 @@ smoothAvatar:function(player,vice){
                             packsource.previousSibling.style.display='none';
                         }
                         else{
-                            packsource.innerHTML='角色包';
+                            packsource.innerHTML='按作品查找';
                         }
                     }
 
@@ -47758,7 +47766,6 @@ smoothAvatar:function(player,vice){
             return 10-get.useful(card);
         },
         unuseful3:function(card){
-            if(card.name=='du') return 20;
             return 10-get.useful(card);
         },
         value:function(card,player,method){

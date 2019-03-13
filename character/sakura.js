@@ -259,6 +259,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (result.targets[0].name == 'ran'){
                             game.trySkillAudio('shihuo',result.targets[0],true,3);
                         }
+                        if (result.targets[0].name == 'yukari'){
+                            game.trySkillAudio('shihuo',result.targets[0],true,4);
+                        }
                     }
                 },
                 prompt:'是否发动【式获】喵？',
@@ -514,6 +517,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(event.num<event.players.length){
                         var target=event.players[event.num];
                         target.draw();
+                        if (target.name == 'lilyblack') game.trySkillAudio('chunxiao',player,true,3);
                         event.num++;
                         event.redo();
                     }
@@ -776,7 +780,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.logSkill('zhenhun');
                     if (result.bool && event.control == '获得牌'){
                         if (result.links.length){
-                            //player.$gain(result.links);
+                            player.$gain(result.links);
                             player.gain(result.links[0],'log');
                             if (!player.storage.mingzhi){
                                 player.storage.mingzhi = [result.links[0]];
@@ -1812,6 +1816,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.targets){
                         result.targets[0].gainlili(get.bonus(cards[0]));
+                        if (result.targets[0].name == 'yukari') game.trySkillAudio('shiqu',result.targets[0],true,3);
+                        if (result.targets[0].name == 'chen') game.trySkillAudio('shiqu',result.targets[0],true,4);
                         if (result.targets[0] != player){
                             result.targets[0].addTempSkill('shiqu2',{player:'phaseBegin'});
                             player.addTempSkill('shiqu2',{player:'phaseBegin'});
@@ -1942,6 +1948,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if(result.bool){
                         var current = _status.currentPhase;
+                        if (current.name == 'yuyuko' && player.name == 'yukari') game.trySkillAudio('huanjing',current,true,3);
+                        if (current.name == 'renko' && player.name == 'yukari' ) game.trySkillAudio('huanjing',player,true,4);
+                        if (current.name == 'meribel' && player.name == 'yukari') game.trySkillAudio('huanjing',current,true,5);
+                        if (current.name == 'reimu' && player.name == 'yukari') game.trySkillAudio('huanjing',current,true,6);
                         event.cards = [];
                         event.cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-1]);
                         player.showCards(event.cards[0]);
@@ -1955,7 +1965,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         } else if (get.type(event.cards[0]) == 'equip'){
                             current.equip(event.cards[0]);
                         }
-                        if (player.storage.bot) player.storage.bot.remove(player.storage.bot[0]);
                     }
                 }
             },
@@ -2235,7 +2244,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shihuo_info:'一回合一次，你获得1点灵力值后，可以令一名角色获得1点灵力值。',
             shihuo_audio1:'喵呜~',
             shihuo_audio2:'喵帕斯！……喵？',
-            shihuo_audio3:'橙也渐渐懂事起来了啊www',
+            shihuo_audio3:'橙也渐渐懂事起来了啊w',
+            shihuo_audio4:'（揉揉橙）',
             shuanggui:'青鬼赤鬼',
             shuanggui_audio1:'鬼符「青鬼赤鬼」!',
             shuanggui_audio2:'不要因为我是猫就小看我了喵！',
@@ -2265,6 +2275,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             chunxiao_info:'准备阶段，若你的灵力值不小于体力值，你可以令所有角色各摸一张牌，然后各弃置与其最近的一名角色一张牌。',
             chunxiao_audio1:'春天到了！',
             chunxiao_audio2:'<u><b>春！天！到！了！</u></b>',
+            chunxiao_audio3:'是你！春天对决，来吧！',
             mengya:'萌芽',
             mengya_info:'一回合两次，出牌阶段，你可以选择一项：获得1点灵力，然后弃置一张牌；或消耗1点灵力，然后摸一张牌。',
             mengya_audio1:'春天是万物复苏的季节！',
@@ -2366,6 +2377,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shiqu_info:'一回合一次，出牌阶段，你可以重铸一张牌；若该牌有灵力，你可以令一名角色获得等量的灵力；若如此做，直到你的准备阶段：你或其需要消耗灵力时，可以改为由对方消耗灵力。',
             shiqu_audio1:'先说清楚，这可不是什么结婚宣言啊？',
             shiqu_audio2:'是谁把我们妖狐的印象污染成了容易暴走的理性蒸发的疯怪啊……',
+            shiqu_audio3:'蓝可真是不错呢，谢谢。',
+            shiqu_audio4:'谢谢你蓝大人！',
             shiqu2:'式取',
             shiqu2_bg:'式',
             tianhugongzhu:'天狐公主 -illusion-',
@@ -2378,6 +2391,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             pileBottom:'牌堆底',
             huanjing_audio1:'来，见识一下隙间的尽头吧？',
             huanjing_audio2:'下面的应该不是【决斗】来着？',
+            huanjing_audio3:'紫，这次又想搞什么事了？',
+            huanjing_audio4:'你这次可是跑到了个不该来的地方呢。',
+            huanjing_audio5:'啊，是你——',
+            huanjing_audio5:'紫你很烦啊，怎么又来了？',
             mengjie:'梦界',
             mengjie_info:'出牌阶段开始时，或你成为攻击牌的目标后，你可以观看牌堆底的三张牌，并可以将其中任意张置于牌堆顶；若此时为回合外，你可以摸一张牌。',
             mengjie_audio1:'呼呼呼呼呼——',

@@ -462,7 +462,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						identity='zhong';
 					}
 					if(!data[identity]){
-						data[identity]=[0,0];
+						data[identity]=[0,0,0];
 					}
 					if(bool){
 						data[identity][0]++;
@@ -1872,6 +1872,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		get:{
 			rawAttitude:function(from,to){
+				// X和num好像都是玩家自设的东西
 				var x=0,num=0,temp,i;
 				if(_status.ai.customAttitude){
 					for(i=0;i<_status.ai.customAttitude.length;i++){
@@ -1885,25 +1886,36 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				if(num){
 					return x/num;
 				}
+				// difficulty是玩家设置的“AI对玩家态度”（只有对玩家的时候会不是0）
+				// 如果来源=目标，或者目标的身份明置，或者（洞察）敌人身份对玩家可见
+				// 弹real attitude
 				var difficulty=0;
 				if(to==game.me) difficulty=2-get.difficulty();
 				if(from==to||to.identityShown||(from.storage.dongcha==to)){
 					return get.realAttitude(from,to)+difficulty*1.5;
 				}
+				// 否则，如果来源和目标不同人，并且目标身份暗置
 				else{
+					// 如果来源是忠，且AI探测身份为0，且AI不会暂时无视目标
+					/* 忠臣偷看身份还是去掉吧
 					if(from.identity=='zhong'&&to.ai.shown==0&&from.ai.tempIgnore&&
 						!from.ai.tempIgnore.contains(to)){
+						// 偷看一眼是反
 						for(var i=0;i<game.players.length;i++){
 							if(game.players[i].ai.shown==0&&game.players[i].identity=='fan'){
 								return -0.1+difficulty*1.5;
 							}
 						}
-					}
+					}*/
+					// AI探测身份为0
 					var aishown=to.ai.shown;
+					// 如果玩家是内，且AI身份标记是反或忠，AI身份暴露为0.5……？
 					if(to.identity=='nei'&&to.ai.shown<1&&(to.ai.identity_mark=='fan'||to.ai.identity_mark=='zhong')){
 						aishown=0.5;
 					}
+					// 如果目标身份不是反也不是主（也就是是内或者忠）
 					else if(aishown==0&&to.identity!='fan'&&to.identity!='zhu'){
+						// 检测有没有玩家认识的反
 						var fanshown=true;
 						for(var i=0;i<game.players.length;i++){
 							if(game.players[i].identity=='fan'&&game.players[i].ai.shown==0&&game.players[i]!=from){
@@ -1912,18 +1924,24 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						if(fanshown) aishown=0.3;
 					}
+					// 弹realattitude*暴露程度出去
 					return get.realAttitude(from,to)*aishown+difficulty*1.5;
 				}
 			},
+			// realattitude出现了
 			realAttitude:function(from,to){
+				// 如果没有主的话，来源或者目标是内的话，弹-1 来源身份=目标的话，为6，否则为-6
+				// 明忠模式模式？明忠模式也应该有主的吧？不管了反正
 				if(!game.zhu){
 					if(from.identity=='nei'||to.identity=='nei') return -1;
 					if(from.identity==to.identity) return 6;
 					return -6;
 				}
+				// situation好像是下面检查场上角色数量的
 				var situation=get.situation();
 				var identity=from.identity;
 				var identity2=to.identity;
+				if (from != to && !to.identityShown) return 0;
 				if(identity2=='zhu'&&!to.isZhu){
 					identity2='zhong';
 					if(from==to) return 10;
@@ -1949,7 +1967,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						switch(identity2){
 							case 'zhu': return 10;
 							case 'zhong':case 'mingzhong': return 6;
-							case 'nei':
+							case 'nei': return 0;
+								/* 跳过一堆判定内奸的东西
 								if(game.players.length==2) return -10;
 								if(to.identity=='zhong') return 0;
 								if(get.population('fan')==0){
@@ -1973,7 +1992,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								}
 								if(situation>1) return 0;
 								return Math.min(3,get.population('fan'));
+								*/
 							case 'fan':
+								/* 假装没看到主内反局
 								if(get.population('fan')==1&&get.population('nei')==1&&game.players.length==3){
 									var nei;
 									for(var i=0;i<game.players.length;i++){
@@ -1988,6 +2009,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									}
 									return -3;
 								}
+								*/
 								return -4;
 						}
 						break;
@@ -1996,9 +2018,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							case 'zhu': return 10;
 							case 'zhong':case 'mingzhong': return 4;
 							case 'nei':
+								/*
 								if(get.population('fan')==0) return -2;
 								if(zhongmode&&to.ai.sizhong&&to.ai.shown<1) return 6;
 								return Math.min(3,-situation);
+								*/
+								return 0;
 							case 'fan': return -8;
 						}
 						break;
@@ -2098,15 +2123,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								return -7;
 							case 'mingzhong':return -5;
 							case 'nei':
-								if(zhongmode&&to.ai.sizhong) return -7;
+								//if(zhongmode&&to.ai.sizhong) return -7;
 								if(get.population('fan')==1) return 0;
-								if(get.population('zhong')+get.population('mingzhong')==0) return -7;
+								//if(get.population('zhong')+get.population('mingzhong')==0) return -7;
 								if(game.zhu&&game.zhu.hp<=2) return -1;
 								return Math.min(3,situation);
 							case 'fan': return 5;
 						}
 				}
 			},
+			// 检测当前场上情况（好像不会计算内奸）
 			situation:function(absolute){
 				var i,j,player;
 				var zhuzhong=0,total=0,zhu,fan=0;

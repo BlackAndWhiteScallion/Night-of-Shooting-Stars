@@ -531,20 +531,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						var target=event.starget;
 						if(player.hasSkillTag('notricksource')) return 0;
 						if(target.hasSkillTag('notrick')) return 0;
-						if(event.player==target){
-							if(player.hasSkill('naman')) return -1;
-							if(ai.get.attitude(target,player)<0){
-								return ai.get.unuseful2(card)
-							}
-							return -1;
+						if(ai.get.attitude(target,player)<0){
+							return ai.get.unuseful2(card)
 						}
-						else{
-							if(target.hasSkill('naman')) return -1;
-							if(ai.get.attitude(player,target)<0){
-								return ai.get.unuseful2(card)
-							}
-							return -1;
-						}
+						return -1;
 					});
 					next.set('splayer',player);
 					next.set('starget',target);
@@ -1347,11 +1337,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			usable:1,
 			discard:false,
 			line:true,
+			position:'hej',
 			prepare:function(cards,player,targets){
 				player.$give(cards.length,targets[0]);
 			},
 			filter:function(event,player){
-				if(player.num('h') == 0) return 0;
+				if(player.num('hej') == 0) return 0;
 				return game.hasPlayer(function(target){
 					return target!=player&&target.hasSkill('saiqian_skill',player);
 				});
@@ -1362,6 +1353,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filterTarget:function(card,player,target){
 				return target!=player&&target.hasSkill('saiqian_skill',player);
 			},
+			check:function(card){return 6-get.value(card)},
 			forceaudio:true,
 			prompt:'请选择要供奉的牌',
 			content:function(){
@@ -1371,7 +1363,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				expose:0.3,
 				order:1,
 				result:{
-					target:0.1
+					target:function(player,target){
+						if (target.countCards('h') <= player.hp) return 1;
+						else return 0.1;
+					},
+					player:function(player,target){
+						if (player.countCards('h') > player.hp) return 1;
+						else return -0.5;
+					}
 				}
 			}
 		},
@@ -1517,6 +1516,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				}
     			"step 1"
     			event.control=result.control;
+    			if (player.name == 'remilia') player.say('这把永恒之枪，是不可能打不中的！');
     			if (event.control == 'lose_lili'){
     				player.loselili(2);
     			} else {
@@ -1545,6 +1545,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			position:'h',
 			content:function(){
 				player.gainlili();
+				if (player.name == 'suika') player.say('好酒，好酒~');
 			},
 			ai:{
 				order:8,
@@ -1681,6 +1682,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return player.lili > 0 && ui.skillPile.childNodes.length > 0;
 			},
 			content:function(){
+				if (player.name == 'patchouli') player.say('书中自有黄金屋。');
 				player.loselili();
 				player.gain(ui.skillPile.childNodes[0],'draw2');
 			},
@@ -2025,7 +2027,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard" && target != 'addJudge') return false;
 				},
 				cardDiscardable:function(card,player,target,event){
-					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard" && target != 'addJudge') return false;
+					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard" && target != 'addJudge' && target != 'equip') return false;
 				},
 				cardGainable:function(card,player,target,event){
 					if(get.is.altered('pantsu_skill')&&card.name!='pantsu'&& target != "phaseDiscard") return false;
@@ -2717,7 +2719,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		pantsu:'蓝白胖次',
 		pantsu_info:'锁定技，你的弃牌阶段外，你的【蓝白胖次】以外的牌不能被弃置或获得。',
 		laevatein:'莱瓦丁',
-		laevatein_info:'锁定技，出牌阶段，你对每名角色使用的第一张【轰！】不算次数。',
+		laevatein_info:'锁定技，出牌阶段，你对一名角色使用的【轰！】不计次数，每名角色限一次。',
 		gungnir:'冈格尼尔',
 		gungnir_skill:'冈格尼尔',
 		lose_lili:'消耗灵力',

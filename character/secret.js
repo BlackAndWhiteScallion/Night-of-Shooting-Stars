@@ -94,6 +94,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.control){
+                        player.discard(cards);
                     	if (event.list[result.index] == '灵力值视为5，直到回合结束'){
                     		player.addTempSkill('sihuan_1');
                             event.control = 'sihuan_1';
@@ -128,7 +129,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     	}
                     }
                     'step 2'
-                    if (event.control && event.control != 'sihuan_4') player.discard(cards);
                     if (result.targets){
                     	if (event.control == 'sihuan_2'){
                     		player.discardPlayerCard(result.targets[0],'hej',true);
@@ -140,11 +140,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	},
             	ai:{
 					basic:{
-						order:7
+						order:10
 					},
 					result:{
 						player:function(player){
                             if (!player.hasSkill('sihuan_3')) return 1;
+                            //if (!player.countCards('lingyong', 'j')) return 0.5;
                             return 0;
                         },
 					},

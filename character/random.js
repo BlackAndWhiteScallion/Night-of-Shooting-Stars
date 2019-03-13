@@ -122,7 +122,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'phaseEnd'},
 				//direct:true,
 				filter:function(event,player){
-					return event.player.isAlive()&&(!event.player.countUsed('sha')&&!event.player.getStat('damage'));
+					return event.player.isAlive()&&(!event.player.countUsed('sha')&&!event.player.countUsed('juedou')&&!event.player.getStat('damage'));
 				},
 				check:function(event,player){
 					return get.attitude(player,event.player) >= 0;

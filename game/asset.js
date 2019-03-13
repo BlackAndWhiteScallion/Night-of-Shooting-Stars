@@ -123,6 +123,7 @@ window.noname_asset_list=[
     'image/character/yuyuko.jpg',
     'image/character/renko.jpg',
     'image/character/meribel.jpg',
+    'image/character/akyuu.jpg',
     'image/character/zigui.jpg',
     'image/character/actress.jpg',
     'image/character/wingedtiger.jpg',

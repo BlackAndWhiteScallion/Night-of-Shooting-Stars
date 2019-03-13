@@ -799,7 +799,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'',
 	        	'',
 	        	'各个角色的画师可以在角色简介内找到。',
-	        	'游戏BGM：東方紅魔月譚 ～ Scarlet Devil Fantasic Rhapsody 【まぐなむおーぱす】',
+	        	'游戏默认BGM：東方紅魔月譚 ～ Scarlet Devil Fantasic Rhapsody 【まぐなむおーぱす】',
 	        	'红月异变BGM：「artificial」 【THE OTHER FLOWER】',
 	        	'散樱异变BGM：「桜風」 【森羅万象】',
 	        	'永夜异变BGM：「輝夜」 【凋叶棕】',
@@ -808,6 +808,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'皆杀异变BGM： EastNewSound - 緋色月下、狂咲ノ絶　-1st Anniversary Remix-',
 	        	'笨蛋异变BGM： 「ちるのりずむ」 【ShibayanRecords】',
 	        	'图鉴BGM：「忘らるる物語」 【凋叶棕】',
+	        	'BGM[琪露诺]：琪露诺的完美算数教室',
+	        	'BGM[烂苹果]：bad apple!',
+	        	'BGM[灵梦战]：少女绮想曲-Dream Battle 交响曲remix',
+	        	'BGM[神赵云战]：三国杀-虎牢关',
 	        	],
 	        	showcase:function(init){
 

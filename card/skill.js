@@ -17,6 +17,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				effect:function(){
 				},
+				ai:{
+					basic:{
+						useful:0,
+						value:0,
+					},
+					result:{target:1},
+					expose:0.2
+				},
 			},
 			ziheng:{
 				audio:true,
@@ -29,6 +37,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return 0;
 				},
 				effect:function(){
+				},
+				ai:{
+					basic:{
+						useful:5,
+						value:5,
+					},
+					result:{target:1},
 				},
 				skills:['ziheng_skill']
 			},
@@ -44,6 +59,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				effect:function(){
 				},
+				ai:{
+					basic:{
+						useful:4,
+						value:4,
+					},
+					result:{target:1},
+				},
 				skills:['shengdun_skill']
 			},
 			qusan:{
@@ -57,6 +79,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return 0;
 				},
 				effect:function(){
+				},
+				ai:{
+					basic:{
+						useful:4,
+						value:4,
+					},
+					result:{target:1},
 				},
 				skills:['qusan_skill']
 			},
@@ -72,6 +101,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				effect:function(){
 				},
+				ai:{
+					basic:{
+						useful:8,
+						value:8,
+					},
+					result:{target:1},
+				},
 				skills:['shenyou_skill_1','shenyou_skill_2']
 			},
 			jinu:{
@@ -85,6 +121,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return 0;
 				},
 				effect:function(){
+				},
+				ai:{
+					basic:{
+						useful:4,
+						value:4,
+					},
+					result:{target:1},
 				},
 				skills:['jinu_skill']
 			},
@@ -100,6 +143,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				effect:function(){
 				},
+				ai:{
+					basic:{
+						useful:6,
+						value:6,
+					},
+					result:{target:1},
+				},
 				skills:['lianji_skill']
 			},	
 			qianxing:{
@@ -114,6 +164,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				effect:function(){
 				},
+				ai:{
+					basic:{
+						useful:7,
+						value:7,
+					},
+					result:{target:1},
+				},
 				skills:['qianxing_skill']
 			},	
 			lingyong:{
@@ -127,6 +184,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return 0;
 				},
 				effect:function(){
+				},
+				ai:{
+					basic:{
+						useful:5,
+						value:3,
+					},
+					result:{target:1},
 				},
 				skills:['lingyong_skill']
 			},
@@ -310,7 +374,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			lianji_skill:{
 				mod:{
 					cardUsable:function(card,player,num){
-						if(card.name=='sha') return num ++;
+						if(card.name=='sha') return num+1;
 					}
 				},
 			},

@@ -12,6 +12,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterIntro:{
 			zigui:'咕咕咕~',
 			zither:'心火怎甘扬汤止沸',
+			actress:'月が绮丽ですね……',
 		},	   
 		perfectPair:{
 		},

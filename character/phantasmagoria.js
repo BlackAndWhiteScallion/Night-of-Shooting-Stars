@@ -524,6 +524,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          player.loselili(player.hp);
                          player.turnOver();
                          player.storage.shenpan=false;
+                         player.syncStorage('shenpan');
+                         player.unmarkSkill('shenpan');
                          player.useCard({name:'lingbi'},game.filterPlayer());
                     },
                     check:function(event, player){

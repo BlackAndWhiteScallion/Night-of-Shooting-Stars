@@ -111,13 +111,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               "step 2"
                               if(event.num<event.targets.length){
                                     if(event.targets[event.num].countCards('hej')){
-                                          player.discardPlayerCard(event.targets[event.num],true);
+                                          player.discardPlayerCard('hej',event.targets[event.num],true);
                                     }
                               }
                               "step 3"
-                              if (result.links && result.links.length){
+                              if (result.bool && result.links && result.links.length){
                                     if (get.type(result.links[0]) == 'delay'){
-                                          if (event.targets[event.num].countCards('hej') >= player.countCards('hej')){
+                                          if (event.targets[event.num].countCards('hej') && event.targets[event.num].countCards('hej') >= player.countCards('hej')){
                                                 event.targets[event.num].damage('thunder');
                                           } 
                                     }
@@ -253,8 +253,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           },
                           content:function(){
                             "step 0"
-                            player.chooseTarget('午夜中的合唱指挥：你可以将'+get.translation(trigger.card)+'转移给一名其他角色').ai=function(target){
+                            player.chooseTarget('午夜中的合唱指挥：你可以将'+get.translation(trigger.card)+'转移给一名其他角色',function(card, player, target){
                               return trigger.player.canUse(trigger.card, target);
+                            }).ai=function(target){
+                                return -get.attitude(player, target);
                             };
                             "step 1"
                             if(result.bool){
@@ -275,26 +277,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           ai:{
                             effect:{
                               target:function(card,player,target){
-                                if(target.countCards('he')==0) return;
-                                if(card.name!='sha') return;
-                                var min=1;
-                                var friend=get.attitude(player,target)>0;
-                                var vcard={name:'shacopy',nature:card.nature,suit:card.suit};
-                                var players=game.filterPlayer();
-                                for(var i=0;i<players.length;i++){
-                                  if(player!=players[i]&&
-                                    get.attitude(target,players[i])<0&&
-                                    target.canUse(card,players[i])){
-                                    if(!friend) return 0;
-                                    if(get.effect(players[i],vcard,player,player)>0){
-                                      if(!player.canUse(card,players[0])){
-                                        return [0,0.1];
-                                      }
-                                      min=0;
-                                    }
-                                  }
-                                }
-                                return min;
+                                return 0;
                               }
                             }
                           }
@@ -490,7 +473,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   mengdie:{
                       skillAnimation:true,
-                      audio:2,
+                      audio:1,
                       unique:true,
                       priority:-10,
                       derivation:'huanjing',
@@ -906,6 +889,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if(result.bool&&result.targets&&result.targets.length){
                         for (var i = 0; i < result.targets.length; i ++){
                           result.targets[0].addTempSkill('huanshi_2','useCardAfter');
+                          if (result.targets[0].name == 'eirin') game.trySkillAudio('huanshi',player,true,3);
+                          if (result.targets[0].name == 'kaguya') game.trySkillAudio('huanshi',player,true,4);
                         }
                         player.storage.huanshi = [cards[0]];
                         player.useCard(event.fakecard,result.targets);
@@ -1080,6 +1065,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                       'step 3'
                       if (result.targets.length){
+                        if (result.targets[0].name == 'kaguya') game.trySkillAudio('zhaixing',result.targets[0],true,3);
                         result.targets[0].gain(event.card);
                         event.cards.remove(event.card);
                       }
@@ -1320,6 +1306,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       "step 0"
+                      if (target.name == 'kaguya') game.trySkillAudio('lanyue',target,true,3);
                       var list = [];
                       if (target.hp != player.hp) list.push('体力');
                       if (target.lili != player.lili) list.push('灵力');
@@ -1483,6 +1470,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             case '属性': valid.push(get.subtype(cards[i])); break;
                           }
                         }
+                        if (targets[0].name == 'eirin') game.trySkillAudio('nanti', player, true, 3);
                         targets[0].chooseCard('是否交给'+get.translation(player)+'一张与'+get.translation(result.cards)+'不同'+result.control+'的牌？','he',function(card){
                             switch(result.control){
                               case '牌名长度': return !valid.contains(get.translation(card.name).length); break;
@@ -1864,7 +1852,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yinyang_info:'一名角色的结束阶段，若你本回合使用过牌，或受到过弹幕伤害，你可以选择一项：摸一张牌；或展示当前回合角色的一张牌，并将之置于牌堆底。',
                   mengdie:'梦蝶',
                   mengdie_audio1:'不知周之梦为胡蝶与？胡蝶之梦为周与？',
-                  mengdie_audio2:'现在想放弃的话还来的及哟？',
                   mengdie_info:'觉醒技，准备阶段，若你的手牌数不大于你已受伤值，你将灵力值补至上限，并获得〖幻境〗',
                   huanjing_reimu_audio1:'哼，别忘了我可会这招！',
                   huanjing_reimu_audio2:'嗯……这里附近应该有张【葱】来着？',
@@ -1895,7 +1882,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   stardust_audio1:'魔符「星屑幻想」！',
                   stardust_audio2:'现在开始，这就是我的舞台了！',
                   stardust_info:'符卡技（X）（X为任意值）你本回合使用下一张牌时：若有强化效果，执行强化效果X次；若不是装备牌，可以无视距离限制指定X名额外目标。',
-                  marisa_die:'没事，这夜晚还很长呢！',
+                  marisa_die:'没事，反正这个夜晚永远不会结束的！',
                   tewi:'帝',
                   mitu:'迷途',
                   mitu_storage_audio1:'嘘——',
@@ -1918,6 +1905,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   huanshi_info:'一回合一次，出牌阶段，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；一名角色成为此牌的目标后，其可将一张牌当做一种防御牌打出。若如此做，你的扣置牌无效且你亮出此牌；若此牌不为此防御牌的合法目标，则你对其使用此牌。',
                   huanshi_audio1:'你也一同陷入狂乱吧！',
                   huanshi_audio2:'来，看着我的眼睛——',
+                  huanshi_audio3:'啊，师、师匠，我、我不是故意的！',
+                  huanshi_audio4:'公、公主大人……？！我、我只是开个玩笑而已啦……',
                   zhenshi:'真实之月（隐形满月）',
                   zhenshi_1:'真实之月（隐形满月）',
                   zhenshi_info:'符卡技（1）【永续】你攻击范围内角色成为攻击牌的唯一目标时，你可以弃置一张牌，将包括其的至多3名角色牌扣置并洗混；来源明置一张：将目标转移给明置的角色；然后将这些牌调整为原状态。',
@@ -1928,6 +1917,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   nanti:'难题',
                   nanti_audio1:'这些难题可已经劝退了无数的人哟。',
                   nanti_audio2:'你，解的开多少个呢？',
+                  nanti_audio3:'啊，这种东西对于永琳来说只是小儿科对吧~',
                   nanti_info:'一回合一次，出牌阶段，你可以展示任意张手牌，并声明一项：牌名的字数，花色，点数，属性，或类型，然后令一名其他角色选择一项：交给你一张该项与你展示的牌均不同的牌，并弃置展示的牌；或令你重铸其与展示的牌等量张牌，并对其造成1点灵击伤害。',
                   poxiao:'破晓',
                   poxiao_info:'结束阶段，你可以重铸任意张牌；若你以此法重铸了4张不同花色的牌，你可以消耗1点灵力，然后进行一个额外的回合。',
@@ -1942,10 +1932,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   zhaixing:'摘星',
                   zhaixing_audio1:'等【星】实装了，我就真的可以摘【星】了呢。',
                   zhaixing_audio2:'就算是星星，我也可以摘下来给你。',
+                  zhaixing_audio3:'啊，还真摘了颗星星来啊，谢谢永琳！',
                   zhaixing_info:'结束阶段，你可以观看牌堆顶，或技能牌堆顶的X张牌（X为你本回合使用的牌花色数）；你将其中一张交给一名角色，其余按任意顺序置于该牌堆顶或底。',
                   lanyue:'揽月',
                   lanyue_audio1:'药也可以这么用的呢。',
                   lanyue_audio2:'即使是月亮，也不会离开我的手心之中。',
+                  lanyue_audio3:'即使是我也逃不出永琳的手掌心呢w',
                   lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同',
                   tianwen:'天文秘葬法',
                   tianwen_audio1:'秘術「天文密葬法」。',
@@ -1967,7 +1959,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   businiao_audio2:'炎符「不死鸟之羽」！',
                   businiao2:'不死鸟之羽',
                   businiao2_audio1:'……浴火重生*',
-                  businiao2_audio2:'无论是第几次，无论是多少次！',
+                  businiao2_audio2:'好像读错字了……？',
                   businiao_info:'符卡技（1）<终语>你不坠机；当前回合的结束阶段，你可以消耗1点灵力值，并使用一张攻击牌；你可以重复此流程任意次；然后，你须消耗所有灵力，将体力回复至1，并将手牌补至3张。',
                   mokou_die:'啊——。有点太硌牙了呢。',
             },

@@ -747,10 +747,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				if (game.me.storage.musicchange){
 					ui.backgroundMusic.pause();
-					lib.config.background_music = game.me.storage.musicchange[0];
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/'+game.me.storage.musicchange[0]+'.mp3';
-					ui.backgroundMusic.currentTime=game.me.storage.musicchange[1];
-					ui.backgroundMusic.play();
+					setTimeout(function(){
+						lib.config.background_music = game.me.storage.musicchange[0];
+						ui.backgroundMusic.src = lib.assetURL+'audio/background/'+game.me.storage.musicchange[0]+'.mp3';
+						ui.backgroundMusic.currentTime=game.me.storage.musicchange[1];
+						ui.backgroundMusic.play();
+					}, 2000);
 				}
 			},
 			checkResult:function(){
@@ -1020,7 +1022,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.musicchange=['music_default',397];
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
-					//game.me.addSkill('finalspark');
+					if (lib.config.connect_nickname == '葱') game.me.addSkill('finalspark');
 					game.me.addSkill('handcard_max');
 				},
 				gameDraw:function(player){
@@ -1550,7 +1552,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                lib.init.onfree();
 	                'step 2'
 					for (var i = 0; i<game.players.length; i ++){
-						
 						if (game.players[i].identity != 'cai'){
 							game.players[i].hide();
 							game.addVideo('hidePlayer',game.players[i]);
@@ -1832,7 +1833,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					game.me.removeSkill('boss_chiyan6x');
 					game.me.storage.skill = ['revive_boss'];
-					game.me.storage.unskill = ['feise'];
+					game.me.storage.unskill = ['feise','feise_start'];
 					game.me.storage.reskill=['gungirs','gens'];
 					game.me.storage.musicchange=['music_default',3621];
 					game.resetSkills();
@@ -2070,8 +2071,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				init:function(player){
 					  player.equip(game.createCard('stg_watch'));
 	                  player.equip(game.createCard('stg_deck'));
-	                  player.removeSkill('privateSquare');
-	                  player.removeSkill('doll');
 	                  player.useSkill('perfectSquare');
 	                  player.addSkill('handcard_max');
 				},
@@ -2133,6 +2132,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.addSkill('feise');
 					lib.skill['feise'].cost = 0;
 					player.useSkill('feise');
+					player.addSkill('feise2');
 					player.addSkill('chiyan_win');
 					player.addIncident(game.createCard('scarlet','zhenfa',''));
 					player.removeSkill('scarlet_win');
@@ -2214,6 +2214,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_needle_2:{
 				trigger:{player:'phaseDrawBegin'},
 				forced:true,
+				filter:function(event,player){
+					if (player.hp < player.maxHp) return true;
+					return false;
+				},
 				content:function(){
 					trigger.num++;
 				},
@@ -2331,9 +2335,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			missile_count:{
-				trigger:{player:'shaAfter'},
+				trigger:{player:'useCardAfter'},
 				direct:true,
 				priority:-10,
+				filter:function(event,player){
+					return event.card.name == 'sha';
+				},
 				content:function(){
 					player.addTempSkill('missile_ready');
 				}
@@ -2342,7 +2349,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			stg_deck_skill:{
 				init:function(player){
-					player.addSkill('doll');
+					if (player.identity != 'zhu') player.addSkill('doll');
 				},
 				trigger:{player:'phaseEnd'},
 				filter:function(event,player){
@@ -2361,7 +2368,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			stg_watch_skill:{
 				init:function(player){
-					player.addSkill('privateSquare');
+					if (player.identity != 'zhu') player.addSkill('privateSquare');
 				},
 				forced:true,
 				trigger:{source:'damageEnd'},
@@ -2529,16 +2536,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				global:'firebook1',
 			},
 			firebook1:{
-				trigger:{player:'shaBegin'},
-				usable:1,
-				forced:true,
-				filter:function(event,player){
-					return game.hasPlayer(function(current){
-						return current.identity == player.identity && current.hasSkill('stg_firebook_skill');
-					});
-				},
-				content:function(){
-					player.getStat().card.sha--;
+				mod:{
+					cardUsable:function(card,player,num){
+						if(card.name=='sha') return num+game.countPlayer(function(current){
+							if(current.identity != player.identity) return false;
+							if(current.hasSkill('stg_firebook_skill')) return true;
+						});
+					}
 				},
 			},
 			stg_waterbook_skill:{
@@ -2654,7 +2658,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			xixue_info:'锁定技，你造成伤害后：令蕾米莉亚获得1点灵力；然后若其灵力等于上限，令其摸一张牌。',
 			revive_boss:'阶段切换！',
 			stg_needle:'封魔针',
-			stg_needle_info:'锁定技，你的摸牌数和手牌上限+1；你使用【轰！】指定目标后，目标的技能无效，直到结算完毕。',
+			stg_needle_info:'锁定技，你的手牌上限+1；若你已受伤，你的摸牌数+1；你使用【轰！】指定目标后，目标的技能无效，直到结算完毕。',
 			stg_yinyangyu:'鬼神阴阳玉',
 			stg_yinyangyu_skill:'鬼神阴阳玉',
 			stg_yinyangyu_info:'你可以将一张非基本牌（可以为此牌）当作一种基本牌使用/打出；你将此牌当作的【轰！】造成弹幕伤害时，该伤害+1。',
@@ -2676,7 +2680,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_deck_skill:'魔术卡片',
 			stg_deck_info:'结束阶段，你可以弃置任意名本回合成为过牌的目标的角色各一张牌。	',
 			stg_firebook:'火魔导书',
-			stg_firebook_info:'锁定技，与你阵营相同的角色于其出牌阶段使用的第一张【轰！】不计次数。',
+			stg_firebook_info:'锁定技，与你阵营相同的角色使用【轰！】的次数上限+1。',
 			stg_waterbook:'水魔导书',
 			waterbook1:'水魔导书',
 			stg_waterbook_info:'与你阵营相同的角色可以将一张黑色手牌当做【没中】使用/打出。',
