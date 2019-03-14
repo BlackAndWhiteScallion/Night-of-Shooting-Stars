@@ -17290,7 +17290,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     }
                 },
                 isMad:function(){
-                    return this.hasSkill('mad') || this.hasSkill('death_win');
+                    return this.hasSkill('mad');
                 },
                 goMad:function(end){
                     if(end){
@@ -22387,8 +22387,8 @@ throwDice:function(num){
                 if(i1.priority==i2.priority){
                     if(i1.forced==undefined&&i2.forced==undefined) return 0;
                     if(i1.forced&&i2.forced) return 0;
-                    if(i1.forced) return 1;
-                    if(i2.forced) return -1;
+                    //if(i1.forced) return 1;
+                    //if(i2.forced) return -1;
                 }
                 return i2.priority-i1.priority;
             },
@@ -22752,10 +22752,10 @@ throwDice:function(num){
                 },
                 ai:{
                     effect:{
-                        player:function(card,player,target,current){
+                        player:function(card,player,target){
                           if (get.bonus(card) < 0){
-                            if (player.lili < 2) return -1;
-                            if (player.isTurnedOver() && player.lili < 3) return -2;
+                            if (player.lili == 1) return 0;
+                            if (player.isTurnedOver()) return 0;
                           } 
                           return ; 
                         },
@@ -27634,6 +27634,11 @@ smoothAvatar:function(player,vice){
         incidentover:function(player){
             // 如果是玩家胜利就是玩家胜利
             "step 0"
+            game.log(get.translation(player)+'异变胜利！');
+            if (player.identity == 'nei' && game.filterPlayer().length > 1 && lib.config.nei_end){
+                player.storage.win = true;
+                return ;
+            }
             if (game.me == player){
                 game.over(true);
                 return;
@@ -27759,6 +27764,8 @@ smoothAvatar:function(player,vice){
                 ui.control.show();
                 ui.clear();
                 game.stopCountChoose();
+                // 如果之前异变赢了就算你赢
+                if (game.me.storage.win) result = true;
     			if(ui.time3){
     				clearInterval(ui.time3.interval);
     			}
@@ -30217,18 +30224,21 @@ smoothAvatar:function(player,vice){
                     if(card.ai.basic.value==undefined) card.ai.basic.value=function(card,player){
                         var value=0;
                         var info=get.info(card);
+                        /*
                         var current=player.getEquip(info.subtype);
                         if(current&&card!=current){
                             value=get.value(current,player);
-                        }
+                        }*/
                         var equipValue=info.ai.equipValue;
                         if(equipValue==undefined){
                             equipValue=info.ai.basic.equipValue;
                         }
                         if(typeof equipValue=='function') return equipValue(card,player)-value;
                         if(typeof equipValue!='number') equipValue=0;
-                        if(player.countCards('e') < player.maxequip) return equipValue;
-                        return equipValue-value;
+                        //if(player.countCards('e') < player.maxequip) return equipValue;
+                        //return equipValue-value;
+                        if (player.countCards('e') >= player.maxequip) return 0;
+                        return equipValue;
                     }
                     card.ai.result.target=(function(name){
                         return (function(player,target){

@@ -542,7 +542,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   liuxing:{
                     audio:2,
-                    trigger:{player:'phaseDrawBefore'},
+                    trigger:{player:'phaseDrawBegin'},
                     filter:function(event,player){
                         return event.num > 0;
                     },

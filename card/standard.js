@@ -2482,6 +2482,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.logSkill('_jingxia');
 				}
 			},
+			ai:{
+				result:{
+						player:function(player,target){
+							return 0.4;
+						}
+					},
+				},
 		},
 		// 如果明置就有急冻
 		_bingyu:{
@@ -2638,6 +2645,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			'step 1'
 				if(result.bool){
 					player.addSkill('lingbi2');
+					game.log(get.translation(player)+'声明了'+get.translation(result.links[0])+'不可以使用。');
 					if (!player.storage._lingbi2) player.storage._lingbi2=[];
 					player.$gain2(result.links[0][2]);
 					player.storage._lingbi2.add(result.links[0][2]);

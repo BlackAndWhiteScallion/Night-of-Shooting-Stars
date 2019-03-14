@@ -1322,7 +1322,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    player.chooseTarget('要斩断哪个倒霉人？',function(card,player,target){
+                    player.chooseTarget('要【一闪】斩断哪个倒霉人？',function(card,player,target){
                         if(player==target) return false;
                         return player.canUse({name:'sha'},target,false);
                     }).set('ai',function(target){
