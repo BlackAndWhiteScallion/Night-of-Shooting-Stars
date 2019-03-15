@@ -1365,7 +1365,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				result:{
 					target:function(player,target){
 						if (target.countCards('h') <= player.hp) return 1;
-						else return 0.1;
+						else return 0.4;
 					},
 					player:function(player,target){
 						if (player.countCards('h') > player.hp) return 1;
@@ -2645,9 +2645,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			'step 1'
 				if(result.bool){
 					player.addSkill('lingbi2');
-					game.log(get.translation(player)+'声明了'+get.translation(result.links[0])+'不可以使用。');
+					game.log(get.translation(player)+'声明了'+get.translation(result.links[0][2])+'不可以使用。');
 					if (!player.storage._lingbi2) player.storage._lingbi2=[];
-					player.$gain2(result.links[0][2]);
+					player.showCards(result.links);
 					player.storage._lingbi2.add(result.links[0][2]);
 					player.markSkill('_lingbi2');
 					player.syncStorage('_lingbi2');

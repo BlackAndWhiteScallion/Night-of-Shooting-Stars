@@ -219,15 +219,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               'step 0'
                               player.chooseControl('令回复量-1','令回复量+1',function(event,player){
-                                    if (get.attitude(player, event.player) >= 0) return '令回复量+1';
+                                    if (get.attitude(player, event.player) > 0) return '令回复量+1';
                                     return '令回复量-1';
                               });
                               'step 1'
                               if (result.control == '令回复量-1'){
-                                    game.log();
+                                    game.log(get.translation(player)+'令'+get.translation(trigger.player)+'回复体力量-1');
                                     trigger.num--;
                               } else {
-                                    game.log();
+                                    game.log(get.translation(player)+'令'+get.translation(trigger.player)+'回复体力量+1');
                                     trigger.num++;
                               }
                         }
@@ -540,18 +540,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          'step 0'
                          event.num = 0;
                          'step 1'
-                         player.chooseTarget(get.prompt('shenpan'),true,function(card,player,target){
-                              if (event.num == 0) return target.isMaxHp(true);
-                              if (event.num == 1) return target.isMaxlili(true);
-                              if (event.num == 2) return target.isMaxHandcard(true);
+                         var str = "选择一名";
+                         if (event.num == 0) str += "体力值最高的角色";
+                         else if (event.num == 1) str += '灵力值最高的角色';
+                         else if (event.num == 2) str += '手牌数最高的角色';
+                         else if (event.num == 3) str += '击坠角色数最高的角色';
+                         str += '，对其造成1点弹幕伤害。';
+                         player.chooseTarget(str,true,function(card,player,target){
+                              if (event.num == 0) return target.isMaxHp(false);
+                              if (event.num == 1) return target.isMaxlili(false);
+                              if (event.num == 2) return target.isMaxHandcard(false);
                               if (event.num == 3){
                                    var list = [player];
-                                   for (var i = 0; i < game.filterPlayer.length; i ++){
-                                        if (game.filterPlayer[i].getStat('kill') > list[0].getStat('kill')){
+                                   var players = game.filterPlayer();
+                                   for (var i = 0; i < players.length; i ++){
+                                        if (players[i].getStat('kill') > list[0].getStat('kill')){
                                              list = [];
-                                             list.push(game.filterPlayer[i]);
-                                        } else if (game.filterPlayer[i].getStat('kill') == list[0].getStat('kill')){
-                                             list.push(game.filterPlayer[i]);
+                                             list.push(players[i]);
+                                        } else if (players[i].getStat('kill') == list[0].getStat('kill')){
+                                             list.push(players[i]);
                                         }
                                    }
                                    return list.contains(target);

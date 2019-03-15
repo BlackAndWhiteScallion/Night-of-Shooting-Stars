@@ -1017,7 +1017,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					game.me.storage.tongguan = 0;
 					game.me.storage.stage = 'boss_chiyan2x';
-					game.me.storage.fuhuo = 2;
+					game.me.storage.fuhuo = 1;
 					game.me.storage.unskill = ['yuezhi'];
 					game.me.storage.musicchange=['music_default',397];
 					game.me.addSkill('revive');
@@ -1045,7 +1045,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return player.storage.fuhuo;
 				},
 				content:function(){
-					event.cards=player.getDiscardableCards('hej');
+					event.cards=player.getDiscardableCards(player, 'hej');
                     //player.$throw(event.cards,1000);
                     player.discard(event.cards);
                     //game.log(player,'弃置了',event.cards);
@@ -2294,21 +2294,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				init:function(player){
 					player.addSkill('masterspark');
 				},
-				enable:'phaseUse',
-				usable:1,
-				filter:function(event,player){
-					// 这段是检测次数限制的
-					if(!lib.filter.filterCard({name:'sha'},player,event)){
-						return false;
-					}
-					return true;
-				},
-				filterTarget:function(card,player,target){
-					return player.canUse('sha',target);
-				},
+				trigger:{source:'damageEnd'},
+				forced:true,
 				content:function(){
-					target.addTempSkill('unequip','shaAfter');
-					player.useCard({name:'sha'},target);
+					player.gainlili();
 				},
 			},
 			stg_missile_skill:{
@@ -2454,7 +2443,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			masterspark:{
 				audio:2,
-                cost:0,
+                cost:1,
                 spell:['spark1'],
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
@@ -2473,26 +2462,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 },
 			},
 			spark1:{
-				trigger:{player:'shaBegin'},
-				forced:true,
-				filter:function(event,player){
-					return player.lili > 1;
-				},
-				content:function(){
-					player.storage.spark = player.lili -1;
-					player.loselili(player.lili-1);
-					player.addTempSkill('spark2','shaAfter');
-				},
-			},
-			spark2:{
+				skillAnimation:true,
 				trigger:{source:'damageBegin'},
 				filter:function(event){
-					return event.card&&(event.card.name=='sha')&&event.notLink();
+					return event.nature != 'thunder';
 				},
 				forced:true,
 				content:function(){
-					trigger.num+=player.storage.spark;
-					delete player.storage.spark;
+					trigger.num+=(player.lili-1);
+					player.loselili(player.lili-1);
 				}
 			},
 			fengmo:{
@@ -2666,11 +2644,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_missile:'魔法飞弹',
 			stg_missile_skill:'魔法飞弹',
 			stg_missile_info:'结束阶段，若你本回合使用过【轰！】，你可以视为使用一张【轰！】。',
-			stg_bagua:'幻象激光',
-			stg_bagua_skill:'幻象激光',
-			stg_bagua_info:'一回合一次，出牌阶段，你可以视为使用一张【轰！】；该【轰！】指定目标后，目标的装备技能无效，直到结算完毕。',
+			stg_bagua:'八卦炉MKII',
+			stg_bagua_skill:'八卦炉MKII',
+			stg_bagua_info:'锁定技，你造成伤害后，获得1点灵力。',
 			masterspark:'极限火花',
-			masterspark_info:'符卡技（0）你使用【轰！】指定目标后，将灵力值消耗至1：若如此做，该【轰！】造成伤害时，该伤害+X（X为消耗灵力量）。',
+			masterspark_info:'符卡技（1）你造成弹幕伤害时，将灵力值消耗至1：令该伤害+X（X为消耗灵力量）。',
 			fengmo:'封魔阵',
 			fengmo_info:'符卡技（2）符卡发动时，弃置所有其他角色各一张牌；其他角色不能使用/打出手牌，技能和装备技能无效。',
 			stg_watch:'血月时针',
@@ -2717,7 +2695,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			gungirs_info:'符卡技（0）<极意> 符卡发动时，你创建并装备一张【冈格尼尔】；你失去装备区内的【冈格尼尔】后，创建一张【冈格尼尔】并装备之。',
 		
 			boss_chiyan:'红雾异变',
-			boss_chiyan_info:'幻想乡被红雾包围了，去找出元凶吧！<br><br> 关卡数：6 <br><br> 复活机会：3       第3关和第5关后追加1次。',
+			boss_chiyan_info:'幻想乡被红雾包围了，去找出元凶吧！<br><br> 关卡数：6 <br><br> 复活机会：1       第3关和第5关后追加1次。',
 		},
 		get:{
 			rawAttitude:function(from,to){

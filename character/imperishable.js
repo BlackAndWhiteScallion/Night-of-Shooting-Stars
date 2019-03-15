@@ -123,7 +123,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     }
                               }
                               "step 4"
-                              if (event.num < event.targets.length){
+                              if (event.num < event.targets.length - 1){
                                     event.num++;
                                     event.goto(2);
                               }
@@ -808,14 +808,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       'step 0'
-                      player.chooseCard('he',get.prompt('mitu')).set('ai',function(card){
+                      player.chooseCard('he','将一张牌作为“坑”放头上').set('ai',function(card){
                             return card.name == 'sha';
                           });
                       'step 1'
                       if(result.cards&&result.cards.length){
                         player.lose(result.cards,ui.special);
                         player.storage.mitu=result.cards[0];
-                        player.logSkill('mitu');
+                        //player.logSkill('mitu');
                         player.syncStorage('mitu');
                         player.markSkill('mitu');
                       }
@@ -1535,7 +1535,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if (result.bool && result.cards.length){
                           var suits = [];
                           for (var i = 0; i < result.cards.length; i ++){
-                            if (get.suit(result.cards[i]) && suits.contains(get.suit(result.cards[i]))) suit.push(get.suit(result.cards[i]))
+                            if (get.suit(result.cards[i]) && !suits.contains(get.suit(result.cards[i]))) suits.push(get.suit(result.cards[i]))
                           }
                           player.recast(result.cards);
                           if (suits.length == 4){
@@ -1545,7 +1545,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                   },
                   poxiao_2:{
-                    direct:true,
                     trigger:{player:'phaseAfter'},
                     filter:function(event,player){
                       return player.lili > 0;
@@ -1555,6 +1554,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.loselili();
                       player.insertPhase();
                     },
+                    prompt:'是否发动【破晓】进行一个额外的回合？',
                   },
                   yongye:{
                     audio:2,
@@ -1885,6 +1885,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   marisa_die:'没事，反正这个夜晚永远不会结束的！',
                   tewi:'帝',
                   mitu:'迷途',
+                  mitu_storage:'迷途（挖坑）',
                   mitu_storage_audio1:'嘘——',
                   mitu_storage_audio2:'这里什么都没有哟，什么都没有',
                   mitu_audio1:'中计啦，你个傻瓜！',

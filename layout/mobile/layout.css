@@ -231,7 +231,7 @@
 }
 #arena:not(.chess) .player[data-position='0']>.hp.actcount{
     top:10px;
-    left:2px;
+    left:-2px;
 }
 
 #arena:not(.chess) .player.fullskin2[data-position='0']:not(.minskin)>.avatar,

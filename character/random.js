@@ -1678,7 +1678,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.num = num;
 					player.storage.shishu -= event.num;
 					'step 1'
-					if (event.num <= 0) event.finish();
+					if (player.storage.shishu <= 0) event.finish();
 					var ej = false;
 					var players = game.filterPlayer();
 					for (var i = 0; i < players.length; i ++){
@@ -1734,8 +1734,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					'step 4'
-					event.num --;
-					if (event.num > 0) event.goto(1);
+					player.storage.shishu --;
+					if (player.storage.shishu > 0) event.goto(1);
 				},
 			},
 			shishu2:{

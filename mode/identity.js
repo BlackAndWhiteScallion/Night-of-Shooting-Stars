@@ -2206,7 +2206,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					var num;
     					if (player.identity == 'zhu') num = Math.floor(Math.random()*(libincident.length-1));
     					else num = Math.floor(Math.random()*(libincident.length));
-    					player.chooseButton(['选择异变',[libincident,'vcard']],true).set('filterButton',function(button){
+    					player.chooseButton(['选择你本局要发动的异变',[libincident,'vcard']],true).set('filterButton',function(button){
     						return true;
     					}).set('ai',function(button){
     						return button.link[2] == libincident[_status.event.num]; 

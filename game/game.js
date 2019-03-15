@@ -37440,7 +37440,7 @@ smoothAvatar:function(player,vice){
                         var span6_br=ui.create.node('br');
                         li2.lastChild.appendChild(span6_br);
 
-                        var span5=ui.create.div('','图片素材（精简，24MB）');
+                        var span5=ui.create.div('','图片素材（精简，只有东方）');
                         span5.style.fontSize='small';
                         span5.style.lineHeight='16px';
                         var span5_check=document.createElement('input');
@@ -37471,7 +37471,7 @@ smoothAvatar:function(player,vice){
                         var span3_br=ui.create.node('br');
                         li2.lastChild.appendChild(span3_br);
 
-                        var span3=ui.create.div('','音效素材（36MB）');
+                        var span3=ui.create.div('','音效素材（162MB）');
                         span3.style.fontSize='small';
                         span3.style.lineHeight='16px';
                         li2.lastChild.appendChild(span3);
@@ -37488,7 +37488,7 @@ smoothAvatar:function(player,vice){
                         var span4_br=ui.create.node('br');
                         li2.lastChild.appendChild(span4_br);
 
-                        var span2=ui.create.div('','皮肤素材（23MB）');
+                        var span2=ui.create.div('','皮肤素材（21MB）');
                         span2.style.fontSize='small';
                         span2.style.lineHeight='16px';
                         li2.lastChild.appendChild(span2);
@@ -37510,7 +37510,7 @@ smoothAvatar:function(player,vice){
                         li2.lastChild.appendChild(span5_check);
                         li2.lastChild.appendChild(span2_br);
 
-                        var span6=ui.create.div('','图片素材（完整，64MB）');
+                        var span6=ui.create.div('','图片素材（完整）');
                         span6.style.fontSize='small';
                         span6.style.lineHeight='16px';
                         li2.lastChild.appendChild(span6);
@@ -47819,14 +47819,17 @@ smoothAvatar:function(player,vice){
             }
             var value1=get.equipValue(card,target);
             var value2=0;
+            /* 无视换装备部分
             var current=target.getEquip(card);
             if(current&&current!=card){
                 value2=get.equipValue(current,target);
                 if(value2>0&&!target.needsToDiscard()&&!get.tag(card,'valueswap')){
                     return 0;
                 }
-            }
-            return Math.max(0,value1-value2)/5;
+            }*/
+            if (!player.countCards('e') || player.countCards('e') < player.maxequip) return value1;
+            //return Math.max(0,value1-value2)/5;
+            return 0;
         },
         equipValue:function(card,player){
             if(player==undefined||get.itemtype(player)!='player') player=get.owner(card);

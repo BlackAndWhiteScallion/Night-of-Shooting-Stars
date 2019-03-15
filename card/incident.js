@@ -378,7 +378,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			imperishable_normal:'【永夜】异变效果',
 			imperishable_normal_info:'<u>一名角色失去牌后，若其没有技能牌，其摸一张技能牌。</u>',
 			imperishable_win_bg:'永',
-			imperishable_win:'【永夜】异变胜利',
+			//imperishable_win:'【永夜】异变胜利',
 			imperishable_win_info:'异变发动后的至少第7个你的回合开始时。',
 			phantasmagoria:'花映',
 			phantasmagoria_info:'<u>胜利条件：</u>牌堆洗牌时，没有角色坠机。<br/><u>异变效果：</u>一名角色的结束阶段，其获得1点灵力。',
