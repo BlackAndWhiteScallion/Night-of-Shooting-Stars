@@ -1137,7 +1137,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				alter:true,
 				intro:{
 					content:function(storage, player){
-						return '手牌上限+'+player.storage.tongguan;
+						return '手牌上限+'+player.storage.tongguan+"<br>你的宝具牌不能被弃置/获得。";
 					}
 				},
 				mod:{
@@ -2648,6 +2648,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_bagua_skill:'八卦炉MKII',
 			stg_bagua_info:'锁定技，你造成伤害后，获得1点灵力。',
 			masterspark:'极限火花',
+			spark1:'极限火花',
 			masterspark_info:'符卡技（1）你造成弹幕伤害时，将灵力值消耗至1：令该伤害+X（X为消耗灵力量）。',
 			fengmo:'封魔阵',
 			fengmo_info:'符卡技（2）符卡发动时，弃置所有其他角色各一张牌；其他角色不能使用/打出手牌，技能和装备技能无效。',

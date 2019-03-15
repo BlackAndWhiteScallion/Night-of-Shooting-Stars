@@ -322,15 +322,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 trigger:{player:['useCard', 'respond']},
                 filter:function(event){
+                    /*
                     if (!get.suit(event.card)) return false;
                     return game.countPlayer(function(current){
                         if (current.num('e',{suit:get.suit(event.card)}) > 0) return true;
                     } > 0);
+                    */
+                    return game.countPlayer(function(current){
+                        if (current.countCards('hej')) return true;
+                    });
                 },
                 content:function(){
                     "step 0"
-                    player.chooseTarget(1,get.prompt('jicai'),function(card,player,target){
-                        return target.num('e',{suit:get.suit(trigger.card)});
+                    player.chooseTarget(1,'弃置一名角色一张牌',function(card,player,target){
+                        return target.countCards('hej');
                     }).set('ai',function(target){
                         return -get.attitude(_status.event.player,target);
                     });
@@ -338,9 +343,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(result.bool){
                         player.logSkill('jicai',result.targets);
                         event.targets=result.targets;
-                        player.discardPlayerCard(event.targets[0],'e',1,function(card,player,target){
-                            return get.suit(card) == get.suit(trigger.card);
-                        });
+                        player.discardPlayerCard(event.targets[0],'hej').set('ai',function(button){
+                            if(!_status.event.att) return 0;
+                            if(get.position(button.link)=='j') return 5-get.value(button.link);
+                            if(get.position(button.link)=='e' && get.color(button) && get.color(trigger.card)) return get.color(button.link) == get.color(trigger.card);
+                            return get.value(button.link);
+                        }).set('att',get.attitude(player,event.targets[0])<=0);
+                    }
+                    "step 2"
+                    if (result.bool && result.links && result.links.length){
+                        if (get.color(result.links[0]) && get.color(trigger.card)){
+                            if (get.color(result.links[0]) == get.color(trigger.card)) event.targets[0].draw();
+                        }
                     }
                 },
                 check:function(){return true;},
@@ -929,7 +943,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (trigger.target.name == 'remilia') game.trySkillAudio('world_skill',player,true,3);
                     if (trigger.target.name == 'flandre') game.trySkillAudio('world_skill',player,true,4);
                     if (trigger.target.name == 'meiling') game.trySkillAudio('world_skill',player,true,5);
-                    player.chooseTarget(get.prompt('world'),function(card,player,target){
+                    player.chooseTarget('弃置一名角色一张牌，作为世界的食粮',function(card,player,target){
                         return target.countCards('hej');
                     }).set('ai',function(target){
                         return get.attitude(player,target)<0;
@@ -1233,9 +1247,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             dizhuang_audio3:'别想动咲夜一下！',
             dizhuang_audio4:'妹妹大人，请让一下！',
             jicai:'极彩风暴',
-            jicai_info:'符卡技（2）<永续>你使用/打出牌时，可以弃置场上一张与之相同花色的牌。',
+            jicai_info:'符卡技（2）<永续>你使用/打出牌时，可以弃置一名角色一张牌；若该牌颜色与使用/打出的牌颜色相同，其摸一张牌。',
             jicai_audio1:'华符「极彩风暴」！',
             jicai_audio2:'哈啊————————————————',
+            jicai2:'极彩风暴',
             jicai2_audio1:'木大木大木大！',
             jicai2_audio2:'欧拉欧拉欧拉欧拉欧拉！',
             meiling_die:'好吧好吧……还是你强一些呢。',

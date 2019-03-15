@@ -117,10 +117,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         trigger:{player:'phaseEnd'},
                         content:function(){
                            'step 0'
-                           var prompt;
+                           var prompt = '令一名灵力不大于你的角色受到1点灵击伤害';
                            if (player.storage.zaidu == 'heal') prompt = '令一名灵力不大于你的角色回复1点体力';
                            if (player.storage.zaidu == 'damage') prompt = '令一名灵力不大于你的角色受到1点弹幕伤害';
-                           player.chooseTarget(get.prompt('zaidu'),function(card,player,target){
+                           player.chooseTarget(prompt,function(card,player,target){
                               return target.lili <= player.lili;
                               }).set('ai',function(target){
                                     if (player.storage.zaidu != 'heal') return -get.attitude(player,target);
@@ -470,7 +470,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseTarget(get.prompt('caijue'),function(card,player,target){
+                    player.chooseTarget('选择一名裁决的罪人',function(card,player,target){
                               return target.countCards('h') > 0;
                               }).set('ai',function(target){
                                     return get.attitude(player, target) < 0 && target.countCards('h') > 3;

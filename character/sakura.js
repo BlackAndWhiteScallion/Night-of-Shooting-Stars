@@ -195,7 +195,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     for(var i=0;i<list.length;i++){
                         list[i]=[get.type(list[i]),'',list[i]];
                     }
-                    player.chooseButton([get.prompt('mingdong'),[list,'vcard']]).set('ai',function(button){
+                    player.chooseButton(['选择【鸣动】这回合可以转化的牌',[list,'vcard']]).set('ai',function(button){
                         if (trigger.card == 'sha') return 'shan';
                         if (_status.currentPhase==player && player.hp == player.maxHp && !player.countCards('h','sha')) return 'sha';
                         return 'tao';
@@ -247,7 +247,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseTarget(get.prompt('shihuo'),function(card,player,target){
+                    player.chooseTarget('令一名角色获得1点灵力',function(card,player,target){
                         return true;
                     }).set('ai',function(target){
                         return get.attitude(_status.event.player,target);
@@ -294,7 +294,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseTarget([1,1],get.prompt('shuanggui'),function(card,player,target){
+                    player.chooseTarget([1,1],'令一名角色与你一同摸一张牌',function(card,player,target){
                         return target != player;
                     },true).set('ai',function(target){
                         return get.attitude(_status.event.player,target);
@@ -771,7 +771,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             },
                             forced:true,
                             position:'hej',
-                            prompt:get.prompt('zhenhun'),
+                            prompt:'将一张明置牌交给一名其他角色',
                         });
                     } else if (result.control == 'cancel2'){
                         event.finish();
@@ -888,7 +888,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             trigger.cancel();
                             event.finish();
                         } else if (result.control == '追加目标'){
-                            player.chooseTarget(get.prompt('hezou'),[1,2],function(card,player,target){
+                            player.chooseTarget('棱镜把【轰！】反射给一到两名角色',[1,2],function(card,player,target){
                                 return trigger.player.canUse('sha',target);
                             }).set('ai',function(target){
                                 var att=get.attitude(_status.event.player,target);
@@ -931,7 +931,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             trigger.cancel();
                             event.finish();
                         } else if (result.control == '追加目标'){
-                            player.chooseTarget(get.prompt('hezou'),[1,2],function(card,player,target){
+                            player.chooseTarget('棱镜把【轰！】反射给一到两名角色',[1,2],function(card,player,target){
                                 return trigger.player.canUse('sha',target);
                             }).set('ai',function(target){
                                 var att=get.attitude(_status.event.player,target);
@@ -1387,7 +1387,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.control == "重置一闪"){
                         if (player.storage.counttrigger) player.storage.counttrigger['yishan'] = 0;
                     } else {
-                        player.chooseTarget(get.prompt('yinhuashan'),function(card,player,target){
+                        player.chooseTarget('选择【轰！】的一名额外目标',function(card,player,target){
                             if(player==target) return false;
                             var trigger=_status.event.getTrigger();
                             return player.canUse(trigger.card,target)&&trigger.targets.contains(target)==false;
@@ -1477,7 +1477,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     "step 0"
-                    player.chooseTarget(get.prompt('moyin'),[1,player.maxHp-player.hp+1],function(card,player,target){
+                    player.chooseTarget('让一些人摸一张牌，然后她们不能为'+get.translation(trigger.player)+'回复体力',[1,player.maxHp-player.hp+1],function(card,player,target){
                         return true;
                     },function(target){
                         if (get.attitude(_status.event.player, trigger.player) > 0){
@@ -1603,7 +1603,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 0"
                     event.num=player.maxHp-player.hp;
                     "step 1"
-                    player.chooseTarget(get.prompt('fanhundie'),[1,1],function(card,player,target){
+                    player.chooseTarget('反魂蝶：弃置一名角色一张牌',[1,1],function(card,player,target){
                         return target.countCards('hej')>0;
                         //return true;
                     },function(target){
@@ -1750,7 +1750,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseTarget(get.prompt('yanyu'),function(card,player,target){
+                    player.chooseTarget('是否改变'+get.translation(trigger.card)+'的来源或目标？',function(card,player,target){
                         return target.canUse(trigger.card, trigger.targets[0]) || player.canUse(trigger.card, target);
                     }).set('ai',function(target){
                         return get.attitude(_status.event.player,target);
@@ -1851,7 +1851,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseTarget(get.prompt('shiqu'),1,function(card,player,target){
+                    player.chooseTarget('让蓝帮你支付灵力？',1,function(card,player,target){
                             return target != player && target.hasSkill('shiqu2');
                         }).set('ai',function(target){
                             return get.attitude(_status.event.player,target) && target.lili > _status.event.player.lili;
@@ -1896,7 +1896,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseTarget([1,1],get.prompt('tianhugongzhu'),function(card,player,target){
+                    player.chooseTarget([1,1],'令一名角色与你一同回复1点体力',function(card,player,target){
                         return target != player;
                     },true).set('ai',function(target){
                         return get.attitude(_status.event.player,target);
@@ -2196,7 +2196,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{player:'phaseBegin'},
                 content:function(){
                     'step 0'
-                    player.chooseTarget([1,1],get.prompt('mengjing'),function(card,player,target){
+                    player.chooseTarget([1,1],'选择一名角色一同与你进入幻想与现实的隙间中——',function(card,player,target){
                         return target != player;
                     },true).set('ai',function(target){
                         return get.attitude(_status.event.player,target);

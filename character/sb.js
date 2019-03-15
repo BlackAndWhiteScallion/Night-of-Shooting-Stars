@@ -242,7 +242,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             content:function(){
                'step 0'
-               player.chooseTarget(get.prompt('kuanglan'),function(card,player,target){
+               player.chooseTarget('选择一名采访目标！',function(card,player,target){
                   return player!=target && player.canUse('caifang', target) && target.storage.kuanglan;
                }).set('ai',function(target){
                   return -get.attitude(_status.event.player,target);
@@ -337,7 +337,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             content:function(){
                'step 0'
-               player.chooseTarget(get.prompt('fengmi'),function(card,player,target){
+               player.chooseTarget('选择一名被疾风骤雨的角色',function(card,player,target){
                   if(player==target) return false;
                   return player.canUse({name:'guohe'},target,false);
                }).set('ai',function(target){

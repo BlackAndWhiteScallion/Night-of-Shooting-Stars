@@ -386,7 +386,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               'step 0'
                               player.storage.richuguo=false;
-                              player.chooseTarget([1,1],get.prompt('richuguo'),true,function(card,player,target){
+                              player.chooseTarget([1,1],'选择一名角色，重置其体力值，灵力值，手牌数',true,function(card,player,target){
                                 return true;
                               }).ai=function(target){
                                     return get.attitude(player, target);
