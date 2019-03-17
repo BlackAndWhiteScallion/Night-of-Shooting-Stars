@@ -1364,11 +1364,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				order:1,
 				result:{
 					target:function(player,target){
-						if (target.countCards('h') <= player.hp) return 1;
-						else return 0.4;
+						if (target.countCards('h') <= target.hp) return 1;
+						else return 0.5;
 					},
 					player:function(player,target){
-						if (player.countCards('h') > player.hp) return 1;
+						if (player.countCards('h') > player.hp) return 0;
 						else return -0.5;
 					}
 				}
@@ -1781,6 +1781,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(result.color){
 					if(result.color==get.color(trigger.card)){
 						trigger.cancel();
+						game.log('八咫镜：'+get.translation(trigger.card)+'对'+get.translation(player)+'无效。');
 					}
 				}
 			},

@@ -321,10 +321,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			// 啊？你以为这个技能有效果的？baka！ 
     		},
     		baka_win:{
-    			trigger:{global:'dieAfter'},
-    			filter:function(event,player){
-    				return player == event.source;	
-    			},
+    			trigger:{source:'dieAfter'},
     			forced:true,
     			skillAnimation:true,
     			/*
@@ -333,7 +330,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
 				*/
     			filter:function(event,player){
-    				return player.getStat('kill') > 1;
+    				var num=0;
+                    for(var j=0;j<player.stat.length;j++){
+                        if(player.stat[j].kill!=undefined) num += player.stat[j].kill;
+                    }
+    				return num > 1;
     			},
     			content:function(){
     				player.$skill('笨蛋胜利',null,null,true);
@@ -350,6 +351,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					threaten:2,
+					effect:{
+						modAttitudeTo:function(from,to,att){
+							return -3;
+						},
+						modAttitudeFrom:function(from,to,att){
+							return -3;
+						},
+					},
 				},
     		},
     		death_win:{

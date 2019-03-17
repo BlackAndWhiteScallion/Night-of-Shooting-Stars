@@ -1865,37 +1865,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					};
 					var step1=function(){
 						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">就这样，红雾异变的黑幕被击退了。<br>没过几天，红雾就从幻想乡<br>彻底的散去了。<br>恭喜你闯关成功！');
-						ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
-						ui.create.control('……魔理沙？',step2);
+						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('呼……累死人了',step3);
 					}
-					var step2=function(){
-						clear();
-						if (game.me.name == 'marisa'){
-							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你不就魔理沙吗？<br>我可不是你哟。</div></div>');
-						} else {
-							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">我是魔理沙，<br>但也不是魔理沙（笑）。</div></div>');
-						}
-						ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
-						ui.create.control('额……',step3);
-					};
 					var step3=function(){
 						clear();
 						if (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 1){
 							step5();
 						} else {
-							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">总之呢，作为通关奖励<br>解锁了在其他模式中使用<br>蕾米莉亚（神枪符卡）<br>和带了五本魔导书的魔导书架。<br>这些可以在左上角[扩展]<br>打开或关闭。</div></div><br><div>将联机昵称改为“路人”可以不通关也解锁这些角色哟。<div style="width:100%;text-align:right;font-size:8px"></div></div>');
-							ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">总之呢，作为通关奖励<br>解锁了在其他模式中使用<br>蕾米莉亚（神枪符卡）<br>和带了五本魔导书的魔导书架。<br>这些可以在左上角[扩展]<br>打开或关闭。</div></div><br><div><div style="width:100%;text-align:right;font-size:8px">将联机昵称改为“路人”可以不通关也解锁这些角色哟。</div></div>');
+							ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 							ui.create.control('不错不错',step4);
 						}
 					};
 					var step4=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">还会继续更新更多关卡的<br>还请你多多期待哟？</div></div>');
-						ui.create.div('.avatar',ui.dialog).setBackground('cong','character');
-						ui.create.control('下次再见！',step5);
+						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">还会继续更新更多关卡的。<br>下次再见？</div></div>');
+						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+						ui.create.control('下次再见！',step6);
 					};
 					var step5=function(){
+						clear();
+						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">下次欺负蕾米的时候轻一点啊<br>人家也是很累的。</div></div>');
+						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+						ui.create.control('哎，好吧',step6);
+					};
+					var step6=function(){
 						clear();
 						clear2();
 						game.resume();
@@ -2650,6 +2645,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			masterspark:'极限火花',
 			spark1:'极限火花',
 			masterspark_info:'符卡技（1）你造成弹幕伤害时，将灵力值消耗至1：令该伤害+X（X为消耗灵力量）。',
+			finalspark:'最终火花',
 			fengmo:'封魔阵',
 			fengmo_info:'符卡技（2）符卡发动时，弃置所有其他角色各一张牌；其他角色不能使用/打出手牌，技能和装备技能无效。',
 			stg_watch:'血月时针',

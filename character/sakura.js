@@ -1524,7 +1524,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 ai:{
                     effect:function(card,player){
                         if(get.tag(card,'recover')){
-                            return [0,0];
+                            return 'zeroplayertarget';
                         }
                     }
                 },

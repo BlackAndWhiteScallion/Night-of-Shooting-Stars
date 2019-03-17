@@ -4,15 +4,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'d3',
 		connect:false,
 		character:{
-			zigui:['female','5',5,["shijianliushi","xinjianfuka1"]],
+			//zigui:['female','5',5,["shijianliushi","xinjianfuka1"]],
+			zigui:['female','5',5,["shijianliushi"]],
 			zither:['female','2',3,["zhisibuyu","chenshihuanxiang"]],
 			actress:['female','3',3,["ye’sbian","schrÖdinger"]],
+			yukizakura:['female','3',3,["ys_fenxue","ys_luoying"]],
 			wingedtiger:['female','1',4,["wt_zongqing","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
 		},
 		characterIntro:{
 			zigui:'咕咕咕~',
-			zither:'心火怎甘扬汤止沸',
-			actress:'月が绮丽ですね……',
+			zither:'<font color=\"#FF1116\"><b>天下疆域，风雨水土，终将归我所有，<br /><br />你便是成了灰，化了骨，也只能是<br /><br /><font size="4"><b>我的灰，我的骨。</b></font></b></font>',
+			actress:'月が綺麗ですね<sub>……</sub>',
+			yukizakura:'信仰鸽子的幻想乡巫女',
 		},	   
 		perfectPair:{
 		},
@@ -520,6 +523,173 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					},
 				},
+								ys_fenxue:{
+					audio:2,
+					enable:['chooseToUse'],
+					group:['ys_fenxue_2'],
+					usable:1,
+					filterCard:function(card,player){
+						return true;
+					},
+					position:'he',
+					viewAs:{name:'guohe'},
+					viewAsFilter:function(player){
+						if(!player.countCards('he')) return false;
+					},
+					prompt:'将一张牌当【疾风骤雨】使用',
+					check:function(card){return 4-get.value(card)},
+					intro:{
+						content:function(storage,player){
+							if(player.storage.ys_fenxue){
+								return '你可以将一张牌当【轰！】使用；此【轰！】指定目标后，你根据转化牌的种类执行下列效果：<br />攻击或武器～你与目标角色同时进行一次拼点：若你赢至少一次，此【轰！】不能成为【没中】的目标；防御或防具～你弃置目标角色各一张牌；辅助、宝物或道具～此【轰！】造成的弹幕伤害＋１。';
+							}
+						}
+					},
+					ai:{
+						skillTagFilter:function(player){
+							if(!player.countCards('he')) return false;
+						},
+					}
+				},
+				ys_fenxue_2:{
+					forced:true,
+					trigger:{player:'useCard'},
+					filter:function(event, player){
+						if (player.lili > 1 && event.skill =='ys_fenxue' && lib.card[event.card.name].enhance)return true;
+						return false;
+					},
+					content:function(){
+						game.log(get.translation(player)+'发动【纷雪】强化了'+get.translation(trigger.card.name)+'。');
+						if (!player.storage._enhance) player.storage._enhance = 1;
+						else player.storage._enhance++; 
+					},
+				},
+				ys_luoying:{
+					cost:2,
+					audio:2,
+					roundi:true,
+					spell:["ys_luoying_2","ys_luoying_3","ys_luoying_4"],
+					trigger:{
+						player:"phaseBegin",
+					},
+					filter:function(event,player){
+						return player.lili > lib.skill.ys_luoying.cost;
+					},
+					check:function(event,player){
+						return true;
+					},
+					content:function(){
+						'step 0'
+						player.loselili(lib.skill.ys_luoying.cost);
+						player.turnOver();
+					},
+					ai:{
+						threaten:2,
+					},
+				},
+				ys_luoying_2:{
+					/*intro:{
+						content:'cards'
+					},*/
+					trigger:{global:'loseEnd'},
+					direct:true,
+					filter:function(event,player){
+						for(var i=0;i<event.cards.length;i++){
+							if(get.position(event.cards[i])=='d') return true;
+						}
+						return false;
+					},
+					content:function(event,player){
+						for (var i = 0; i < trigger.cards.length; i ++){
+							if (!get.suit(trigger.cards[i])) continue;
+							if (!player.storage.ys_luoying_2) player.storage.ys_luoying_2 = [trigger.cards[i]];
+							else player.storage.ys_luoying_2.push(trigger.cards[i]); 
+						}
+					},   
+				},
+				ys_luoying_3:{
+					trigger:{player:'discardAfter'},
+					/*init:function(player){
+						player.storage.ys_luoying_3=false;
+					},*/
+					filter:function(event,player){
+						/*for (var i = 0; i < player.storage.ys_luoying_2.length; i ++){
+							if (!get.suit(player.storage.ys_luoying_2[i])) continue;
+							for (var j = 0; j < event.cards.length; j ++){
+								if (get.suit(player.storage.ys_luoying_2[i]) != event.cards[j]) {
+									return true;
+								}
+							}
+						}
+						return false;*/
+						return true;
+					},
+					content:function(event,player){
+						"step 0"
+						var list = [];
+						var dif_suit = false;
+						for (var i = 0; i < player.storage.ys_luoying_2.length; i ++){
+							if (!get.suit(player.storage.ys_luoying_2[i])) continue;
+							for (var j = 0; j < trigger.cards.length; j ++){
+								if (get.suit(player.storage.ys_luoying_2[i]) != get.suit(trigger.cards[j])) {
+									dif_suit = true;
+									if (!player.storage.ys_luoying_3) player.storage.ys_luoying_3 = [player.storage.ys_luoying_2[i]];
+									else player.storage.ys_luoying_3.push(player.storage.ys_luoying_2[i]); 
+									break;
+								}
+							}
+						}
+						if (dif_suit){
+							list.push('获得本回合进入弃牌堆的一张与弃置的牌花色不同的牌');//'+get.translation(trigger.card.name)+'
+						}
+						list.push('对一名角色造成1点灵击伤害');
+						player.chooseControl(list,function(event,player){
+							if (player.countCards('he') == 0 && list.contains('对一名角色造成1点灵击伤害')) return '对一名角色造成1点灵击伤害';
+						});
+						"step 1"
+						if(result.control=='对一名角色造成1点灵击伤害'){
+							event.goto(4);
+						}
+						"step 2"
+						player.chooseCardButton(player.storage.ys_luoying_3,'捡回一张牌',1,true).ai=function(button){
+							var val=get.value(button.link);
+							if(val<0) return -10;
+							return val;
+						}
+						"step 3"
+						if (result.links){
+							player.gain(result.links)._triggered=null;
+							for(var i=0;i<result.links.length;i++){
+								ui.discardPile.remove(result.links[i]);
+								player.storage.ys_luoying_2.remove(result.links[i]);
+							}
+						}
+						event.goto(6);
+						"step 4"
+						player.chooseTarget('选择一名角色',true).set('ai',function(target){
+							return -get.attitude(_status.event.player,target);
+						}).set('enemy');
+						"step 5"
+						if(result.targets){
+							result.targets[0].damage(1,'thunder');
+						}
+						"step 6"
+						player.storage.ys_luoying_3 = [];
+						player.syncStorage('ys_luoying_3');
+					},
+				},
+				ys_luoying_4:{
+					trigger:{player:'phaseAfter'},
+					direct:true,
+					filter:function(event,player){
+						return true;
+					},
+					content:function(){
+						"step 0"
+						player.storage.ys_luoying_2 = [];
+						player.syncStorage('ys_luoying_2');
+					},
+				},
 			},
 			translate:{
 				zigui:'子规',
@@ -528,6 +698,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				zither_die:'此生无怨无悔……',
 				actress:'伶',
 				wingedtiger:'飞虎',
+				yukizakura:'雪樱',
+				yukizakura_die:'樱花，继续飘落……',
 				wingedtiger_die:'在此，施撒所有的诅咒将会永世伴随着妳们，妾身就是有着如此之大的怨念啊！',
 				
 				shijianliushi:"时逝",
@@ -556,6 +728,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				shizhibuyu_audio2:'你，是敌人还是朋友？',
 				chenshihuanxiang_audio1:'这是我自己选择的道路！',
 				chenshihuanxiang_audio2:'妳们谁都别想置身事外',
+				ys_fenxue:"纷雪",
+				ys_fenxue_info:"一回合一次，出牌阶段，你可以将一张手牌当【疾风骤雨】使用，若你的灵力大于1点，强化之",
+				ys_luoying:"落樱",
+				ys_luoying_info:"符卡技（2）【永续】当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
+				ys_luoying_3:"落樱",
+				ys_fenxue_audio1:"雪花像绽放的礼花 天地间肆意的飘洒 纵情在一霎那~<sup>♪</sup>",
+				ys_fenxue_audio2:"又到了《ホワイトアルバム》的季节呢",
+				ys_luoying_audio1:"呐，樱花每秒下落的速度，你知道吗？",
+				ys_luoying_audio2:"落红不是无情物",
 				"ye’sbian":"夜之彼岸",
 				"ye’sbian_info":"当你造成或受到弹幕伤害后，你可以消耗1点灵力：展示受伤角色或伤害来源的所有手牌，获得其所有黑色牌。",
 				"schrÖdinger":"活猫心脏",

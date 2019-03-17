@@ -22829,16 +22829,10 @@ throwDice:function(num){
                 content:function(){
                     // 回合开始时如果有不是极意的符卡就翻回去。
                     if (player.isTurnedOver()){
-                        var info = ""
-                        for(var i=0;i<player.skills.length;i++){
-                            if (lib.skill[player.skills[i]].spell){
-                                var info = lib.skill[player.skills[i]];
-                                if (player.hasSkill(info.spell[0])){
-                                    if (!info.infinite){
-                                        player.turnOver();
-                                    }
-                        //          break;
-                                }
+                        if (player.storage.spell){
+                            var info = lib.skill[player.storage.spell];
+                            if (info.spell){
+                                if (!info.infinite) player.turnOver();
                             }
                         }
                     }
@@ -22860,16 +22854,12 @@ throwDice:function(num){
                     // 结束阶段，如果有角色是背面朝上的，就翻过去。
                     var players = game.filterPlayer();
                     for (var j = 0; j < players.length; j ++) {
-                        if (players[j].isTurnedOver()){
-                            for(var i=0;i<players[j].skills.length;i++){
-                                if (lib.skill[players[j].skills[i]].spell){
-                                    var info = lib.skill[players[j].skills[i]];
-                                    if (players[j].hasSkill(info.spell[0])){
-                                        if (!info.roundi && !info.infinite){
-                                            players[j].turnOver();
-                                        }
-                            //          break;
-                                    }
+                        if (players[j].isTurnedOver() && player.storage.spell){
+                            var skillname = player.storage.spell;
+                            var info = lib.skill[skillname];
+                            if (info.spell){
+                                if (!info.roundi && !info.infinite){
+                                    players[j].turnOver();
                                 }
                             }
                         }
@@ -22891,12 +22881,10 @@ throwDice:function(num){
                     return player.isTurnedOver() && player.lili < 1;
                 },
                 content:function(){
-                    for(var i in player.skills){
-                        if (i.spell){
-                            game.log(player+'的灵力值变为0,'+get.translation(i)+'符卡结束');
-                        }
+                    if (player.storage.spell){
+                        game.log(get.translation(player)+'的灵力值变为0，符卡结束。');
+                        player.turnOver();
                     }
-                    player.turnOver();
                 },
             },
             // 符卡结束翻面回来，取除所有符卡技能。
@@ -22907,21 +22895,30 @@ throwDice:function(num){
                     return true;
                 },
                 content:function(){
-                    for(var i=0;i<player.skills.length;i++){
-                        var info = lib.skill[player.skills[i]];
+                    if (player.isTurnedOver()){
+                        var skillname = trigger.parent.name;
+                        var info = lib.skill[skillname];
                         if (info.spell){
-                            for (var j = 0; j < info.spell.length; j ++){
-                                if (!player.isTurnedOver()){
-                                    player.removeSkill(info.spell[j]);
-                                    player.addSkillTrigger(player.skills[i]);
-                                    if (info.infinite){
-                                        player.die();
-                                    }
-                                } else {
-                                    player.addSkill(info.spell[j]);
-                                    player.removeSkillTrigger(player.skills[i]);
+                            for (var i = 0; i < info.spell.length; i ++){
+                                player.addSkill(info.spell[i]);
+                            }
+                            player.removeSkillTrigger(skillname);
+                        }
+                        player.storage.spell = skillname;
+                    } else {
+                        if (player.storage.spell){
+                            var info = lib.skill[player.storage.spell];
+                            if (info.spell){
+                                game.log(get.translation(player)+'的【'+get.translation(player.storage.spell)+'】符卡结束。');
+                                for (var i = 0; i < info.spell.length; i ++){
+                                    player.removeSkill(info.spell[i]);
+                                }
+                                player.removeSkillTrigger(player.storage.spell);
+                                if (info.infinite){
+                                    player.die();
                                 }
                             }
+                            delete player.storage.spell;
                         }
                     }
                 },
@@ -47742,6 +47739,7 @@ smoothAvatar:function(player,vice){
                 }
                 delete _status.tempnofake;
             }
+            if (from.hasSkill('death_win') || to.hasSkill('death_win')) att = -1;
             return att;
         },
         sgnAttitude:function(){
