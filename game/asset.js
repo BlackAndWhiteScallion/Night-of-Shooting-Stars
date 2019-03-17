@@ -128,6 +128,7 @@ window.noname_asset_list=[
     'image/character/actress.jpg',
     'image/character/wingedtiger.jpg',
     'image/character/zither.jpg',
+    'image/character/yukizakura.jpg',
     'image/character/arisa.jpg',
     'image/character/yudachi.jpg',
     'image/character/megumin.jpg',
