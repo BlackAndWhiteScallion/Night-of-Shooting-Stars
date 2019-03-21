@@ -1840,6 +1840,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return false;
 				},
 			},
+			ai:{
+				effect:{
+					target:function(card,player,target){
+						if(get.tag(card,'damage') && -get.attitude(player, target)) return 0.8;
+					}
+				}
+			},
 		},
 		kusanagi_skill:{
 			audio:2,
@@ -2039,6 +2046,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		bingyu1:{
+			group:'bingyu3',
 			trigger:{source:'damageBefore'},
     		forced:true,
     		priority:15,
@@ -2048,11 +2056,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		content:function(){
     			trigger.untrigger();
     			trigger.finish();
-    		},
-    		mod:{
-    			maxHandcard:function(player,num){
-    				return num+200;
-    			}
     		},
     		ai:{
     			nofire:true,
@@ -2085,6 +2088,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				player.removeSkill('bingyu2');
 			},
+		},
+		bingyu3:{
+			trigger:{player:'phaseDiscardBefore'},
+			direct:true,
+			content:function(){
+				trigger.cancel();
+			}
 		},
 		_wuxie:{
 			trigger:{player:['useCardToBefore','phaseJudge']},
@@ -2833,7 +2843,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		_bingyu:'冰域之宴',
 		bingyu1:'冰域之宴',
 		bingyu1_bg:'冰',
-		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，手牌上限视为无限，直到你的回合开始，或你坠机时。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
+		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，跳过弃牌阶段，直到你的回合开始，或你坠机时。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
 		jingxia:'惊吓派对',
 		_jingxia:'惊吓派对',
 		jingxia_bg:'潜',

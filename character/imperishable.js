@@ -944,6 +944,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 2'
                       if(result.bool&&result.links){
                         player.$throw(event.card,500);
+                        player.lose(event.card);
                         game.log(get.translation(player)+'将'+get.translation(event.card)+'当作'+get.translation(result.links[0][2])+'打出');
                         trigger.cancel();
                         if (trigger.player.storage.huanshi){
