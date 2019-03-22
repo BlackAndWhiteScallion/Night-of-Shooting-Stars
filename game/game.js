@@ -25,7 +25,7 @@
         //updateURL:'https://raw.githubusercontent.com/libccy/noname',
         extensionURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/master/',
         //mirrorURL:'',
-        mirrorURL:'https://gitee.com/blackwhitess/NOSS/raw',
+        mirrorURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
         hallURL:'318sgs.6655.la',
         //hallURL:'noname.pub',
         assetURL:'',
