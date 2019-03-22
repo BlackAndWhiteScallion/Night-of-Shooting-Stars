@@ -25,7 +25,7 @@
         //updateURL:'https://raw.githubusercontent.com/libccy/noname',
         extensionURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/master/',
         //mirrorURL:'',
-        mirrorURL:'https://coding.net/u/BWS/p/Night-of-Shooting-Stars/git/raw',
+        mirrorURL:'https://gitee.com/blackwhitess/NOSS/raw',
         hallURL:'318sgs.6655.la',
         //hallURL:'noname.pub',
         assetURL:'',
@@ -36854,7 +36854,7 @@ smoothAvatar:function(player,vice){
                                 return 'GitHub';
                             }
                             if(str==lib.mirrorURL){
-                                return 'Coding';
+                                return 'Gitee';
                             }
                             var index;
                             index=str.indexOf('://');
@@ -36999,7 +36999,7 @@ smoothAvatar:function(player,vice){
                                 // 似乎是在这里进行更新的
                                 if (!lib.config.updateURL || lib.config.updateURL.includes("github")){
                                     updateURL = lib.updateURL+'/master/';
-                                } else if (lib.config.updateURL.includes('coding')){
+                                } else if (lib.config.updateURL.includes('gitee')){
                                     updateURL = lib.mirrorURL+'/master/';
                                 } else {
                                     updateURL = lib.config.updateURL;
