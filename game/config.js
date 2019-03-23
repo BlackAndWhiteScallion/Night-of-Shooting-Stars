@@ -71,7 +71,7 @@ window.config={
 
 	theme:'simple',
 	layout:'mobile',
-	card_style:'ol',
+	card_style:'simple',
 	cardback_style:'ol',
 	hp_style:'official',
 	lili_style:'official',

@@ -28,6 +28,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		player.chooseBool('是否将本回合的摸牌改为从牌堆底摸？');
             		'step 1'
             		if (result.bool){
+                        game.log(get.translation(player)+'本回合摸牌改为从牌堆底摸');
             			player.addTempSkill('xingdu_1');
             		}
             		player.draw();
@@ -46,7 +47,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             			}
             			cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
             		}
-            		player.gain(cards, 'draw2');
+            		player.gain(cards);
+                    player.$draw(cards.length);
             	},
             },
             sihuan:{
@@ -260,7 +262,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	forced:true,
             	content:function(){
             		'step 0'
-            		player.chooseTarget('选择跨入幻想之门的角色',[2,2], true,function(card,player,target){
+            		player.chooseTarget('选择跨入幻想之门的两名角色',[2,2], true,function(card,player,target){
 						return player.canUse({name:'huanxiang'},target);
 					}).set('ai',function(target){
                         if (player.name == 'renko' && target.name == 'meribel') return 99999;

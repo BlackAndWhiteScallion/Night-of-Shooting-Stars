@@ -565,7 +565,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				ys_luoying:{
-					cost:2,
+					cost:1,
 					audio:2,
 					roundi:true,
 					spell:["ys_luoying_2","ys_luoying_3","ys_luoying_4"],
@@ -731,7 +731,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				ys_fenxue:"纷雪",
 				ys_fenxue_info:"一回合一次，出牌阶段，你可以将一张手牌当【疾风骤雨】使用，若你的灵力大于1点，强化之",
 				ys_luoying:"落樱",
-				ys_luoying_info:"符卡技（2）【永续】当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
+				ys_luoying_info:"符卡技（1）【永续】当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
 				ys_luoying_3:"落樱",
 				ys_fenxue_audio1:"雪花像绽放的礼花 天地间肆意的飘洒 纵情在一霎那~<sup>♪</sup>",
 				ys_fenxue_audio2:"又到了《ホワイトアルバム》的季节呢",

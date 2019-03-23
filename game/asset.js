@@ -268,6 +268,8 @@ window.noname_asset_list=[
     'theme/style/player/silver_d1.png',
     'theme/style/player/silver_d2.png',
     'theme/effect/damage.gif',
+    'theme/card.png',
+    'theme/zhenfa.png',
     'theme/spell.gif',
 ];
 window.noname_skin_list={
@@ -300,7 +302,7 @@ window.noname_skin_list={
     kaguya:2,
     eirin:2,
     mokou:2,
-    hatate:2,
+    hetate:2,
     aya:2,
     eiki:2,
     medicine:2,

@@ -2673,6 +2673,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				game.log('幻想之门：游戏开始时，令所有角色摸一张牌');
+				player.showCards(player.getCards('h',{name:'huanxiang'}));
 				for (var i = 0; i < game.filterPlayer().length; i ++){
 					game.filterPlayer()[i].draw();
 				}

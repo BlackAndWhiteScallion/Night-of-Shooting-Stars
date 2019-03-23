@@ -1139,7 +1139,7 @@
                     },
                     card_style:{
                         name:'卡牌样式',
-                        init:'default',
+                        init:'simple',
                         intro:'设置正面朝上的卡牌的样式',
                         item:{
                             wood:'木纹',
@@ -21085,10 +21085,13 @@ throwDice:function(num){
                     // 贴个灵力加成在底下
                     // 这里可能要被换掉吧……
                     if (this.bonus && this.bonus != 0) {
-                        if (this.bonus > 0)
+                        if (this.bonus > 0){
                             this.node.range.innerHTML = '灵力：+' + this.bonus;
-                        else
+                            //this.node.range.style.color = 'rgb(255,0,0)';
+                        }else{
                             this.node.range.innerHTML = '灵力：' + this.bonus;
+                            //this.node.range.style.color = 'rgb(0,0,255)';
+                        }
                     }
                     switch(get.subtype(this)){
                         case 'equip1':
@@ -21151,6 +21154,23 @@ throwDice:function(num){
 							this.node.range.innerHTML+=tagstr;
 						}
 					}
+                    // 在这里追加因禁忌牌而更改的东西应该就可以了吧？
+                    // 为什么这个会出现两次呢？难道每次加载的时候都要跑两次？不过对于我要做的事情没有影响就是了……
+                    if (info.type == 'jinji'){
+                        this.node.name.style.color='rgb(255, 255, 255)';
+                        this.node.name.style.border='1px solid rgb(255,255,255)';
+                        this.node.info.style.color='rgb(255,255,255)';
+                        this.setBackgroundImage('theme/card.png');
+                    } else if (info.type == 'zhenfa'){
+                        this.node.name.style.color='rgb(255, 255, 255)';
+                        this.node.name.style.fontSize='16px';
+                        this.node.name.style.border='0px solid rgb(255,255,255)';
+                        this.node.info.style.color='rgb(255,255,255)';
+                        this.setBackgroundImage('theme/zhenfa.png');
+                    } else if (info.type == 'delay'){
+                        if (this.node.info.innerHTML != '技能<span> </span>') this.node.info.innerHTML = '';
+                        this.node.name.style.fontSize = '15px';
+                    }
                     return this;
                 },
                 updateTransform:function(bool,delay){
@@ -39774,7 +39794,7 @@ smoothAvatar:function(player,vice){
                     if(lib.forcehide.contains('wuxie')) ui.wuxie.classList.add('forcehide');
                     if(lib.forcehide.contains('cardPileButton')) ui.cardPileButton.classList.add('forcehide');
                 }
-                ui.volumn=ui.create.system('♫');
+                ui.volumn=ui.create.system('♫ 音乐');
                 lib.setPopped(ui.volumn,ui.click.volumn,200);
                 // if(lib.config.show_pause) ui.auto.style.marginLeft='10px';
                 if(!lib.config.show_volumn){
