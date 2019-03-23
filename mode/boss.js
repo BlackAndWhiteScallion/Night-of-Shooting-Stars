@@ -916,7 +916,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					player.gainlili();
     				}
     				else{
-    					player.gain(result.card);
+    					player.gain(result.card, 'draw2');
     				}
     			}
     		},
@@ -966,7 +966,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				var players=get.players(player);
 					players.remove(player);
 					player.loselili();
-    				player.useCard({name:'sha'},players);
+    				player.useCard({name:'sha'},players,false);
     			},
     			check:function(event,player){
     				return player.lili != 1; 

@@ -22933,11 +22933,12 @@ throwDice:function(num){
                                 for (var i = 0; i < info.spell.length; i ++){
                                     player.removeSkill(info.spell[i]);
                                 }
-                                player.removeSkillTrigger(player.storage.spell);
+                                player.addSkillTrigger(player.storage.spell);
                                 if (info.infinite){
                                     player.die();
                                 }
                             }
+
                             delete player.storage.spell;
                         }
                     }
