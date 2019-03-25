@@ -310,4 +310,5 @@ window.noname_skin_list={
     komachi:2,
     suika:2,
     kanade:2,
+    boss_reimu:1,
 };

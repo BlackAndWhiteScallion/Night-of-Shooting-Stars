@@ -47,7 +47,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     var players = game.filterPlayer();
                     for (var i = 0; i < players.length; i ++){
                         if (players[i] == player) players.remove(players[i]);
-                        else if (!(!players[i].storage.shuang && players[i].storage._mubiao)) players.remove(players[i]);
+                        if (!(!players[i].storage.shuang && players[i].storage._mubiao)) players.remove(players[i]);
                     }
                     player.chooseTarget(players.length,('霜降：是否对所有亮的角色各造成1点灵击伤害'),function(card,player,target){
                             return players.contains(target);
@@ -66,10 +66,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             shuangjiang2:{
                 trigger:{global:['useCard','respond']},
-                forced:true,
-                popup:false,
+                direct:true,
                 filter:function(event,player){
-                    return _status.currentPhase == player;
+                    return _status.currentPhase.hasSkill('shuangjiang');
                 },
                 content:function(){
                     if (trigger.player){

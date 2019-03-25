@@ -311,7 +311,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			selectTarget:1,
 			range:{attack:1},
 			filterTarget:function(card,player,target){
-				if(player==target) return false;
 				return (target.num('hej')>0);
 			},
 			content:function(){
@@ -2715,10 +2714,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		reidaisai:'例大祭',
 		reidaisai_info:'出牌阶段，对所有角色使用：目标各摸一张牌，然后各交给一名角色一张牌。',
 		danmakucraze:'弹幕狂欢',
-		danmakucraze_info:'出牌阶段，对你使用：目标使用的下两张【轰！】不计次数，直到结束阶段。</br><u>强化（1）：摸一张牌。<u>',
+		danmakucraze_info:'出牌阶段，对你使用：目标使用的下两张【轰！】不计次数，直到结束阶段。</br><u>强化（-1）：摸一张牌。</u>',
 		wuzhong:'灵光一闪',
 		wuzhong_bg:'生',
-		wuzhong_info:'出牌阶段，对你使用：目标摸两张牌。</br><u>强化(1)：再摸一张技能牌。<u>',
+		wuzhong_info:'出牌阶段，对你使用：目标摸两张牌。</br><u>强化(-1)：再摸一张技能牌。</u>',
 		juedou:'决斗',
 		juedou_info:'出牌阶段，对一名其他角色使用。由其开始，其与你轮流打出一张【轰！】，直到其中一方未打出【轰！】为止。未打出【轰！】的一方受到另一方对其造成的1点弹幕伤害。',
 		juedou_bg:'斗',
@@ -2726,12 +2725,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		shunshou_info:'出牌阶段，对攻击范围内的一名角色使用：获得其区域内的一张牌，然后若你本回合没有对其使用过牌，你消耗1点灵力。',
 		guohe:'疾风骤雨',
 		guohe_bg:'拆',
-		guohe_info:'出牌阶段，对攻击范围内的一名其他角色使用；弃置其区域内的一张牌。</br><u>强化(1)：再弃置一张装备或技能牌。<u>',
+		guohe_info:'出牌阶段，对攻击范围内的一名角色使用；弃置其区域内的一张牌。</br><u>强化(-1)：再弃置其一张装备或技能牌。</u>',
 		wuxie:'请你住口！',
 		wuxie_bg:'滚',
 		wuxie_info:'一名角色或一张牌成为法术牌的目标后，对此牌使用。抵消此牌对一名角色产生的效果',
 		caifang:'突击采访',
-		caifang_info:'出牌阶段，对一名其他角色使用；其选择一项：明置身份牌，或令你观看其手牌并摸一张牌。</br><u>强化（1）：改为选择两项。<u>',
+		caifang_info:'出牌阶段，对一名其他角色使用；其选择一项：明置身份牌，或令你观看其手牌并摸一张牌。</br><u>强化（-1）：改为选择两项。</u>',
 		/*
 		penglaiyao:'魔力药水',
 		penglaiyao_info:'结束阶段，你失去2点灵力。',

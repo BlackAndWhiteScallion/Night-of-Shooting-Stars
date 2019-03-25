@@ -87,7 +87,30 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.arena.classList.remove('only_dialog');
 				};
 				var step1=function(){
-					ui.create.dialog('欢迎来到东方流星夜！<br>这是第一次来到幻想乡吗？');
+					var dialog = ui.create.dialog('欢迎来到东方流星夜！<br>请问您的名字是什么？<br><br><br><div><div style="text-align:center;font-size:14px">这个名字以后可以修改。</div>');
+					var text2=document.createElement('input');
+                        text2.style.width='200px';
+                        text2.style.height='20px';
+                        text2.style.padding='0';
+                        text2.style.position='relative';
+                        text2.style.top='80px';
+                        //text2.style.left='30px';
+                        text2.style.resize='none';
+                        text2.style.border='none';
+                        text2.style.borderRadius='2px';
+                        text2.style.boxShadow='rgba(0, 0, 0, 0.2) 0 0 0 1px';
+                        text2.value=lib.config.connect_nickname; 
+                        dialog.appendChild(text2);
+					ui.auto.hide();
+					ui.create.control('写好了',function(){
+						game.saveConfig('connect_nickname',text2.value);
+						game.saveConfig('connect_nickname',text2.value,'connect');
+						step15();
+					});
+				}
+				var step15=function(){
+					clear();
+					ui.create.dialog('欢迎您，'+lib.config.connect_nickname+'! <br>这是第一次来到幻想乡吗？');
 					//game.saveConfig('new_tutorial',true);
 					ui.auto.hide();
 					ui.create.control('怎么可能',function(){

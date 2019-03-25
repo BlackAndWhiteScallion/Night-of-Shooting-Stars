@@ -879,9 +879,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 direct:true,
                 filter:function(event,player){
                     if (_status.currentPhase!=player) return false;
-                    if (player.equiping == true){
-                        if (player.countCards('e') < 3) return false;
-                    }
                     for(var i=0;i<event.cards.length;i++){
                         if(get.position(event.cards[i])=='d'){
                             return true;

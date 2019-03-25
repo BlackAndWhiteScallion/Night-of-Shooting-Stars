@@ -12092,10 +12092,12 @@
                         event.finish();
                         return;
                     }
-                    var next=player.lose(cards);
-                    for(var i=0;i<cards.length;i++){
-                        if(!next.cards.contains(cards[i])){
-                            cards[i].discard();
+                    if (get.type(card)!='equip'){
+                        var next=player.lose(cards);
+                        for(var i=0;i<cards.length;i++){
+                            if(!next.cards.contains(cards[i])){
+                                cards[i].discard();
+                            }
                         }
                     }
                     player.using=cards;
@@ -13757,8 +13759,10 @@
                 },
                 equip:function(){
                     "step 0"
-                    var owner=get.owner(card)
-                    if(owner) owner.lose(card,ui.special).set('type','equip');
+                    var owner=player||get.owner(card);
+                    if(owner){
+                        owner.lose(card,ui.special).set('type','gain');
+                    }
                     "step 1"
                     if(event.cancelled){
                         event.finish();
@@ -13795,12 +13799,13 @@
                         player.chooseToDiscard('装备区达到上限，请弃置'+num+'张装备牌', num, {type:'equip'},'e',true);
                     }
                     "step 3"
+                    /* 不知道这是啥，先跳过了吧
                     if(player.isMin()){
                         event.finish();
                         card.discard();
                         delete player.equiping;
                         return;
-                    }
+                    } */
                     if(lib.config.background_audio){
                         game.playAudio('effect',get.subtype(card));
                     }
@@ -17321,6 +17326,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         next.draw=true;
                     }
                     next.setContent(lib.element.content.equip);
+                    //next.setContent('equip');
                     return next;
                 },
                 addJudge:function(card,cards){
@@ -22814,6 +22820,15 @@ throwDice:function(num){
                         if (get.mode()!='identity') return false;
                         return (event.targets[0].identityShown != true);
                     }
+                },
+                prompt:function(trigger,player){
+                    return "是否消耗"+lib.card[trigger.card.name].enhance+'点灵力强化【'+lib.translate[trigger.card.name]+'】？';
+                },
+                prompt2:function(trigger, player){
+                    var str = lib.translate[trigger.card.name + '_info'];
+                    var num = str.indexOf('强化');
+                    str = str.slice(num, str.length);
+                    return str;
                 },
                 ai:{
                     effect:{
@@ -31928,11 +31943,11 @@ smoothAvatar:function(player,vice){
                             }
                         };
                         if(config.name=='联机昵称'){
-                            input.innerHTML=config.init||'无名玩家';
+                            input.innerHTML=config.init||'黑白葱fans';
                             input.onblur=function(){
                                 input.innerHTML=input.innerHTML.replace(/<br>/g,'');
                                 if(!input.innerHTML){
-                                    input.innerHTML='无名玩家';
+                                    input.innerHTML='黑白葱fans';
                                 }
                                 game.saveConfig('connect_nickname',input.innerHTML);
                                 game.saveConfig('connect_nickname',input.innerHTML,'connect');
