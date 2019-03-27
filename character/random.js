@@ -23,6 +23,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			kanade:'啊，是天使，我死了——<br>死后世界的学校中的学生会长，标准的无口萌妹。<br>出自：Angel Beats! <b>画师：sua(スア)</b>',
 			arisa:'守护森林的妖精弓手。（不过森林里的东西比她要恐怖多了）<br>出自：暗影之诗 <b>画师：黒井ススム</b>',
 			nero:'古罗马的皇帝，比起皇帝更像个偶像，奢华浪费和浮夸无人能出其右。<br>出自:Fate/Extra <b>画师：demercles</b>',
+			kurumi:'<br>出自：Date-A-Live! <b>画师：</b>',
 		},	   
 		perfectPair:{
 		},
@@ -857,7 +858,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				direct:true,
 				filter:function(event,player){
-					if(event.card.name!='wuzhong'&&event.skill!='huanrao') return false;
+					if(event.skill!='huanrao') return false;
 					return true;
 				},
 				content:function(){
@@ -880,6 +881,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<trigger.cards.length;i++){
 						player.storage.huanrao.add(trigger.cards[i]);
 					}
+					player.showCards(trigger.cards);
 					player.removeSkill('huanrao_3')
 				}
 			},
@@ -901,6 +903,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:["chooseToUse"],
 				filter:function(){
 					return true;
+				},
+				onremove:function(player){
+					player.storage.huanrao = [];
 				},
 				filterCard:function(card){
 					var player=_status.event.player;
@@ -1006,13 +1011,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				logTarget:'target',
 				content:function(){
+					'step 0'
 					if(event.triggername=='shaBefore'){
 						if(get.subtype(trigger.cards[0])=='attack'||get.subtype(trigger.cards[0])=='equip1'){//get.itemtype(trigger.card)==''){
 							player.chooseToCompare(trigger.target);
-							if(result.bool){
-								trigger.directHit=true;
-							}
-							
 						}
 						if(get.subtype(trigger.cards[0])=='defense'||get.subtype(trigger.cards[0])=='equip2'){
 							if(player.countCards('he'))player.discardPlayerCard('he',trigger.target,true);
@@ -1022,6 +1024,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(get.subtype(trigger.cards[0])=='support'||get.subtype(trigger.cards[0])=='equip3'||get.subtype(trigger.cards[0])=='equip5'){
 							player.addTempSkill('hongxi_3','damageBegin');
 						}
+					}
+					'step 1'
+					if(result.bool){
+						trigger.directHit=true;
 					}
 				}
 			},
@@ -1152,7 +1158,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				filter:function(event,player){
 					if(event.player.hasSkill('sbrs_liansuo_4')){
-						if (event.getParent(2).name == 'discardPlayerCard' || event.getParent().name == 'gain' || event.getParent(2).name == 'gainPlayerCard'){
+						if (event.getParent().name == 'discard' || event.getParent().name == 'gain' || event.getParent(2).name == 'gainPlayerCard'){
 							return true;
 						}
 					}

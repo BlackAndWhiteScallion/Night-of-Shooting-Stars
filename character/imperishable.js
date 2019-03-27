@@ -446,13 +446,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               if (result.bool&&result.links.length){
                                     game.log(get.translation(player)+'将'+get.translation(trigger.player)+'的'+get.translation(result.links[0])+'置入牌堆底');
                                     trigger.player.showCards(result.links[0]);
+                                    trigger.player.lose(result.links[0], ui.special);
+                                    trigger.player.update();
                                     if (get.type(result.links[0]) == 'delay'){
                                       ui.skillPile.appendChild(result.links[0]);
                                     } else {
                                       ui.cardPile.appendChild(result.links[0]);
                                     }
-                                    trigger.player.lose(result.links[0]);
-                                    trigger.player.update();
                               }
                               player.storage.yinyang = false;
                         },

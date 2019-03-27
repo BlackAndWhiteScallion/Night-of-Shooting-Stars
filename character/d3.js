@@ -49,9 +49,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							ui.arena.classList.remove('only_dialog');
 						};
 						var step1=function(){
-							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">欢迎来到东方流星夜！<br>我是新手导师子规！');
-							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							if (lib.config.connect_nickname=='黑白葱'){
+								ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你好啊——哎？？主人大人？？？</div>');
+								ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							}
+							else {
+								ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你是'+lib.config.connect_nickname+'吧？<br>从阿求小姐那里听说了呢。<br>欢迎来到东方流星夜！<br>我是新手导师子规！')
+								ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							}
 							ui.create.control('老师好！',step2);
+						}
+						var step15 = function(){
+							clear();
+							var dialog = '';
+							if (lib.config.connect_nickname == '葱'){
+								dialog = '哎，主人大人，早上好啊！';
+							} else if (lib.config.connect_nickname == '伶'){
+								dialog = '伶伶大人好！';
+							} else {
+								dialog = '你好啊，'+lib.config.connect_nickname+'!';
+							}
+							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+dialog+'</div>');
+							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
+							ui.create.control('老师好',step2);
 						}
 						var step2=function(){
 							clear();
@@ -131,7 +151,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if (!lib.config.new_tutorial){
 							step1();
 						} else {
-							step2();
+							step15();
 						}
 					},
 				},

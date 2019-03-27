@@ -742,25 +742,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var list = ['cancel2'];
-                    if (player.storage.zhenhun && player.storage.zhenhun.length) list.push('获得牌');
-                    if (player.storage.mingzhi && player.storage.mingzhi.length && _status.currentPhase != player) list.push('交出去明置牌');
+                    if (player.storage.zhenhun && player.storage.zhenhun.length) list.push('获得弃置的一张牌');
+                    if (player.storage.mingzhi && player.storage.mingzhi.length && _status.currentPhase != player) list.push('将明置牌交给当前回合角色');
                     event.list = list;
                     'step 1'
                     if (event.list.length == 1) event.finish();
                     player.chooseControl(event.list,function(event,player){
-                        if (event.list.contains('获得牌')) return '获得牌';
-                        if (player.storage.mingzhi.length > 1) return '交出去明置牌';
+                        if (event.list.contains('获得弃置的一张牌')) return '获得弃置的一张牌';
+                        if (player.storage.mingzhi.length > 1) return '将明置牌交给当前回合角色';
                         return 'cancel2';
                     }).set('prompt',get.prompt('zhenhun'));
                     "step 2"
                     event.control = result.control;
-                    if(result.control=='获得牌'){
+                    if(result.control=='获得弃置的一张牌'){
                         player.chooseCardButton(player.storage.zhenhun,'获得本回合因弃置进入弃牌堆的一张牌',1,true).ai=function(button){
                             var val=get.value(button.link);
                             if(val<0) return -10;
                             return val;
                         }
-                    } else if (result.control == '交出去明置牌'){
+                    } else if (result.control == '将明置牌交给当前回合角色'){
                         player.chooseCardTarget({
                             filterCard:function(card,player){
                                 return player.storage.mingzhi.contains(card) || get.position(card) == 'e' || get.position(card) == 'j';
@@ -770,14 +770,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             },
                             forced:true,
                             position:'hej',
-                            prompt:'将一张明置牌交给一名其他角色',
+                            prompt:'将一张明置牌交给当前回合角色',
                         });
                     } else if (result.control == 'cancel2'){
                         event.finish();
                     }
                     "step 3"
                     player.logSkill('zhenhun');
-                    if (result.bool && event.control == '获得牌'){
+                    if (result.bool && event.control == '获得弃置的一张牌'){
                         if (result.links.length){
                             player.$gain(result.links);
                             player.gain(result.links[0],'log');
@@ -861,7 +861,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:'hezou_skill',
                 trigger:{target:'useCardToBegin'},
                 cost:2,
-                spell:['henzou_skill'],
+                spell:['hezou_skill'],
                 filter:function(event,player){
                     if (event.card.name != 'sha') return false;
                     return player.lili > lib.skill.hezou.cost && !player.isTurnedOver();
@@ -1068,11 +1068,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.bool){
                         trigger.target.recast(result.cards[0]);
-                        player.choosePlayerCard(trigger.target,'hej',true);
+                        player.choosePlayerCard(player,'hej',true);
                     }
                     'step 2'
                     if (result.bool){
-                        trigger.target.recast(result.cards[0]);
+                        player.recast(result.cards[0]);
                         player.logSkill(event.name,result.targets);
                         if (!trigger.targets.contains(player)){
                             trigger.targets.remove(trigger.target);
@@ -1250,18 +1250,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                             }
                                         }
                                     }
-                                } else if (trigger.cards[i].original == 'e'){
+                                }
+                                if (trigger.cards[i].original == 'e'){
                                     var info=get.info(trigger.cards[i]);
                                     if (trigger.player == player && player.storage.mingzhi){
                                         if(info.skills){
                                             for(var j=0;j<info.skills.length;j++){
-                                                player.removeSkill(info.skills[j]);
+                                                target.removeSkill(info.skills[j]);
                                             }
                                         }
                                     } else if (trigger.player == target && player.storage.mingzhi){
                                         if(info.skills){
                                             for(var j=0;j<info.skills.length;j++){
-                                                target.removeSkill(info.skills[j]);
+                                                player.removeSkill(info.skills[j]);
                                             }
                                         }
                                     }
@@ -1287,7 +1288,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return get.attitude(player,event.player) > 0;
                 },
                 prompt:function(event){
-                    return '是否让'+get.translation(event.player)+'摸一张牌？';
+                    return '幻奏：是否让'+get.translation(event.player)+'摸一张牌？';
                 },
             },
             huanzou2:{
@@ -1875,8 +1876,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 roundi:true,
                 check:function(event,player){
                     if (player.countCards('h') > player.hp) return false;
-                    if (player.lili > 3) return true;
-                    return false;
+                    return player.hp < player.maxHp;
                 },
                 filter:function(event,player){
                     return player.lili > lib.skill.tianhugongzhu.cost;
@@ -1898,7 +1898,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.chooseTarget([1,1],'令一名角色与你一同回复1点体力',function(card,player,target){
                         return target != player;
                     },true).set('ai',function(target){
-                        return get.attitude(_status.event.player,target);
+                        return get.attitude(_status.event.player,target) && target.hp < target.maxHp;
                     });
                     'step 1'
                     if (result.bool){

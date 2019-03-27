@@ -124,7 +124,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return distance + 10*game.countPlayer(function(current){
 							if(current==from) return false;
 							if(!current.hasSkill('yuezhi2')) return false;
-							if(current.lili > get.distance(current,from,'global')) return true;
+							if(current.lili >= get.distance(current,from,'attack')) return true;
 						});
 					}
 				},

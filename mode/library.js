@@ -302,7 +302,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    player.style.transition='all 0.5s';
 	                    player.onclick = function(){
 	                    	 ui.arena.classList.add('only_dialog');
-	                    	 var dialog = ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">抱歉，我还没有准备好呢……<br>请继续等待吧。<br>那个，要茶吗？');
+	                    	 var d = '<div><div style="width:100%;text-align:right;font-size:18px">抱歉，'+lib.config.connect_nickname+'，<br>我还没有准备好呢……<br>请再等等吧。<br>……那个，要茶吗？</div>';
+	                    	 if (lib.config.connect_nickname == '黑白葱') d = '<div><div style="width:100%;text-align:right;font-size:18px">主人啊……<br>你倒是什么时候才会不摸鱼啊？</div>';
+	                    	 var dialog = ui.create.dialog(d);
 							 ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 	                    	 ui.create.control('没事，不用急',function(){
 	                    	 	dialog.close();
@@ -320,7 +322,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.classList.add('fixed');
 	        			dialog.noopen=true;
 						node.appendChild(dialog);
-						var i = ['欢迎来到东方流星夜！',
+						var i = ['欢迎来到东方流星夜,'+lib.config.connect_nickname+'!',
 	    				'东方流星夜是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏。',
 	    				'而流星夜的程序化，也就是你现在所在的游戏，是基于无名杀1.9.51版的大型魔改。',
 	    				'对游戏的不解，在我这里有规则，模式介绍，卡牌查询。 如果还有不懂的，在[场景-对战练习]下找子规去练习吧，实战可是最快的学习方式哟。',
@@ -377,6 +379,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'3. 在[对称]布局下，玩家视角无法主动弃置技能牌，也不能查看自己的技能牌。',
 	    				'4. [场景-创建场景]后，第一次打开场景会导致游戏崩溃。第二次和之后不会出现问题。',
 	    				'5. 在[场景]的自创场景中，使用【魔导书塔】会装备10个魔导书而不是5个',
+	    				'6. 锁定效果会必定在可选效果前发动：这不是规则，是bug。正在处理中。',
 	    				],
 	    		showcase:function(init){
 	    			
@@ -441,7 +444,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
-						dialog.addText('请在上方点击你想要了解的模式。');
+						dialog.addText('请在上方点击你想要了解的模式，'+lib.config.connect_nickname+'。');
 						dialog.classList.add('fixed');
 	        			dialog.noopen=true;
 	        			this.appendChild(dialog);
@@ -682,12 +685,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        },
 	        record:{
 	        	name:'你的战绩',
-	        	intro:[''],
+	        	intro:[],
 	        	fullshow:true,
 	        	showcase:function(init){
 	        		if (init){
 		        		var node = this;
 		        		this.style.height=(parseInt(this.style.height.substr(0,this.style.height.length-2))-this.offsetTop)+'px';
+	                    ui.create.div('.config.indent','<div><div style="width:100%;text-align:right;font-size:18px"><b><u>'+lib.config.connect_nickname+'的战绩：</b></u></div>',node);
 	                    for(var i=0;i<lib.config.all.mode.length;i++){
                             if(!lib.config.gameRecord[lib.config.all.mode[i]]) continue;
                             if(lib.config.gameRecord[lib.config.all.mode[i]].str){

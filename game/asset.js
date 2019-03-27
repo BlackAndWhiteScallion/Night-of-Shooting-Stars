@@ -71,6 +71,7 @@ window.noname_asset_list=[
     'image/card/zhiyuu.png',
     'image/card/ziheng.png',
     'image/card/zuiye.png',
+    'image/card/luanwu.png',
     'image/card/houraiyuzhi.png',
     'image/card/stg_firebook.png',
     'image/card/stg_waterbook.png',

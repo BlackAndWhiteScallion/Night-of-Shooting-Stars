@@ -2507,8 +2507,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{player:'phaseBegin'},
 			filter:function(event,player){
 				if (!player.storage.mingzhi) return false;
-				for (var i in player.storage.mingzhi){
-					if (i.name == 'bingyu') return true;
+				for (var i = 0; i < player.storage.mingzhi.length; i ++){
+					if (player.storage.mingzhi[i].name == 'bingyu') return true;
 				}
 				return false;
 			},

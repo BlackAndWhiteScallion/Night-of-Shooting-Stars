@@ -5191,7 +5191,7 @@
                 name:'联机',
                 config:{
                     connect_nickname:{
-                        name:'联机昵称',
+                        name:'昵称',
                         input:true,
                         frequent:true,
                     },
@@ -22889,8 +22889,8 @@ throwDice:function(num){
                     // 结束阶段，如果有角色是背面朝上的，就翻过去。
                     var players = game.filterPlayer();
                     for (var j = 0; j < players.length; j ++) {
-                        if (players[j].isTurnedOver() && player.storage.spell){
-                            var skillname = player.storage.spell;
+                        if (players[j].isTurnedOver() && players[j].storage.spell){
+                            var skillname = players[j].storage.spell;
                             var info = lib.skill[skillname];
                             if (info.spell){
                                 if (!info.roundi && !info.infinite){
@@ -27802,7 +27802,6 @@ smoothAvatar:function(player,vice){
     			if(ui.time3){
     				clearInterval(ui.time3.interval);
     			}
-                if (lib.backgroundmusicURL) lib.config.background_music = lib.backgroundmusicURL;
                 if(game.layout=='long2'&&!game.chess){
                     ui.arena.classList.add('choose-character');
                     ui.me.hide();
@@ -31942,7 +31941,7 @@ smoothAvatar:function(player,vice){
                                 input.blur();
                             }
                         };
-                        if(config.name=='联机昵称'){
+                        if(config.name=='昵称'){
                             input.innerHTML=config.init||'黑白葱fans';
                             input.onblur=function(){
                                 input.innerHTML=input.innerHTML.replace(/<br>/g,'');

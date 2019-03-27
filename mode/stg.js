@@ -1022,7 +1022,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.musicchange=['music_default',397];
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
-					if (lib.config.connect_nickname == '葱') game.me.addSkill('finalspark');
+					if (lib.config.connect_nickname == '黑白葱') game.me.addSkill('finalspark');
 					game.me.addSkill('handcard_max');
 				},
 				gameDraw:function(player){
@@ -2008,22 +2008,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				mod:{
 					canBeDiscarded:function(card,player,target,event){
 						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip'&& game.hasPlayer(function(current){
-							return current.hasSkill('emerald1') && current.identity == player.identity;
+							return current.hasSkill('emerald1') && current.isFriendsOf(player);
 						})) return false;
 					},
 					cardDiscardable:function(card,player,target,event){
 						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip'&& game.hasPlayer(function(current){
-							return current.hasSkill('emerald1') && current.identity == player.identity;
+							return current.hasSkill('emerald1') && current.isFriendsOf(player);
 						})) return false;
 					},
 					canBeGained:function(card,player,target,event){
 						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip'&& game.hasPlayer(function(current){
-							return current.hasSkill('emerald1') && current.identity == player.identity;
+							return current.hasSkill('emerald1') && current.isFriendsOf(player);
 						})) return false;
 					},
 					cardGainable:function(card,player,target,event){
 						if(get.is.altered('emerald2')&&get.subtype(card) == 'equip' && game.hasPlayer(function(current){
-							return current.hasSkill('emerald1') && current.identity == player.identity;
+							return current.hasSkill('emerald1') && current.isFriendsOf(player);
 						})) return false;
 					},
 				},
@@ -2530,7 +2530,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				viewAsFilter:function(player){
 					if(!player.countCards('h',{color:'black'})) return false;
 					return game.hasPlayer(function(current){
-						return current.identity == player.identity && current.hasSkill('stg_waterbook_skill');
+						return current.isFriendsOf(player) && current.hasSkill('stg_waterbook_skill');
 					});
 				},
 				prompt:'将一张黑色手牌当【没中】使用/打出',
@@ -2554,7 +2554,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				mod:{
 					maxHandcard:function(player,num){
 						return num+game.countPlayer(function(current){
-							return current.hasSkill('stg_woodbook_skill') && current.identity == player.identity;
+							return current.hasSkill('stg_woodbook_skill') && current.isFriendsOf(player);
 						});
 					}
 				},
@@ -2577,12 +2577,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'phaseDrawBegin'},
 				filter:function(event,player){
 					return game.countPlayer(function(current){
-							return current.hasSkill('stg_goldbook_skill') && current.identity == player.identity;
+							return current.hasSkill('stg_goldbook_skill') && current.isFriendsOf(player);
 						}) > 0;
 				},
 				content:function(){
 					trigger.num+=game.countPlayer(function(current){
-							return current.hasSkill('stg_goldbook_skill') && current.identity == player.identity;
+							return current.hasSkill('stg_goldbook_skill') && current.isFriendsOf(player);
 						});
 				},
 			},
