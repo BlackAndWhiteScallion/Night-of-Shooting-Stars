@@ -2190,7 +2190,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             mengjing2:{
-                // 紫妈不知道行不行……
                 forced:true,
                 trigger:{player:'phaseBegin'},
                 content:function(){
