@@ -358,7 +358,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		mode:'',
 	    		intro:[	'更新方式有三种:',
 	    				'1: 下载更新程序包',
-	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://coding.net/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
+	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://dev.tencent.com/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
 	    				'手机端也可以使用这个更新方式，安卓手机所需要拖到的文件夹在：<b>(默认SD卡)/android/data/com.widget.noname1</b>',
 	    				'覆盖完毕后，需要重启流星夜程序！',
