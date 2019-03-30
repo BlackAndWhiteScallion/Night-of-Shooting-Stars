@@ -404,7 +404,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             player.skip('phaseDiscard');
                             player.loselili();
                             game.trySkillAudio('qiyao',player,true,3);
-                            player.addTempSkill('qiyao4');
+                            if (!player.storage._enhance){
+                                player.storage._enhance = 1;
+                            } else {
+                                player.storage._enhance += 1;
+                            }
                         } else {
                             event.finish();
                         }
@@ -546,6 +550,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     threaten:1,
                 }
             },
+            /*
             qiyao4:{
                 forced:true,
                 popup:false,
@@ -564,6 +569,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
             },
+            */
             riyin:{
                 trigger:{global:'useCardToBefore'},
                 forced:true,
@@ -1260,7 +1266,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             qiyao_audio3:'……（哈欠）',
             phaseUse_qiyao:'跳过出牌阶段，将一张牌当作一种法术牌使用',
             phaseDraw_qiyao:'跳过摸牌阶段，视为使用一种法术牌',
-            phaseDiscard_qiyao:'跳过弃牌阶段并消耗1点灵力，强化你本回合使用的所有法术牌',
+            phaseDiscard_qiyao:'跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张牌',
             riyin:'日阴',
             riyin2:'日阴',
             riyin_info:'一名角色成为牌的目标后，若该角色本回合在此牌前成为过牌的目标，你可以将一张牌当作【请你住口！】使用。',

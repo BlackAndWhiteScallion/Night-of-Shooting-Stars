@@ -2,6 +2,7 @@
 game.import('card',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'skill',
+		connect:true,
 		card:{
 			qicheng:{
 				audio:true,

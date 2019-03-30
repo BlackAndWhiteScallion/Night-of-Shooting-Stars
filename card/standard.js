@@ -2586,6 +2586,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		lingbi2:{
 			global:'lingbi1',
 			trigger:{player:'phaseBegin'},
+			intro:{
+				content:'cards'
+			},
 			forced:true,
 			filter:function(event,player){
 				if (!player.storage._lingbi2) return false;
@@ -2597,7 +2600,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					players[i].removeSkill('lingbi1');
 				}
 				player.removeSkill('lingbi2');
+				player.storage.lingbi2 = [];
 				player.storage._lingbi2 = [];
+				player.unmarkSkill('lingbi2');
 				player.unmarkSkill('_lingbi2');
 			},
 		},
@@ -2620,9 +2625,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			forced:true,
 			init:function(player){
 				player.storage._lingbi2=[];
-			},
-			intro:{
-				content:'cards'
+				player.storage.lingbi2=[];
 			},
 			filter:function(event,player){
     			return (event.card.name=='lingbi');
@@ -2657,10 +2660,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.addSkill('lingbi2');
 					game.log(get.translation(player)+'声明了'+get.translation(result.links[0][2])+'不可以使用。');
 					if (!player.storage._lingbi2) player.storage._lingbi2=[];
+					if (!player.storage.lingbi2) player.storage.lingbi2=[];
 					player.showCards(result.links);
 					player.storage._lingbi2.add(result.links[0][2]);
-					player.markSkill('_lingbi2');
+					player.storage.lingbi2.add(game.createCard(result.links[0][2],'',''));
+					player.markSkill('lingbi2');
 					player.syncStorage('_lingbi2');
+					player.syncStorage('lingbi2');
 				}
 			},
 		},
@@ -2823,7 +2829,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		tianguo_info:'出牌阶段，对所有角色使用：将弃牌堆洗入牌堆，然后目标各摸一张牌。</br> <u>追加效果：你摸到此牌时，可以展示之，所有角色回复1点体力。</u>',
 		lingbi:'令避之间',
 		lingbi_info:'准备阶段，对所有角色使用：你声明一张牌，目标角色不能使用该牌，直到你的回合开始，或你坠机时。</br> <u>追加效果：此牌可以当作【请你住口！】使用。</u>',
-		lingbi2:'令避之间2',
+		lingbi2:'所有角色不能使用',
 		lingbi2_info:'',
 		lingbi1:'令避之间',
 		_lingbi:'令避之间',

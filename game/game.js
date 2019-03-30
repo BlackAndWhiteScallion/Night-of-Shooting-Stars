@@ -9503,8 +9503,9 @@
 					var filter=function(i){
 						if(list[i][1]==list[0][1]&&list[i][1].hasSkill(list[i][0],true)){
 							var info=get.info(list[i][0]);
-							if(info.forced||info.popup===false){
-								return false;
+							//if(info.forced||info.popup===false){
+							if (info.popup == false){
+                            	return false;
 							}
 							return true;
 						}
@@ -21594,6 +21595,8 @@ throwDice:function(num){
                         listAdded[skill]=true;
                         var info=lib.skill[skill];
                         var num=0;
+                        // 这里是优先级设置吧，那去掉这个应该就行了？
+                        /*
                         if(info.priority){
                             num=info.priority*100;
                         }
@@ -21603,6 +21606,7 @@ throwDice:function(num){
                         if(info.forced){
                             num++;
                         }
+                        */
                         list.push([skill,player,num]);
                     };
                     var totalPopulation=game.players.length+game.dead.length+1;

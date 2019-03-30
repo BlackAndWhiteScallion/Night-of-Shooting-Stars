@@ -49,15 +49,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (players[i] == player) players.remove(players[i]);
                         if (!(!players[i].storage.shuang && players[i].storage._mubiao)) players.remove(players[i]);
                     }
+                    var num = 0;
+                    for (var i = 0; i < players.length; i++){
+                        if (get.attitude(player, players[i]) > 0) num --;
+                        if (get.attitude(player,players[i]) < 0) num ++;
+                    }
                     player.chooseTarget(players.length,('霜降：是否对所有亮的角色各造成1点灵击伤害'),function(card,player,target){
                             return players.contains(target);
-                          }).set('ai',function(target){
-                              return -get.attitude(_status.event.player,target);
+                          }).set('num',num).set('ai',function(target){
+                              return _status.event.num > 0;
                           }); 
                     'step 1'
                     if(result.bool){
                         player.logSkill('shuangjiang',result.targets);
-                        result.targets[0].damage('thunder');
+                        for (var i = 0; i < result.targets.length; i ++){
+                            result.targets[i].damage('thunder');
+                        }
                     }
                 },
                 check:function(){
