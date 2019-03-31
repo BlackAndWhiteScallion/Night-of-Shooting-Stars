@@ -277,7 +277,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 cost:2,
                 spell:['shuanggui2','shuanggui3'],
                 roundi:true,
-                trigger:{player:'phaseBeginStart'},
+                trigger:{player:'phaseBegin'},
                 check:function(event,player){
                     if (player.countCards('h') > player.hp) return false;
                     if (player.lili > 3) return true;
@@ -287,19 +287,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.lili > lib.skill.shuanggui.cost;
                 },
                 content:function(){
+                    'step 0'
                     player.loselili(lib.skill.shuanggui.cost);
                     player.turnOver();
-                },
-            },
-            shuanggui2:{
-                audio:2,
-                trigger:{player:'phaseBegin'},
-                forced:true,
-                filter:function(event,player){
-                    return true;
-                },
-                content:function(){
-                    'step 0'
                     player.chooseTarget([1,1],'令一名角色与你一同摸一张牌',function(card,player,target){
                         return target != player;
                     },true).set('ai',function(target){
@@ -313,6 +303,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.draw();
                     }
                 },
+            },
+            shuanggui2:{
+
             },
             shuanggui3:{
                 audio:2,
@@ -1879,7 +1872,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:3,
                 spell:['tianhugongzhu_1'],
-                trigger:{player:'phaseBeginStart'},
+                trigger:{player:'phaseBegin'},
                 roundi:true,
                 check:function(event,player){
                     if (player.countCards('h') > player.hp) return false;
@@ -1889,19 +1882,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.lili > lib.skill.tianhugongzhu.cost;
                 },
                 content:function(){
+                    'step 0'
                     player.loselili(lib.skill.tianhugongzhu.cost);
                     player.turnOver();
-                },
-            },
-            tianhugongzhu_1:{
-                audio:2,
-                trigger:{player:'phaseBegin'},
-                forced:true,
-                filter:function(event,player){
-                    return true;
-                },
-                content:function(){
-                    'step 0'
                     player.chooseTarget([1,1],'令一名角色与你一同回复1点体力',function(card,player,target){
                         return target != player;
                     },true).set('ai',function(target){
@@ -1915,6 +1898,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         result.targets[0].addTempSkill('tianhugongzhu_2');
                     }
                 },
+            },
+            tianhugongzhu_1:{
             },
             tianhugongzhu_2:{
                 audio:2,

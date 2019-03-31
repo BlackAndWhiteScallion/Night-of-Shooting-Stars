@@ -54,7 +54,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 							}
 							else {
-								ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你是'+lib.config.connect_nickname+'吧？<br>从阿求小姐那里听说了呢。<br>欢迎来到东方流星夜！<br>我是新手导师子规！')
+								ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你是'+lib.config.connect_nickname+'吧？<br>欢迎来到东方流星夜！<br>我是新手导师子规！')
 								ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 							}
 							ui.create.control('老师好！',step2);

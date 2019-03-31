@@ -105,6 +105,7 @@ window.config={
 	threed_card:false,
 	vertical_scroll:false,
 	handcard_scroll:0,
+	cardshape:'oblong',
 	animation:true,
 	skill_animation_type:'default',
 	paused:false,

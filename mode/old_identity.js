@@ -407,27 +407,27 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(player.fanfixed) return;
 					if(game.zhu&&game.zhu.isZhu){
 						return {
-							fan:'反',
-							zhong:'忠',
-							nei:'内',
+							fan:'自',
+							zhong:'异',
+							nei:'路',
 							cai:'猜',
 						}
 					}
 					else{
 						return {
-							fan:'反',
-							zhong:'忠',
-							nei:'内',
-							zhu:'主',
+							fan:'自',
+							zhong:'异',
+							nei:'路',
+							zhu:'黑',
 							cai:'猜',
 						}
 					}
 				}
 				else{
 					return {
-						fan:'反',
-						zhong:'忠',
-						nei:'内',
+						fan:'自',
+						zhong:'异',
+						nei:'路',
 						cai:'猜',
 					}
 				}
@@ -435,10 +435,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			getIdentityList2:function(list){
 				for(var i in list){
 					switch(i){
-						case 'fan':list[i]='反贼';break;
-						case 'zhong':list[i]='忠臣';break;
-						case 'nei':list[i]='内奸';break;
-						case 'zhu':list[i]='主公';break;
+						case 'fan':list[i]='自机';break;
+						case 'zhong':list[i]='异变';break;
+						case 'nei':list[i]='路人';break;
+						case 'zhu':list[i]='黑幕';break;
 						case 'cai':list[i]='未知';break;
 					}
 				}
@@ -628,11 +628,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					else if(player.identity=='zhong'&&Math.random()<0.5){
 						var choice=0;
+						/*
 						for(var i=0;i<list.length;i++){
 							if(lib.character[list[i]][1]==game.zhu.group){
 								choice=i;break;
 							}
-						}
+						}*/
 						if(get.config('double_character')){
 							player.init(list[choice],list[choice==0?choice+1:choice-1]);
 						}

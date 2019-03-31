@@ -1015,8 +1015,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{global:'useCardToBegin'},
                 direct:true,
                 filter:function(event, player){
+                    if (event.targets.length > 1) return false;
                     return !event.skill || event.skill != 'mingyun2';
-                    console.log(event);
                 },
                 content:function(){
                     "step 0"
@@ -1046,7 +1046,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             feise_start:{
-                trigger:{player:'phaseBeginStart'},
+                trigger:{player:'phaseBegin'},
                 direct:true,
                 content:function(){
                     if (player.lili > lib.skill.feise.cost) player.useSkill('feise');

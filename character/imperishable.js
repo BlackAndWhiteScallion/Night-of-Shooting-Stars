@@ -326,9 +326,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   richuguo:{
                          audio:2,
                          cost:3,
-                         spell:['richuguo1','richuguo2'],
+                         spell:['richuguo2'],
                          roundi:true,
-                         trigger:{player:'phaseBeginStart'},
+                         trigger:{player:'phaseBegin'},
                          init:function(player){
                               player.storage.richuguo=true;
                           },
@@ -374,31 +374,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          if (event.bool){
                             player.turnOver();
                             player.storage.richuguo=false;
+                              player.chooseTarget([1,1],'选择一名角色，重置其体力值，灵力值，手牌数',true,function(card,player,target){
+                                return true;
+                              }).ai=function(target){
+                                    return get.attitude(player, target);
+                              }
+                          }
+                          'step 4'
+                          if (result.targets){
+                                result.targets[0].hp = result.targets[0].maxHp;
+                                result.targets[0].lili = parseInt(lib.character[result.targets[0].name][1])
+                                result.targets[0].draw(4-result.targets[0].getCards('h').length);
                           }
                        },
                        check:function(event, player){
                          return player.hp < 2;
                        },
                      },
-                  richuguo1:{
-                        trigger:{player:['phaseBegin']},
-                        frequent:true,
-                        content:function(){
-                              'step 0'
-                              player.storage.richuguo=false;
-                              player.chooseTarget([1,1],'选择一名角色，重置其体力值，灵力值，手牌数',true,function(card,player,target){
-                                return true;
-                              }).ai=function(target){
-                                    return get.attitude(player, target);
-                              }
-                              'step 1'
-                              if (result.targets){
-                                    result.targets[0].hp = result.targets[0].maxHp;
-                                    result.targets[0].lili = parseInt(lib.character[result.targets[0].name][1])
-                                    result.targets[0].draw(4-result.targets[0].getCards('h').length);
-                              }
-                        }
-                  },
                   richuguo2:{
                         trigger:{player:'dying'},
                         forced:true,
@@ -1329,12 +1321,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if(result.control){
                         if (result.control == '体力'){
                           game.log(get.translation(target)+'的体力调整为'+player.hp);
-                          target.hp = player.hp;
-                          target.update();
+                          target.changeHp(player.hp - target.hp);
                         } else if (result.control == '灵力'){
                           game.log(get.translation(target)+'的灵力调整为'+player.lili);
-                          target.lili = player.lili;
-                          target.update();
+                          target.changelili(player.lili - target.lili);
                         }
                       }
                     },

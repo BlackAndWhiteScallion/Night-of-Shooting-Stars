@@ -2449,7 +2449,7 @@
                         name:'手牌显示',
                         intro:'将手牌设置为正方形或长方形',
                         init:'oblong',
-                        unfrequent:true,
+                        //unfrequent:true,
                         item:{
                             default:'默认',
                             oblong:'长方',
@@ -3866,14 +3866,14 @@
                     update:function(config,map){
                         if(config.connect_identity_mode=='zhong'){
                             map.connect_player_number.hide();
-                            map.connect_enhance_zhu.hide();
+                            //map.connect_enhance_zhu.hide();
                             map.connect_double_nei.hide();
                             map.connect_zhong_card.show();
                             map.connect_special_identity.hide();
                         }
                         else{
                             map.connect_player_number.show();
-                            map.connect_enhance_zhu.show();
+                            //map.connect_enhance_zhu.show();
                             if(config.connect_player_number!='2'){
                                 map.connect_double_nei.show();
                             }
@@ -3943,6 +3943,7 @@
                         frequent:true,
                         intro:'开启后游戏中将增加军师、大将、贼首三个身份'
                     },
+                    /*
                     connect_ban_weak:{
                         name:'屏蔽弱将',
                         init:true,
@@ -3959,6 +3960,7 @@
                         restart:true,
                         intro:'为主公增加一个额外技能'
                     },
+                    */
                 },
                 config:{
                     update:function(config,map){
@@ -4119,6 +4121,7 @@
                         init:false,
                         intro:'根据角色的出牌行为自动标记可能的身份',
                     },
+                    /*
                     ban_weak:{
                         name:'屏蔽弱将',
                         init:true,
@@ -4128,7 +4131,7 @@
                         name:'屏蔽强将',
                         init:false,
                         restart:true,
-                    },
+                    },*/
                     free_choose:{
                         name:'自由选将',
                         init:true,
@@ -4144,7 +4147,7 @@
                     },
                     change_identity:{
                         name:'自由选择身份和座位',
-                        init:true,
+                        init:false,
                         onclick:function(bool){
                             game.saveConfig('change_identity',bool,this._link.config.mode);
                             if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
@@ -4345,14 +4348,14 @@
                     update:function(config,map){
                         if(config.connect_identity_mode=='zhong'){
                             map.connect_player_number.hide();
-                            map.connect_enhance_zhu.hide();
+                            //map.connect_enhance_zhu.hide();
                             map.connect_double_nei.hide();
                             map.connect_zhong_card.show();
                             map.connect_special_identity.hide();
                         }
                         else{
                             map.connect_player_number.show();
-                            map.connect_enhance_zhu.show();
+                            //map.connect_enhance_zhu.show();
                             if(config.connect_player_number!='2'){
                                 map.connect_double_nei.show();
                             }
@@ -4422,6 +4425,7 @@
                         frequent:true,
                         intro:'开启后游戏中将增加军师、大将、贼首三个身份'
                     },
+                    /*
                     connect_ban_weak:{
                         name:'屏蔽弱将',
                         init:true,
@@ -4438,12 +4442,13 @@
                         restart:true,
                         intro:'为主公增加一个额外技能'
                     },
+                    */
                 },
                 config:{
                     update:function(config,map){
                         if(config.identity_mode=='zhong'){
                             map.player_number.hide();
-                            map.enhance_zhu.hide();
+                            //map.enhance_zhu.hide();
                             map.double_nei.hide();
                             map.auto_identity.hide();
                             map.choice_zhu.hide();
@@ -4458,7 +4463,7 @@
                         }
                         else{
                             map.player_number.show();
-                            map.enhance_zhu.show();
+                            //map.enhance_zhu.show();
                             map.auto_identity.show();
                             if(config.player_number!='2'){
                                 map.double_nei.show();
@@ -4594,6 +4599,7 @@
                         init:false,
                         intro:'根据角色的出牌行为自动标记可能的身份',
                     },
+                    /*
                     ban_weak:{
                         name:'屏蔽弱将',
                         init:true,
@@ -4610,6 +4616,7 @@
                         restart:true,
                         intro:'为主公增加一个额外技能'
                     },
+                    */
                     free_choose:{
                         name:'自由选将',
                         init:true,
@@ -4625,7 +4632,7 @@
                     },
                     change_identity:{
                         name:'自由选择身份和座位',
-                        init:true,
+                        init:false,
                         onclick:function(bool){
                             game.saveConfig('change_identity',bool,this._link.config.mode);
                             if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
@@ -4881,6 +4888,7 @@
                             '5':'5人',
                         }
                     },
+                    /*
                     connect_ban_weak:{
                         name:'屏蔽弱将',
                         init:true,
@@ -4890,7 +4898,7 @@
                         name:'屏蔽强将',
                         init:false,
                         restart:true,
-                    },
+                    },*/
                 },
                 config:{
                     update:function(config,map){
@@ -5145,6 +5153,7 @@
                         },
                         frequent:true
                     },
+                    /*
                     ban_weak:{
                         name:'屏蔽弱将',
                         init:true,
@@ -5154,7 +5163,7 @@
                         name:'屏蔽强将',
                         init:false,
                         restart:true
-                    },
+                    },*/
                     ladder_reset:{
                         name:'重置天梯数据',
                         onclick:function(){
@@ -5293,6 +5302,7 @@
                         },
                         intro:'只控制一名角色，其他角色由AI控制'
                     },
+                    /*
                     ban_weak:{
                         name:'屏蔽弱将',
                         init:true,
@@ -5302,7 +5312,7 @@
                         name:'屏蔽强将',
                         init:false,
                         restart:true,
-                    },
+                    },*/
                 }
             },
             stg:{
@@ -5361,6 +5371,7 @@
                             map.free_choose.hide();
                             map.change_choice.hide();
                         }
+                        /*
                         if(config.chess_mode!='leader'){
                             map.ban_weak.show();
                             map.ban_strong.show();
@@ -5368,7 +5379,7 @@
                         else{
                             map.ban_weak.hide();
                             map.ban_strong.hide();
-                        }
+                        }*/
                     },
                     chess_leader_save:{
                         name:'选择历程',
@@ -5475,16 +5486,18 @@
                             }
                         },
                     },
+                    /*
                     ban_weak:{
                         name:'屏蔽弱将',
-                        init:true,
-                        restart:true,
+                        init:false,
+                        restart:false,
                     },
                     ban_strong:{
                         name:'屏蔽强将',
                         init:false,
                         restart:true,
                     },
+                    */
                     chessscroll_speed:{
                         name:'边缘滚动速度',
                         init:'20',
@@ -13389,7 +13402,7 @@
                                 player.$recover();
                             }
                         },player);
-                        player.$damagepop(num,'wood');
+                        player.$damagepop(num,'water');
                         game.log(player,'回复了'+get.cnNumber(num)+'点体力');
                     }
                 },
@@ -13422,7 +13435,7 @@
                         if(lib.config.animation&&!lib.config.low_performance){
                             player.$recover();
                         }
-                        player.$damagepop(num,'water');
+                        player.$damagepop(num,'wood');
                         game.log(player,'获得了'+get.cnNumber(num)+'点灵力');
                     }
                 },
@@ -22832,6 +22845,9 @@ throwDice:function(num){
                     var str = lib.translate[trigger.card.name + '_info'];
                     var num = str.indexOf('强化');
                     str = str.slice(num, str.length);
+                    if (player.storage._enhance){
+                        str += '<br>此卡已强化'+player.storage._enhance+'次';
+                    }
                     return str;
                 },
                 ai:{
@@ -22860,7 +22876,7 @@ throwDice:function(num){
                 },
             },
             _phasebegin:{
-                trigger:{player:'phaseBeginStart'},
+                trigger:{player:'phaseBefore'},
                 forced:true,
                 // 一定要在符卡启动前使用
                 priority:20000000,
@@ -28402,6 +28418,9 @@ smoothAvatar:function(player,vice){
                 }
                 if(game.addRecord){
                     game.addRecord(resultbool);
+                }
+                if(!ui.exit){
+                    ui.create.exit();
                 }
                 if(window.isNonameServer){
                     lib.configOL.gameStarted=false;
