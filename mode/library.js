@@ -105,10 +105,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	                intro+=info.intro;
 	            }
-	            var i = ui.create.div('.text center',intro);
-	            i.style.overflow='scroll';
 	            var today = new Date();
             	if(today.getMonth() == 3 && name == 'thanks') intro += '<br> 特殊BGM：資料室のお茶会 - key';
+	            var i = ui.create.div('.text center',intro);
+	            i.style.overflow='scroll';
 	            var showcase=ui.create.div();
 	            showcase.style.margin='0px';
 	            showcase.style.padding='0px';
@@ -346,6 +346,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	        	},
 	    	},
+	    	/*
 	    	new:{
 	    		name:'写在前面',
 	    		mode:'',
@@ -353,6 +354,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		showcase:function(init){
 	    		},
 	    	},
+	    	*/
 	    	updatelog:{
 	    		name:'更新事宜',
 	    		mode:'',
@@ -379,6 +381,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'3. 在[对称]布局下，玩家视角无法主动弃置技能牌，也不能查看自己的技能牌。',
 	    				'4. [场景-创建场景]后，第一次打开场景会导致游戏崩溃。第二次和之后不会出现问题。',
 	    				'5. 在[场景]的自创场景中，使用【魔导书塔】会装备10个魔导书而不是5个',
+	    				'6. 联机模式下异变胜利后的战果显示有错误',
 	    				],
 	    		showcase:function(init){
 	    			
@@ -424,7 +427,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        		'拼点完毕后，拼点双方各摸一张牌',
 	        		],
 	        	showcase:function(init){
-
+	        		
 	        	},
 	        },
 	        modeview:{

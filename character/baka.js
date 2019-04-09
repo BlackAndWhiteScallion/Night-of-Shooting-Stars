@@ -98,6 +98,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         usable:1,
                         direct:true,
                         filter:function(event,player){
+                              if(!lib.filter.cardRespondable({name:'sha'},player)) return false;
                               return event.card.name=='sha' && player.countCards('h','sha') > 0;
                         },
                         content:function(){

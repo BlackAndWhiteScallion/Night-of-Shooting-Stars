@@ -2050,7 +2050,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		forced:true,
     		priority:15,
     		intro:{
-    			content:'防止所有角色造成的所有伤害',
+    			content:'防止所有角色造成的所有伤害<br>所有角色跳过弃牌阶段',
     		},
     		content:function(){
     			trigger.untrigger();

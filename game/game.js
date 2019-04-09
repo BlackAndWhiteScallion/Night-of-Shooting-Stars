@@ -12805,7 +12805,7 @@
                             cardaudio=false;
                         }
                         player.logSkill(event.skill);
-                       player.checkShow(event.skill,true);
+                        player.checkShow(event.skill,true);
 						if(lib.skill[event.skill].onrespond&&!game.online){
 							lib.skill[event.skill].onrespond(event,player);
 						}
@@ -27737,11 +27737,11 @@ smoothAvatar:function(player,vice){
                 return;
             }
             // 如果胜利玩家的队友包括玩家，判定胜利，否则判定失败。
-            if (player.getFriends().contains(game.me)){
+            if (player.getFriends(true).contains(game.me)){
                 game.over(true);
             } else {
                 game.over(false);
-            }
+            } 
             "step 4"
         },
         incidentoverOL:function(player){
