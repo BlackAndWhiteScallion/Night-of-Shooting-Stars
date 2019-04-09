@@ -130,6 +130,9 @@ window.noname_asset_list=[
     'image/character/wingedtiger.jpg',
     'image/character/zither.jpg',
     'image/character/yukizakura.jpg',
+    'image/character/hemerocalliscitrinabaroni.jpg',
+    'image/character/bullygang.jpg',
+    'image/character/pear.jpg',
     'image/character/arisa.jpg',
     'image/character/yudachi.jpg',
     'image/character/megumin.jpg',
@@ -312,4 +315,5 @@ window.noname_skin_list={
     suika:2,
     kanade:2,
     boss_reimu:1,
+    zigui:1,
 };
