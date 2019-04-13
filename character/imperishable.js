@@ -1546,6 +1546,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.insertPhase();
                     },
                     prompt:'是否发动【破晓】进行一个额外的回合？',
+                    check:function(){
+                      return true;
+                    },
                   },
                   yongye:{
                     audio:2,

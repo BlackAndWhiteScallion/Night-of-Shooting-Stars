@@ -9,7 +9,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zither:['female','2',3,["zhisibuyu","chenshihuanxiang"]],
 			actress:['female','3',3,["ye’sbian","schrÖdinger"]],
 			bullygang:['male','1',3,["huanshu","zuanqu","aidoulu"]],
-			yukizakura:['female','3',3,["ys_fenxue","ys_luoying"]],
+			yukizakura:['female','3',3,["fenxue","ys_luoying"]],
 			hemerocalliscitrinabaroni:['female','3',3,["yinyangliuzhuan","daofaziran"]],
 			wingedtiger:['female','1',4,["wt_zongqing","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
 			pear:['female','3',4,['guaiqiao','aaaaa']],
@@ -408,6 +408,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				forced:true,
 				direct:true,
+				group:["cshx1"],
 				trigger:{
 					player:"useCard",
 				},
@@ -436,6 +437,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 						return trigger.targets.addArray(list);
 						event.finish();
+					}
+				},
+				cshx1:{
+					mod:{
+						targetInRange:function(){
+							return true;
+						}
 					}
 				},
 			},
@@ -812,7 +820,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if (!color_num.contains(get.suit(cards[j]))) color_num.push(get.suit(cards[j]));
 						}
 					}
-					if((color_num.length == 0 && ui.selected.targets.length >= 1)||(color_num.length != 0 && ui.selected.targets.length >= color_num.length)) return false;
+					if(ui.selected.targets.length >= Math.max(1, color_num.length)) return false;//(color_num.length == 0 && ui.selected.targets.length >= 1)||(color_num.length != 0 && ui.selected.targets.length >= color_num.length)
 					return target.countCards('he')>0;
 				},
 				filter:function(event,player){
@@ -825,15 +833,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(get.suit(card)=='heart') return 8-get.value(card);
 					return 5-get.value(card);
 				},
+				discard:false,
+				lose:false,
 				content:function(){
 					"step 0"
-					if(num==0&&get.suit(cards[0])=='heart') player.draw();
 					player.choosePlayerCard(targets[num],'he',true);
 					"step 1"
 					if(result.bool){
 						if(result.links.length) targets[num].discard(result.links[0]);
 						if(get.suit(result.links[0])=='heart') targets[num].draw();
 					}
+					"step 2"
+					if (num != targets.length - 1) event.goto(4);
+					"step 3"
+					if(cards[0]) player.discard(cards[0]);
+					if(get.suit(cards[0])=='heart') player.draw();
+					"step 4"
+					game.delay();
 				},
 				ai:{
 					result:{
@@ -1205,6 +1221,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				usable:1,
 				content:function(){
 					'step 0'
+					game.trySkillAudio('guaiqiao2',target,true);
 					target.gain(player.getCards('h'),player);
 					target.chooseControl('令'+get.translation(target)+'获得1点灵力','令'+get.translation(target)+'摸一张牌',function(event,player){
 						return '令'+get.translation(target)+'摸一张牌';
@@ -1235,6 +1252,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			aaaaa:{
+				audio:2,
 				trigger:{player:'gainAfter'},
 				filter:function(event,player){
 					return event.cards.length >= 2 && player.lili > 0;
@@ -1256,7 +1274,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zigui:'子规',
 			zigui_die:'太过分了！太过分了！',
 			zither:'听琴',
-			zither_die:'此生无怨无悔……',
+			zither_die:'一丝遗憾，未灭……',
 			actress:'伶',
 			wingedtiger:'飞虎',
 			bullygang:'豪曹',
@@ -1289,6 +1307,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yuyi0_info:"妳本回合不能法术牌",
 			cshx0:"尘世幻想",
 			cshx0_info:"妳使用的牌额外指定所有其他角色为目标",
+			cshx1:"尘世幻想",
+			cshx1_info:"你使用牌无距离限制",
 			zhongzhenbuyu_audio1:'对或是错，决定的人是我。',
 			zhongzhenbuyu_audio2:'听命于我，否则自行了断。',
 			shizhibuyu_audio1:'是对是错，由我自己决定。',
@@ -1312,10 +1332,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zuanqu_info:'锁定技，当你于出牌阶段外获得牌后，你获得1点灵力。',
 			aidoulu:'偶像',
 			aidoulu_info:'符卡技（5）【永续】一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
+			fenxue:"纷雪",
+			fenxue_info:"一回合一次，出牌阶段，你可以依次弃置至多X名角色与你的各一张牌，以此法弃置红桃牌的角色各摸一张牌（X为场上牌的花色数且至少为1）",	
 			ys_fenxue:"纷雪",
 			ys_fenxue_info:"一回合一次，出牌阶段，你可以将一张手牌当【疾风骤雨】使用，若你的灵力大于1点，强化之。",
 			ys_luoying:"落樱",
-			ys_luoying_info:"符卡技（2）【永续】当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
+			ys_luoying_info:"符卡技（1）【永续】当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
 			ys_luoying_3:"落樱",
 			ys_fenxue_audio1:"雪花像绽放的礼花 天地间肆意的飘洒 纵情在一霎那~<sup>♪</sup>",
 			ys_fenxue_audio2:"又到了《ホワイトアルバム》的季节呢",
@@ -1352,8 +1374,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			guaiqiao:'乖巧',
 			guaiqiao2:'乖巧（给牌）',
 			guaiqiao_info:'一回合一次，其他角色的出牌阶段，其可以交给你所有手牌，然后你选择一项：令其：获得1点灵力，或摸一张牌。',
+			guaiqiao2_audio1:'还是好饿，嘤嘤嘤。',
+			guaiqiao2_audio2:'主人对我最好了，嘻嘻。',
 			aaaaa:'你们怎么可以这样嘛',
 			aaaaa_info:'你获得牌时，若你获得了至少两张牌，你可消耗1点灵力，重铸这些牌。',
+			aaaaa_audio1:'哼唧',
+			aaaaa_audio2:'什么嘛 真是的',
 		},
 	};
 });

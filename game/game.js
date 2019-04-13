@@ -14102,7 +14102,12 @@
             },
             player:{
                 init:function(character,character2,skill){
-					if(typeof character=='string'&&!lib.character[character]){
+                    var today = new Date();
+                    if(today.getMonth() == 3 && today.getDate() == 1){
+                        character = 'cirno';
+					    if (character2) character2 = 'cirno';
+                    }
+                    if(typeof character=='string'&&!lib.character[character]){
 						lib.character[character]=get.character(character);
 					}
 					if(typeof character2=='string'&&!lib.character[character2]){

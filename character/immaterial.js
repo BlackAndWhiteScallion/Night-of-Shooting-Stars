@@ -74,7 +74,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						respondSha:true,
 						order:4,
 						useful:-1,
-						value:-1
+						value:-1,
 					},
 					mod:{
 						cardUsable:function(card,player,num){

@@ -1510,6 +1510,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             moyin2:{
                 trigger:{global:'recoverBegin'},
                 mark:true,
+                forced:true,
                 intro:{
                     content:'防止所有回复',
                 },
