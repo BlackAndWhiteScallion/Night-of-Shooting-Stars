@@ -144,6 +144,8 @@ window.noname_asset_list=[
     'image/character/miku.jpg',
     'image/character/sinon.jpg',
     'image/character/scathach.jpg',
+    'image/character/niuzhanshi.jpg',
+    'image/character/mordred.jpg',
     'image/character/stg_remilia.jpg',
     'image/mode/boss/character/boss_reimu.jpg',
     'image/mode/boss/character/boss_reimu2.jpg',

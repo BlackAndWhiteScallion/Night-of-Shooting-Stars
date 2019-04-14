@@ -833,20 +833,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(get.suit(card)=='heart') return 8-get.value(card);
 					return 5-get.value(card);
 				},
-				discard:false,
-				lose:false,
 				content:function(){
 					"step 0"
-					player.choosePlayerCard(targets[num],'he',true);
+					player.discardPlayerCard(targets[num],'hej');
 					"step 1"
-					if(result.bool){
-						if(result.links.length) targets[num].discard(result.links[0]);
+					if(result.bool&&result.links&&result.links.length){
 						if(get.suit(result.links[0])=='heart') targets[num].draw();
 					}
 					"step 2"
 					if (num != targets.length - 1) event.goto(4);
 					"step 3"
-					if(cards[0]) player.discard(cards[0]);
 					if(get.suit(cards[0])=='heart') player.draw();
 					"step 4"
 					game.delay();
@@ -914,47 +910,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							game.trySkillAudio('wt_feihu',player,true,3);
 						}
 					}
-				},
-			},
-			ys_fenxue:{
-				audio:2,
-				enable:['chooseToUse'],
-				group:['ys_fenxue_2'],
-				usable:1,
-				filterCard:function(card,player){
-					return true;
-				},
-				position:'he',
-				viewAs:{name:'guohe'},
-				viewAsFilter:function(player){
-					if(!player.countCards('he')) return false;
-				},
-				prompt:'将一张牌当【疾风骤雨】使用',
-				check:function(card){return 4-get.value(card)},
-				intro:{
-					content:function(storage,player){
-						if(player.storage.ys_fenxue){
-							return '你可以将一张牌当【轰！】使用；此【轰！】指定目标后，你根据转化牌的种类执行下列效果：<br />攻击或武器～你与目标角色同时进行一次拼点：若你赢至少一次，此【轰！】不能成为【没中】的目标；防御或防具～你弃置目标角色各一张牌；辅助、宝物或道具～此【轰！】造成的弹幕伤害＋１。';
-						}
-					}
-				},
-				ai:{
-					skillTagFilter:function(player){
-						if(!player.countCards('he')) return false;
-					},
-				},
-			},
-			ys_fenxue_2:{
-				forced:true,
-				trigger:{player:'useCard'},
-				filter:function(event, player){
-					if (player.lili > 1 && event.skill =='ys_fenxue' && lib.card[event.card.name].enhance) return true;
-					return false;
-				},
-				content:function(){
-					game.log(get.translation(player)+'发动【纷雪】强化了'+get.translation(trigger.card.name)+'。');
-					if (!player.storage._enhance) player.storage._enhance = 1;
-					else player.storage._enhance++; 
 				},
 			},
 			ys_luoying:{
@@ -1333,9 +1288,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aidoulu:'偶像',
 			aidoulu_info:'符卡技（5）【永续】一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
 			fenxue:"纷雪",
-			fenxue_info:"一回合一次，出牌阶段，你可以依次弃置至多X名角色与你的各一张牌，以此法弃置红桃牌的角色各摸一张牌（X为场上牌的花色数且至少为1）",	
-			ys_fenxue:"纷雪",
-			ys_fenxue_info:"一回合一次，出牌阶段，你可以将一张手牌当【疾风骤雨】使用，若你的灵力大于1点，强化之。",
+			fenxue_info:"一回合一次，出牌阶段，你可以依次弃置至多X名角色与你的各一张牌，以此法弃置红桃牌的角色各摸一张牌（X为场上牌的花色数且至少为1）",
 			ys_luoying:"落樱",
 			ys_luoying_info:"符卡技（1）【永续】当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
 			ys_luoying_3:"落樱",

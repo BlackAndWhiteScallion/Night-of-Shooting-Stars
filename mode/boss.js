@@ -402,7 +402,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				//boss_lvbu1:['male','shen',8,['mashu','wushuang','boss_baonu'],['qun','boss','bossallowed'],'wei'],
 				//boss_lvbu2:['male','shen',4,['mashu','wushuang','xiuluo','shenwei','shenji'],['qun','hiddenboss','bossallowed'],'qun'],
 				boss_zhaoyun:['male','shen',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'qun'],
-			}
+			},
 		},
 		cardPack:{
 		},
@@ -963,13 +963,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				return player.lili > 0;
     			},
     			content:function(){
-    				var players=get.players(player);
+    				var players=game.filterPlayer();
+    				for (var i = 0; i < players.length; i++){
+    					if (!player.canUse('sha',players[i])) players.remove(players[i]);
+    				}
 					players.remove(player);
-					player.loselili();
+					player.loselili(); 
     				player.useCard({name:'sha'},players,false);
     			},
     			check:function(event,player){
-    				return player.lili != 1; 
+    				return player.lili > 1; 
     			},
     		},
     		boss_damagecount:{
@@ -1221,7 +1224,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_qixiang_info:'乐不思蜀判定时，你的方块判定牌视为红桃；兵粮寸断判定时，你的黑桃判定牌视为草花',
 			boss_damagecount:'沙袋武将',
 			boss_damagecount_info:'你在6分钟之内可以对我造成多少伤害呢？',
-			mode_boss_character_config:'挑战武将',
+			mode_boss_character_config:'挑战角色',
 			boss_zhaoyun:'高达一号',
 			boss_juejing:'绝境',
 			boss_juejing2:'绝境',

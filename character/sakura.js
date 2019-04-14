@@ -1419,8 +1419,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.chooseToDiscard('hej', true);
                     "step 1"
                     if(result.bool){
-                        var nh=_status.currentPhase.hp;
-                        var nmax=nh;
+                        var nmax=100000;
                         var targets=[];
                         var players=game.filterPlayer();
                         players.remove(player);
@@ -1443,37 +1442,38 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 check:function(event,player){
                     var attitude = 0;
-                    var nh=_status.currentPhase.hp;
-                        var nmax=nh;
-                        var targets=[];
-                        var players=game.filterPlayer();
-                        players.remove(player);
-                        for(var i=0;i<players.length;i++){
-                            var nh2=players[i].hp;
-                            if(nh2<nmax){
-                                nmax=nh2;
-                                targets.length=0;
-                                targets.push(players[i]);
-                            }
-                            else if(nh2==nmax){
-                                targets.push(players[i]);
-                            }
+                    var nh= 10000;
+                    var nmax=nh;
+                    var targets=[];
+                    var players=game.filterPlayer();
+                    players.remove(player);
+                    for(var i=0;i<players.length;i++){
+                        var nh2=players[i].hp;
+                        if(nh2<nmax){
+                            nmax=nh2;
+                            targets.length=0;
+                            targets.push(players[i]);
                         }
-                        for (var j=0;j<targets.length;j++){
-                            attitude += get.attitude(player,targets[j]);
+                        else if(nh2==nmax){
+                            targets.push(players[i]);
                         }
-                        return -attitude;
+                    }
+                    for (var j=0;j<targets.length;j++){
+                        attitude += get.attitude(player,targets[j]);
+                    }
+                    return -attitude;
                 },
                 ai:{
-                    threaten:2
-                }
+                    threaten:2,
+                },
             },
             moyin:{
-                trigger:{global:'dying'},
-                priority:6,
+                trigger:{global:'dyingBegin'},
+                priority:15,
                 audio:2,
                 filter:function(event,player){
-                    return event.player.hp<=0;
+                    //return event.player.hp<=0;
+                    return true;
                 },
                 content:function(){
                     "step 0"

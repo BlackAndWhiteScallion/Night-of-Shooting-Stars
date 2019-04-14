@@ -382,13 +382,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           }
                           'step 4'
                           if (result.targets){
-                                result.targets[0].hp = result.targets[0].maxHp;
-                                result.targets[0].lili = parseInt(lib.character[result.targets[0].name][1])
-                                result.targets[0].draw(4-result.targets[0].getCards('h').length);
+                              result.targets[0].recover(result.targets[0].maxHp - result.targets[0].hp);
+                              var ol = parseInt(lib.character[result.targets[0].name][1]);
+                              if (result.targets[0].lili < ol){
+                                result.targets[0].gainlili(ol-result.targets[0].lili);
+                              } else if (result.targets[0].lili > ol){
+                                result.targets[0].loselili(result.targets[0].lili-ol);
+                              }
+                              if (result.targets[0].countCards('h') < 4){
+                                result.targets[0].draw(4-result.targets[0].countCards('h'));
+                              } else if (result.targets[0].countCards('h') > 4){
+                                result.targets[0].chooseToDiscard(result.targets[0].countCards('h')-4,true,'h');
+                              }
                           }
                        },
                        check:function(event, player){
-                         return player.hp < 2;
+                        var players = game.filterPlayer();
+                        var t = false;
+                        for (var i = 0; i < players.length; i ++){
+                          if (get.attitude(player, players[i]) && (players[i].hp < 2 || players[i].countCards('h') < 2)){
+                            t = true;
+                          }
+                        }
+                        return t;
                        },
                      },
                   richuguo2:{
@@ -1321,10 +1337,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if(result.control){
                         if (result.control == '体力'){
                           game.log(get.translation(target)+'的体力调整为'+player.hp);
+                          if (target.hp < player.hp){
+                            target.recover(player.hp-target.hp);
+                          } else if (target.hp > player.hp){
+                            target.losehp(target.hp-player.hp);
+                          }
                           target.changeHp(player.hp - target.hp);
                         } else if (result.control == '灵力'){
                           game.log(get.translation(target)+'的灵力调整为'+player.lili);
-                          target.changelili(player.lili - target.lili);
+                          if (target.lili < player.lili){
+                            target.gainlili(player.lili-target.lili);
+                          } else if (target.lili > player.lili){
+                            target.loselili(target.lili-player.lili);
+                          }
                         }
                       }
                     },

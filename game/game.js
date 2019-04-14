@@ -3734,19 +3734,6 @@
 					onswitch:function(bool){
 						if(bool){
 							var storage={boss:{},versus:{},translate:{}};
-							var loadversus=function(){
-								game.loadModeAsync('versus',function(mode){
-									for(var i in mode.translate){
-										storage.translate[i]=mode.translate[i];
-									}
-									for(var i in mode.jiangeboss){
-										if(mode.jiangeboss[i][4].contains('bossallowed')){
-											storage.versus[i]=mode.jiangeboss[i];
-										}
-									}
-									localStorage.setItem('boss_storage_playpackconfig',JSON.stringify(storage));
-								});
-							};
 							game.loadModeAsync('boss',function(mode){
 								for(var i in mode.translate){
 									storage.translate[i]=mode.translate[i];
@@ -3756,7 +3743,6 @@
 										storage.boss[i]=mode.characterPack.mode_boss[i];
 									}
 								}
-								loadversus();
 							});
 						}
 						else{
@@ -3788,6 +3774,59 @@
                         else{
                             this.firstChild.innerHTML='隐藏此扩展';
                             lib.config.hiddenPlayPack.remove('boss');
+                        }
+                        game.saveConfig('hiddenPlayPack',lib.config.hiddenPlayPack);
+                    }
+                },
+            },
+            boss1:{
+                enable:{
+                    name:'开启',
+                    init:true,
+                    restart:true,
+                    onswitch:function(bool){
+                        if(bool){
+                            var storage={boss:{},versus:{},translate:{}};
+                            game.loadModeAsync('boss',function(mode){
+                                for(var i in mode.translate){
+                                    storage.translate[i]=mode.translate[i];
+                                }
+                                for(var i in mode.characterPack.mode_boss){
+                                    if(mode.characterPack.mode_boss[i][4].contains('bossallowed')){
+                                        storage.boss[i]=mode.characterPack.mode_boss[i];
+                                    }
+                                }
+                            });
+                        }
+                        else{
+                            localStorage.removeItem('boss_storage_playpackconfig');
+                        }
+                    }
+                },
+                intro:{
+                    name:'将击败的挑战模式BOSS追加到其他模式中。',
+                    clear:true,
+                    nopointer:true,
+                },
+                enableai:{
+                    name:'AI可选',
+                    init:false
+                },
+                hide:{
+                    name:'隐藏此扩展',
+                    clear:true,
+                    onclick:function(){
+                        if(this.firstChild.innerHTML=='隐藏此扩展'){
+                            this.firstChild.innerHTML='此扩展将在重启后隐藏';
+                            lib.config.hiddenPlayPack.add('boss2');
+                            if(!lib.config.prompt_hidepack){
+                                alert('隐藏的扩展包可通过选项-其它-重置隐藏内容恢复');
+                                game.saveConfig('prompt_hidepack',true);
+                            }
+                        }
+                        else{
+                            this.firstChild.innerHTML='隐藏此扩展';
+                            lib.config.hiddenPlayPack.remove('boss2');
                         }
                         game.saveConfig('hiddenPlayPack',lib.config.hiddenPlayPack);
                     }
@@ -22900,7 +22939,7 @@ throwDice:function(num){
                 },
             },
             _phaseend:{
-                trigger:{player:'phaseEnd'},
+                trigger:{player:'phaseAfter'},
                 forced:true,
                 priority:-20,
                 popup:false,
@@ -24875,7 +24914,7 @@ throwDice:function(num){
                 }
                 if (music == 'music_default'){
                     ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
-                    ui.backgroundMusic.currentTime = [137, 693, 1338, 1970, 2715, 3463].randomGet();
+                    ui.backgroundMusic.currentTime = [137, 693, 1338, 1970,2331, 2715, 3463].randomGet();
                 }
                 else{
                     ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
@@ -45910,7 +45949,23 @@ smoothAvatar:function(player,vice){
             }
         },
         number:function(card){
-            return card.number;
+            if(get.itemtype(card)=='cards'){
+                var number=get.number(card[0])
+                for(var i=1;i<card.length;i++){
+                    number += get.number(card[i]);
+                }
+                return number;
+            }
+            else if(get.itemtype(card.cards)=='cards'){
+                return get.number(card.cards);
+            }
+            else{
+                var owner=get.owner(card);
+                if(owner){
+                    return game.checkMod(card,card.number,'number',owner);
+                }
+                return card.number;
+            }
         },
         nature:function(card){
             return card.nature;

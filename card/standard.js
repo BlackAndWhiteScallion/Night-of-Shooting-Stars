@@ -1550,9 +1550,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				order:8,
 				result:{
 					player:function(player){
-						if(player.hp<=2) return player.num('h')==0?1:0;
-						if(player.num('h',{name:'sha',color:'red'})) return 1;
-						return player.num('h')<=player.hp?1:0;
+						if (player.lili < 3) return 0.5;
 					}
 				},
 			}
@@ -2744,6 +2742,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		pantsu:'蓝白胖次',
 		pantsu_info:'锁定技，你的弃牌阶段外，你的【蓝白胖次】以外的牌不能被弃置或获得。',
 		laevatein:'莱瓦丁',
+		laevatein_skill:'莱瓦丁（计数）',
 		laevatein_info:'锁定技，出牌阶段，你对一名角色使用的【轰！】不计次数，每名角色限一次。',
 		gungnir:'冈格尼尔',
 		gungnir_skill:'冈格尼尔',
@@ -2751,6 +2750,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		throw_gungir:'贯穿他，冈格尼尔！',
 		gungnir_info:'你使用【轰！】指定目标后，可以弃置此牌，或消耗2点灵力，令目标不能对该【轰！】使用牌。',
 		louguan:'楼观剑',
+		louguan_skill:'楼观剑',
 		louguan_info:'锁定技，你使用【轰！】指定目标时，该角色的装备技能无效，直到该牌结算完毕。',
 		ibuki:'伊吹瓢',
 		ibuki_skill:'吨吨吨',
@@ -2813,6 +2813,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		hakkero_skill:'轰过去！',
 		hakkero_info:'出牌阶段，你可以消耗1点灵力，视为使用一张【轰！】',
 		lantern:'人魂灯',
+		lantern_skill:'人魂灯',
 		lantern_info:'锁定技，你成为【轰！】的目标后，若来源在你攻击范围内，与其拼点；若你赢，令该【轰！】对你无效。',
 		stone:'贤者之石',
 		stone_info:'你可以将两张牌(包括此牌)当作一种法术牌使用。',

@@ -311,7 +311,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
          },
          fengmi:{
             spell:['fengmi_1'],
-            cost:0,
+            cost:1,
             audio:2,
             trigger:{player:'phaseBegin'},
              filter:function(event,player){
@@ -337,19 +337,33 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             },
             content:function(){
                'step 0'
-               player.chooseTarget('选择一名被疾风骤雨的角色',function(card,player,target){
-                  if(player==target) return false;
-                  return player.canUse({name:'guohe'},target,false);
-               }).set('ai',function(target){
-                  return get.effect(target,{name:'guohe'},_status.event.player);
+               event.str = '跳过'+get.translation(trigger.name);
+               player.chooseControl('消耗1点灵力',event.str,function(event,player){
+                  if (trigger.name == 'phaseDiscard') return event.str;
+                  if (player.lili > 1 || trigger.name == 'phaseDraw')  return '消耗1点灵力';
+                  return event.str;
                });
                'step 1'
+               if (result.control){
+                  if (result.control == '消耗1点灵力') player.loselili();
+                  if (result.control == event.str) trigger.cancel();
+                  player.chooseTarget('选择一名被疾风骤雨的角色',function(card,player,target){
+                     return player.canUse({name:'guohe'},target,false);
+                  }).set('ai',function(target){
+                     return get.effect(target,{name:'guohe'},_status.event.player);
+                  });
+               }
+               'step 2'
                if (result.bool && result.targets){
-                  player.loselili();
                   player.useCard({name:'guohe'},result.targets[0],false);
-                  trigger.cancel();
                }
             },
+            check:function(event,player){
+               if (event.name == 'phaseDiscard') return true;
+               if (event.name == 'phaseUse' && player.lili > 2) return true;
+               return false;
+            },
+            prompt2:'消耗1点灵力，或跳过当前阶段，视为使用了一张【疾风骤雨】',
          },
       },
       translate:{
@@ -380,7 +394,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   fengmi_audio1:'「幻想风靡」！',
                   fengmi_audio2:'放心，我会放水的啦~',
                   fengmi_1:'幻想风靡',
-                  fengmi_info:'符卡技（0）你可以消耗1点灵力并跳过一个阶段，然后视为使用一张无距离限制的【疾风骤雨】。',
+                  fengmi_info:'符卡技（1）你的一个阶段开始时，可以消耗1点灵力，或跳过该阶段，然后视为使用一张无距离限制的【疾风骤雨】。',
                   aya_die:'明天的报纸上见！',
             },
       };

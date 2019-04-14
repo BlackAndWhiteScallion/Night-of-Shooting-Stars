@@ -16,6 +16,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			miku:['female', '3', 3, ['geying', 'wuyan', 'stage']],
 			sinon:['female', '3', 3, ['yanju', 'shangtang']],
 			scathach:['female', '1', 4, ['ruizhi','mojing']],
+			niuzhanshi:['female','2',4,['ng_wenhao','ng_wenhao2']],
+			mordred:['female','2',4,['niguang','ClarentBloodArthur'],["unseen","forbidai"]],
 		},
 		characterIntro:{
 			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
@@ -28,8 +30,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			nero:'古罗马的皇帝，比起皇帝更像个偶像，奢华浪费和浮夸无人能出其右。<br>出自:Fate/Extra <b>画师：demercles</b>',
 			kurumi:'<br>出自：Date-A-Live! <b>画师：kyuriin</b>',
 			miku:'我们天下第一的公主大人~<br>出自：Vocaloid<b>画师：saberii</b>',
-			sinon:'<br>出自：刀剑神域<b>画师：PCManiac88</b>',
+			sinon:'被称为“冰之狙击手”的GGO玩家。“死枪”事件后在桐谷和人的邀请下转换到新生了ALO中扮演擅长使用弓箭狙击猫妖精。<br>出自：刀剑神域<b>画师：PCManiac88</b>',
 			scathach:'影之国的女王，当女王当了几千年了。<br>出自：Fate/Grand Order <b>设计：冰茶	画师：saberii</b>',
+			niuzhanshi:'还能是谁呢这。<br>出自：Fate/Apocrypha <b>画师：イセ川</b>',
+			mordred:'圆桌骑士之一，亚瑟王的儿子——同时也是终结父王的叛逆骑士。<br>出自：Fate/Apocrypha <b>画师：Shigure</b>',
 		},	   
 		perfectPair:{
 		},
@@ -979,7 +983,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			hongxi:{
-				audio:3,
+				audio:2,
 				enable:['chooseToUse'],
 				group:['hongxi_2'],
 				filterCard:function(card,player){
@@ -1006,7 +1010,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			hongxi_2:{
-				audio:2,
 				forced:true,
 				trigger:{player:'shaBefore'},
 				filter:function(event,player){
@@ -1038,7 +1041,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			hongxi_3:{
-				audio:2,
 				forced:true,
 				onremove:function (player){
 					delete player.storage.hongxi;
@@ -1058,7 +1060,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			solomon:{
 				cost:2,
-				audio:0,
+				audio:1,
 				spell:["hongxi_3"],
 				trigger:{
 					player:"phaseBegin",
@@ -2159,13 +2161,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if (result.control){
 						if (result.control == '无视距离'){
 							player.addTempSkill('yanju1', 'useCardAfter');
+							game.trySkillAudio('yanju',player,true,1);
 						} else if (result.control == '无视装备效果'){
 							player.addTempSkill('louguan_skill','useCardAfter');
+							game.trySkillAudio('yanju',player,true,2);
 						} else if (result.control == '不能成为牌的目标'){
 							player.addTempSkill('yanju3', 'useCardAfter');
+							game.trySkillAudio('yanju',player,true,3);
 						}
 						player.chooseTarget('选择一名狙击目标',function(card,player,target){
-							return player.canUse({name:'sha'},target,false);
+							return player.canUse({name:'sha'},target);
 						}).set('ai',function(target){
 							return get.effect(target,{name:'sha'},_status.event.player);
 						});
@@ -2197,6 +2202,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forced:true,
 			},
 			shangtang:{
+				audio:2,
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili < 3 || player.countCards('h') < 4;
@@ -2263,11 +2269,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var list = [];
 					for (var i = 0; i < event.cards.length; i ++){
 						if (get.suit(event.cards[i]) == 'spade'){
-							list.push('♠：获得1点灵力');
+							if (!list.contains('♠：获得1点灵力')) list.push('♠：获得1点灵力');
 						} else if (get.suit(event.cards[i]) == 'club'){
-							list.push('♣：将一名角色的一张牌置于牌堆顶');
+							if (!list.contains('♣：将一名角色的一张牌置于牌堆顶')) list.push('♣：将一名角色的一张牌置于牌堆顶');
 						} else if (get.suit(event.cards[i]) == 'diamond'){
-							list.push('♢：视为使用一张【轰！】');
+							if (!list.contains('♢：视为使用一张【轰！】')) list.push('♢：视为使用一张【轰！】');
 						}
 					}
 					if (list.length == 0) event.finish();
@@ -2294,7 +2300,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						});
                     } else if (result.control == '♢：视为使用一张【轰！】'){
                     	player.chooseTarget('选择【轰！】的目标',function(card,player,target){
-							return player.canUse({name:'sha'},target,false);
+							return player.canUse({name:'sha'},target);
 						}).set('ai',function(target){
 							return get.effect(target,{name:'sha'},_status.event.player);
 						});
@@ -2302,17 +2308,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     	event.finish();
                     }
                     'step 6'
-                    if (event.control == '♢：视为使用一张【轰！】'){
-                  		player.logSkill('ruizhi',result.targets);
-						player.useCard({name:'sha'},result.targets[0],false);  	
-                    } else if (event.control == '♣：将一名角色的一张牌置于牌堆顶'){
-                    	event.target = result.targets[0];
-                    	player.choosePlayerCard('he','将'+get.translation(event.target)+'的一张牌置于牌堆顶',true,event.target);
-                    }
+                    if(result.bool){
+	                    if (event.control == '♢：视为使用一张【轰！】'){
+	                  		player.logSkill('ruizhi',result.targets);
+							player.useCard({name:'sha'},result.targets[0],false);  	
+	                    } else if (event.control == '♣：将一名角色的一张牌置于牌堆顶'){
+	                    	event.target = result.targets[0];
+	                    	player.choosePlayerCard('he','将'+get.translation(event.target)+'的一张牌置于牌堆顶',true,event.target);
+	                    }
+	                }
                     'step 7'
-                    if (result.bool){
-                    	player.logSkill('ruizhi',result.targets);
-                    	game.log(get.translation(result.target[0])+'的一张牌置于牌堆顶');
+                    if (result.bool && event.control == '♣：将一名角色的一张牌置于牌堆顶'){
+                    	player.logSkill('ruizhi',event.target);
+                    	game.log(get.translation(event.target)+'的一张牌置于牌堆顶');
                     	var card=result.links[0];
                     	event.target.lose(card,ui.special);
                     	ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
@@ -2373,6 +2381,124 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			ng_wenhao:{
+				group:['ng_pinjian','ng_pinjian3'],
+			},
+			niguang:{
+				group:['ng_pinjian','ng_pinjian3'],
+			},
+			ng_pinjian:{
+				audio:2,
+				trigger:{global:'useCardToBegin'},
+				filter:function(event, player){
+					if(event._notrigger.contains(player)) return false;
+					return event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack')&&event.player&&event.target&&event.target.isAlive()&&event.player.isAlive()&&event.player!=event.target&&event.player.countCards('h')&&event.target.countCards('h');
+				},
+				check:function(event,player){
+					if(event.target==player) return -get.attitude(player,event.player);
+					return -get.attitude(player,event.target);
+				},
+    			content:function(){
+    				"step 0"
+					event.target = trigger.target;
+					if(trigger.target==player) event.target = trigger.player;
+    				player.chooseToCompare(event.target);
+    				"step 1"
+        			if (!result.tie){
+						if(result.bool){
+							player.discardPlayerCard('hej',event.target,true);
+						}else{
+							event.target.discardPlayerCard('hej',player,true);
+						}
+					}
+    			},
+    			ai:{
+    				expose:0.3
+    			},
+			},
+			ng_pinjian3:{
+				trigger:{player:'chooseCardBegin'},
+				filter:function(event){
+					console.log(event);
+					return event.type=='compare'&&!event.directresult;
+				},
+				content:function(){
+					if (trigger.parent && trigger.parent.target){
+						player.loselili();
+						player.discardPlayerCard('hej',trigger.parent.target,true);
+					}
+				},
+				prompt2:'消耗1点灵力，弃置与你拼点的角色一张牌',
+			},
+			ng_wenhao2:{
+				audio:1,
+				init:function(player){
+					player.storage.ng_wenhao2=false;
+				},
+				filter:function(event,player){
+					if(player.storage.ng_wenhao2) return false;
+					return true;
+				},
+				trigger:{player:'phaseBegin'},
+				content:function (event,player){
+					'step 0'
+					player.draw(player.maxHp-player.hp);
+					'step 1'
+					player.awakenSkill('ng_wenhao2');
+					player.storage.ng_wenhao2=true;
+					'step 2'
+					var hp = player.hp;
+					var lili = player.lili;
+					player.init('mordred');
+					player.hp=hp;
+					player.lili=lili;
+					player.useSkill('ClarentBloodArthur');
+					player.update();
+				},
+			},
+			ClarentBloodArthur:{
+				audio:2,
+				cost:1,
+				roundi:true,
+				spell:['CBA2'],
+				group:['CBA3'],
+				trigger:{player:'phaseBegin'},
+				filter:function(event,player){
+					return player.lili > lib.skill.ClarentBloodArthur.cost;
+				},
+				content:function(){
+					player.loselili(lib.skill.ClarentBloodArthur.cost);
+					player.turnOver();
+					player.maxlili = 8;
+				},
+			},
+			CBA2:{
+				mod:{
+					number:function(card,number){
+						if(number!=-1)return 13;
+					}
+				},
+			},
+			CBA3:{
+				trigger:{player:'turnOverAfter'},
+				forced:true,
+				filter:function(event,player){
+					return !player.isTurnedOver();
+				},
+				content:function(){
+					"step 0"
+					player.chooseTarget('对一名角色造成'+player.lili+'点弹幕伤害',true).set('ai',function(target){
+						return -get.attitude(player,target);
+					});
+					"step 1"
+					if(result.bool){
+						result.targets[0].damage(player.lili);
+					}
+					"step 2"
+					player.maxlili = parseInt(lib.character[player.name][6]);
+					player.loselili(player.lili);
+				},
+			},
 		},
 		translate:{
 			kanade:'奏',
@@ -2426,22 +2552,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sliver_arrow_audio2:'看招，白银之箭！',
 			arisa_die:'你可真强呢……',
 			yudachi:'夕立',
-			yudachi_die:'-转圈学狗叫<br />-poi!poi!poi!',
+			yudachi_die:'真、真是笨蛋！这样就没法战斗了poi！？',
 			hongxi:'轰袭',
 			hongxi_info:'你可以将一张牌当作【轰！】使用；该【轰！】指定目标后，按照原牌属性执行对应效果：攻击／武器～与目标拼点：若你赢，该【轰！】不能成为【没中】的目标；防御／防具～弃置目标角色一张牌。',
 			hongxi_2:'轰袭',
 			hongxi_3:'轰袭',
-			hongxi_audio1:'',
-			hongxi_audio2:'',
-			hongxi_audio3:'',
+			hongxi_audio1:'首先从哪里开始打呢？',
+			hongxi_audio2:'那么，让我们举办一场华丽的派对吧！',
 			solomon:'所罗门的噩梦',
 			solomon_info:'符卡技（2）<u>若你的体力值为1，此符卡消耗视为0；</u>符卡发动时，你获得一张【连击】技能牌；【轰袭】追加描述“辅助／宝物／道具～令该【轰！】造成的弹幕伤害＋１”。',
-			solomon_audio1:'',
-			solomon_audio2:'',
+			solomon_audio1:'所罗门的噩梦，让你们见识一下！',
 			megumin:'惠惠',
 			megumin_die:'和真，快来背我回去啊OAQ',
 			honglian:'红链',
-			honglian_info:'准备阶段，你可以选择一名角色；若如此做，你于本回合内对其造成伤害后，仅限一次地可以视为对所有与其距离X以内的角色使用一张【轰！】（X为你的灵力值）。',
+			honglian_info:'准备阶段，你可以选择一名角色：本回合一次，你对其造成伤害后，视为对所有与其距离X以内的角色使用一张【轰！】（X为你的灵力值）。',
 			honglian_2:'红链',
 			honglian_3:'红链',
 			honglian_audio1:'艺术就是爆炸！',
@@ -2508,17 +2632,46 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			stage_info:'符卡技（2）<永续>准备阶段，你将手牌数补至3，并明置所有手牌；无视【舞燕】中的“数量最多”。',
 			sinon:'诗乃',
 			yanju:'燕狙',
+			yanju_audio1:'你逃不掉的！',
+			yanju_audio2:'……这种小伎俩没有用的。',
+			yanju_audio3:'……',
 			yanju_info:'出牌阶段开始时，你可以消耗１点灵力，并选择一项：无视距离，无视装备效果，或不能成为牌的目标；然后视为使用一张持有该效果的【轰！】。',
 			shangtang:'上膛',
+			shangtang_audio1:'请掩护！',
+			shangtang_audio2:'你们等我一下……',
 			shangtang1:'上膛（后续）',
 			shangtang1_bg:'膛',
 			shangtang_info:'准备阶段，若你的手牌数／灵力值小于初始值，你可以重置该数值，然后获得以下效果，直到你的下个准备阶段：你不能对其他角色使用牌；你的手牌上限至少为３；你视为不在其他角色的攻击范围内。',
+			sinon_die:'撤退……',
 			scathach:'斯卡哈',
 			ruizhi:'魔境智慧',
+			ruizhi_audio1:'这是魔境，深渊的睿智。',
+			ruizhi_audio2:'我杀不了的人,基本上没有。',
 			ruizhi_info:'准备阶段，你可以判定3次，然后选择一项：若结果中有方片，你获得1点灵力；若有黑桃，你视为使用一张【轰！】；若有梅花，你将一张角色的一张牌置于牌堆顶。',
 			mojing:'满溢死亡的魔境之门',
+			mojing_audio1:'以我之名连接的力量，回应我的呼唤开启大门。',
+			mojing_audio2:'来尝试将我杀死吧！',
 			mojing1:'魔境之门（掉血）',
 			mojing_info:'符卡技（4）<永续>符卡发动时，你视为使用了一张【死境之门】；【魔境智慧】中的“选择一项”视为“选择所有项”;一名角色因弃置而失去红桃牌后，令所有其他角色各失去1点体力。',
+			niuzhanshi:'？',
+			mordred:'莫德雷德',
+			ng_wenhao:'？',
+			ng_pinjian_audio1:'烦死了！',
+			ng_pinjian_audio2:'无路赛！',
+			ng_wenhao_info:'你使用攻击牌指定目标后，或成为攻击牌的目标后，可以与另一方拼点：赢的一方弃置没赢的一方一张牌；你选择拼点牌前，可以消耗1点灵力，弃置与你进行拼点的角色一张牌。',
+			niguang:'逆光',
+			niguang_info:'你使用攻击牌指定目标后，或成为攻击牌的目标后，可以与另一方拼点：赢的一方弃置没赢的一方一张牌；你选择拼点牌前，可以消耗1点灵力，弃置与你进行拼点的角色一张牌。',
+			ng_pinjian:'？',
+			ng_pinjian3:'？',
+			ng_wenhao2:'？',
+			ng_wenhao2_audio1:'我不是王，而是走在王身后的人我，为了王的安危，驱逐一切敌人！',
+			ng_wenhao2_info:'限定技，准备阶段，你可以摸X张牌（X为你已受伤值），然后获得并发动你的符卡技。',
+			ClarentBloodArthur:'向端丽的吾父发起叛逆',
+			ClarentBloodArthur_audio1:'[向端丽的吾父发起叛逆]！',
+			ClarentBloodArthur_audio2:'这便是毁灭吾父的邪剑！',
+			ClarentBloodArthur_info:'符卡技（1）<永续>你的灵力上限为无限，你的牌点数均为K，符卡结束时，你对一名角色造成X点弹幕伤害，然后消耗所有灵力（X为你的灵力值）。',
+			CBA2:'向端丽的吾父发起叛逆',
+			CBA3:'向端丽的吾父发起叛逆',
 		},
 	};
 });

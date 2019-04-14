@@ -18,6 +18,7 @@ window.noname_package={
     },
     play:{
         boss:'闯关角色',
+        boss1:'挑战角色',
         cardpile:'牌堆补充',
         coin:'金币系统',
     },
