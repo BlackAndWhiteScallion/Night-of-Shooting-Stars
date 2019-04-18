@@ -1340,9 +1340,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           if (target.hp < player.hp){
                             target.recover(player.hp-target.hp);
                           } else if (target.hp > player.hp){
-                            target.losehp(target.hp-player.hp);
+                            target.loseHp(target.hp-player.hp);
                           }
-                          target.changeHp(player.hp - target.hp);
                         } else if (result.control == '灵力'){
                           game.log(get.translation(target)+'的灵力调整为'+player.lili);
                           if (target.lili < player.lili){

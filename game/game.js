@@ -3734,15 +3734,17 @@
 					onswitch:function(bool){
 						if(bool){
 							var storage={boss:{},versus:{},translate:{}};
-							game.loadModeAsync('boss',function(mode){
+							game.loadModeAsync('stg',function(mode){
 								for(var i in mode.translate){
 									storage.translate[i]=mode.translate[i];
 								}
+                                /*
 								for(var i in mode.characterPack.mode_boss){
 									if(mode.characterPack.mode_boss[i][4].contains('bossallowed')){
 										storage.boss[i]=mode.characterPack.mode_boss[i];
 									}
 								}
+                                */
 							});
 						}
 						else{
@@ -3791,15 +3793,17 @@
                                 for(var i in mode.translate){
                                     storage.translate[i]=mode.translate[i];
                                 }
+                                /*
                                 for(var i in mode.characterPack.mode_boss){
                                     if(mode.characterPack.mode_boss[i][4].contains('bossallowed')){
                                         storage.boss[i]=mode.characterPack.mode_boss[i];
                                     }
                                 }
+                                */
                             });
                         }
                         else{
-                            localStorage.removeItem('boss_storage_playpackconfig');
+                            localStorage.removeItem('boss1_storage_playpackconfig');
                         }
                     }
                 },
@@ -45914,7 +45918,7 @@ smoothAvatar:function(player,vice){
 		},
         suit:function(card){
             if(get.itemtype(card)=='cards'){
-                var suit=get.suit(card[0])
+                var suit=get.suit(card[0]);
                 for(var i=1;i<card.length;i++){
                     if(get.suit(card[i])!=suit) return 'none';
                 }
@@ -45933,7 +45937,7 @@ smoothAvatar:function(player,vice){
         },
         color:function(card){
             if(get.itemtype(card)=='cards'){
-                var color=get.color(card[0])
+                var color=get.color(card[0]);
                 for(var i=1;i<card.length;i++){
                     if(get.color(card[i])!=color) return 'none';
                 }
@@ -45950,7 +45954,7 @@ smoothAvatar:function(player,vice){
         },
         number:function(card){
             if(get.itemtype(card)=='cards'){
-                var number=get.number(card[0])
+                var number=get.number(card[0]);
                 for(var i=1;i<card.length;i++){
                     number += get.number(card[i]);
                 }

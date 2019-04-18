@@ -17,7 +17,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterIntro:{
 			zigui:'咕咕咕~',
 			zither:'<font color=\"#FF1116\"><b>天下疆域，风雨水土，终将归我所有，<br /><br />你便是成了灰，化了骨，也只能是<br /><br /><font size="4"><b>我的灰，我的骨。</b></font></b></font>',
-			bullygang:'',
+			bullygang:'白嫖到最后一无所有',
 			actress:'月が綺麗ですね<sub>……</sub>',
 			hemerocalliscitrinabaroni:'今天你平衡了么？<br />我可以帮你好好<font size="5"><b>平衡</b></font>（物理）一下',
 			yukizakura:'信仰鸽子的幻想乡巫女',

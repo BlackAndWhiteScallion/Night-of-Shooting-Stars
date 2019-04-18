@@ -918,8 +918,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},	
 			content:function(){
 				var num = target.maxHp-target.hp;
-				for (var i = 0; i < num; i++){
-					if (target.num('hej')) player.discardPlayerCard('hej',target,true);
+				if (target.num('hej') <= num){
+					target.discard(target.getCards('hej'));
+				} else {
+					for (var i = 0; i < num; i++){
+						if (target.num('hej')) player.discardPlayerCard('hej',target,true);
+					}
 				}
 			},
 			ai:{
@@ -2831,6 +2835,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		lingbi:'令避之间',
 		lingbi_info:'准备阶段，对所有角色使用：你声明一张牌，目标角色不能使用该牌，直到你的回合开始，或你坠机时。</br> <u>追加效果：此牌可以当作【请你住口！】使用。</u>',
 		lingbi2:'所有角色不能使用',
+		lingbi2_bg:'令',
 		lingbi2_info:'',
 		lingbi1:'令避之间',
 		_lingbi:'令避之间',

@@ -439,7 +439,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							data[name]=[0,0,0,0];
 						}
 					}
-					if (name == 'boss_nianshou'){
+					if (name == 'boss_nianshou' && _status.damageCount > data[name][0]){
 						data[name][0] = _status.damageCount;
 					} else {
 						if(bool){
@@ -977,7 +977,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		},
     		boss_damagecount:{
 				mode:['boss'],
-				global:'boss_damagecount2'
+				global:'boss_damagecount2',
+				direct:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					player.skip('phaseUse');
+				},
 			},
 			boss_damagecount2:{
 				trigger:{source:'damageEnd'},
@@ -996,7 +1001,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				content:function(){
 					trigger.num+=2;
-					player.skip('phaseUse');
 				},
 				ai:{
 					threaten:1.6
@@ -1217,13 +1221,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			mengxiangtiansheng_info:'准备阶段，或结束阶段，你可以消耗1点灵力，视为对所有其他角色使用了一张【轰！】。',
 			boss_nianshou:'年兽',
 			boss_nianrui:'年瑞',
-			boss_nianrui_info:'锁定技，摸牌阶段，你额外摸两张牌；跳过你的出牌阶段',
+			boss_nianrui_info:'锁定技，摸牌阶段，你额外摸两张牌。',
 			boss_qixiang:'祺祥',
 			boss_qixiang1:'祺祥',
 			boss_qixiang2:'祺祥',
 			boss_qixiang_info:'乐不思蜀判定时，你的方块判定牌视为红桃；兵粮寸断判定时，你的黑桃判定牌视为草花',
 			boss_damagecount:'沙袋武将',
-			boss_damagecount_info:'你在6分钟之内可以对我造成多少伤害呢？',
+			boss_damagecount_info:'锁定技，跳过你的出牌阶段。<br>你在6分钟之内可以对我造成多少伤害呢？',
 			mode_boss_character_config:'挑战角色',
 			boss_zhaoyun:'高达一号',
 			boss_juejing:'绝境',

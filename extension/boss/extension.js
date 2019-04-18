@@ -12,7 +12,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				for(var i in lib.characterPack.mode_extension_stg_scarlet){
 					lib.characterPack.mode_extension_stg_scarlet[i][4].push('mode:stg');
 					lib.character[i]=lib.characterPack.mode_extension_stg_scarlet[i];
-					if(!lib.config.stg_enableai_playpackconfig){
+					if(!lib.config.stg_scarlet_enableai_playpackconfig){
 						lib.config.forbidai.push(i);
 					}
 				}
@@ -31,6 +31,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		arenaReady:function(){
+			if(get.mode()=='stg') return;
 			game.loadModeAsync('stg',function(mode){
 				for(var i in mode.translate){
 					lib.translate[i]=lib.translate[i]||mode.translate[i];

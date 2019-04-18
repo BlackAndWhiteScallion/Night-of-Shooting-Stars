@@ -7,8 +7,8 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			if (lib.config.gameRecord.boss){
 				lib.characterPack.mode_extension_boss1={
 				};
-				if (lib.config.gameRecord.boss.data['boss_reimu']){
-					lib.characterPack.mode_extension_boss1.boss_reimu = ['female','3',4,['lingji','mengxiangtiansheng'],[]];
+				if (lib.config.gameRecord.boss.data['boss_reimu2']){
+					lib.characterPack.mode_extension_boss1.boss_reimu = ['female','0',4,['lingji','mengxiangtiansheng'],[]];
 				} 
 				if (lib.config.gameRecord.boss.data['boss_zhaoyun']){
 					lib.characterPack.mode_extension_boss1.boss_zhaoyun = ['male','0',1,['boss_juejing','longhun'],[]];
@@ -26,7 +26,6 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				var list={
 					mode_extension_boss1_character_config:'挑战',
 				};
-				
 				if(get.mode()!='boss'){
 					for(var i in list){
 						lib.translate[i]=lib.translate[i]||list[i];

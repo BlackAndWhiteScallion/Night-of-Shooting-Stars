@@ -2085,7 +2085,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			// 舞燕方片
 			wuyan4:{
-				forced:true,
 				intro:{
                     content:function(storage,player){
                         return '所有角色在弃牌阶段开始时，可以交给初音一张牌';
@@ -2116,7 +2115,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.$give(result.cards.length,result.targets[0]);
                       result.targets[0].say('谢谢你的应援~！');  
                     }
-				}
+				},
+				check:function(event,player){
+					return game.hasPlayer(function(target){
+						return target.hasSkill('wuyan') && target.storage.wuyan4 && target.storage.wuyan4 != 0 && get.attitude(player,target) && player.countCards('h') > target.countCards('h');
+					});
+				},
 			},
 			stage:{
 				spell:['stage1'],
@@ -2180,6 +2184,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.loselili();
 						player.logSkill('yanju',result.targets);
 						player.useCard({name:'sha'},result.targets[0],false);
+					} else {
+						player.removeSkill('yanju1');
+						player.removeSkill('louguan_skill');
+						player.removeSkill('yanju3');
 					}
 				},
 			},
@@ -2228,6 +2236,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.gainlili(3-player.lili);
 						player.addTempSkill('shangtang1',{player:'phaseBefore'});
 					}
+				},
+				check:function(event,player){
+					return player.countCards('h') < 2 || player.lili < 2;
 				},
 			},
 			shangtang1:{
@@ -2419,7 +2430,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ng_pinjian3:{
 				trigger:{player:'chooseCardBegin'},
 				filter:function(event){
-					console.log(event);
 					return event.type=='compare'&&!event.directresult;
 				},
 				content:function(){
@@ -2454,6 +2464,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.lili=lili;
 					player.useSkill('ClarentBloodArthur');
 					player.update();
+					lib.translate['ng_pinjian'] = '逆光';
+					lib.translate['ng_pinjian3'] = '逆光';
+				},
+				check:function(event,player){
+					return player.lili > 3 || player.hp < 3;
 				},
 			},
 			ClarentBloodArthur:{
@@ -2610,6 +2625,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			kedan_info:'你可以将一张有灵力的牌当作一种禁忌牌使用，一回合一种禁忌牌名限一次；你使用禁忌牌时，可以将目标改为“一名角色”。',
 			shishu:'时溯',
 			shishu3:'本回合进入弃牌堆的有灵力/禁忌牌',
+			shishu3_bg:'时',
 			shishu_info:'结束阶段，你可以获得场上或本回合进入弃牌堆的至多Ｘ张有灵力的牌或禁忌牌（Ｘ为本回合其他角色扣减的体力总值）。',
 			shishi:'食时之城',
 			shishi_info:'符卡技（4）<永续>防止你扣减体力或灵力；你的攻击范围和使用【轰！】的次数限制视为无限；结束阶段，若你本回合击坠过角色，你于回合结束后进行一个额外的回合，该回合内符卡不结束。',
