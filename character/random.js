@@ -2244,7 +2244,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			shangtang1:{
 				mark:true,
 				intro:{
-					content:'不能对其他角色使用牌<br>不在其他角色攻击范围内<br>手牌上限至少为3',
+					content:'不能对其他角色使用牌<br>手牌上限至少为3',
 				},
 				mod:{
 					playerEnabled:function(card,player,target){
@@ -2254,10 +2254,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if (num < 3) return 3;
 						else return num;
 					},
+					/*
                     globalTo:function(from,to,distance){
                         if (to.hasSkill('shangtang1')) return distance+10000;
                         return distance;
                     },
+                    */
 				}
 			},
 			ruizhi:{
@@ -2447,7 +2449,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				filter:function(event,player){
 					if(player.storage.ng_wenhao2) return false;
-					return true;
+					return player.lili > 1;
 				},
 				trigger:{player:'phaseBegin'},
 				content:function (event,player){
@@ -2657,7 +2659,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			shangtang_audio2:'你们等我一下……',
 			shangtang1:'上膛（后续）',
 			shangtang1_bg:'膛',
-			shangtang_info:'准备阶段，若你的手牌数／灵力值小于初始值，你可以重置该数值，然后获得以下效果，直到你的下个准备阶段：你不能对其他角色使用牌；你的手牌上限至少为３；你视为不在其他角色的攻击范围内。',
+			shangtang_info:'准备阶段，若你的手牌数／灵力值小于初始值，你可以重置该数值，然后获得以下效果，直到你的下个准备阶段：你不能对其他角色使用牌；你的手牌上限至少为３。',
 			sinon_die:'撤退……',
 			scathach:'斯卡哈',
 			ruizhi:'魔境智慧',
@@ -2681,7 +2683,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ng_pinjian3:'？',
 			ng_wenhao2:'？',
 			ng_wenhao2_audio1:'我不是王，而是走在王身后的人我，为了王的安危，驱逐一切敌人！',
-			ng_wenhao2_info:'限定技，准备阶段，你可以摸X张牌（X为你已受伤值），然后获得并发动你的符卡技。',
+			ng_wenhao2_info:'限定技，准备阶段，若你的灵力大于1，你可以摸X张牌（X为你已受伤值），然后获得并发动你的符卡技。',
 			ClarentBloodArthur:'向端丽的吾父发起叛逆',
 			ClarentBloodArthur_audio1:'[向端丽的吾父发起叛逆]！',
 			ClarentBloodArthur_audio2:'这便是毁灭吾父的邪剑！',

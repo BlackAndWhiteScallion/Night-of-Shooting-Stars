@@ -45,9 +45,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var players = game.filterPlayer();
+                    var p = [];
                     for (var i = 0; i < players.length; i ++){
-                        if (players[i] == player) players.remove(players[i]);
-                        if (!(!players[i].storage.shuang && players[i].storage._mubiao)) players.remove(players[i]);
+                        if (!players[i].storage.shuang && players[i].storage._mubiao) p.push(players[i]);
                     }
                     var num = 0;
                     for (var i = 0; i < players.length; i++){
@@ -55,7 +55,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (get.attitude(player,players[i]) < 0) num ++;
                     }
                     player.chooseTarget(players.length,('霜降：是否对所有亮的角色各造成1点灵击伤害'),function(card,player,target){
-                            return players.contains(target);
+                            return p.contains(target);
                           }).set('num',num).set('ai',function(target){
                               return _status.event.num > 0;
                           }); 

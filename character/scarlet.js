@@ -855,7 +855,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 prompt:'是否把今天用出去的飞刀捡起来？',
                 filter:function(event,player){
-                    if (player.lili == 0 || !player.storage.shijing) return false;
+                    if (player.lili == 0 || !player.storage.shijing || player.storage.shijing.length == 0) return false;
                     if (player.countCards('e',{name:'stg_watch'})) return player.countCards('h') < 4;
                     else return player.countCards('h') < 3;
                 },
@@ -1015,7 +1015,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 trigger:{global:'useCardToBegin'},
                 direct:true,
                 filter:function(event, player){
-                    if (event.targets.length > 1) return false;
+                    if (get.type(event.card) == 'equip') return false;
                     return !event.skill || event.skill != 'mingyun2';
                 },
                 content:function(){
@@ -1314,7 +1314,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             remilia:'蕾米莉亚',
             mingyun:'命运',
             mingyun2:'命运',
-            mingyun_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以：摸X张牌，并将等量牌置于牌堆顶（X为攻击范围），然后，直到结束阶段：一名角色使用其手牌指定唯一目标时，若该牌不是以此法使用，其取消目标并判定：若判定牌可以对目标使用，其将判定牌对目标使用。',
+            mingyun_info:'出牌阶段开始时，或你受到弹幕伤害后，你可以：摸X张牌，并将等量牌置于牌堆顶（X为攻击范围），然后，直到结束阶段：一名角色使用非装备牌指定目标时，若该牌不是以此法使用，其取消目标并判定：若判定牌可以对目标使用，其将判定牌对目标使用。',
             mingyun_audio1:'你的命运可是掌握在我的手心中哦',
             mingyun_audio2:'只需要像这样轻轻一碰……',
             mingyun_audio3:'…………喂，等下，这什么牌啊！',

@@ -289,28 +289,127 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    			var node=this;
 	    			if(init){
 	                    var player=ui.create.player(null,true);
-	                    player.node.avatar.style.backgroundSize='cover';
-	                    player.node.avatar.setBackgroundImage('image/character/akyuu.jpg');
-	                    player.node.name.innerHTML = '阿求';
+	                    lib.character['akyuu'] = ['female','1',3,['luguo'],[]];
+				        lib.skill['luguo'] = {};
+	                    player.init('akyuu');
 	                    player.node.avatar.show();
 	                    //player.style.left='calc(50% - 75px)';
 	                    player.style.left='0px';
 	                    player.style.top='0px';
 	                    player.style.zIndex = '10';
+	                    player.style.cursor = 'pointer';
 	                    player.node.count.remove();
+	                    player.node.lili.remove();
 	                    player.node.hp.remove();
 	                    player.style.transition='all 0.5s';
 	                    player.onclick = function(){
 	                    	 ui.arena.classList.add('only_dialog');
-	                    	 var d = '<div><div style="width:100%;text-align:right;font-size:18px">抱歉，'+lib.config.connect_nickname+'，<br>我还没有准备好呢……<br>请再等等吧。<br>……那个，要茶吗？</div>';
-	                    	 if (lib.config.connect_nickname == '黑白葱') d = '<div><div style="width:100%;text-align:right;font-size:18px">主人啊……<br>你倒是什么时候才会不摸鱼啊？</div>';
-	                    	 var dialog = ui.create.dialog(d);
-							 ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
-	                    	 ui.create.control('没事，不用急',function(){
-	                    	 	dialog.close();
-								while(ui.controls.length) ui.controls[0].close();
-								ui.arena.classList.remove('only_dialog');
-							});
+	                    	 var num;
+	                    	 if (lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu']){
+	                    	 	num = 3 - lib.config.gameRecord.incident.data['akyuu'];
+	                    	 	if (num <= 0) num = 0;
+	                    	 } else {
+	                    	 	num = 3;
+	                    	 }
+	                    	 if (!lib.config.akyuu){
+		                    	 var d = '<div><div style="width:100%;text-align:right;font-size:18px">抱歉，'+lib.config.connect_nickname+'，<br>我还没有准备好呢……<br>再异变胜利'+num+'次应该就可以了。<br>……那个，要茶吗？</div>';
+		                    	 if (num <= 0) d = '<div><div style="width:100%;text-align:right;font-size:18px">太好啦，'+lib.config.connect_nickname+'，<br>我准备好了呢！<br>快来异变模式玩吧！</div>';
+		                    	 if (lib.config.connect_nickname == '黑白葱') d = '<div><div style="width:100%;text-align:right;font-size:18px">主人啊……<br>你倒是什么时候才会不摸鱼啊？</div>';
+		                    	 var dialog = ui.create.dialog(d);
+								 ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+		                    	 ui.create.control('没事，不用急',function(){
+		                    	 	dialog.close();
+									while(ui.controls.length) ui.controls[0].close();
+									ui.arena.classList.remove('only_dialog');
+								});
+		                    } else {
+		                    	var dialog = ui.create.dialog();
+		                    	dialog.classList.add('fixed');
+						        dialog.classList.add('scroll1');
+						        dialog.classList.add('scroll2');
+						        dialog.classList.add('fullwidth');
+						        dialog.classList.add('fullheight');
+						        dialog.classList.add('noupdate');
+						        dialog.classList.add('character');
+						        dialog.classList.remove('nobutton');
+						        dialog.style.top = '0px';
+
+						        var p=ui.create.player(null,true);
+								p.init('akyuu');
+								p.node.avatar.show();
+								p.style.left='20px';
+			                    p.style.top='20px';
+			                    p.style.zIndex = '10';
+			                    p.style.cursor = 'pointer';
+			                    p.node.count.remove();
+			                    p.classList.add('show');
+			                    lib.translate['library'] = '平和';
+								//player.node.hp.remove();
+								p.style.transition='all 0.5s';
+								dialog.appendChild(p);
+			                    ui.create.div('.config.indent','<div><div style="width:100%;left:140px;text-align:right;font-size:18px"><b><u>至今所发生过的异变：</b></u></div>',dialog);
+			                 	var list=[];
+								for (i in lib.card){
+									if(lib.translate[i] && lib.card[i].type == 'zhenfa'){
+										list.push(i);
+			                        }
+								}
+								dialog.addText('<div><div style="display:block;top:500px;text-align:left;font-size:16px">距离阿求下一次出场还有'+num+'次异变胜利。');
+								list.push('library');
+								for (var i = 0; i < list.length; i ++){
+									if (!lib.config.gameRecord.incident.data[list[i]]) continue;
+									var data = lib.config.gameRecord.incident.data[list[i]];
+									ui.create.div('.config.indent','<div><div style="width:100%;left:140px;text-align:right">'+lib.translate[list[i]]+'异变：'+data[0]+'次发生  '+data[1]+'胜<br>',dialog);
+								}
+		                    	var control = ui.create.control('好了，谢谢！',function(){
+		                    	 	dialog.close();
+									while(ui.controls.length) ui.controls[0].close();
+									ui.arena.classList.remove('only_dialog');
+								});
+								var counter = 0;
+								var f = get.rand(4);
+		                    	p.onclick = function(){
+		                    		if (counter > 6) return;
+		                    		var h = [['其实流星夜有个四格漫画系列，<br>可以在贴吧和群里找到哟。',
+		                    					'主人没事做的时候，<br>不仅会做漫画，也会做表情呢。<br>所以，有有趣的情况请说给他听吧。',
+		                    					'别看主人那个样子，<br>该忙的时候他还是会忙的啦。',
+		                    					'除了忙以外，<br>灵感缺失也是一大问题呢。',
+		                    					'不过灵感缺失的一大方面，<br>还是因为他的要求和想法<br>总是太奇奇怪怪吧。',
+		                    					'不擅长弄一些正常的想法也不是坏事呢。<br>毕竟，把我弄成这个样子……<br>其实感觉也挺不错的呢。'],
+		                    				['其实游戏开始的教程是我啦。<br>对，就是问你名字的那个。<br>……是个不错的名字呢，<br>'+lib.config.connect_nickname+'。',
+		                    				'嗯？为什么我当时不露脸？<br>主人觉得一开始不要出来<br>那么多角色比较好。<br>特别是，<br>离我正式出场还有相当一段时间呢。',
+		                    				'我是怎么成为管理员的？<br>主人说我不能战斗，<br>又比较擅长这一块，<br>而我觉得做管理员也挺有趣的。',
+		                    				'“不应该战斗那就别战斗”<br>主人他是这么说的。<br>确实，我也不觉得我有<br>和其他人弹幕战的一天呢。',
+		                    				'如果能打弹幕战会怎么样？<br>…………<br>虽然我不反对试新事物，<br>但是我有更重要的事情做呢。',
+		                    				'现在神主反常的开始高产起来了。<br>我的工作也就自然越来越多了。<br>没时间去参加弹幕战呢。<br>而主人虽然也是越来越忙了，<br>但是他却经常去乐悠悠的弹幕战。<br>真是的……'],
+		                    				['符卡和异变，是幻想乡中最重要的元素。<br>异变推动着故事走向，<br>亮出新人物，给已有人物追加新维度。',
+		                    				'而符卡则是战斗的核心。<br>酷炫以外，战斗方式也是人心的镜子。<br>如何运用能力，如何布置弹幕，<br>都是很体现人物性格的。<br>符卡更是如此。',
+		                    				'虽然符卡是有趣很多啦，<br>但是我不会弹幕战，<br>所以……我也没什么感觉。<br>要研究符卡的话，<br>魔理沙倒是有出书呢。',
+		                    				'我的工作则是记录幻想乡中的<br>各色人物，和发生过的异变呢。<br>成为管理员之后，也兼职<br>进行规则的介绍了。',
+		                    				'异变毕竟是幻想乡中的超大变故，<br>还会出现永久改变幻想乡的事情。<br>大家每天吃的饭，用的牌……<br>要记那种东西的话，<br>就是一万辈子我也记不完啊。',
+		                    				'虽然有些异变也不是坏事，<br>但是对于我们这些没有战斗力的人类，<br>还是希望日子能正常一点好啊。<br>啊……要是灵梦会老实干活就好了……'],
+		                    				['幻想乡是个很神奇的地方。<br>撰写《幻想乡缘起》的初衷是教导人类们对付妖怪<br>但现在看来，记载丰富多彩的大家也不错呢。',
+		                    				'其实幻想乡以前不是欢乐的地方。<br>前几代巫女非常敬业，<br>把妖怪们打的毫无还手之力。<br>虽然正面冲突基本没有了，<br>暗地里的袭击事件多了很多。',
+		                    				'而这代巫女，灵梦，是个很奇怪的人呢。<br>她创建了符卡规则，让妖怪，人类，巫女，<br>本来是类似食物链的关系，<br>变成了可以同台对战。',
+		                    				'因为符卡规则，<br>妖怪不但不惧怕，甚至还相当欢迎与巫女的正面冲突。<br>也造成了异变事件常常发生。<br>随着时间的推移，异变对人类的影响也越来越少。<br>而本来可怕的妖怪，<br>对人类的友好度也高了起来……',
+		                    				'',
+		                    				''],
+		                    				];
+									var k = h[f][counter];
+									if (counter == 6) k = lib.config.connect_nickname+'，<br>虽然我并不讨厌和你说话,<br>但是你肯定有更好的事情做吧？';
+									var date = new Date();
+									if (date.getHours() > 22 || date.getHours() < 8) k = 'Zzz……';
+									var d = ui.create.dialog('<div><div style="width:100%;text-align:right;">'+k+'</div>');
+									 ui.create.div('.avatar',d).setBackground('akyuu','character');
+			                    	 control.hide();
+			                    	 var c = ui.create.control(counter!=6?'嗯嗯':'抱歉……',function(){
+			                    	 	counter++;
+			                    	 	d.close();
+										c.close();
+										control.show();
+									});	
+								}
+		                    }
 	                    };
 	                    node.appendChild(player);
 	                    node.playernode=player;
@@ -358,7 +457,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    	updatelog:{
 	    		name:'更新事宜',
 	    		mode:'',
-	    		intro:[	'更新方式有三种:',
+	    		intro:['定期更新一下是最好的，隔一周更新一下大部分时候都会有些更新的。<br>大更新了的时候，在群里和贴吧里都会发出消息来的。'],
+	        	showcase:function(init){
+	        		if (init){
+	        			var style2={position:'relative',display:'block',left:10,top:0,marginBottom:'6px',padding:0,width:'100%'};
+	        			var line2=ui.create.div(style2,this);
+	        			line2.style.lineHeight='50px';
+	        			var dialog=ui.create.dialog('hidden',line2);
+						dialog.style.left = "0px";
+						dialog.style.top = "0px";
+						dialog.style.width = "100%";
+						dialog.style.height = "100%";
+						dialog.addText('有什么更新相关的问题吗，'+lib.config.connect_nickname+'？');
+						dialog.classList.add('fixed');
+	        			dialog.noopen=true;
+	        			this.appendChild(dialog);
+	        			var incident=ui.create.node('button','更新方式',line2,function(){
+	        			var i = ['更新方式有三种:',
 	    				'1: 下载更新程序包',
 	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://dev.tencent.com/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
@@ -371,10 +486,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'检查素材更新在电脑和手机端都可以进行。',
 	    				'',
 	    				'3. 手机端更新，可以在<b>[选项—选项—其他—重新下载游戏]</b>来进行更新。',
-	    				'这样会保留所有的设置，但是并不会更新素材。素材需要另外进行更新。',
-	    				'',
-	    				'<u>更新注释：</u>',
-	    				'<br>',
+	    				'这样会保留所有的设置，但是并不会更新素材。素材需要另外进行更新。'];
+	        			dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var identity=ui.create.node('button','更新注释',line2,function(){
+	        				var i = ['其实主人他最近有点懒得写这些啦……',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var versus=ui.create.node('button','已知BUG',line2,function(){
+	        				var i = ['<br>',
 	    				'<u>已知bug列表：</u>',
 	    				'1. 永琳，紫妈，梅莉，还有莉格露观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了。',
 	    				'2. 永琳使用符卡效果有时候会卡住，有时候可以通过暂停来解决，有时候就是卡死了。因原因不明，碰到的话请一定向制作组反馈情况。',
@@ -383,52 +504,95 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'5. 在[场景]的自创场景中，使用【魔导书塔】会装备10个魔导书而不是5个',
 	    				'6. 联机模式下异变胜利后的战果显示有错误',
 	    				'7. [挑战角色]和[闯关角色]扩展同时打开会导致其中一个不能使用。',
-	    				],
-	    		showcase:function(init){
-	    			
-	    		},
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	        		}
+	        	},
 	    	},
 	    	ruleview:{
 	        	name:'规则帮助',
 	        	mode:'',
 	        	intro:[
-	        		'规则图文介绍可以在<a href="game/guide.pdf">幻想乡最速体系介绍</a>读到    详细的资源可以在<a href="http://liuxingye.666forum.com/f1-forum">魔法店仓库里</a>和<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">官方QQ群</a>里找到',
+	        		'虽然新规则看起来有点太复杂，很麻烦，但是不用担心，规则比看起来的要容易理解多了！',
 	        		'',
-	        		'《东方流星夜！》的新系统：',
-	        		'<u>灵力值</u>:（角色下的绿色星星，或者蓝圆圈）',
-	        		'游戏的核心系统，各种消耗和启动符卡都需要用。',
-	        		'玩家的<u>攻击范围</u>等于灵力值；<u>灵击伤害</u>指对灵力值造成的伤害。',
-	        		'使用持有"灵力：+1"的牌可以增加1点灵力。',
-	        		'在准备阶段，如果玩家没有灵力，在结束阶段，玩家会将灵力补到1。',
+	        		'如果你觉得文字太枯燥的话，图文介绍可以在<a href="game/guide.pdf">幻想乡最速体系介绍</a>读到。',
+	        		'如果你觉得文字和图片都不够提起兴趣的话，你可以去[场景-对战练习]找子规老师探讨探讨！',
 	        		'',
-	        		'<u>强化</u>：持有“强化”的牌通过消耗标注量的灵力可以强化，结算时追加描述里的效果',
-	        		'',
-	        		'<u>追加效果</u>：这牌有追加的效果。使用追加效果不算使用牌。',
-	        		'',
-	        		'<u>符卡技</u>：游戏的核心技能系统。',
-	        		'符卡技在玩家回合开始时，灵力大于标注量时，通过消耗标注量的灵力启动。',
-	        		'启动后，玩家持有符卡技描述中的技能，并且<u>不能获得灵力</u>，直到符卡结束。',
-	        		'<u>符卡结束时机</u>：1.当前回合结束；2. 灵力值变化为0',
-	        		'',
-	        		'<u>符卡标签</u>：<br><u><永续></u>符卡结束时机1改为你的下个回合开始时；<br><u><瞬发></u>你可以在需要使用符卡描述技能时，发动符卡并立即使用（正常发动条件生效）;',
-	        		'<u><限定></u>一局游戏只能启动一次；<br><u><终语></u>在决死状态可以启动（正常发动条件生效）；<br><u><极意></u>删除符卡结束时机1，符卡结束时，立即坠机',
-	        		'',
-	        		'<u>技能牌</u>:',
-	        		'技能牌是一种新牌，处于它的独立牌堆。',
-	        		'技能牌与装备牌类似，摸到后可以任意使用上面的技能。',
-	        		'技能牌可以获得，弃置，但是不能用于转化，不能置于角色牌上。',
-	        		'技能牌可以重铸：重铸后摸一张技能牌。',
-	        		'技能牌同时可以持有3张。',
-	        		'',
-	        		'<u>其他元素：</u>',
-	        		'装备区可以装任意种任何牌，但是最多只能装3张。',
-	        		'判定区和延时锦囊已不复存在',
-	        		'牌都有【属性】（比如【轰！】是攻击属性），在牌的信息中有记载。',
-	        		'攻击范围内包括自己',
-	        		'拼点完毕后，拼点双方各摸一张牌',
+	        		'无论是我，还是子规老师，还是主人，都是会全力帮助你的，所以一定不要泄气！加油！',
 	        		],
 	        	showcase:function(init){
-	        		
+	        		if (init){
+	        			var style2={position:'relative',display:'block',left:10,top:0,marginBottom:'6px',padding:0,width:'100%'};
+	        			var line2=ui.create.div(style2,this);
+	        			line2.style.lineHeight='50px';
+	        			var dialog=ui.create.dialog('hidden',line2);
+						dialog.style.left = "0px";
+						dialog.style.top = "0px";
+						dialog.style.width = "100%";
+						dialog.style.height = "100%";
+						dialog.addText('请选择你想要了解的系统，'+lib.config.connect_nickname+'，我会尽力解答的！');
+						dialog.classList.add('fixed');
+	        			dialog.noopen=true;
+	        			this.appendChild(dialog);
+	        			var incident=ui.create.node('button','灵力值是什么？',line2,function(){
+	        				var i = ['<u>灵力值</u>:（角色下的绿色星星，或者蓝圆圈）',
+				        		'游戏的核心系统，各种消耗和启动符卡都需要用。',
+				        		'玩家的<u>攻击范围</u>等于灵力值；<u>灵击伤害</u>指对灵力值造成的伤害。',
+				        		'使用持有"灵力：+1"的牌可以增加1点灵力。',
+				        		'在准备阶段，如果玩家没有灵力，在结束阶段，玩家会将灵力补到1。',];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var identity=ui.create.node('button','游戏牌有哪些新设定？',line2,function(){
+	        				var i = ['游戏牌有很多小改动。其实你跟着感觉走就行，但是多了解些绝对不是坏事！',
+	        						'<u>强化</u>：持有“强化”的牌通过消耗标注量的灵力可以强化，结算时追加描述里的效果',
+	        						'',
+	        						'<u>追加效果</u>：这牌有追加的效果。使用追加效果不算使用牌。',
+	        						'',
+	        						'牌都有【属性】（比如【轰！】是攻击属性），在牌的信息中有记载。<br>属性和种类之类的一样，不影响平常使用牌。',
+	        						'',
+	        						'装备区可以装任意种任何牌，但是最多只能装3张。',
+	        						'',
+	        						'哦对了，判定区和延时锦囊的坏文明已不复存在！',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var versus=ui.create.node('button','符卡怎么使用？',line2,function(){
+	        				var i = ['<u>符卡技</u>：游戏的核心技能系统。',
+	        						'在幻想乡怎么可以不会用符卡呢！对吧！',
+	        						'',
+					        		'符卡技在玩家回合开始时，灵力大于标注量时，通过消耗标注量的灵力启动。',
+					        		'（游戏内可发动时会有提示的 放心）',
+					        		'启动后，玩家持有符卡技描述中的技能，并且<u>不能获得灵力</u>，直到符卡结束。',
+					        		'<u>符卡结束时机</u>：1.当前回合结束；2. 灵力值变化为0',
+					        		'',
+					        		'<u>符卡标签</u>：<br><u><永续></u>符卡结束时机1改为你的下个回合开始时；<br><u><瞬发></u>你可以在需要使用符卡描述技能时，发动符卡并立即使用（正常发动条件生效）;',
+					        		'<u><限定></u>一局游戏只能启动一次；<br><u><终语></u>在决死状态可以启动（正常发动条件生效）；<br><u><极意></u>删除符卡结束时机1，符卡结束时，立即坠机',
+					        		'',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var boss=ui.create.node('button','技能牌是什么？',line2,function(){
+	        				var i = ['技能牌是一种新牌，处于和牌堆分开的独立牌堆里。换句话来说，你摸牌是不会摸到它的。',
+					        		'技能牌与装备牌类似，摸到后可以任意使用上面的技能，且一次最多持有3张。',
+
+					        		'技能牌可以通过“摸技能牌”或者“获得技能牌”来获得，也可以获得其他人的技能牌。',
+					        		'除此之外，技能牌也可以弃置，或重铸（摸一张技能牌）。',
+					        		'但是技能牌没有花色，点数，种类或属性，所以不能用于满足对应的要求。并且，也不能用于转化，不能置于角色牌上。'
+					        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var tafang=ui.create.node('button','其他注意事项？',line2,function(){
+	        				var i = [
+	        						'攻击范围内包括你自己了。 所以，在读牌的时候要记得：【轰！】，【疾风骤雨】，【顺手牵羊】都是可以对自己用的！',
+	        						'',
+	        						'拼点结束后，拼点双方各摸一张牌。',
+	        						'',
+	        						'明置牌指的就是你所持有的，正面朝上的牌。这包括你的<b>明置手牌</b>，你的装备牌，和你的技能牌，请一定要仔细读描述。',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	        		}
 	        	},
 	        },
 	        modeview:{

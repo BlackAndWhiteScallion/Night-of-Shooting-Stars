@@ -62,13 +62,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				event.finish();
 			}
-			// 如果不是联机模式，并且是zhong（明忠）模式？
+			// 如果不是录像且不是联机模式
 			else if(!_status.connectMode){
+				// 如果是明忠模式
 				if(_status.mode=='zhong'){
 					if(get.config('zhong_card')){
 						event.replacePile();	// 然后就替换牌堆，emmm
 					}
 					game.prepareArena(8);
+				}
+				// 如果阿求启动
+				// 阿求启动的条件是，异变胜利的次数为3……
+				else if (lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] && lib.config.gameRecord.incident.data['akyuu'] >= 3){
+					game.prepareArena(7);
 				}
 				else{
 					game.prepareArena();
@@ -694,6 +700,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					*/
+					else if (player.identity == 'nei' && !_status.connectMode && (lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] && lib.config.gameRecord.incident.data['akyuu'] >= 3) || lib.config.library && lib.config.library[3]){
+						lib.character['akyuu'] = ['female','1',3,['luguo','mengji','','boom'],[]];
+						lib.characterIntro['akyuu']='全名稗田阿求，将毕生奉献于记载幻想乡的历史的稗田家的现任家主。持有过目不忘的记忆能力。<br><b>画师：渡瀬　玲<br></b><br>现因一些原因，被赋予了幻想乡的管理员权限。不过依然是和平常一样做着记录屋的工作。';
+						player.init('akyuu');
+					}
 					else{
 						if(get.config('double_character')){
 							player.init(list[0],list[1]);
@@ -949,6 +960,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						ban_identity.remove('off');
+						// 如果阿求启动就就屏蔽掉路人身份
+						if (!_status.connectMode && lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] && lib.config.gameRecord.incident.data['akyuu'] >= 3){
+							ban_identity.push('nei');
+						}
 						if(ban_identity.length){
 							var identityList2=identityList.slice(0);
 							for(var i=0;i<ban_identity.length;i++){
@@ -1638,6 +1653,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			dongcha_info:'游戏开始时，随机一名反贼的身份对你可见；准备阶段，你可以弃置场上的一张牌',
 			sheshen:'舍身',
 			sheshen_info:'锁定技，主公处于濒死状态即将死亡时，令主公+1体力上限，回复体力至X点（X为你的体力值数），获得你的所有牌，然后你死亡',
+			luguo:'无作',
+			luguo_info:'锁定技，此角色只能在路人身份使用；游戏开始时，你明置身份（不发动明置效果）并明置身份（不发动明置效果），并获得一张【平和】异变牌。',
+			library_skill2:'【平和】异变效果',
+			library_skill2_info:'<u>一名角色的回合结束时，若其本回合没有对其他角色使用攻击牌或控场牌，其摸一张牌。</u>',
+			library_info:'<u>胜利条件：</u>无。<br/><u>异变效果：</u>一名角色的回合结束时，若其本回合没有对其他角色使用攻击牌或控场牌，其摸一张牌。',
+			mengji:'缘起',
+			mengji2:'缘起',
+			mengji_info:'锁定技，游戏开始时，根据玩家最近所使用的角色，追加一至三条规则；准备阶段，根据游戏中至今出场过的异变牌，更换你的异变牌。',
+			shuchu:'输出',
+			shuchu_info:'一名角色的回合结束时，其摸X张牌（X为其本回合造成的伤害数）。',
+			fuzhu:'辅助',
+			fuzhu_info:'所有角色体力上限+1，灵力上限+2，手牌上限+3。',
+			kongchang:'控场',
+			guding_skill:'控场',
+			kongchang_info:'一名角色造成伤害时，若其手牌数为场上最高（或之一），该伤害+1。',
 		},
 		element:{
 			player:{
@@ -2196,6 +2226,326 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
+			// 阿求的三个技能：输出，辅助，控场
+			luguo:{
+				trigger:{global:"gameStart"},
+				direct:true,
+				content:function(){
+					player.identityShown = true;
+    				player.setIdentity(player.identity);
+    				player.node.identity.classList.remove('guessing');
+    				lib.card['library'] = {
+						type:'zhenfa',
+						fullskin:true,
+						enable:true,
+						vanish:true,
+						selectTarget:-1,
+						filterTarget:function(card,player,target){
+							return target == player;
+						},
+						modTarget:true,
+						skills:['library_normal'],
+						content:function(){
+							target.addSkill('library_normal');
+						},
+    				},
+    				lib.translate['library'] = '平和';
+    				lib.config.musicchange = 'luren';
+    				lib.config.backgroundchange = 'luren';
+    				player.addIncident(game.createCard('library','zhenfa',''));
+    				lib.config.backgroundchange = 'off';
+				},
+				ai:{
+					effect:{
+						// 目前习性：不会被伤害牌。
+						target:function(card,player,target,current){
+							//if(player!=target) return 'zeroplayertarget';
+							if(get.tag(card,'damage')) return 'zeroplayertarget';
+						},
+						// 觉得太路人了就把后面的去掉
+						// 目前习性：不会使用伤害牌。
+						player:function(card,player,target,current){
+							//if(player!=target) return 'zeroplayertarget';
+							//if ((player == target) && get.tag(card,'damage')) return 'zeroplayertarget';
+							if (get.tag(card,'damage')) return 'zeroplayertarget';
+						}
+					},
+					threaten:-1000,
+				}
+			},
+			library_normal:{
+				global:'library_skill',
+			},
+			library_skill:{
+				forced:true,
+				group:['library_skill2'],
+				trigger:{player:'phaseEnd'},
+				filter:function(event,player){
+					return !player.hasSkill('library_skill3');
+				},
+				content:function(){
+					player.draw();
+				},
+			},
+			library_skill2:{
+				forced:true,
+				trigger:{player:'useCard'},
+				filter:function(event,player){
+					return _status.currentPhase==player&&!event.target.contains(player)&&(get.subtype(event.card) == 'disrupt' || get.subtype(event.card) == 'attack');
+				},
+				content:function(){
+					player.addTempSkill('library_skill3');
+				},
+			},
+			library_skill3:{
+			},
+			mengji:{
+				direct:true,
+				trigger:{global:'gameStart'},
+				group:'mengji2',
+				content:function(){
+					game.saveConfig('akyuu',true);
+					lib.config.gameRecord.incident.data['akyuu'] = 0;
+					game.saveConfig('gameRecord',lib.config.gameRecord);
+					var recent=get.config('recentCharacter');
+					var fav=lib.config.favouriteCharacter;
+					var num1 = 0;
+					var num2 = 0;
+					var num3 = 0;
+					// 输出角色
+					var list1 = ['rumia', 'patchouli','flandre','letty','youmu','yuyuko','suika','marisa','mokou','medicine','yuuka','komachi',
+					'sinon','megumin','yudachi','mordred'];
+					// 辅助
+					var list2 = ['koakuma','patchouli','chen','alice','lilywhite','lunasa','merlin','lyrica','ran','yukari','wriggle'
+					,'keine','tewi','eirin','lilyblack','hetate','daiyousei','renko','meribel','kanade','shigure','nero','miku'];
+					// 控场
+					var list3 = ['patchouli','sakuya','remilia','yukari','mystia','reimu','marisa','reisen','kaguya','eiki','aya','cirno',
+					'arisa','kurumi','scathach','satone'];
+					for (var i = 0; i < recent.length; i ++){
+						if (list1.contains(recent[i])) num1 ++;
+						if (list2.contains(recent[i])) num2 ++;
+						if (list3.contains(recent[i])) num3 ++;
+					}
+					for (var i = 0; i < fav.length; i ++){
+						if (list1.contains(fav[i])) num1 += 3;
+						if (list2.contains(fav[i])) num2 += 3;
+						if (list3.contains(fav[i])) num3 += 3;
+					}
+					game.pause();
+					var time = 0;
+					var max = Math.max(num1, num2, num3);
+					if (num1 == max){
+						player.say('喜欢输出角色啊。把别人暴揍一顿可比玩什么牌不牌的直接多了呢。');
+						setTimeout(function(){
+							player.say('那我就让你更肆无忌惮的输出吧。');
+							player.addSkill('shuchu');
+		                    game.log('本局游戏，所有角色在回合结束时摸X张牌（X为本回合造成的伤害）。');
+		                },2500);
+		                time += 5000;
+					}
+					if (num2 == max){
+						setTimeout(function(){
+							player.say('喜欢辅助么……确实，大家都喜欢帮助别人和多摸摸牌呢。');
+							setTimeout(function(){
+								player.say('那我来让你可以更多的辅助和刷牌吧。');
+			                    player.addSkill('fuzhu');
+			                    game.log('本局游戏，所有角色体力上限+1，灵力上限+2，手牌上限+3。');
+			                }, 2500);
+						}, time);
+						time += 5000;
+					}
+					if (num3 == max){
+						setTimeout(function(){
+							player.say('喜欢控场么……<br>但是让你们控场翻倍并不好呢……');
+							setTimeout(function(){
+			                    player.say('那我就换个方式给你加成吧。');
+			                    player.addSkill('kongchang');
+			                    game.log('本局游戏，手牌最多的角色造成的伤害+1。');
+			                }, 2500);
+						}, time);
+						time += 5000;
+					}
+					setTimeout(function(){
+						game.resume();
+					}, time + 1000);
+					if (lib.config.gameRecord.incident){
+						var data = lib.config.gameRecord.incident.data;
+						var l = [];
+						for(var i in data){
+							if (i == 'akyuu') continue;
+							if (l.length == 0){
+								l.push(i);
+								continue;
+							} 
+							var h = 0;
+							while (l.length >= h){
+								if (h == l.length){
+									l.push(i);
+									break;
+								}
+								else if (i[0] < data[l[h]][0]){
+									l.splice(h, 0, i);
+								}
+								h++;
+							}
+			            }
+			            player.storage.mengji = l;
+					}
+				},
+			},
+			mengji2:{
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					game.pause();
+					var name = false;
+					if (player.storage._tanpai){
+						name = player.storage._tanpai[0];
+						player.lose(name,ui.special);
+						player.storage._tanpai = [];
+						for (var i = 0; i < get.info(name).skills.length; i ++){
+                        	player.removeSkill(get.info(name).skills[i]);
+                    	}
+                    	game.log(player,'弃置了异变牌',name);
+					}
+					name = name.name;
+					if (player.storage.mengji){
+						var index = 0;
+						// indexOf 如果没有找到的话就返回-1。
+						if (name) index = player.storage.mengji.indexOf(name);
+						if (index == player.storage.mengji.length-1 || index < 0){
+							index = -1;
+						}
+						index ++;
+						player.addIncident(game.createCard(player.storage.mengji[index]));
+					}
+					player.say('本轮的异变是'+get.translation(player.storage.mengji[index])+'。');
+					setTimeout(function(){
+						game.resume();
+					},2500);
+				},
+			},
+			shuchu:{
+				direct:true,
+				trigger:{global:'phaseBegin'},
+				content:function(){
+					trigger.player.addTempSkill('huazhi_skill');
+				}
+			},
+			fuzhu:{
+				global:'fuzhu_max',
+				init:function(player){
+					var players = game.filterPlayer();
+					for (var i = 0; i < players.length; i ++){
+						players[i].gainMaxHp();
+						players[i].gainMaxlili(2);
+					}
+				},
+			},
+			fuzhu_max:{
+				mod:{
+					maxHandcard:function(player,num){
+						return num + 3;
+					},
+				},
+			},
+			kongchang:{
+				global:'guding_skill',
+			},
+			guding_skill:{
+				trigger:{source:'damageBegin'},
+				filter:function(event, player){
+					return player.isMaxHandcard(false);
+				},
+				forced:true,
+				content:function(){
+					trigger.num++;
+				},
+				ai:{
+					effect:{
+						target:function(card,player,target,current){
+							if(player.isMaxHandcard(false)) return [1,-2];
+						}
+					}
+				}
+			},
+			boom:{
+				trigger:{player:'dieBegin'},
+				direct:true,
+				filter:function(event){
+					return true;
+				},
+				content:function(){
+					"step 0"
+					lib.character['cong'] = ['female','10000',Infinity,['finalspark','mianyi'],[],[],Infinity];
+					lib.translate['cong']='黑白葱';
+					player.init('cong');
+					player.update();
+					game.pause();
+					player.say('居然击坠了管理员，你也是挺有勇气的呢。');
+					setTimeout(function(){
+                        if (game.me.name != 'marisa'){
+	                        player.say('我，有必要给你一些惩罚呢。 下次不要这么做了哟。');
+	                        setTimeout(function(){
+		                        game.resume();
+		                    },2500);
+                    	} else {
+                    		player.say('看在你品味不错的份上，这次就算了吧。');
+                    		setTimeout(function(){
+		                        player.init('akyuu');
+		                        game.resume();
+		                    },2500);
+                    	}
+                    },2500);
+					"step 1"
+					if (game.me.name != 'marisa'){
+						game.me.damage(Number.MAX_SAFE_INTEGER);
+					}
+					"step 2"
+					if (game.me.isAlive() && game.me.name != 'marisa'){
+						event.goto(1);
+					}
+					"step 3"
+					trigger.cancel();
+				},
+				ai:{
+					threaten:-10
+				},
+			},
+			d:{
+				enable:'phaseUse',
+				selectTarget:1,
+				filterTarget:function(){
+					return true;
+				},
+				content:function(){
+
+				},
+				ai:{
+					effect:{
+						player:function(card,player,target){
+							return 0;
+						},
+					}
+				},
+			},
+			finalspark:{
+				enable:'phaseUse',
+				selectTarget:1,
+				filterTarget:function(){
+					return true;
+				},
+				content:function(){
+					targets[0].damage(Number.MAX_SAFE_INTEGER);
+				},
+				ai:{
+					effect:{
+						player:function(card,player,target){
+							if (target == game.me) return 10000000;
+						}
+					},
+				},
+			},
 			// 出牌阶段的摊牌技能。
 			_tanpai:{
 				name:'摊牌',

@@ -29,7 +29,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				fixed:true,
 				trigger:{global:'gameStart'},
 				content:function(){
-					game.incidentover(player);
+					game.incidentover(player, 'scarlet');
 				}
 			},
 			shijianliushi:{
@@ -762,7 +762,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			aidoulu:{
 				spell:["aidoulu_2"],
-				cost:5,
+				cost:4,
 				audio:"ext:d3:true",
 				priority:5,
 				trigger:{player:'phaseBeginStart'},
@@ -993,7 +993,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					list.push('对一名角色造成1点灵击伤害');
 					player.chooseControl(list,function(event,player){
-						if (player.countCards('he') == 0 && list.contains('对一名角色造成1点灵击伤害')) return '对一名角色造成1点灵击伤害';
+						if (list.contains('获得本回合进入弃牌堆的一张与弃置的牌花色不同的牌')) return '获得本回合进入弃牌堆的一张与弃置的牌花色不同的牌';
+						return '对一名角色造成1点灵击伤害';
 					});
 					"step 1"
 					if(result.control=='对一名角色造成1点灵击伤害'){
@@ -1028,7 +1029,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			ys_luoying_4:{
-				trigger:{player:'phaseAfter'},
+				trigger:{global:'phaseAfter'},
 				direct:true,
 				filter:function(event,player){
 					return true;
@@ -1286,7 +1287,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zuanqu:'赚取',
 			zuanqu_info:'锁定技，当你于出牌阶段外获得牌后，你获得1点灵力。',
 			aidoulu:'偶像',
-			aidoulu_info:'符卡技（5）【永续】一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
+			aidoulu_info:'符卡技（4）【永续】一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
 			fenxue:"纷雪",
 			fenxue_info:"一回合一次，出牌阶段，你可以依次弃置至多X名角色与你的各一张牌，以此法弃置红桃牌的角色各摸一张牌（X为场上牌的花色数且至少为1）",
 			ys_luoying:"落樱",

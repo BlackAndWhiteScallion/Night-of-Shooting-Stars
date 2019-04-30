@@ -892,6 +892,77 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            },
 	        },
+	        library:{
+	        	name:'稗田教室',
+	        	mode:'identity',
+	        	intro:[
+	        		'阿求老师的特殊规则！',
+	        	],
+	        	showcase:function(init){
+	        		var node=this;
+	                var player;
+	        		if (init){
+	        			lib.config['library'] = [false,false,false,false];
+		                lib.character['akyuu'] = ['female','1',3,[],[]];
+	    				player=ui.create.player(null,true);
+	                    player.init('akyuu');
+	                    player.node.avatar.show();
+	                    player.style.left='calc(50% - 75px)';
+	                    player.style.top='20px';
+	                    player.node.count.remove();
+	                    player.node.hp.remove();
+	                    player.node.lili.remove();
+	                    player.style.transition='all 0.5s';
+	                    node.appendChild(player);
+	                    node.playernode=player;
+	        			if (lib.config.akyuu){
+	        				var style2={position:'relative',display:'block',left:0,top:'210px',marginBottom:'6px',padding:0,width:'100%'};
+	        				var line2=ui.create.div(style2,this);
+	        				var style3={position:'relative',display:'block',left:0,top:'210px',marginBottom:'6px',padding:0,width:'100%'};
+	        				var line3=ui.create.div(style3, this);
+	        				ui.create.node('span','请选择你想要使用的规则！',line2,{marginLeft:'20px'});
+	        				ui.create.node('span','<br>一名角色的回合结束时，其摸X张牌（X为其本回合造成的伤害数）。 ',line2,{});
+		                    var linked=ui.create.node('input',line2);
+		                    linked.type='checkbox';
+		                    ui.create.node('span','<br>所有角色的体力上限+1，灵力上限+2，手牌上限+3。 ',line2,{});
+		                    var turn=ui.create.node('input',line2,{marginLeft:'116px'});
+		                    turn.type='checkbox';
+		                    ui.create.node('span','<br>一名角色造成伤害时，若其手牌数为场上最高（之一），该伤害+1。 ',line2,{});
+		                    var round=ui.create.node('input',line2);
+		                    round.type='checkbox';
+		                    ui.create.node('span','<br>阿求老师来一起玩！ ',line2,{});
+		                    var akyuu=ui.create.node('input',line2,{});
+		                    akyuu.type='checkbox';
+		                    ui.create.div('.menubutton.large','确定',line3,{position:'relative'},function(){
+		                    	lib.config['library'] = [linked.checked,turn.checked,round.checked,akyuu.checked];
+		                    });
+	        			} else {
+		                    var dialog=ui.create.dialog('hidden');
+							dialog.style.left = "0px";
+							dialog.style.top = "0px";
+							dialog.style.width = "100%";
+							dialog.style.height = "100%";
+							dialog.classList.add('fixed');
+		        			dialog.noopen=true;
+							node.appendChild(dialog);
+							var number = 3;
+							if (lib.config.gameRecord.incident.data['akyuu']){
+								number = lib.config.gameRecord.incident.data['akyuu'] < 3?3-lib.config.incident.data['akyuu']:0;
+							}
+		                    dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">成功召唤阿求就可以使用这个场景啦！<br>召唤阿求还需要'+num+'次异变胜利。');
+	        			}
+	        		}
+	        	},
+	        	content:{
+	        		gameStart:function(){
+	        			if (lib.config.library){
+	        				if (lib.config.library[0]) game.zhu.addSkill('shuchu');
+	        				if (lib.config.library[1]) game.zhu.addSkill('fuzhu');
+	        				if (lib.config.library[2]) game.zhu.addSkill('kongchang');
+	        			}
+	                }
+	        	},
+	        },
 	        scene:{
 	            name:'创建场景',
 	            content:{
@@ -1005,6 +1076,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                game.players[i].hp=info.hp;
 	                                if(game.players[i].hp>game.players[i].maxHp){
 	                                    game.players[i].maxHp=game.players[i].hp;
+	                                }
+	                            }
+	                            if(info.maxlili){
+	                                game.players[i].maxlili=info.maxlili;
+	                                if(game.players[i].lili>game.players[i].maxlili){
+	                                    game.players[i].lili=game.players[i].maxlili;
+	                                }
+	                            }
+	                            if(info.lili){
+	                                game.players[i].lili=info.lili;
+	                                if(game.players[i].lili>game.players[i].maxlili){
+	                                    game.players[i].maxlili=game.players[i].lili;
 	                                }
 	                            }
 	                            game.players[i].update();
@@ -1132,8 +1215,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                    }
 	                                }
 	                            }
-	                            if(info.linked) target.classList.add('linked');
-	                            if(info.turnedover) target.classList.add('turnedover');
 	                            if(info.position<_status.firstAct.brawlinfo.position) _status.firstAct=target;
 	                            var hs=[];
 	                            for(var j=0;j<info.handcards.length;j++){
@@ -1208,10 +1289,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            },
 	            showcase:function(init){
 	                if(init){
-	                    lib.translate.zhu=lib.translate.zhu||'主';
-	                    lib.translate.zhong=lib.translate.zhong||'忠';
-	                    lib.translate.nei=lib.translate.nei||'内';
-	                    lib.translate.fan=lib.translate.fan||'反';
+	                    lib.translate.zhu=lib.translate.zhu||'黑';
+	                    lib.translate.zhong=lib.translate.zhong||'异';
+	                    lib.translate.nei=lib.translate.nei||'路';
+	                    lib.translate.fan=lib.translate.fan||'自';
 
 
 	                    this.style.transition='all 0s';
@@ -1336,7 +1417,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    var capt1=ui.create.div(style2,'','角色信息',this);
 	                    var line2=ui.create.div(style2,this);
 	                    line2.style.display='none';
-	                    var identity=ui.create.selectlist([['zhu','主公'],['zhong','忠臣'],['nei','内奸'],['fan','反贼']],'zhu',line2);
+	                    var identity=ui.create.selectlist([['zhu','黑幕'],['zhong','异变'],['nei','路人'],['fan','自机']],'zhu',line2);
 	                    identity.value='fan';
 	                    identity.style.marginLeft='3px';
 	                    identity.style.marginRight='3px';
@@ -1352,15 +1433,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    ui.create.node('span','体力上限：',line2_t,{marginLeft:'10px'});
 	                    var maxHp=ui.create.node('input',line2_t,{width:'40px'});
 	                    maxHp.type='text';
-	                    ui.create.node('span','横置 ',line2_t,{marginLeft:'20px'});
-	                    var linked=ui.create.node('input',line2_t);
-	                    linked.type='checkbox';
-	                    ui.create.node('span','翻面 ',line2_t,{marginLeft:'10px'});
-	                    var turnedover=ui.create.node('input',line2_t);
-	                    turnedover.type='checkbox';
-	                    ui.create.node('span','玩家 ',line2_t,{marginLeft:'10px'});
-	                    var playercontrol=ui.create.node('input',line2_t);
-	                    playercontrol.type='checkbox';
+	                    ui.create.node('span','灵力：',line2_t,{marginLeft:'10px'});
+	                    var lili=ui.create.node('input',line2_t,{width:'40px'});
+	                    lili.type='text';
+	                    ui.create.node('span','灵力上限：',line2_t,{marginLeft:'10px'});
+	                    var maxlili=ui.create.node('input',line2_t,{width:'40px'});
+	                    maxlili.type='text';
 
 	                    var list=[];
 	                    for(var i in lib.character){
@@ -1489,7 +1567,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        fakecard([cardpileaddname.value,cardpileaddsuit.value,cardpileaddnumber.value],line6_e,capt_e);
 	                        capt_e.style.display='block';
 	                    });
-	                    var cc_j=ui.create.node('button','加入判定区',line5,function(){
+	                    var cc_j=ui.create.node('button','加入技能牌',line5,function(){
 	                        if(get.type(cardpileaddname.value)!='delay') return;
 	                        for(var i=0;i<line6_j.childElementCount;i++){
 	                            if(line6_j.childNodes[i].name==cardpileaddname.value){
@@ -1595,15 +1673,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        position.value='0';
 	                        hp.value='';
 	                        maxHp.value='';
+	                        lili.value='';
+	                        maxlili.value='';
 	                        line6_h.innerHTML='';
 	                        line6_e.innerHTML='';
 	                        line6_j.innerHTML='';
 	                        cardpileaddname.value='random';
 	                        cardpileaddsuit.value='random';
 	                        cardpileaddnumber.value='random';
-	                        linked.checked=false;
-	                        turnedover.checked=false;
-	                        playercontrol.checked=false;
 	                    };
 	                    var createCharacter=function(info){
 	                        var player=ui.create.player(null,true);
@@ -1646,12 +1723,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        if(info.hp){
 	                            player.hp=Math.min(info.hp,player.maxHp);
 	                        }
+	                        if(info.maxlili){
+	                            player.maxlili=info.maxlili;
+	                        }
+	                        if(info.lili){
+	                            player.lili=Math.min(info.lili,player.maxlili);
+	                        }
 	                        for(var i=0;i<info.handcards.length;i++){
 	                            player.node.handcards1.appendChild(ui.create.card());
 	                        }
 	                        for(var i=0;i<info.equips.length;i++){
 	                            player.$equip(fakecard(info.equips[i]));
-	                        }
+	                        } 
 	                        for(var i=0;i<info.judges.length;i++){
 	                            player.node.judges.appendChild(fakecard(info.judges[i]));
 	                        }
@@ -1662,13 +1745,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        }
 	                        else{
 	                            pos=get.cnNumber(pos,true)+'号位'
-	                        }
-	                        if(info.linked&&info.turnedover){
-	                            pos+='<br>横置 - 翻面'
-	                        }
-	                        else{
-	                            if(info.linked) pos+=' - 横置';
-	                            if(info.turnedover) pos+=' - 翻面';
 	                        }
 	                        player.setNickname(pos);
 	                        player.update();
@@ -1703,9 +1779,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            position:parseInt(position.value),
 	                            hp:parseInt(hp.value),
 	                            maxHp:parseInt(maxHp.value),
-	                            linked:linked.checked,
-	                            turnedover:turnedover.checked,
-	                            playercontrol:playercontrol.checked,
+	                            lili:parseInt(lili.value),
+	                            maxlili:parseInt(maxlili.value),
 	                            handcards:[],
 	                            equips:[],
 	                            judges:[]

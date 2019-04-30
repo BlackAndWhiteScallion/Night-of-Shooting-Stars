@@ -333,11 +333,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					target:function(player,target){
 						var es=target.get('e');
 						var nh=target.num('h');
+						/*
 						var noe=(es.length==0||target.hasSkillTag('noe'));
 						var noe2=(es.length==1&&es[0].name=='baiyin'&&target.hp<target.maxHp);
 						var noh=(nh==0||target.hasSkillTag('noh'));
 						if(noh&&noe) return 0;
 						if(noh&&noe2) return 0.01;
+						*/
 						if(ai.get.attitude(player,target)<=0) return (target.num('he'))?-1.5:1.5;
 						return -1.5;
 					},
@@ -1630,7 +1632,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				game.log(target,'展示了',event.card2);
 				player.chooseToDiscard({suit:get.suit(event.card2)},function(card){
 					var evt=_status.event.getParent();
-					if(ai.get.damageEffect(evt.target,evt.player,evt.player,'fire')>0){
+					if(evt.target)
+					if(ai.get.damageEffect(evt.target,evt.player,evt.player,'thunder')>0){
 						return 7-ai.get.value(card,evt.player);
 					}
 					return -1;
@@ -1659,6 +1662,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						},
 						target:function(player,target){
 							if(target.countCards('h')==0) return 0;
+							if(target.lili == 0) return -0.5;
+							if(target.lili == 1) return -2;
 							if(player.countCards('h')<=1) return 0;
 							if(target==player){
 									return -1.5;
@@ -1738,15 +1743,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                         player.storage.houraiyuzhinumber = result.control;
 					}
 					player.addTempSkill('houraiyuzhi_skill2');
+					game.log(get.translation(cards[0])+'改为'+get.translation(result.control)||result.control);
 				}
 			},
 		},
 		houraiyuzhi_skill2:{
 			mod:{
 				suit:function(card,suit){
+					if (!get.owner(card)) return suit;
+					var player=get.owner(card);
 					if(card == player.storage.houraiyuzhi && player.storage.houraiyuzhisuit) return player.storage.houraiyuzhisuit;
 				},
 				number:function(card,number){
+					if (!get.owner(card)) return number;
+					var player=get.owner(card);
 					if(card == player.storage.houraiyuzhi && player.storage.houraiyuzhinumber) return player.storage.houraiyuzhinumber;
 				},
 			},
@@ -2543,7 +2553,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			forced:true,
 			content:function(){
 				var num = player.getStat('damage');
-				player.draw(num);
+				if (num != 0) player.draw(num);
 				player.removeSkill('huazhi_skill');
 			},
 		},
