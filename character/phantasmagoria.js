@@ -35,15 +35,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           event.players=game.filterPlayer();
                           player.line(event.players,'black');
                           "step 1"
-                          event.current.chooseTarget([1,1],true,'弃置与你最近的一名角色一张牌',function(card,player,target){
+                          event.current.chooseTarget([1,1],true,'弃置与你最近的一名其他角色一张牌',function(card,player,target){
+                              // 不能选玩家
                               if(player==target) return false;
-                              if(get.distance(player,target)<=1) return true;
-                              if(game.hasPlayer(function(current){
-                                  return current!=player&&get.distance(player,current)<get.distance(player,target);
+                              // 不能选“有比他离你更近”的玩家
+                              if (game.hasPlayer(function(current){
+                                return current != player && get.distance(player,current)<get.distance(player,target);
                               })){
+                                return false;
+                              } else {
+                                if (target.countCards('hej') || !game.hasPlayer(function(current){
+                                  return current != player && get.distance(player,current) == get.distance(player,target) && target.countCards('hej')
+                                })) return true;
+                              }
                               return false;
-                          }
-                              return target.countCards('hej');
                           }).set('ai',function(target){
                               return -get.attitude(_status.event.player,target);
                           }); 
@@ -51,8 +56,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           if(result.bool){
                               event.current.line(result.targets,'black');
                               event.targets=result.targets;
-                              event.current.discardPlayerCard(event.targets[0],'hej',[1,1],true);
-                              event.targets[0].storage.chunmian = 1;
+                              if (event.targets[0].countCards('hej')){
+                                event.current.discardPlayerCard(event.targets[0],'hej',[1,1],true);
+                                event.targets[0].storage.chunmian = 1;
+                              }
                           }
                           if(event.current.next!=player){
                               event.current=event.current.next;

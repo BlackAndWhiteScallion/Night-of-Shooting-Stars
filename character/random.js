@@ -2402,10 +2402,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			ng_pinjian:{
 				audio:2,
-				trigger:{global:'useCardToBegin'},
+				trigger:{player:'useCardToBegin',target:'useCardToBegin'},
 				filter:function(event, player){
 					if(event._notrigger.contains(player)) return false;
-					return event.card&&lib.card[event.card.name].subtype&&(lib.card[event.card.name].subtype=='attack')&&event.player&&event.target&&event.target.isAlive()&&event.player.isAlive()&&event.player!=event.target&&event.player.countCards('h')&&event.target.countCards('h');
+					return event.card&&get.subtype(event.card) == 'attack' &&event.player && event.target && event.player!=event.target &&event.player.countCards('h') && event.target.countCards('h');
 				},
 				check:function(event,player){
 					if(event.target==player) return -get.attitude(player,event.player);

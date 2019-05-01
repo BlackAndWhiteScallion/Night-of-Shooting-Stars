@@ -2395,7 +2395,7 @@ div:not(.handcards)>.card>.info>span,
 }
 .hp.text[data-condition="high"],
 .hp.textstyle[data-condition="high"] {
-	text-shadow: rgba(57, 123, 4,1) 0 0 2px,rgba(57, 123, 4,1) 0 0 5px,rgba(57, 123, 4,1) 0 0 10px
+	text-shadow: rgba(239, 0, 255,1) 0 0 2px,rgba(239, 0, 255,1) 0 0 5px,rgba(239, 0, 255,1) 0 0 10px
 }
 
 .player::after,

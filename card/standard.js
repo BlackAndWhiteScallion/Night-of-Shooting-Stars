@@ -2703,7 +2703,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		danmaku_skill:{
 			mod:{
 				cardUsable:function(card,player,num){
-					if(card.name=='sha') return num + 2;
+					if(card.name=='sha') return num + 2*player.countUsed('danmakucraze');
 				}
 			},
 		},

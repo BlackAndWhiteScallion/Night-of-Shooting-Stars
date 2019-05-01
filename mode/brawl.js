@@ -1439,6 +1439,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    ui.create.node('span','灵力上限：',line2_t,{marginLeft:'10px'});
 	                    var maxlili=ui.create.node('input',line2_t,{width:'40px'});
 	                    maxlili.type='text';
+	                    ui.create.node('span','玩家 ',line2_t,{marginLeft:'10px'});
+						var playercontrol=ui.create.node('input',line2_t);
+						playercontrol.type='checkbox';
 
 	                    var list=[];
 	                    for(var i in lib.character){
@@ -1681,6 +1684,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        cardpileaddname.value='random';
 	                        cardpileaddsuit.value='random';
 	                        cardpileaddnumber.value='random';
+	                        playercontrol.checked=false;
 	                    };
 	                    var createCharacter=function(info){
 	                        var player=ui.create.player(null,true);
@@ -1781,6 +1785,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            maxHp:parseInt(maxHp.value),
 	                            lili:parseInt(lili.value),
 	                            maxlili:parseInt(maxlili.value),
+	                            playercontrol:playercontrol.checked,
 	                            handcards:[],
 	                            equips:[],
 	                            judges:[]

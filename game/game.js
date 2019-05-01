@@ -10788,8 +10788,7 @@
                             event.addToAI=true;
                         }
                     }
-                    player.lose(event.card1);
-                    target.lose(event.card2);
+                    // 失去拼点牌原位置
 
                     "step 5"
                     game.broadcast(function(){
@@ -10800,8 +10799,8 @@
                     player.$compare(event.card1,target,event.card2);
                     game.log(player,'的拼点牌为',event.card1);
                     game.log(target,'的拼点牌为',event.card2);
-                    event.num1=event.card1.number;
-                    event.num2=event.card2.number;
+                    event.num1=get.number(event.card1);
+                    event.num2=get.number(event.card2);
                     event.trigger('compare');
                     game.delay(0,1500);
                     "step 6"
@@ -10842,6 +10841,10 @@
                     },str);
                     game.delay(2);
                     // 这里是拼点完摸牌。
+
+                    player.lose(event.card1);
+                    target.lose(event.card2);
+                    
                     if (lib.config.compare_discard){
                         player.draw();
                         target.draw();    
@@ -40353,6 +40356,7 @@ smoothAvatar:function(player,vice){
                             } else {
                                 var textlili=ui.create.div('.text','2',node.node.lili);
                             }
+                            node.node.lili.condition='high';
                             /*
                             if(infoitem[5]==0){
                                 node.node.hp.hide();
