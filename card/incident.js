@@ -16,8 +16,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['scarlet_normal','scarlet_win'],
 				content:function(){
-					target.addSkill('scarlet_normal');
-					target.addSkill('scarlet_win');
+					target.addIncident(game.createCard('scarlet'));
 				},
 			},
 			sakura:{
@@ -32,8 +31,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['sakura_normal','sakura_win'],
 				content:function(){
-					target.addSkill('sakura_normal');
-					target.addSkill('sakura_win');
+					target.addIncident(game.createCard('sakura'));
 				}
 			},
 			imperishable:{
@@ -48,8 +46,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['imperishable_normal','imperishable_win'],
 				content:function(){
-					target.addSkill('imperishable_normal');
-					target.addSkill('imperishable_win');
+					target.addIncident(game.createCard('imperishable'));
 				}
 			},
 			phantasmagoria:{
@@ -64,8 +61,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['phantasmagoria_normal','phantasmagoria_win'],
 				content:function(){
-					target.addSkill('phantasmagoria_normal');
-					target.addSkill('phantasmagoria_win');
+					target.addIncident(game.createCard('phantasmagoria'));
 				}
 			},
 			immaterial:{
@@ -80,8 +76,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['immaterial_normal','immaterial_win'],
 				content:function(){
-					target.addSkill('immaterial_normal');
-					target.addSkill('immaterial_win');
+					target.addIncident(game.createCard('immaterial'));
 				}
 			},
 			sb:{
@@ -96,8 +91,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['sb_normal','sb_win'],
 				content:function(){
-					target.addSkill('sb_normal');
-					target.addSkill('sb_win');
+					target.addIncident(game.createCard('sb'));
 				}
 			},
 			baka:{
@@ -112,8 +106,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['baka_normal','baka_win'],
 				content:function(){
-					target.addSkill('baka_normal');
-					target.addSkill('baka_win');
+					target.addIncident(game.createCard('baka'));
 				}
 			},
 			death:{
@@ -128,8 +121,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				modTarget:true,
 				skills:['death_normal','death_win'],
 				content:function(){
-					target.addSkill('death_normal');
-					target.addSkill('death_win');
+					target.addIncident(game.createCard('death'));
 				}
 			},
 		},

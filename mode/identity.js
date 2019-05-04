@@ -701,7 +701,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					*/
 					else if (player.identity == 'nei' && !_status.connectMode && (lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] && lib.config.gameRecord.incident.data['akyuu'] >= 3) || lib.config.library && lib.config.library[3]){
-						lib.character['akyuu'] = ['female','1',3,['luguo','mengji','','boom'],[]];
+						lib.character['akyuu'] = ['female','1',3,['luguo','mengji','boom'],[]];
 						lib.characterIntro['akyuu']='全名稗田阿求，将毕生奉献于记载幻想乡的历史的稗田家的现任家主。持有过目不忘的记忆能力。<br><b>画师：渡瀬　玲<br></b><br>现因一些原因，被赋予了幻想乡的管理员权限。不过依然是和平常一样做着记录屋的工作。';
 						player.init('akyuu');
 					}
@@ -2519,7 +2519,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 				content:function(){
-
+					
 				},
 				ai:{
 					effect:{

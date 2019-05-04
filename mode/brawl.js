@@ -946,10 +946,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		        			dialog.noopen=true;
 							node.appendChild(dialog);
 							var number = 3;
-							if (lib.config.gameRecord.incident.data['akyuu']){
-								number = lib.config.gameRecord.incident.data['akyuu'] < 3?3-lib.config.incident.data['akyuu']:0;
+							if (lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu']){
+								number = lib.config.gameRecord.incident.data['akyuu'] < 3?3-lib.config.gameRecord.incident.data['akyuu']:0;
 							}
-		                    dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">成功召唤阿求就可以使用这个场景啦！<br>召唤阿求还需要'+num+'次异变胜利。');
+		                    dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">成功召唤阿求就可以使用这个场景啦！<br>召唤阿求还需要'+number+'次异变胜利。');
 	        			}
 	        		}
 	        	},
@@ -1491,11 +1491,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        if(!lib.cardPack[lib.config.cards[i]]) continue;
 	                        for(var j=0;j<lib.cardPack[lib.config.cards[i]].length;j++){
 	                            var cname=lib.cardPack[lib.config.cards[i]][j];
-	                            pileaddlist.push([cname,get.translation(cname)]);
-	                            if(cname=='sha'){
-	                                pileaddlist.push(['huosha','火杀']);
-	                                pileaddlist.push(['leisha','雷杀']);
-	                            }
+	                            if (lib.translate[cname]){
+	                            	pileaddlist.push([cname,get.translation(cname)]);
+	                        	}
 	                        }
 	                    }
 	                    for(var i in lib.cardPack){
@@ -1792,7 +1790,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        };
 	                        for(var i=0;i<line7.childElementCount;i++){
 	                            if(info.identity=='zhu'&&line7.childNodes[i].info.identity=='zhu'){
-	                                alert('不能有两个主公');
+	                                alert('不能有两个黑幕');
 	                                return;
 	                            }
 	                            if(info.position!=0&&info.position==line7.childNodes[i].info.position){

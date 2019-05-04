@@ -185,7 +185,7 @@
 
 .player.playergrid,.player.obstacle{
     background: rgba(0,0,0,0.2);
-	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
+	box-shadow: rgba(0, 0, 0, 1) 0 0 0 1px;
 	border-radius:8px;
 }
 #window[data-radius_size='reduce'] .player.playergrid,
@@ -206,8 +206,8 @@
 #window .player.obstacle{
     background: repeating-linear-gradient(
       135deg,
-      rgba(0,0,0,0.2),
-      rgba(0,0,0,0.2) 10px,
+      rgba(0,0,0,1.2),
+      rgba(0,0,0,1.2) 10px,
       rgba(0,0,0,0.1) 10px,
       rgba(0,0,0,0.1) 20px
     );

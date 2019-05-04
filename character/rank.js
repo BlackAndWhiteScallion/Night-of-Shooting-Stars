@@ -1,29 +1,29 @@
 window.noname_character_rank={
     s:[
-        'swd_muyun',
+        "marisa"
     ],
     ap:[
-        'ow_zhaliya',
+        "suika", "lilyblack", "medicine", "yuuka", "komachi", "eiki", "aya", 
     ],
     a:[
-        'gw_kanbi',
+        "hetate", "cirno", "daiyousei", "renko", "meribel", "zigui", "patchouli",  "youmu",  "mokou", "kanade", "shigure", "arisa", "yudachi", "megumin", "satone", "nero", "kurumi", "miku", "sinon", "scathach", "niuzhanshi", "mordred",
     ],
     am:[
-        'dongyun',
+        "actress", "bullygang", "yukizakura", "hemerocalliscitrinabaroni", "wingedtiger",
     ],
     bp:[
-        'gw_qigaiwang',
+         "zither",  "pear", "rumia", "meiling", "koakuma",
     ],
     b:[
-        'pangde',
+        "sakuya", "remilia", "flandre", "letty", "chen",
     ],
     bm:[
-        'yanwen',
+         "lilywhite", "lunasa", "merlin", "lyrica", "alice",
     ],
     c:[
-        'yujin',
+        "yuyuko", "ran", "yukari", "wriggle", "mystia", "keine", 
     ],
     d:[
-        'old_huaxiong',
+        "reimu", "tewi", "reisen", "eirin", "kaguya",
     ],
 };

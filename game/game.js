@@ -3407,7 +3407,7 @@
                     },
                     background_music:{
                         name:'背景音乐',
-                        init:true,
+                        init:'music_default',
                         item:{
                             music_default:'默认',
                         },
@@ -5502,6 +5502,11 @@
                         name:'战棋卡牌',
                         init:true,
                         frequent:true,
+                    },
+                    damage_move:{
+                        name:'受伤弹飞',
+                        init:false,
+                        intro:'受到伤害的角色会向伤害来源的反方向移动一格',
                     },
                     free_choose:{
                         name:'自由选将',
@@ -8496,7 +8501,7 @@
                 game.saveConfig('tao_enemy',true);
                 game.saveConfig('layout','long2');
 				game.saveConfig('hp_style','ol');
-                game.saveConfig('background_music','music_off');
+                game.saveConfig('background_music','music_default');
                 game.saveConfig('background_audio',false);
                 game.saveConfig('background_speak',false);
                 game.saveConfig('show_volumn',false);
@@ -15644,6 +15649,11 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     this.$gain2(card);
                     if (!this.storage._tanpai) this.storage._tanpai=[];
                     this.storage._tanpai.add(card);
+                    if (!lib.skill['_tanpai']){
+                        lib.skill._tanpai = {intro:{
+                            content:'cards'
+                        }};
+                    }
                     this.markSkill('_tanpai');
                     this.syncStorage('_tanpai');
                     // 使用异变牌时，切换背景/BGM
@@ -22449,6 +22459,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 return !this.player.hasShan();
             },
             wuxieSwap:function(event){
+                if (!event) return ;
                 if(event.type=='wuxie'){
                     if(ui.wuxie&&ui.wuxie.classList.contains('glow')){
                         return true;
@@ -24945,6 +24956,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
             ui.window.appendChild(audio);
         },
         playBackgroundMusic:function(){
+            if (!lib.config.background_music) lib.config.backgroundmusic = 'music_default';
             if(lib.config.background_music=='music_off'){
                 ui.backgroundMusic.src='';
             }
@@ -40329,6 +40341,7 @@ smoothAvatar:function(player,vice){
                             if(lib.config.buttoncharacter_style=='simple'){
                                 node.node.group.style.display='none';
                             }
+                            
                             node.node.name.dataset.nature=get.groupnature(infoitem[1]);
                             //node.node.group.dataset.nature=get.groupnature(infoitem[1],'raw');
                             node.classList.add('newstyle');

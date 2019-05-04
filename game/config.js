@@ -15,7 +15,7 @@ window.config={
 		sgscards:['standard','incident','skill'],
 		sgsmodes:['identity','versus','brawl','connect','library'],
 		stockmode:['old_identity','identity','versus','boss','stg','chess','connect','brawl','library'],
-		stockextension:['boss','cardpile','coin','wuxing','hs_mod'],
+		stockextension:['boss','cardpile','coin','wuxing'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple'],
 		card_font:['xiaozhuan','huangcao','caoshu','xingshu'],
@@ -52,6 +52,7 @@ window.config={
 	background_speak:true,
 	glow_phase:'yellow',
 	die_move:'flip',
+	textequip:'text',
 
 	skin:{},
 	gameRecord:{},
