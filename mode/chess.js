@@ -32,6 +32,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		ui.chesssheet=document.createElement('style');
     		document.head.appendChild(ui.chesssheet);
     		var playback=localStorage.getItem(lib.configprefix+'playback');
+            // 游戏设置中的宝物列表
     		lib.treasurelist=[];
     		if(get.config('chess_character')||playback||_status.mode=='leader'){
     			for(var i in lib.characterPack.mode_chess){
@@ -171,7 +172,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		else{
     			side=Math.random()<0.5;
     		}
-
+            // 这里是战棋棋盘的大小设置
+            // chessheight是高度，chesswidth是宽度（高度*1.5，四舍五入）
+            // num为（玩家数量+敌人数量）/2
+            // 2个角色为4*6，4~6个角色为5*8，8~10个角色为6*9，12~14个角色为7*10，16个角色为8*12
+            // 默认为8*12
     		switch(num){
     			case 1:ui.chessheight=4;break;
     			case 2:ui.chessheight=5;break;
@@ -185,7 +190,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		}
     		ui.chesswidth=Math.round(ui.chessheight*1.5);
 
-    		if(num==1) ui.chesswidth++;
+    		if(num==1) ui.chesswidth++;   // 如果只有2个角色的话宽度+1，所以实际为4*7棋盘
+
     		ui.chess.style.height=148*ui.chessheight+'px';
     		ui.chess.style.width=148*ui.chesswidth+'px';
     		if(!lib.config.touchscreen){
@@ -263,12 +269,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		}
 
     		var grids=[];
+            // gridnum 是棋盘的大小
     		var gridnum=ui.chessheight*ui.chesswidth;
     		for(var i=0;i<gridnum;i++){
     			grids.push(i);
     		}
     		event.obs=[];
+            // 这里是加障碍物的
     		if(!event.video){
+                // 如果不是录像的话，根据设置的障碍数量随机加入障碍，分别为1/5，1/3，和1/2
     			var nco=parseFloat(get.config('chess_obstacle'));
     			if(nco>0){
     				var ng=Math.floor(gridnum*nco);
@@ -278,7 +287,24 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					event.obs.push(cg.toString());
     				}
     			}
+                var list=[];
+                for(var i=0;i<game.treasures.length;i++){
+                    list.push(game.treasures[i].name);
+                }
+                if(list.length<lib.treasurelist.length){
+                    var name=Array.prototype.randomGet.apply(lib.treasurelist,list);
+                    var cg=grids.randomRemove();
+                    var treasure=game.addChessPlayer(name,'treasure',cg.toString());
+                    treasure.playerfocus(1500);
+                    if(lib.config.animation&&!lib.config.low_performance){
+                        setTimeout(function(){
+                            treasure.$rare2();
+                        },500);
+                    }
+                    game.delay(3);
+                }
     		}
+            // 这里应该是加角色的地方
     		_status.enemyCount=_status.enemylist.length;
     		_status.friendCount=_status.mylist.length;
     		while(_status.mylist.length){
@@ -1453,6 +1479,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		minskin:true,
     		singleHandcard:true,
     		chess:true,
+            // obstacles 是障碍物列表，treasures似乎是宝物列表？
+            // 根据研究，这些treasure个个都是陷阱……所以在哪儿加呢？
     		treasures:[],
     		obstacles:[],
     		getVideoName:function(){
@@ -1460,6 +1488,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			var name=[get.translation(game.me.name),str];
     			return name;
     		},
+            // 创建一个战棋角色
+            // name：名字
+            // enemy：敌人种类（treasure为中立，否则true=友军，False=敌人）
+            // num: 不清楚，但是似乎默认为4
+            // pos：位置
     		addChessPlayer:function(name,enemy,num,pos){
     			if(typeof num!='number'){
     				num=4;
@@ -1474,7 +1507,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				player.node.identity.dataset.color='zhong';
     				player.classList.add('treasure');
     				player.node.hp.classList.add('treasure');
-    				player.life=6+Math.floor(Math.random()*6);
+                    // 这保持时间凭什么是随机的？？
+    				//player.life=6+Math.floor(Math.random()*6);
     				game.treasures.add(player);
     			}
     			else{
@@ -1545,18 +1579,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
     			return player;
     		},
+            // 更换战棋角色
     		replaceChessPlayer:function(name,enemy){
     			var next=game.createEvent('replaceChessPlayer');
     			next.playername=name;
     			next.enemy=enemy;
     			next.setContent('replaceChessPlayer');
     		},
+            // 移除treasure
     		removeTreasure:function(player){
     			game.addVideo('removeTreasure',null,player.dataset.position);
     			player.delete();
     			delete lib.posmap[player.dataset.position];
     			game.treasures.remove(player);
     		},
+            // 添加障碍物（x和y方位）
     		addObstacle:function(x,y){
     			if(y!==false){
     				game.addVideo('addObstacle',null,[x,y]);
@@ -1583,6 +1620,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				game.obstacles.push(grid);
     			}
     		},
+            // 移除障碍物（pos为位置号码）
     		removeObstacle:function(pos){
     			var node=lib.posmap[pos];
     			if(node&&game.obstacles.contains(node)){
@@ -1592,6 +1630,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				node.delete();
     			}
     		},
+            // 游戏结束的对话框
     		addOverDialog:function(dialog,result){
     			if(ui.finishGame){
     				ui.finishGame.remove();
@@ -1669,6 +1708,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		},
+            // 33式回合顺序（即由玩家选择行动角色）
     		phaseLoopThree:function(player){
     			var next=game.createEvent('phaseLoop');
     			next.player=player;
@@ -1769,6 +1809,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				event.goto(0);
     			});
     		},
+            // 正常回合顺序
     		phaseLoopOrdered:function(player){
     			var next=game.createEvent('phaseLoop');
     			next.player=player;
@@ -1789,10 +1830,36 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     						}
     					}
     					if(_status.roundStart&&_status.roundStart.side==player.side){
-    						delete _status.roundStart;
+    						// 每轮开始时扣宝箱
+                            for(var i=0;i<game.treasures.length;i++){
+                                game.treasures[i].loseHp();
+                                if(game.treasures[i].hp<=0){
+                                    game.removeTreasure(game.treasures[i--]);
+                                }
+                            }
+                            // 每轮开始有概率来一个宝箱
+                            if(Math.random()<parseFloat(get.config('chess_treasure'))){
+                                var list=[];
+                                for(var i=0;i<game.treasures.length;i++){
+                                    list.push(game.treasures[i].name);
+                                }
+                                if(list.length<lib.treasurelist.length){
+                                    var name=Array.prototype.randomGet.apply(lib.treasurelist,list);
+                                    var treasure=game.addChessPlayer(name,'treasure',0);
+                                    treasure.playerfocus(1500);
+                                    if(lib.config.animation&&!lib.config.low_performance){
+                                        setTimeout(function(){
+                                            treasure.$rare2();
+                                        },500);
+                                    }
+                                    game.delay(3);
+                                }
+                            }
+                            delete _status.roundStart;
     					}
+                        // 这里是每轮开始时滚雪球的谜之设定
     					var num2=game.players.length-num1;
-    					if(num2>num1){
+    					if(num2>num1 && get.config('end_draw')){
     						if(next.side==game.me.side){
     							next=game.me;
     						}
@@ -1881,31 +1948,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     						break;
     					}
     				}
-    				if(Math.random()<parseFloat(get.config('chess_treasure'))){
-    					var list=[];
-    					for(var i=0;i<game.treasures.length;i++){
-    						list.push(game.treasures[i].name);
-    					}
-    					if(list.length<lib.treasurelist.length){
-    						var name=Array.prototype.randomGet.apply(lib.treasurelist,list);
-    						var treasure=game.addChessPlayer(name,'treasure',0);
-    						treasure.playerfocus(1500);
-    						if(lib.config.animation&&!lib.config.low_performance){
-    							setTimeout(function(){
-    								treasure.$rare2();
-    							},500);
-    						}
-    						game.delay(3);
-    					}
-    				}
-    				for(var i=0;i<game.treasures.length;i++){
-    					game.treasures[i].life--;
-    					if(game.treasures[i].life<=0){
-    						game.removeTreasure(game.treasures[i--]);
-    					}
-    				}
     			});
     		},
+            // 检测是否
     		isChessNeighbour:function(a,b){
     			if(a&&a.dataset){
     				a=a.dataset.position;
@@ -1959,6 +2004,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		},
+            // 为角色添加战棋用的UI
     		setChessInfo:function(p){
     			if(!p){
     				if(ui.phasequeue&&ui.phasequeue.length){
@@ -1983,14 +2029,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				p=p.next;
     			}
     		},
+            // 从这里到3516行为君主模式使用function
+            // 君主模式默认起始数值
     		initLeaderSave:function(save){
     			game.save(save,{
-    				money:300,
+    				money:500,
     				dust:0,
     				legend:0,
     				character:[]
     			});
     		},
+            // 君主模式界面
     		leaderView:function(){
     			var next=game.createEvent('leaderView',false);
     			next.setContent(function(){
@@ -3438,9 +3487,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				game.delay();
     			});
     		},
+            // 存档
     		saveData:function(){
     			game.save(get.config('chess_leader_save'),game.data);
     		},
+            // 君主持有的角色列表（如果将池为0，会给一个刑天大佬）
     		getLeaderList:function(){
     			var list=lib.rank.all.slice(0);
     			for(var i=0;i<game.data.character.length;i++){
@@ -3627,19 +3678,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     						dialog.choice.main_zhu.parentNode.classList.add('disabled');
     					}
     					dialog.choice.noreplace_end=dialog.add(ui.create.switcher('noreplace_end',get.config('noreplace_end'))).querySelector('.toggle');
-    					dialog.choice.additional_player=dialog.add(ui.create.switcher('additional_player',get.config('additional_player'))).querySelector('.toggle');
-    					dialog.choice.single_control=dialog.add(ui.create.switcher('single_control',get.config('single_control'))).querySelector('.toggle');
-    					dialog.choice.first_less=dialog.add(ui.create.switcher('first_less',get.config('first_less'))).querySelector('.toggle');
-    					// dialog.attack_move=dialog.add(ui.create.switcher('attack_move',get.config('attack_move'))).querySelector('.toggle');
+                        dialog.choice.single_control=dialog.add(ui.create.switcher('single_control',get.config('single_control'))).querySelector('.toggle');
+    					dialog.choice.battle_number=dialog.add(ui.create.switcher('battle_number',[1,2,3,4,6,8],get.config('battle_number'))).querySelector('.toggle');
+                        dialog.choice.replace_number=dialog.add(ui.create.switcher('replace_number',[0,1,2,3,5,7,9,17],get.config('replace_number'))).querySelector('.toggle');
+    					//dialog.choice.grid_size=dialog.add(ui.create.switcher('grid_size',['自动',],get.config('replace_number'))).querySelector('.toggle');
+                        dialog.chess_obstacle=dialog.add(ui.create.switcher('chess_obstacle',['0', '0.2', '0.333', '0.5'],get.config('chess_obstacle'))).querySelector('.toggle');
+                        dialog.chess_treasure=dialog.add(ui.create.switcher('chess_treasure',['0', '0.1', '0.2', '0.5', '1'],get.config('chess_treasure'))).querySelector('.toggle');
+                        dialog.choice.seat_order=dialog.add(ui.create.switcher('seat_order',['指定','交替'],get.config('seat_order'))).querySelector('.toggle');
+                        dialog.choice.first_less=dialog.add(ui.create.switcher('first_less',get.config('first_less'))).querySelector('.toggle');
+    					dialog.damage_move=dialog.add(ui.create.switcher('damage_move',get.config('damage_move'))).querySelector('.toggle');
     					// this.dialog.versus_single_control=this.dialog.add(ui.create.switcher('versus_single_control',lib.storage.single_control)).querySelector('.toggle');
     					// this.dialog.versus_first_less=this.dialog.add(ui.create.switcher('versus_first_less',lib.storage.first_less)).querySelector('.toggle');
-    					dialog.choice.reward=dialog.add(ui.create.switcher('reward',[0,1,2,3,4],get.config('reward'))).querySelector('.toggle');
+    					dialog.choice.end_draw=dialog.add(ui.create.switcher('end_draw'), get.config('end_draw')).querySelector('.toggle');
+                        dialog.choice.reward=dialog.add(ui.create.switcher('reward',[0,1,2,3,4],get.config('reward'))).querySelector('.toggle');
     					dialog.choice.punish=dialog.add(ui.create.switcher('punish',['弃牌','无','摸牌'],get.config('punish'))).querySelector('.toggle');
-    					dialog.choice.seat_order=dialog.add(ui.create.switcher('seat_order',['指定','交替'],get.config('seat_order'))).querySelector('.toggle');
-    					dialog.choice.battle_number=dialog.add(ui.create.switcher('battle_number',[1,2,3,4,6,8],get.config('battle_number'))).querySelector('.toggle');
-    					dialog.choice.replace_number=dialog.add(ui.create.switcher('replace_number',[0,1,2,3,5,7,9,17],get.config('replace_number'))).querySelector('.toggle');
     					dialog.choice.choice_number=dialog.add(ui.create.switcher('choice_number',[3,6,9],get.config('choice_number'))).querySelector('.toggle');
-    					if(get.config('additional_player')){
+    					dialog.choice.additional_player=dialog.add(ui.create.switcher('additional_player',get.config('additional_player'))).querySelector('.toggle');
+                        if(get.config('additional_player')){
     						dialog.choice.noreplace_end.parentNode.classList.add('disabled');
     						dialog.choice.replace_number.parentNode.classList.add('disabled');
     						dialog.choice.choice_number.parentNode.classList.remove('disabled');
@@ -3937,6 +3992,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		}
     	},
     	skill:{
+            // 被打就会弹飞的系统技能（现已关闭）
     		_attackmove:{
     			trigger:{player:'damageEnd'},
     			forced:true,
@@ -4119,6 +4175,48 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		},
+            shrine1:{
+                global:'shrine2'
+            },
+            shrine2:{
+                trigger:{player:'phaseBegin'},
+                forced:true,
+                popup:false,
+                filter:function(event,player){
+                    for(var i=0;i<game.treasures.length;i++){
+                        if(game.treasures[i].name=='treasure_shrine1'){
+                            return get.chessDistance(game.treasures[i],player)<=2;
+                        }
+                    }
+                    return false;
+                },
+                content:function(){
+                    'step 0'
+                    game.log('守矢神社的保佑发动！');
+                    player.draw();
+                }
+            },
+            shrine3:{
+                global:'shrine4'
+            },
+            shrine4:{
+                trigger:{player:'phaseBegin'},
+                forced:true,
+                popup:false,
+                filter:function(event,player){
+                    for(var i=0;i<game.treasures.length;i++){
+                        if(game.treasures[i].name=='treasure_shrine2'){
+                            return get.chessDistance(game.treasures[i],player)<=2;
+                        }
+                    }
+                    return false;
+                },
+                content:function(){
+                    'step 0'
+                    game.log('给博丽神社交了保护费……');
+                    player.chooseToDiscard(1,true,'hej');
+                }
+            },
     		wuyashenxiang:{
     			global:'wuyashenxiang2'
     		},
@@ -4275,7 +4373,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				for(var i=0;i<game.treasures.length;i++){
     					if(game.treasures[i].name=='treasure_shenmidiaoxiang'){
     						return player.canMoveTowards(game.treasures[i])&&
-    							get.chessDistance(game.treasures[i],player)>3;
+    							get.chessDistance(game.treasures[i],player)>2;
     					}
     				}
     				return false;
@@ -5326,18 +5424,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		}
     	},
     	translate:{
-    		zhu_config:'启用主将',
-    		main_zhu_config:'启用副将',
+    		zhu_config:'启用主帅',
+    		main_zhu_config:'主帅继承',
     		noreplace_end_config:'无替补时结束',
-    		reward_config:'杀敌摸牌',
-    		punish_config:'杀死队友',
+    		reward_config:'击坠摸牌',
+    		punish_config:'击坠队友奖惩',
     		seat_order_config:'行动顺序',
-    		battle_number_config:'对战人数',
+    		battle_number_config:'每方人数',
     		replace_number_config:'替补人数',
     		first_less_config:'先手少摸牌',
     		single_control_config:'单人控制',
     		additional_player_config:'无尽模式',
     		choice_number_config:'无尽模式候选',
+            damage_move_config:'受伤弹飞',
+            chess_obstacle_config:'路障占比',
+            chess_treasure_config:'机关出场概率',
+            end_draw_config:'回合结束摸牌',
 
     		friend:'友',
     		enemy:'敌',
@@ -5416,25 +5518,31 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		chess_beimingjukun:'北溟巨鲲',
     		chess_wuzhaojinlong:'五爪金龙',
 
-    		treasure_dubiaoxianjing:'毒镖陷阱',
+    		treasure_dubiaoxianjing:'流星雨',
     		treasure_jiqishi:'集气石',
-    		treasure_shenmidiaoxiang:'神秘雕像',
+    		treasure_shenmidiaoxiang:'黑洞',
     		treasure_shenpanxianjing:'审判之刃',
     		treasure_shiyuansu:'石元素',
     		treasure_wuyashenxiang:'乌鸦神像',
+            treasure_shrine1:'守矢神社',
+            treasure_shrine2:'博丽神社',
 
-    		dubiaoxianjing:'飞刃',
-    		dubiaoxianjing_info:'距离两格体力值大于1的角色在回合结束后受到一点伤害，然后摸两张牌',
-    		jiqishi:'集气',
-    		jiqishi_info:'距离两格以内的已受伤角色在回合结束后回复一点体力，然后弃置两张牌',
-    		shenmidiaoxiang:'秘咒',
-    		shenmidiaoxiang_info:'距离三格以外的所有角色在回合结束后强制向此处移动一格',
+    		dubiaoxianjing:'拍卖陨石',
+    		dubiaoxianjing_info:'距离两格以内的一名角色回合结束时，若其体力值大于1，其受到1点弹幕伤害，然后摸两张牌',
+    		jiqishi:'集气？',
+    		jiqishi_info:'距离两格以内的一名角色回合结束时，若其已受伤，其回复1点体力，然后弃置两张牌',
+    		shenmidiaoxiang:'啊——呜——',
+    		shenmidiaoxiang_info:'距离两格以外的一名角色回合结束时，其向黑洞移动一格',
     		shenpanxianjing:'审判',
     		shenpanxianjing_info:'在任意一名角色回合结束后，若没有其他角色手牌数比其多，随机弃置其一张手牌',
     		shiyuansu:'护体',
     		shiyuansu_info:'任意一名角色一次性受到不少于两点伤害后，使其获得一点护甲',
     		wuyashenxiang:'厄音',
     		wuyashenxiang_info:'距离3格以内的角色在其回合结束后，若体力值不大于1，令其回复一点体力，然后将牌堆中的一张延时锦囊牌置于其判定区',
+            shrine1:'保佑',
+            shrine1_info:'距离两格以内的一名角色回合开始时，其摸一张牌',
+            shrine3:'保护费',
+            shrine3_info:'距离两格以内的一名角色回合开始时，其弃置一张牌',
 
     		leader_caocao:'曹操',
     		leader_liubei:'刘备',
@@ -5766,18 +5874,54 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			chess_huangzhong:['male','shu',4,['sanjiansheji','gongji']],
     			chess_taishici:['male','wu',4,['gongji','guanchuan','pojun']],
     			chess_sunshangxiang:['female','wu',3,['lingdong','lianshe','gongji']],
-    			chess_diaochan:['female','qun',3,['xingzhui','pianyi','biyue']],
+    			chess_diaochan:['female','qun',3,['gongji','pianyi','biyue']],
     			chess_jinchidiao:['male','qun',7,['boss_bfengxing','boss_chiyu'],['boss','chessboss']],
     			chess_beimingjukun:['male','qun',12,['boss_wuying','cangming'],['boss','chessboss']],
     			chess_wuzhaojinlong:['male','qun',10,['boss_tenglong','boss_wushang'],['boss','chessboss']],
     			chess_dongzhuo:['male','qun',10,['jiuchi','boss_stoneqiangzheng','boss_stonebaolin'],['boss','chessboss']],
     			chess_xingtian:['male','qun',99,['boss_moyan','wushuang'],['boss','chessboss']],
-    		}
+
+                treasure_dubiaoxianjing:['male','0',3,['dubiaoxianjing'],[],[],'0'],
+                treasure_jiqishi:['male','0',3,['jiqishi'],[],[],'0'],
+                treasure_shenmidiaoxiang:['female','0',3,['shenmidiaoxiang'],[],[],'0'],
+                treasure_shrine1:['female','0',3,['shrine1'],[],[],'0'],
+                treasure_shrine2:['female','0',3,['shrine3'],[],[],'0'],
+                //treasure_shenpanxianjing:['male','0',3,['shenpanxianjing'],[],[],'0'],
+    		},
     	},
+        characterIntro:{
+            leader_caocao:'从异界进入幻想乡的后宫愿望的人物之一。爱好为人妻，因幻想乡中并没有人妻（有的人妻不敢撩）而非常失望。',
+            leader_liubei:'从异界进入幻想乡的后宫愿望的人物之二。爱好为基佬，因幻想乡中连男人都没有而绝望。',
+            leader_sunquan:'从异界进入幻想乡的后宫愿望的人物之三。爱好为萝莉，因幻想乡中虽然萝莉很多但是一个都不敢撩而天天以喝酒度日。',
+            chess_zhangliao:'从异界进入幻想乡的人物之一。【是人就应该有弓骑】公会的书记。',
+            chess_huangzhong:'从异界进入幻想乡的人物之一。【是人就应该有弓骑】公会的副会长。',
+            chess_taishici:'从异界进入幻想乡的人物之一。【是人就应该有弓骑】公会的主力输出。',
+            chess_sunshangxiang:'从异界进入幻想乡的人物之一。【是人就应该有弓骑】公会的一点红。',
+            chess_diaochan:'从异界进入幻想乡的人物之一。刚刚被拐骗入【是人就应该有弓骑】公会的新人。',
+            chess_jinchidiao:'',
+            chess_beimingjukun:'',
+            chess_wuzhaojinlong:'',
+            chess_dongzhuo:'',
+            chess_xingtian:'',
+
+            treasure_dubiaoxianjing:'虽然陨石很值钱，但也不要冒着生命危险去捡啊……',
+            treasure_jiqishi:'“这个石头有神奇的，治愈人心的力量！”<br>“这就是你用300块钱换了块石头的理由吗……”',
+            treasure_shenmidiaoxiang:'规则34：凡是存在的东西，都有R18表现<br>画师：メンヤンん',
+            treasure_shenpanxianjing:'',
+            treasure_shrine1:'“只要信仰了，每个月都有会员活动，年度烟火表演，还可以买到巫女的泳装照片集……怎么，太过分了？”<br>画师：朱シオ',
+            treasure_shrine2:'“所以你的神社到底是供奉谁的？”<br>“我也想知道啊？！”<br>画师：kirero',
+        },
     	cardPack:{
     		mode_chess:['chess_shezhang','chess_chuzhang']
     	},
-    	chess_cardlist:[],
+    	chess_cardlist:[
+            ['club',10,'chess_shezhang'],
+            ['diamond',2,'chess_chuzhang'],
+            ['spade',7,'chess_shezhang'],
+            ['heart',4,'chess_chuzhang'],
+            ['spade',12,'chess_shezhang'],
+            ['club',6,'chess_chuzhang'],
+        ],
     	rank:{
     		rarity:{
     	        legend:[

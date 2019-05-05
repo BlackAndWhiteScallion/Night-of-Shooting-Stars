@@ -384,6 +384,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return event.list.length - 1;
                     });
                     'step 1'
+                    console.log(event.list);
+                    console.log(result);
                     if (result.control){
                         if (event.list[result.index] == '跳过摸牌阶段，视为使用一种法术牌'){
                             player.skip('phaseDraw');
@@ -400,7 +402,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 var type=get.type(card,'trick');
                                 return type=='trick';
                             },'是否使用一张法术牌？').set('logSkill','qiyao');
-                        } else if (event.list[result.index] == '跳过弃牌阶段并消耗1点灵力，强化你本回合使用的所有法术牌'){
+                        } else if (event.list[result.index] == '跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张法术牌'){
                             player.skip('phaseDiscard');
                             player.loselili();
                             game.trySkillAudio('qiyao',player,true,3);
@@ -1178,7 +1180,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return '弃牌';
                     }).set('prompt','想要和'+get.translation(trigger.player)+'怎么玩呢？');
                     'step 1'
-                    if (result.bool){
+                    if (result.control){
                         if (result.control == '弃牌'){
                             var list = [];
                             if (trigger.player.getCards('h')) list.push('手牌区');
@@ -1188,7 +1190,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 return list[Math.floor(Math.random()*list.length)];
                             }).set('prompt','想要撕掉'+get.translation(trigger.player)+'哪里的所有牌呢？');
                         } else if (result.control == '扣灵力'){
-                            trigger.player.lili = 1;
+                            if (trigger.player.lili > 1) trigger.player.loselili(trigger.player.lili - 1);
                         } else if (result.control == '扣上限'){
                             trigger.player.loseMaxHp();
                             if (trigger.player.storage.zhihou) 

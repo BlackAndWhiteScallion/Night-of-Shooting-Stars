@@ -5462,18 +5462,18 @@
                         clear:true,
                         frequent:true,
                     },
-                    // chess_treasure:{
-                    //  name:'战场机关',
-                    //  init:'0',
-                    //  frequent:true,
-                    //  item:{
-                    //      '0':'关闭',
-                    //      '0.1':'较少出现',
-                    //      '0.2':'偶尔出现',
-                    //      '0.333':'时常出现',
-                    //      '0.5':'频繁出现',
-                    //  }
-                    // },
+                    chess_treasure:{
+                      name:'战场机关',
+                      init:'0',
+                      frequent:true,
+                      item:{
+                          '0':'关闭',
+                          '0.1':'较少出现',
+                         '0.2':'偶尔出现',
+                         '0.5':'频繁出现',
+                         '1':'必定出现',
+                        }
+                    },
                     chess_obstacle:{
                         name:'随机路障',
                         init:'0.2',
@@ -14187,8 +14187,8 @@
                         info[4]=[];
                     }
                     // 默认起始灵力值 （默认为2）
-                    if(!info[1]){
-                        info[1]=0;
+                    if(!info[1] || isNaN(parseInt(info[1]))){
+                        info[1]=2;
                     } else{
                         info[1] = parseInt(info[1]);
                     }

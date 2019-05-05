@@ -110,7 +110,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.turnOver();
                 },
                 intro:{
-                    content:function(storage){
+                    content:function(storage,player){
                         if (!storage) return null;
                         var str = '';
                         for (var i = 0; i < player.storage.baofengxue.length; i ++){

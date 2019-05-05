@@ -18,6 +18,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			scathach:['female', '1', 4, ['ruizhi','mojing']],
 			niuzhanshi:['female','2',4,['ng_wenhao','ng_wenhao2']],
 			mordred:['female','2',4,['niguang','ClarentBloodArthur'],["unseen","forbidai"]],
+			twob:['female', '3', 4, ['qiyue','yueding']],
 		},
 		characterIntro:{
 			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
@@ -34,6 +35,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			scathach:'影之国的女王，当女王当了几千年了。<br>出自：Fate/Grand Order <b>设计：冰茶	画师：saberii</b>',
 			niuzhanshi:'还能是谁呢这。<br>出自：Fate/Apocrypha <b>画师：イセ川</b>',
 			mordred:'圆桌骑士之一，亚瑟王的儿子——同时也是终结父王的叛逆骑士。<br>出自：Fate/Apocrypha <b>画师：Shigure</b>',
+			twob:'——机器人会梦见电子绵羊吗？<br>——不，机器人会梦见和小男朋友一起去商城买T恤衫————<br>出自：NieR:Automata <b>画师：saberii</b>',
 		},	   
 		perfectPair:{
 		},
@@ -2516,6 +2518,75 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.loselili(player.lili);
 				},
 			},
+			qiyue:{
+				trigger:{player:'shaBegin'},
+				filter:function(event,player){
+					return event.target.countCards('hej')>0;
+				},
+				audio:2,
+				logTarget:'target',
+				content:function(){
+					'step 0'
+					player.discardPlayerCard(trigger.target,'hej',true);
+					'step 1'
+					if (trigger.target.countCards('h') == 0) player.gainlili();
+				},
+				ai:{
+					expose:0.2
+				}
+			},
+			yueding:{
+				audio:2,
+				cost:2,
+				spell:['yueding1','yueding2'],
+				trigger:{player:'phaseBegin'},
+				filter:function(event,player){
+					return player.lili > lib.skill.yueding.cost;
+				},
+				content:function(){
+					player.loselili(lib.skill.yueding.cost);
+					player.turnOver();
+				},
+			},
+			yueding1:{
+				trigger:{player:'shaBegin'},
+				filter:function(event,player){
+					return event.target.countCards('hej')>0;
+				},
+				audio:2,
+				logTarget:'target',
+				content:function(){
+					'step 0'
+					player.discardPlayerCard(trigger.target,'hej',true);
+					'step 1'
+					if (trigger.target.countCards('e') == 0) player.draw();
+				},
+				prompt2:'你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有装备牌，你摸一张牌。',
+				ai:{
+					expose:0.2
+				}
+			},
+			yueding2:{
+                audio:2,
+                enable:['chooseToUse'],
+                filter:function(event,player){
+                  return true;
+                },
+                position:'he',
+                selectCard:1,
+                usable:1,
+                viewAs:{name:'sha'},
+                filterCard:true,
+                prompt:'将一张牌当【轰！】使用',
+                check:function(card){return 4-get.value(card)},
+                ai:{
+                },
+                mod:{
+                  cardUsable:function(card,player,num){
+                    if(card.name=='sha') return num+1;
+                  }
+                },
+              },
 		},
 		translate:{
 			kanade:'奏',
@@ -2690,6 +2761,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ClarentBloodArthur_info:'符卡技（1）<永续>你的灵力上限为无限，你的牌点数均为K，符卡结束时，你对一名角色造成X点弹幕伤害，然后消耗所有灵力（X为你的灵力值）。',
 			CBA2:'向端丽的吾父发起叛逆',
 			CBA3:'向端丽的吾父发起叛逆',
+			twob:'2B',
+			qiyue:'白之契约',
+			qiyue_info:'你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有手牌，你获得1点灵力。',
+			yueding:'白之约定',
+			yueding2:'白之约定（转化）',
+			yueding1:'白之约定',
+			yueding_info:'符卡技（2）一回合一次，你可以将一张牌当作【轰！】使用；你使用【轰】的次数上限+1；你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有装备牌，你摸一张牌。',
 		},
 	};
 });
