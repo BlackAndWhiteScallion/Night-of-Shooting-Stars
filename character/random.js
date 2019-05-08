@@ -2533,7 +2533,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					expose:0.2
-				}
+				},
+				check:function(event,player){
+					return -get.attitude(player,event.target);
+				},
 			},
 			yueding:{
 				audio:2,
@@ -2546,6 +2549,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.loselili(lib.skill.yueding.cost);
 					player.turnOver();
+				},
+				check:function(event,player){
+					return player.lili > 4;
 				},
 			},
 			yueding1:{
@@ -2564,6 +2570,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				prompt2:'你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有装备牌，你摸一张牌。',
 				ai:{
 					expose:0.2
+				},
+				check:function(event,player){
+					return -get.attitude(player,event.target);
 				}
 			},
 			yueding2:{

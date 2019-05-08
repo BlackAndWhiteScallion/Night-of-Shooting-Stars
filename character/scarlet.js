@@ -384,8 +384,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return event.list.length - 1;
                     });
                     'step 1'
-                    console.log(event.list);
-                    console.log(result);
                     if (result.control){
                         if (event.list[result.index] == '跳过摸牌阶段，视为使用一种法术牌'){
                             player.skip('phaseDraw');
@@ -1130,9 +1128,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 3'
                     lib.skill['kuangyan'].forced = true;
                     player.markSkill('kuangyan');
+                    if (get.mode() == 'stg') lib.skill['kuangyan'].audio = 0;
                 },
                 check:function(){
                     return true;
+                },
+                ai:{
+                    effect:{
+                        player:function(card,player,target,current){
+                            if(get.tag(card,'save') && target != player && get.mode() == 'stg'){
+                                return 'zeroplayertarget';
+                            }
+                        }
+                    },
                 },
             },
             kuangyan2:{
@@ -1154,7 +1162,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.lili > player.hp;
                 },
                 content:function(){
-                    player.loselili(player.hp);
+                    if (get.mode() != 'stg') player.loselili(player.hp);
                     player.addIncident(game.createCard('death','zhenfa',''));
                     player.turnOver();
                 },

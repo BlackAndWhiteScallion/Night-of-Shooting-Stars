@@ -13253,7 +13253,7 @@
                                 var info1=get.info(cards[num]);
                                 if(info1.skills){
                                     for(var i=0;i<info1.skills.length;i++){
-                                        if (!player.countCards(cards[num].name, 'j')) player.removeSkill(info1.skills[i]);
+                                        if (!player.countCards('j', {name:cards[num].name})) player.removeSkill(info1.skills[i]);
                                     }
                                 }
                             }
@@ -14187,7 +14187,10 @@
                         info[4]=[];
                     }
                     // 默认起始灵力值 （默认为2）
-                    if(!info[1] || isNaN(parseInt(info[1]))){
+                    if (info[1] == '0'){
+                        info[1] = 0;
+                    }
+                    else if(!info[1] || isNaN(parseInt(info[1]))){
                         info[1]=2;
                     } else{
                         info[1] = parseInt(info[1]);
@@ -22705,6 +22708,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 				},
 				group:['dualside_init','dualside_turn']
 			},
+            // 目前角色的所有技能失效（locked以外）
             fengyin:{
                 init:function(player,skill){
                     var skills=player.getSkills(true,false);
@@ -24973,7 +24977,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 }
                 if (music == 'music_default'){
                     ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
-                    ui.backgroundMusic.currentTime = [137, 693, 1338, 1970,2331, 2715, 3463].randomGet();
+                    ui.backgroundMusic.currentTime = [137, 693, 1338, 1970, 2715, 3463, 3982].randomGet();
                 }
                 else{
                     ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
@@ -38734,7 +38738,6 @@ smoothAvatar:function(player,vice){
                     // 自由选将的武将在这里！
                     // 但是我不会设置！
                     for(var i in lib.character){
-                        //console.log(i);
                         if(lib.character[i][4].contains('minskin')) continue;
                         if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
                             if(lib.config.mode=='boss') continue;
@@ -44834,7 +44837,7 @@ smoothAvatar:function(player,vice){
             locked:function(skill){
                 var info=lib.skill[skill];
                 if(info.locked==false) return false;
-                if(info.trigger&&info.forced) return true;
+                //if(info.trigger&&info.forced) return true;
                 if(info.mod) return true;
                 if(info.locked) return true;
                 return false;

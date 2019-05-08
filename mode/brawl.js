@@ -1560,10 +1560,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    var cc_e=ui.create.node('button','加入装备区',line5,function(){
 	                        if(get.type(cardpileaddname.value)!='equip') return;
 	                        var subtype=get.subtype(cardpileaddname.value);
-	                        for(var i=0;i<line6_e.childElementCount;i++){
-	                            if(get.subtype(line6_e.childNodes[i].name)==subtype){
-	                                line6_e.childNodes[i].remove();break;
-	                            }
+	                        if (line6_e.childElementCount > 2){
+	                        	line6_e.childNodes[2].remove();
 	                        }
 	                        fakecard([cardpileaddname.value,cardpileaddsuit.value,cardpileaddnumber.value],line6_e,capt_e);
 	                        capt_e.style.display='block';

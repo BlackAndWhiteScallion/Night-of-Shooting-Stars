@@ -1884,7 +1884,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   reimu_die:'啊啊，肚子饿了，回去了回去了。',
                   marisa:'魔理沙',
                   liuxing:'流星',
-                  liuxing_info:'摸牌阶段，你可以少摸至少一张牌，令你的攻击范围+X（X为以此法少摸的牌数），直到结束阶段；若如此做，结束阶段，你视为使用一张强化的【顺手牵羊】。',
+                  liuxing_info:'摸牌阶段，你可以少摸至少一张牌，令你的攻击范围+X（X为以此法少摸的牌数），直到结束阶段；若如此做，结束阶段，你视为使用一张不消耗灵力的【顺手牵羊】。',
                   liuxing_audio1:'无论你有没有准备好！',
                   liuxing_audio2:'让开，流星雨要来了！',
                   liuxing_shun:'流星（顺手牵羊）',

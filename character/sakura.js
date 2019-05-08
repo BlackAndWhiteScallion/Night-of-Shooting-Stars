@@ -790,7 +790,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             }
                         }
                     }
-                    if (result.bool && event.control == '交出去明置牌'){
+                    if (result.bool && event.control == '将明置牌交给当前回合角色'){
                         if(result.targets&&result.targets[0]){
                             result.targets[0].gain(result.cards,player);
                             player.$give(result.cards.length,result.targets[0]);

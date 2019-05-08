@@ -1000,6 +1000,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	'BGM[烂苹果]：bad apple!',
 	        	'BGM[灵梦战]：少女绮想曲-Dream Battle 交响曲remix',
 	        	'BGM[神赵云战]：三国杀-虎牢关',
+	        	'BGM[红魔乡EX]：魔法少女们的百年祭——まらしぃ ',
 	        	],
 	        	showcase:function(init){
 

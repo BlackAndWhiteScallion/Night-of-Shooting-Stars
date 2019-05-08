@@ -1411,7 +1411,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{source:'damageEnd'},
 			forced:true,
 			filter:function(event){
-				return (event.card && event.card.name=='sha' && event.nature != 'thunder');
+				return (event.card && get.subtype(event.card) == 'attack' && event.nature != 'thunder');
 			},
 			content:function(){
 				trigger.player.damage('thunder');
