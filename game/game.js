@@ -5386,7 +5386,7 @@
                         item:{
                             combat:'自由',
                             three:'统率',
-                            leader:'君主',
+                            leader:'后宫',
                         },
                         restart:true,
                         frequent:true,
@@ -10269,6 +10269,9 @@
                                 else{
                                     str='请选择要使用的牌';
                                 }
+                                if (!lib.config.new_tutorial){
+                                    str += '<br><br><div><div style="width:100%;text-align:center;font-size:14px">在牌上浮空或右键可以查看效果<br>在角色上浮空，右键，或双击可以查看技能</div>';
+                                }
                                 if(event.openskilldialog){
                                     event.skillDialog=ui.create.dialog(event.openskilldialog);
                                     delete event.openskilldialog;
@@ -10630,7 +10633,9 @@
                     "step 1"
                     event.list=targets.slice(0);
                     event.list.unshift(player);
-  					player.chooseCardOL(event.list,'请选择拼点牌',true).set('type','compare').set('ai',event.ai).set('source',player).aiCard=function(target){
+                    var str = '请选择拼点牌<br><br><div><div style="width:100%;text-align:center;font-size:14px">点数更大方为赢，点数相等为双方都没赢';
+                    if (lib.config.compare_discard) str += '<br>拼点完双方各摸一张牌</div>'; 
+  					player.chooseCardOL(event.list,str,true).set('type','compare').set('ai',event.ai).set('source',player).aiCard=function(target){
   						var hs=target.getCards('h');
                         var event=_status.event;
                         event.player=target;
@@ -10738,23 +10743,25 @@
                             };
                         }
                     };
+                    var str = '请选择拼点牌<br><br><div><div style="width:100%;text-align:center;font-size:14px">点数更大方为赢，点数相等为双方都没赢';
+                    if (lib.config.compare_discard) str += '<br>拼点完双方各摸一张牌</div>'; 
                     if(player.isOnline()){
                         player.wait(sendback);
                         event.ol=true;
                         player.send(function(ai){
-						game.me.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=ai;
+						game.me.chooseCard(str,true).set('type','compare').set('glow_result',true).ai=ai;
 							game.resume();
 						},event.ai);
 					}
 					else{
 						event.localPlayer=true;
-						player.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=event.ai;
+						player.chooseCard(str,true).set('type','compare').set('glow_result',true).ai=event.ai;
 					}
 					if(target.isOnline()){
 						target.wait(sendback);
 						event.ol=true;
 						target.send(function(ai){
-							game.me.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=ai;
+							game.me.chooseCard(str,true).set('type','compare').set('glow_result',true).ai=ai;
 							game.resume();
 						},event.ai);
 					}
@@ -10762,11 +10769,13 @@
 						event.localTarget=true;
 					}
 					"step 2"
+                    var str = '请选择拼点牌<br><br><div><div style="width:100%;text-align:center;font-size:14px">点数更大方为赢，点数相等为双方都没赢';
+                    if (lib.config.compare_discard) str += '<br>拼点完双方各摸一张牌</div>'; 
 					if(event.localPlayer){
 						event.card1=result.cards[0];
 					}
 					if(event.localTarget){
-						target.chooseCard('请选择拼点牌',true).set('type','compare').set('glow_result',true).ai=event.ai;
+						target.chooseCard(str,true).set('type','compare').set('glow_result',true).ai=event.ai;
 					}
                     "step 3"
                     if(event.localTarget){
@@ -20692,7 +20701,8 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 						node.classList.add('fullscreenavatar');
 						ui.create.div('',ui.create.div(node));
 						// ui.create.div('',str.split('').join('<br>'),ui.create.div('.text.textbg',node));
-						ui.create.div('','<div>'+str.split('').join('</div><br><div>')+'</div>',ui.create.div('.text',node));
+						//ui.create.div('','<div>'+str.split('').join('</div><br><div>')+'</div>',ui.create.div('.text',node));
+                        ui.create.div('',str,ui.create.div('.text',node));
 						node.firstChild.firstChild.style.backgroundImage=avatar.style.backgroundImage;
 						node.dataset.nature=nature||'unknown';
 						var num=0;
@@ -22216,8 +22226,8 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 if(lib.character[i][4]&&lib.character[i][4].contains('forbidai')) return true;
                 if(lib.character[i][4]&&lib.character[i][4].contains('unseen')) return true;
                 if(lib.config.forbidai.contains(i)) return true;
-				if(lib.characterFilter[i]&&!lib.characterFilter[i](get.mode())) return true;
-				if(_status.connectMode){
+				//if(lib.characterFilter[i]&&!lib.characterFilter[i](get.mode())) return true;
+                if(_status.connectMode){
                     if(lib.configOL.banned.contains(i)) return true;
                    var double_character=false;
                     if(lib.configOL.mode=='guozhan'){
@@ -48240,6 +48250,7 @@ smoothAvatar:function(player,vice){
             return (result1*get.attitude(player,player)+(target?result2*get.attitude(player,target):0));
         },
         damageEffect:function(target,player,viewer,nature){
+            if (!target) return 0;
             if(!player){
                 player=target;
             }

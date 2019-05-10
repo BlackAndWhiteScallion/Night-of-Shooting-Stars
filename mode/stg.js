@@ -1061,6 +1061,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.tongguan = 0;
 					game.me.storage.fuhuo = 0;
 					lib.character['flandre'] = ['female','1',4,['kuangyan', 'flaninit'],[]];
+					lib.skill['kuangyan'].trigger = {player:'phaseUseBegin'};
+					lib.translate['kuangyan'] = '狂宴（改）';
+					lib.translate['kuangyan_info'] = '出牌阶段开始时，你可以弃置攻击范围内的所有其他角色各一张牌；然后，对其中没有手牌的角色各造成1点弹幕伤害；你发动此技能后，此技能改为锁定技，直到一名角色坠机。';
 					game.me.storage.reskill = ['fourof','starbow','chiyan_ex_win'];
 					game.me.storage.musicchange=['death',0];
 					lib.character['patchouli'] = ['female','4',3,['qiyao','riyin','silent'],[]];
@@ -2900,7 +2903,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				//trigger:{player:'phaseBegin'},
 				spell:['fourof1'],
 				init:function(player){
-					player.addTempSkill('fengyin');
 					player.useSkill('fourof');
 				},
 				content:function(){

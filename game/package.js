@@ -65,6 +65,7 @@ window.noname_package={
         sb:'文花异变',
         baka:'笨蛋异变',
         reimu:'灵梦战',
+        magicalgirl:'魔法少女',
     },
     font:{
         xiaozhuan:'小篆',

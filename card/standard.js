@@ -1535,7 +1535,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				}	
 				trigger.directHit=true;
-			}
+			},
+			prompt2:'你可以消耗2点灵力，或弃置冈格尼尔，令【轰！】强制命中'
 		},
 		ibuki_skill:{
 			audio:true,

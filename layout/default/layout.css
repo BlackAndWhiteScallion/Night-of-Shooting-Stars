@@ -2028,13 +2028,16 @@ div:not(.handcards)>.card>.info>span,
 #arena:not(.hide_turned):not(.oldlayout) .player.turnedover>.turned{
 	opacity: 0.2;
 }
+/* 整个东西的位置 */
 #window>.damage.fullscreenavatar{
 	text-align: center;
 	font-family: 'xinwei';
 	top: calc(50% - 200px);
+	/*left:50px;*/
 	height: 400px;
 	transform-origin: center;
 }
+/* 还是整个东西的位置 */
 #window>.damage.fullscreenavatar>div{
 	width: 500px;
 	height: 100%;
@@ -2046,6 +2049,7 @@ div:not(.handcards)>.card>.info>span,
 #window>.damage.fullscreenavatar>div:first-child{
 	-webkit-mask-image: linear-gradient(transparent, black, black, transparent);
 }
+/* 背后图片的位置 */
 #window>.damage.fullscreenavatar>div:first-child>div{
 	background-size: cover;
 	background-position: 50%;
@@ -2082,16 +2086,17 @@ div:not(.handcards)>.card>.info>span,
 	width: auto;
 	height: auto;
 	font-size: 90px;
-	text-align: right;
+	text-align: center;
 	top: auto;
 	bottom: 30px;
 	position: absolute;
-	left: auto;
-	right: 165px;
+	left: 60px;
+	/*right: 165px;*/
 }
 #window>.damage.fullscreenavatar>.name>div{
 	display: block;
 	position: relative;
+	text-align: center;
 	width: auto;
 	height: auto;
 	top: 30px;

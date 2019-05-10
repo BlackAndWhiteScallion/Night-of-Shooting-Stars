@@ -74,7 +74,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var step15 = function(){
 						clear();
 						var dialog = '';
-						if (lib.config.connect_nickname == '葱'){
+						if (lib.config.connect_nickname == '黑白葱'){
 							dialog = '哎，主人大人，早上好啊！';
 						} else if (lib.config.connect_nickname == '伶'){
 							dialog = '伶伶大人好！';

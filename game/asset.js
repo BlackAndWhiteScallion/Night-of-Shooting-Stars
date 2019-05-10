@@ -211,7 +211,7 @@ window.noname_asset_list=[
     'audio/background/marisa.mp3',
     'audio/background/boss.mp3',
     'audio/background/nero.mp3',
-    'audio\background\magicalgirl.mp3',
+    'audio/background/magicalgirl.mp3',
     'audio/card/female/bingyu.mp3',
     'audio/card/female/caifang.mp3',
     'audio/card/female/danmakucraze.mp3',

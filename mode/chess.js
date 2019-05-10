@@ -2297,8 +2297,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     						intro.innerHTML=get.translation(rarity);
     					}
     				}
-    				game.leaderLord=['leader_caocao','leader_liubei','leader_sunquan'];
-    				var dialog1=ui.create.dialog('选择君主','hidden');
+    				game.leaderLord=['leader_caocao','leader_liubei','leader_sunquan','leader_marisa'];
+    				var dialog1=ui.create.dialog('选择后宫王','hidden');
     				event.dialog1=dialog1;
     				dialog1.classList.add('fullheight');
     				dialog1.classList.add('halfleft');
@@ -4527,13 +4527,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				if(Math.random()<chance){
     					_status.zhaoxiang=target.name;
     					game.data.character.add(target.name);
+                        if (player.hasSkill('leader_op')){
+                            game.data.dust += 30;
+                            game.reward += 10;
+                        }
     					game.saveData();
     					game.over();
     				}
     				else{
     					game.log('招降',target,'失败')
     					player.popup('招降失败');
-    					player.damage(target);
     				}
     			}
     		},
@@ -4566,6 +4569,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		},
+            leader_op:{
+                unique:true,
+            },
     		tongshuai:{
     			unique:true,
     			forbid:['guozhan'],
@@ -5447,7 +5453,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		trueColor:"zhu",
     		falseColor:"wei",
     		_chessmove:'移动',
-    		leader:'君主',
+    		leader:'后宫王',
     		combat:'对阵',
     		chessscroll_speed_config:'边缘滚动速度',
     		chess_character_config:'战棋武将',
@@ -5547,17 +5553,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		leader_caocao:'曹操',
     		leader_liubei:'刘备',
     		leader_sunquan:'孙权',
+            leader_marisa:'魔理沙',
     		leader_xiaoxiong:'枭雄',
     		leader_xiaoxiong_info:'每当你造成伤害，获胜后会得到一定数量的额外金币奖励',
     		leader_renyi:'仁义',
     		leader_renyi_info:'你招降敌将的成功率大幅增加',
     		leader_mouduan:'谋断',
     		leader_mouduan_info:'其他友方角色回合内的行动范围+1',
+            leader_op:'外挂',
+            leader_op_info:'你招降成功后，获得30招募令和10金币奖励。',
+
 
     		tongshuai:'统率',
     		tongshuai_info:'准备阶段和结束阶段，你可以选择一名未上场的已方武将的一个技能作为你的技能',
     		leader_zhaoxiang:'招降',
-    		leader_zhaoxiang_info:'出牌阶段限一次，你可以尝试对相邻敌方武将进行招降，若成功，你获得该武将并立即结束本局游戏，若失败，你受到一点伤害。每发动一次消耗10招募令',
+    		leader_zhaoxiang_info:'出牌阶段限一次，你可以尝试对相邻敌方角色进行招降（成功率取决于其体力，牌数，和稀有度）。若成功，你获得该武将并立即结束本局游戏。每发动一次消耗10招募令',
 
     		common:'普通',
     		rare:'稀有',
@@ -5870,6 +5880,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			leader_caocao:['male','wei',4,['leader_xiaoxiong']],
     			leader_liubei:['male','shu',4,['leader_renyi']],
     			leader_sunquan:['male','wu',4,['leader_mouduan']],
+                leader_marisa:['female','2',3,['liuxing','leader_op']],
     			chess_zhangliao:['male','wei',4,['gongji','zhiming']],
     			chess_huangzhong:['male','shu',4,['sanjiansheji','gongji']],
     			chess_taishici:['male','wu',4,['gongji','guanchuan','pojun']],

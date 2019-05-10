@@ -2502,8 +2502,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.damage(Number.MAX_SAFE_INTEGER);
 					}
 					"step 2"
-					if (game.me.isAlive() && game.me.name != 'marisa'){
-						event.goto(1);
+					if (game.me.isAlive()){
+						game.pause();
+						player.say('挺厉害的嘛，那这次就先放过你了吧。');
+						setTimeout(function(){
+	                        player.init('akyuu');
+	                        game.resume();
+	                    },2500);
 					}
 					"step 3"
 					trigger.cancel();
