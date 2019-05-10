@@ -28045,7 +28045,10 @@ smoothAvatar:function(player,vice){
                     resultbool=null;
                 }
                 if(result===true) result='战斗胜利';
-                if(result===false) result='战斗失败';
+                if(result===false){
+                    result='战斗失败';
+                        if (get.mode() == 'stg') result = '满身疮痍';
+                    }
                 if(result==undefined) result='战斗结束';
                 dialog=ui.create.dialog(result);
                 dialog.forcebutton=true;

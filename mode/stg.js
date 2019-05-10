@@ -2067,6 +2067,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addBossFellow(6,'stg_maid',2);
 					game.addBossFellow(2,'stg_maid',2);
 					game.boss.addSkill('jicai');
+					lib.skill['jicai'].skillAnimation = true;
 					lib.skill['jicai'].cost = 0;
 					game.boss.useSkill('jicai');
 					lib.skill['jicai'].infinite = true;
@@ -2287,6 +2288,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.removeSkill('gungirs');
 					player.removeSkill('gungirs1');
 					player.addSkill('feise');
+					lib.skill['feise'].skillAnimation = true;
 					lib.skill['feise'].cost = 0;
 					player.useSkill('feise');
 					player.addSkill('feise2');
@@ -2381,6 +2383,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_yinyangyu_skill:{
 				init:function(player){
 					player.addSkill('mengxiang');
+					lib.skill['mengxiang'].skillAnimation = true;
 				},
 				enable:['chooseToUse','chooseToRespond'],
 				hiddenCard:function(player,name){
@@ -2457,6 +2460,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				group:'missile_count',
 				init:function(player){
 					player.addSkill('stardust');
+					lib.skill['stardust'].skillAnimation=true;
 				},
 				trigger:{player:'phaseEnd'},
 				filter:function(event,player){
@@ -2535,6 +2539,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				cost:2,
 				spell:['doll2'],
+				skillAnimation:true,
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > lib.skill.doll.cost;
@@ -2569,6 +2574,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				cost:2,
 				roundi:true,
+				skillAnimation:true,
 				spell:['private2', 'private3'],
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
@@ -2598,6 +2604,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
                 cost:1,
                 spell:['spark1'],
+                skillAnimation:true,
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.masterspark.cost;
@@ -2615,7 +2622,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 },
 			},
 			spark1:{
-				skillAnimation:true,
 				trigger:{source:'damageBegin'},
 				filter:function(event){
 					return event.nature != 'thunder';
@@ -2630,6 +2636,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:2,
                 spell:['fengmo1'],
+                skillAnimation:true,
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.fengmo.cost;
