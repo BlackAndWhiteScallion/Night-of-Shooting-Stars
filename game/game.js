@@ -12856,7 +12856,7 @@
                     var num  = 0;
                     for(var i=0;i<cards.length;i++){
                         if(get.type(cards[i]) == 'delay'){
-                            player.gain(ui.skillPile.childNodes[0],'draw2');
+                            player.gain(ui.skillPile.childNodes[i],'draw2');
                         } else {
                             num ++;
                         }
@@ -41670,7 +41670,8 @@ smoothAvatar:function(player,vice){
                 else{
                     num=ui.cardPile.childNodes.length;
                 }
-                uiintro.add('剩余 <span style="font-family:'+'xinwei'+'">'+num);
+                uiintro.add('牌堆剩余 <span style="font-family:'+'xinwei'+'">'+num);
+                uiintro.add('技能牌剩余 <span style="font-family:'+'xinwei'+'">'+ui.skillPile.childNodes.length);
 
                 if(_status.connectMode) return uiintro;
                 uiintro.add('<div class="text center">轮数 <span style="font-family:xinwei">'+game.roundNumber+'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">'+game.shuffleNumber+'</div>');

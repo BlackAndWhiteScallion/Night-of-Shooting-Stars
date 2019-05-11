@@ -35,6 +35,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           event.players=game.filterPlayer();
                           player.line(event.players,'black');
                           "step 1"
+                          if (event.current.name == 'lilywhite') game.trySkillAudio('chunmian',event.current,true,3);
                           event.current.chooseTarget([1,1],true,'弃置与你最近的一名其他角色一张牌',function(card,player,target){
                               // 不能选玩家
                               if(player==target) return false;
@@ -266,6 +267,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		content:function(){
             			"step 0"
         					player.chooseToCompare(target);
+                  if (target.name == 'marisa') game.trySkillAudio('zanghua',target,true,3);
+                  if (target.name == 'alice') game.trySkillAudio('zanghua', target, true, 4);
         					"step 1"
         					if (!result.tie){
                       if(result.bool){
@@ -467,6 +470,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         'step 1'
                         if (result.bool&&result.cards.length){
                             trigger.player.recast(result.cards[0]);
+                            if(trigger.player.name == 'komachi') game.trySkillAudio('huiwu',trigger.player,true,3);
                         }
                     }
               },
@@ -590,6 +594,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   chunmian:'春眠',
                   chunmian_audio1:'春天马上就到了呢。',
                   chunmian_audio2:'春眠不觉晓……',
+                  chunmian_audio3:'幻想乡需要迎接新的春天了！旧的春天需要革新了！',
                   chunmian_info:'准备阶段，若你的灵力值不大于体力值，你可以令所有角色各弃置与其最近的一名角色一张牌；然后，所有以此法失去牌的角色各摸一张牌。',
                   bamiao:'拔苗',
                   bamiao_audio1:'光靠自己生长，是长不出好苗子的！',
@@ -619,6 +624,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	    zanghua:'葬花',
                   zanghua_audio1:'花儿们好像对你很感兴趣呢。',
                   zanghua_audio2:'呵呵。',
+                  zanghua_audio3:'幽香，这次我可不会输了！',
+                  zanghua_audio4:'幽香……别低估我了。',
             	     zanghua_info:'出牌阶段，你可以与一名其他角色拼点；赢的角色视为对输的角色使用了一张【决斗】；若平局，或其体力值小于你，此技能无效，直到结束阶段。',
             	   xiaofeng:'啸风弄月',
                   xiaofeng_audio1:'幻想「花鸟风月，啸风弄月」。',
@@ -640,6 +647,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 huiwu:'悔悟',
                 huiwu_audio1:'果然你是完全没有听从我的教诲。（其实也有点习惯了。）你可知道这样随随便便的攻击是不会有任何好结果的。无意义的纷争和骚乱，破坏其他人的生活，难道，你真的认为破坏其他人，对你是不会有任何后果的吗？听着，以后一定要收拾你的情绪——我还会再回来检查你的表现的。',
                 huiwu_audio2:'虽然说进行弹幕对战是不可避免的，甚至是幻想乡中必要的一环，但是这并不代表斗争就是好的。斗争只会让你们越来越意气用事，越来越控制不住自己，这对任何人都是没有任何好处的。因此，你们要学会控制自己的情绪，不要让弹幕战变成你的重心。只有多多反思和思考，才能成为更好的人，更好的自己。',
+                huiwu_audio3:'（还好映姬大人没发现我戴了耳塞……）',
                 huiwu_info:'锁定技，一名角色的回合结束时，其须重铸一张牌；若其本回合造成过伤害，该牌由你指定。',
                 caijue:'裁决',
                 caijue_info:'准备阶段，你可以展示一名角色的手牌：弃置其中所有攻击牌，然后你消耗等量灵力（不够耗至1）， 对其造成消耗量的灵击伤害；若其中没有攻击牌，【裁决】无效，直到你受到弹幕伤害后。',

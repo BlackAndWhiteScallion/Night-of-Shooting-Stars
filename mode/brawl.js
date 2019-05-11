@@ -1568,10 +1568,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    });
 	                    var cc_j=ui.create.node('button','加入技能牌',line5,function(){
 	                        if(get.type(cardpileaddname.value)!='delay') return;
-	                        for(var i=0;i<line6_j.childElementCount;i++){
-	                            if(line6_j.childNodes[i].name==cardpileaddname.value){
-	                                line6_j.childNodes[i].remove();break;
-	                            }
+	                        if (line6_e.childElementCount > 2){
+	                        	line6_e.childNodes[2].remove();
 	                        }
 	                        fakecard([cardpileaddname.value,cardpileaddsuit.value,cardpileaddnumber.value],line6_j,capt_j);
 	                        capt_j.style.display='block';
@@ -1590,7 +1588,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    var line6_h=ui.create.div(style2,this);
 	                    var capt_e=ui.create.div(style2,'','装备区',this);
 	                    var line6_e=ui.create.div(style2,this);
-	                    var capt_j=ui.create.div(style2,'','判定区',this);
+	                    var capt_j=ui.create.div(style2,'','技能牌',this);
 	                    var line6_j=ui.create.div(style2,this);
 	                    line6_j.style.marginBottom='10px';
 	                    capt_h.style.display='none';

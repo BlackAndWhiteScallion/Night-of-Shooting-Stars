@@ -105,6 +105,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               if (result.targets.length){
                                  player.line(result.targets,'green');
                                  result.targets[0].gain(event.card,'gain2');
+                                 if (result.targets[0].name == 'aya') game.trySkillAudio('nianxie',result.targets[0],true,3);
                               }
                         },
          },
@@ -253,6 +254,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                      game.playAudio('effect','shutter');
                   }
                   player.useCard({name:'caifang'},result.targets[0],false);
+                  if (result.targets[0].name == 'hetate') game.trySkillAudio('kuanglan',result.targets[0],true,3);
                }
             },
             check:function(event,player){
@@ -374,6 +376,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   nianxie_bg:'念',
                   nianxie_audio1:'这不比出去到处跑方便多了吗？',
                   nianxie_audio2:'我觉得好像应该就是这个样子没错？',
+                  nianxie_audio3:'嗯，摄影技术大大提高了呢，果。',
                   jilan:'极岚',
                   jilan_info:'锁定技，你视为不在灵力值小于你的角色的攻击范围内。',
                   lianxu:'连续拍摄',
@@ -390,6 +393,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   kuanglan_info:'一名角色的结束阶段，你可以指定一名本回合内满足以下一项的角色：1. 发动过符卡；2. 明置过异变牌；3. 击坠过角色; 4. 使用过禁忌牌；视为你对其使用一张【突击采访】。',
                   kuanglan_audio1:'幻想乡最速取材，射命丸文参上~',
                   kuanglan_audio2:'好素材好素材~',
+                  kuanglan_audio3:'',
                   fengmi:'幻想风靡',
                   fengmi_audio1:'「幻想风靡」！',
                   fengmi_audio2:'放心，我会放水的啦~',
