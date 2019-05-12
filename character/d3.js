@@ -20,6 +20,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			bullygang:'白嫖到最后一无所有',
 			actress:'月が綺麗ですね<sub>……</sub>',
 			hemerocalliscitrinabaroni:'今天你平衡了么？<br />我可以帮你好好<font size="5"><b>平衡</b></font>（物理）一下',
+			pear:'凤梨倒了~',
 			yukizakura:'信仰鸽子的幻想乡巫女',
 		},	   
 		perfectPair:{
