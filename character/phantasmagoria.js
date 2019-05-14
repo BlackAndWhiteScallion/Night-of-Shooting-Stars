@@ -460,17 +460,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 return -get.buttonValue(button);
                               }
                               }).set('neg',neg);
-                            game.trySkillAudio('huiwu',player,true,1);
+                            game.trySkillAudio('huiwu',player,true,get.rand(2)+1);
                         } else {               
                           trigger.player.chooseCard('hej',true,'悔悟：你须重铸一张牌').set('ai',function(card){
                             return -get.value(card);
                           });
-                            game.trySkillAudio('huiwu',player,true,2);
+                            game.trySkillAudio('huiwu',player,true,get.rand(2)+3);
                         }
                         'step 1'
                         if (result.bool&&result.cards.length){
                             trigger.player.recast(result.cards[0]);
-                            if(trigger.player.name == 'komachi') game.trySkillAudio('huiwu',trigger.player,true,3);
+                            if(trigger.player.name == 'komachi') game.trySkillAudio('huiwu',trigger.player,true,5);
                         }
                     }
               },
@@ -646,8 +646,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 eiki:'映姬',
                 huiwu:'悔悟',
                 huiwu_audio1:'果然你是完全没有听从我的教诲。（其实也有点习惯了。）你可知道这样随随便便的攻击是不会有任何好结果的。无意义的纷争和骚乱，破坏其他人的生活，难道，你真的认为破坏其他人，对你是不会有任何后果的吗？听着，以后一定要收拾你的情绪——我还会再回来检查你的表现的。',
-                huiwu_audio2:'虽然说进行弹幕对战是不可避免的，甚至是幻想乡中必要的一环，但是这并不代表斗争就是好的。斗争只会让你们越来越意气用事，越来越控制不住自己，这对任何人都是没有任何好处的。因此，你们要学会控制自己的情绪，不要让弹幕战变成你的重心。只有多多反思和思考，才能成为更好的人，更好的自己。',
-                huiwu_audio3:'（还好映姬大人没发现我戴了耳塞……）',
+                huiwu_audio2:'都说了不要这么打架了，怎么就听不进去？你真的只会这么毫无华丽感的打架？我来教你：首先你需要发动你的符卡技，记得要大声喊名字，其次你需要有规律的发弹幕，记得数量要多，但是不要会压死人，完全不可能突破的弹幕就没有战斗的意义了。双方互相往对方身上用杀招是没有人想要见到的。最后，记住给你的弹幕加入只属于你的特色！',
+                huiwu_audio3:'虽然说进行弹幕对战是不可避免的，甚至是幻想乡中必要的一环，但是这并不代表斗争就是好的。斗争只会让你们越来越意气用事，越来越控制不住自己，这对任何人都是没有任何好处的。因此，你们要学会控制自己的情绪，不要让弹幕战变成你的重心。只有多多反思和思考，才能成为更好的人，更好的自己。',
+                huiwu_audio4:'嗯，无论是什么时候，即使是在激烈战斗的中心，也是值得花几分钟，集中精神，稳定情绪。事态已如此，慌只会让你的攻击变的无力和没用。要冷静的考虑，找出关键点，突破点，再向着那个方向进发吧。再说了，在你坠机后躺地上了，有的是时间让你慢慢慌的。',
+                huiwu_audio5:'（还好映姬大人没发现我戴了耳塞……）',
                 huiwu_info:'锁定技，一名角色的回合结束时，其须重铸一张牌；若其本回合造成过伤害，该牌由你指定。',
                 caijue:'裁决',
                 caijue_info:'准备阶段，你可以展示一名角色的手牌：弃置其中所有攻击牌，然后你消耗等量灵力（不够耗至1）， 对其造成消耗量的灵击伤害；若其中没有攻击牌，【裁决】无效，直到你受到弹幕伤害后。',

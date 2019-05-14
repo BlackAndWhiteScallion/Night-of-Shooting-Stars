@@ -4194,6 +4194,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     'step 0'
                     game.log('守矢神社的保佑发动！');
                     player.draw();
+                    var players = game.filterPlayer();
+                    for (var i = 0; i < players.length; i ++){
+                        if (players[i].name == 'sanae') players[i];
+                    }
                 }
             },
             shrine3:{
@@ -4215,6 +4219,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     'step 0'
                     game.log('给博丽神社交了保护费……');
                     player.chooseToDiscard(1,true,'hej');
+                    'step 1'
+                    if (result.bool && game.hasPlayer(function(current){
+                        return current.name == 'reimu'; 
+                    })){
+                        var players = game.filterPlayer();
+                        for (var i = 0; i < players.length; i ++){
+                            if (players[i].name == 'reimu') players[i].gain(result.cards);
+                        }
+                    }
                 }
             },
     		wuyashenxiang:{
@@ -5546,9 +5559,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		wuyashenxiang:'厄音',
     		wuyashenxiang_info:'距离3格以内的角色在其回合结束后，若体力值不大于1，令其回复一点体力，然后将牌堆中的一张延时锦囊牌置于其判定区',
             shrine1:'保佑',
-            shrine1_info:'距离两格以内的一名角色回合开始时，其摸一张牌',
+            shrine1_info:'距离两格以内的一名角色回合开始时，其摸一张牌；若场上有早苗，早苗可以交给其一张牌。',
             shrine3:'保护费',
-            shrine3_info:'距离两格以内的一名角色回合开始时，其弃置一张牌',
+            shrine3_info:'距离两格以内的一名角色回合开始时，其弃置一张牌；若场上有灵梦，灵梦获得弃置牌。',
 
     		leader_caocao:'曹操',
     		leader_liubei:'刘备',

@@ -36,9 +36,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.character[i][4]=[];
 				}
 			}
-			// for(var i in lib.cardPack.mode_stg){
-			// 	lib.card[i]=lib.cardPack.mode_stg[i];
-			// }
+			 for(var i in lib.cardPack.mode_stg){
+			 	lib.card[i]=lib.cardPack.mode_stg[i];
+			 }
 			for(var i in lib.skill){
 				if(lib.skill[i].changeSeat){
 					lib.skill[i]={};
@@ -502,7 +502,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				subtype:'equip4',
 				ai:{
 					basic:{
-						equipValue:6
+						equipValue:6,
 					}
 				},
 				skills:['stg_yinyangyu_skill']
@@ -513,7 +513,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				subtype:'equip4',
 				ai:{
 					basic:{
-						equipValue:6
+						equipValue:6,
 					}
 				},
 				skills:['stg_needle_skill']
@@ -2497,19 +2497,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				init:function(player){
 					if (player.identity != 'zhu') player.addSkill('doll');
 				},
-				trigger:{player:'phaseEnd'},
+				trigger:{global:'gainAfter'},
+				usable:1,
 				filter:function(event,player){
-					return game.hasPlayer(function(current){
-						return current.storage._mubiao;
-					});
+					return (player != event.player && !(event.player == _status.currentPhase && _status.event.getParent('phaseDraw')));
 				},
 				content:function(){
-					var players = game.filterPlayer();
-					for (var i = 0; i < players.length; i ++){
-						if (players[i].storage._mubiao && players[i] != player){
-							player.discardPlayerCard(players[i], 'hej', true);
-						}
-					}
+					player.discardPlayerCard(trigger.player, 'hej', true);
 				},
 			},
 			stg_watch_skill:{
@@ -3100,7 +3094,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_watch_info:'【时静】中的“3”视为“4”；你造成伤害后，防止你的灵力和体力扣减，直到回合结束。',
 			stg_deck:'魔术卡片',
 			stg_deck_skill:'魔术卡片',
-			stg_deck_info:'结束阶段，你可以弃置任意名本回合成为过牌的目标的角色各一张牌。	',
+			stg_deck_info:'一回合一次，一名其他角色在其摸牌阶段外获得牌后，你可以弃置其一张牌。',
+			doll:'杀人人偶',
+			doll_info:'符卡技（2）结束阶段，你可以视为使用一张【轰！】；然后你可以重复此流程两次。',
+			privateSquare:'个人空间',
+			privateSquare_info:'符卡技（2）<永续>防止你造成的伤害；防止你的灵力扣减；当前回合结束后，进行一个额外的回合。',
 			stg_firebook:'火魔导书',
 			stg_firebook_info:'锁定技，与你阵营相同的角色使用【轰！】的次数上限+1。',
 			stg_waterbook:'水魔导书',

@@ -2059,7 +2059,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		bingyu1:{
-			group:'bingyu3',
+			//group:['bingyu3'],
 			trigger:{source:'damageBefore'},
     		forced:true,
     		priority:15,
@@ -2091,7 +2091,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		}
 		},
 		bingyu2:{
-			global:'bingyu1',
+			global:['bingyu1','bingyu3'],
 			trigger:{player:'phaseBegin'},
 			forced:true,
 			content:function(){
@@ -2104,7 +2104,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		bingyu3:{
 			trigger:{player:'phaseDiscardBefore'},
-			direct:true,
+			forced:true,
 			content:function(){
 				trigger.cancel();
 			}
@@ -2866,6 +2866,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		bingyu:'冰域之宴',
 		_bingyu:'冰域之宴',
 		bingyu1:'冰域之宴',
+		bingyu3:'冰域之宴',
 		bingyu1_bg:'冰',
 		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，跳过弃牌阶段，直到你的回合开始，或你坠机时。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
 		jingxia:'惊吓派对',
