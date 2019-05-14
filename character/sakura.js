@@ -54,7 +54,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (get.attitude(player, players[i]) > 0) num --;
                         if (get.attitude(player,players[i]) < 0) num ++;
                     }
-                    player.chooseTarget(players.length,('霜降：是否对所有亮的角色各造成1点灵击伤害'),function(card,player,target){
+                    player.chooseTarget(p.length,('霜降：是否对所有亮的角色各造成1点灵击伤害'),function(card,player,target){
                             return p.contains(target);
                           }).set('num',num).set('ai',function(target){
                               return _status.event.num > 0;

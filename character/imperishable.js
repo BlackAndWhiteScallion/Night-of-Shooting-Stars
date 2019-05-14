@@ -34,6 +34,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         audio:4,
                         trigger:{player:'useCard'},
                         frequent:true,
+                        usable:1,
                         filter:function(event, player){
                               if (player.hasSkill('yechong1')) return true;
                               //if (player.getStat().skill.yingguang>=1) return false;
@@ -75,7 +76,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               game.addVideo('thrownhighlight2');
                               ui.arena.classList.remove('thrownhighlight');
-                              if (!player.hasSkill('yechong1')) player.addTempSkill('fengyin');
                         },
                         ai:{
                               threaten:1.4,
@@ -99,6 +99,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         audio:2,
                         forced:true,
                         trigger:{player:'phaseEnd'},
+                        init:function(player){
+                          lib.skill['yingguang'].usable = 10000;
+                        },
+                        onremove:function(player){
+                          lib.skill['yingguang'].usable = 1;
+                        },
                         content:function(){
                               "step 0"
                               var targets=game.filterPlayer();
@@ -855,11 +861,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   huanshi:{
                     audio:2,
                     enable:'phaseUse',
-                    usable:1,
                     discard:false,
                     filterCard:true,
                     filter:function(event,player){
-                      return player.countCards('hej');
+                      return player.countCards('he');
                     },
                     content:function(){
                       'step 0'
@@ -886,7 +891,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           var card = {name:result.links[0][2]};
                           event.fakecard=card;
                           player.chooseTarget(function(card,player,target){
-                              return player.canUse(event.fakecard,target,true);
+                              return player.canUse(event.fakecard,target,true) && !target.hasSkill('huanshi_3');
                           },true,'选择'+get.translation(card.name)+'的目标').set('ai',function(target){
                               return get.effect(target,event.fakecard,_status.event.player);
                           });
@@ -896,9 +901,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 2'
                       if(result.bool&&result.targets&&result.targets.length){
                         for (var i = 0; i < result.targets.length; i ++){
-                          result.targets[0].addTempSkill('huanshi_2','useCardAfter');
-                          if (result.targets[0].name == 'eirin') game.trySkillAudio('huanshi',player,true,3);
-                          if (result.targets[0].name == 'kaguya') game.trySkillAudio('huanshi',player,true,4);
+                          result.targets[i].addTempSkill('huanshi_2','useCardAfter');
+                          result.targets[i].addTempSkill('huanshi_3');
+                          if (result.targets[i].name == 'eirin') game.trySkillAudio('huanshi',player,true,3);
+                          if (result.targets[i].name == 'kaguya') game.trySkillAudio('huanshi',player,true,4);
                         }
                         player.storage.huanshi = [cards[0]];
                         player.useCard(event.fakecard,result.targets);
@@ -907,8 +913,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     ai:{
                         order:6,
                         result:{
-                            player:function(player){
-                                return 1;
+                            player:function(player,target){
+                                if (player.countCards('h') < 3) return -1;
+                                var players=game.filterPlayer();
+                                for(var i=0;i<players.length;i++){
+                                  if (get.attitude(player,players[i])< 0 && !players[i].hasSkill('huanshi_3')) return 1;
+                                }
                             }
                         },
                         threaten:1,
@@ -958,7 +968,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (trigger.player.storage.huanshi){
                             var rcard = trigger.player.storage.huanshi[0];
                             if (trigger.player.canUse(rcard, player)){
-                              if (result.links[2] == 'shan' && trigger.player.storage.huanshi[0][2] != 'sha' ||
+                              if (result.links[2] == 'shan' && trigger.player.storage.huanshi[0].name != 'sha' ||
                                 result.links[2] == 'wuxie' && get.type(trigger.player.storage.huanshi[0]) != 'trick')
                               trigger.player.useCard(rcard,player);
                             }
@@ -967,6 +977,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           event.finish();
                       }
                     },
+                    mod:{
+                      cardEnabled:function(card,player){
+                        if(get.subtype(card) == 'defense') return false;
+                      },
+                      cardUsable:function(card,player){
+                        if(get.subtype(card) == 'defense') return false;
+                      },
+                      cardRespondable:function(card,player){
+                        if(get.subtype(card) == 'defense') return false;
+                      },
+                      cardSavable:function(card,player){
+                        if(get.subtype(card) == 'defense') return false;
+                      },
+                    },
+                  },
+                  huanshi_3:{
+
                   },
                   zhenshi:{
                     audio:2,
@@ -1921,14 +1948,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   reisen:'铃仙',
                   huanshi:'幻视',
                   huanshi_2:'幻视',
-                  huanshi_info:'一回合一次，出牌阶段，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；一名角色成为此牌的目标后，其可将一张牌当做一种防御牌打出。若如此做，你的扣置牌无效且你亮出此牌；若此牌不为此防御牌的合法目标，则你对其使用此牌。',
+                  huanshi_info:'一回合每名角色限一次，出牌阶段，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；目标角色不能对之使用防御牌；其成为该牌目标后，可将一张牌当作防御牌打出，令扣置牌无效且你亮出之：若此牌不为此防御牌的合法目标，则你对其使用此牌。',
                   huanshi_audio1:'你也一同陷入狂乱吧！',
                   huanshi_audio2:'来，看着我的眼睛——',
                   huanshi_audio3:'啊，师、师匠，我、我不是故意的！',
                   huanshi_audio4:'公、公主大人……？！我、我只是开个玩笑而已啦……',
                   zhenshi:'真实之月（隐形满月）',
                   zhenshi_1:'真实之月（隐形满月）',
-                  zhenshi_info:'符卡技（1）【永续】你攻击范围内角色成为攻击牌的唯一目标时，你可以弃置一张牌，将包括其的至多3名角色牌扣置并洗混；来源明置一张：将目标转移给明置的角色；然后将这些牌调整为原状态。',
+                  zhenshi_info:'符卡技（1）<永续>你攻击范围内角色成为攻击牌的唯一目标时，你可以弃置一张牌，将包括其的至多3名角色牌扣置并洗混；来源明置一张：将目标转移给明置的角色；然后将这些牌调整为原状态。',
                   zhenshi_audio1:'散符「真实之月(Invisible Full Moon)」！',
                   zhenshi_audio2:'真实和虚假的区别，你分的出来吗？',
                   reisen_die:'啊啊，要被师匠骂了',

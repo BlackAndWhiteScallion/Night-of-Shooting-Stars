@@ -144,15 +144,15 @@
                         intro:'当候选目标只有1个时，点击目标后无需再点击确认',
                     },
                     wuxie_self:{
-                        name:'不无懈自己',
+                        name:'不住口自己',
                         init:true,
                         unfrequent:true,
                         intro:'自己使用的单目标普通锦囊即将生效时，不询问无懈',
                     },
                     tao_enemy:{
-                        name:'不对敌方出桃',
+                        name:'不对敌方出葱',
                         init:false,
-                        intro:'双方阵营明确的模式中（如对决），敌方角色濒死时不询问出桃',
+                        intro:'双方阵营明确的模式中（如对决），敌方角色濒死时不询问出葱',
                         unfrequent:true,
                     },
                     enable_drag:{

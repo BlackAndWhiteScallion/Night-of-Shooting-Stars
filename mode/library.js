@@ -773,7 +773,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		            	//var i;
 		            	var list=[];
 		            	for(var i in lib.character){
-							list.push(i);
+		            		if (i != 'akyuu') list.push(i);
 						}
 		            	var dialog=ui.create.dialog('hidden');
 						dialog.style.left = "0px";
