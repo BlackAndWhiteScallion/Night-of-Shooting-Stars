@@ -103,14 +103,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                         content:function(){
                               "step 0"
-                              player.chooseCard(get.prompt('bingbi'),function(card){
-                                    return card.name=='sha';
-                              }).set('ai',function(card){
-                                    return 1;
-                              });
+                              var num = 1;
+                              if (player.storage._mubiao) num += player.storage._mubiao;
+                              player.chooseToRespond('打出一张【轰！】，取消之，并摸'+ num +'张牌',{name:'sha'});
                               "step 1"
                               if(result.bool){
-                                    player.respond(result.cards,'highlight');
                                     trigger.cancel();
                                     if (player.storage._mubiao) player.draw(player.storage._mubiao + 1);
                                     else player.draw();

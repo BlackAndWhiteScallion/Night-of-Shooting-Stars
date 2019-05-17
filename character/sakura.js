@@ -22,7 +22,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             lilywhite:'在春天才会出现的，宣告春天到来的妖精。<br> <b>设计：安定   画师：oninoko</b>',
             lunasa:'全名露娜萨·普莉兹姆利巴。骚灵三姐妹中的大姐，因此也担任乐团的领队。有些阴沉，但又不喜欢拐弯抹角，且很容易较真的性子。使用乐器为小提琴，演奏的曲调带有令观众镇静，低落，甚至忧郁的效果。<br><b>画师：中島楓</b>',
             merlin:'全名梅露兰·普莉兹姆利巴。骚灵三姐妹中的二姐。很是开朗，但是感觉上有点神经质。力量上是姐妹中最强的。使用乐器为小号，演奏的曲调带有令观众激动，激昂，甚至抓狂的效果。<br><b>画师：中島楓</b>',
-            lyrica:'全名莉莉卡·普莉兹姆利巴。骚灵三姐妹中的三妹。聪明，但是总是想用小聪明去赚姐姐们的便宜。力量上是姐妹中最强的。使用乐器为键盘，打击乐器也可以使用。<br><b>画师：中島楓</b>',
+            lyrica:'全名莉莉卡·普莉兹姆利巴。骚灵三姐妹中的三妹。聪明，但是总是想用小聪明去赚姐姐们的便宜。使用乐器为键盘，打击乐器也可以使用。<br><b>画师：中島楓</b>',
             alice:'全名爱丽丝·玛格特罗伊德。住在魔法森林中，以操纵人偶出名的魔法使。因为是人偶使，大部分人不太敢接近，所以比较孤僻的样子。顺便也有着收集各种道具的坏习惯。<br><b>画师：藤原</b>',
             youmu:'全名魂魄妖梦。冥界白玉楼的庭师（同时也是女仆，厨师，剑术指导）。是半人半幽灵的混血，因此持有更长的寿命和更强的身体能力。使用楼观剑和白楼剑的二刀流剑豪。<br><b>画师：daiaru</b>',
             yuyuko:'全名西行寺幽幽子。冥界白玉楼的大小姐。冥界的管理者，可以控制死亡，也可以控制已死的幽灵。已经成为亡灵千年以上，并且没有生前的记忆，因而很是乐天和无忧无虑。<br><b>画师：.SIN</b>',
@@ -69,7 +69,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 check:function(){
                     return true;
-                }
+                },
+                ai:{
+                    tag:{
+                        thunderdamage:1,
+                    },
+                },
             },
             shuangjiang2:{
                 trigger:{global:['useCard','respond']},
@@ -1860,7 +1865,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.bool && result.targets.length){
                         result.targets[0].removeSkill('shiqu2');
-                        result.targets[0].loselili(event.num);
+                        result.targets[0].loselili(trigger.num);
                         result.targets[0].addTempSkill('shiqu2',{player:'phaseBegin'});
                         trigger.cancel();
                     }
@@ -2357,8 +2362,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             fanhundie_info:'符卡技（1）<终语>你不会坠机；当前回合的结束阶段，你可以：弃置一名角色的一张牌，其以此法失去最后的手牌后，其失去1点体力；然后你须消耗1点灵力并重复此流程，直到灵力为1，或重复第X次（X为你已受伤值）。',
             yuyuko_die:'啊——那就这样了吧。',
             ran:'蓝',
-            jiubian:'九变',
-            jiubian2:'九变',
+            jiubian:'九变（葱→法术）',
+            jiubian2:'九变（法术→葱）',
+            jiubian3:'九变（变更目标/来源）',
             jiubian_info:'你可以将一张法术牌当作【葱】，或将一张【葱】当作一种法术牌使用；你以此法使用牌指定目标时，可以指定一名角色，将目标或来源改为其。',
             jiubian_backup_audio1:'我可不知道什么72变的猴子。',
             jiubian_backup_audio2:'没事，不费吹灰之力。',

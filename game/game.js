@@ -587,7 +587,7 @@
                     compare_discard:{
                         name:'拼点完摸一',
                         init:true,
-                        intro:'打开后，拼点后，双方各摸一张牌',
+                        intro:'拼点后，双方各摸一张牌',
                     },
                     regain_lili:{
                         name:'结束阶段灵力补至1',
@@ -608,6 +608,11 @@
                         name:'映姬大人闭嘴啦！',
                         init:false,
                         intro:'四季映姬在全模式下不会说台词——但是让阎罗王闭嘴，后果可要自负哟……',
+                    },
+                    pear_nobrain:{
+                        name:'大家都是烂好人',
+                        init:false,
+                        intro:'凤梨在场时，所有AI会无脑给凤梨所有牌。',
                     },
                 },
             },
@@ -10734,7 +10739,7 @@
                 },
                 chooseToCompare:function(){
                     "step 0"
-                    if(player.countCards('h')==0||target.countCards('h')==0){
+                    if(player.countCards('h')==0||target.countCards('h')==0|| player == target){
                         event.result={cancelled:true,bool:false}
                         event.finish();
                         return;

@@ -291,6 +291,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    var player=ui.create.player(null,true);
 	                    lib.character['akyuu'] = ['female','1',3,['luguo'],[]];
 				        lib.skill['luguo'] = {};
+				        lib.translate['luguo'] = '隐藏';
+				        lib.translate['luguo_info'] = '达成多次异变胜利的话，可以解锁这个角色哟？';
 	                    player.init('akyuu');
 	                    player.node.avatar.show();
 	                    //player.style.left='calc(50% - 75px)';
@@ -439,6 +441,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'3.1 在左上的[选项-角色]里双击角色牌也可以看到简介。',
 	    				'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
 	    				'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
+	    				'<b>6. 其实，点击我是可以跟我说话的啦。就上方那个。</b>',
 	    				]; 
 	                	dialog.addText('<div><div style="display:block;left:180px;text-align:left;font-size:16px">'+i.join('<br>'));
 	                	dialog.addText('<div><div style="display:block;top:140px;text-align:left;font-size:16px">'+j.join('<br>'));
@@ -773,7 +776,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		            	//var i;
 		            	var list=[];
 		            	for(var i in lib.character){
-		            		if (i != 'akyuu') list.push(i);
+		            		list.push(i);
 						}
 		            	var dialog=ui.create.dialog('hidden');
 						dialog.style.left = "0px";

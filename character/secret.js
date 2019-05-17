@@ -69,7 +69,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	content:function(){
             		'step 0'
             		var list = [];
-            		if (!player.hasSkill('sihuan_1')) list.push('灵力值视为5，直到回合结束');
+            		if (!player.hasSkill('sihuan_1')) list.push('获得5点灵力上限和5点灵力，直到回合结束');
             		if (!player.hasSkill('sihuan_2') && game.hasPlayer(function(current){
             			return current.storage._tanpai || current.storage._tanyibian;
             		})) list.push('弃置有异变牌的一名角色一张牌');
@@ -89,7 +89,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }) && event.list.contains('弃置有异变牌的一名角色一张牌')) return event.list.indexOf('弃置有异变牌的一名角色一张牌')
                         if (!player.countCards('j', {name:'lingyong'})){
                             if (event.list.contains('摸一张技能牌和一张【灵涌】')) return event.list.indexOf('摸一张技能牌和一张【灵涌】');
-                            else return event.list.indexOf('灵力值视为5，直到回合结束');
+                            else return event.list.indexOf('获得5点灵力上限和5点灵力，直到回合结束');
                         } 
                         if (event.list.contains('摸一张技能牌和一张【灵涌】')) return event.list.indexOf('摸一张技能牌和一张【灵涌】');
                         return 'cancel2';
@@ -97,7 +97,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.control){
                         player.discard(cards);
-                    	if (event.list[result.index] == '灵力值视为5，直到回合结束'){
+                    	if (event.list[result.index] == '获得5点灵力上限和5点灵力，直到回合结束'){
                     		player.addTempSkill('sihuan_1');
                             event.control = 'sihuan_1';
                     	} else if (event.list[result.index] == '弃置有异变牌的一名角色一张牌'){
@@ -285,7 +285,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
         	xingdu_audio1:'嗯……好像是这个方向？',
         	xingdu_audio2:'哎哎哎，为什么是这两张？',
         	sihuan:'似幻',
-        	sihuan_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之门】；出牌阶段，你可以弃置一张牌并选择一项，一回合每项限一次： 1. 灵力值视为5，直到回合结束；2. 弃置一名有异变牌的角色一张牌；3. 摸一张技能牌和一张【灵涌】；4. 将之交给一名符卡发动中的角色。',
+        	sihuan_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之门】；出牌阶段，你可以弃置一张牌并选择一项，一回合每项限一次： 1. 获得5点灵力上限和5点灵力，直到回合结束；2. 弃置一名有异变牌的角色一张牌；3. 摸一张技能牌和一张【灵涌】；4. 将之交给一名符卡发动中的角色。',
         	sihuan_audio1:'啊，我来试试这个！',
         	sihuan_audio2:'这又是什么神奇的操作！',
         	renko_die:'这地方还蛮好玩的嘛，梅莉？',

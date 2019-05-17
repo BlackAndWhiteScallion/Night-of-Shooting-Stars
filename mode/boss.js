@@ -396,17 +396,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		characterPack:{
 			mode_boss:{
+				//boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss']],
+				boss_cirno2:['female', '0', 4, [], ['hiddenboss']],
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss']],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss']],
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
-				//boss_lvbu1:['male','shen',8,['mashu','wushuang','boss_baonu'],['qun','boss','bossallowed'],'wei'],
-				//boss_lvbu2:['male','shen',4,['mashu','wushuang','xiuluo','shenwei','shenji'],['qun','hiddenboss','bossallowed'],'qun'],
 				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'qun'],
 			},
 		},
 		characterIntro:{
 			boss_reimu:'啊，真是一个好天气啊……如果今天能有赛钱的话就更好了……咦，我赛钱箱呢？<br>画师：萩原',
 			boss_reimu2:'不要在灵梦面前提钱，不要动灵梦的赛钱箱，不要对博丽神社做任何事情。<br>——来自造成了目前整个事态的某个魔法师的灵梦三戒律<br>画师：Ran',
+			boss_cirno:'要我说几遍啊，我不是什么⑨！我是幻想乡最强的！',
+			boss_cirno2:'虽然成功的获得了超越常人的力量，但是这力量对于超越常人的家伙们来说……还是杂鱼级别的。',
 			boss_nianshou:'比起加一堆没人想要的大杂烩设定，把本来欢乐的活动变成一个累死人的掀桌活动，还是回到最开始的简单日子好。',
 			boss_zhaoyun:'幻想乡是一切皆有可能的地方。<br>即使是那个只存在于传说中的男人……！',
 		},
@@ -913,13 +915,36 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.damageCount=ui.create.system('伤害: 0',null,true);
 				}
 			},
-			boss_lvbu1:{
+			boss_patchy1:{
 				loopType:2,
 				gameDraw:function(player){
-					return player==game.boss?8:4;
+					return player==game.boss?7:4;
 				},
+				init:function(){
+					game.loadModeAsync('stg',function(mode){
+						for(var i in mode.translate){
+							lib.translate[i]=lib.translate[i]||mode.translate[i];
+							//lib.translate[i]=mode.translate[i];
+						}
+						for(var i in mode.skill){
+							if(lib.skill[i]) console.log(i);
+							//console.log(i);
+							lib.skill[i]=mode.skill[i];
+							game.finishSkill(i);
+						}
+						if(get.mode()!='stg'){
+							lib.skill['juguang'].forced = false;
+						}
+						for(var i in mode.card){
+							if(lib.card[i]) console.log(i);
+							//console.log(i);
+							lib.card[i]=mode.card[i];
+							game.finishCards();
+						}
+					});
+				}
 			},
-			boss_lvbu2:{
+			boss_patchy2:{
 				loopType:1,
 			},
 			boss_zhaoyun:{
@@ -1012,6 +1037,42 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			check:function(event,player){
     				return player.lili > 1; 
     			},
+    		},
+    		bianshen_cirno:{
+    			audio:1,
+    			trigger:{player:['damageAfter','phaseBegin']},
+    			forced:true,
+    			skillAnimation:true,
+    			init:function(player){
+					player.lili = 0;
+				},
+    			filter:function(event,player){
+    				return player.hp <= 4;
+    			},
+    			content:function(){
+					var lili=player.lili;
+					player.init('boss_cirno2');
+					player.$skill('最强的来了！',null,null,true);
+					player.lili=lili;
+					player.update();
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.resetSkills();
+					if (lib.config.background_music != 'marisa'){
+						setTimeout(function(){
+						ui.backgroundMusic.src = lib.assetURL+'audio/background/cirno.mp3'
+                    	lib.config.background_music = 'cirno';
+                    	},500);
+                	}
+					_status.paused=false;
+					_status.event.player=player;
+					_status.event.step=0;
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+						_status.roundStart=game.boss;
+					}
+    			}
     		},
     		boss_damagecount:{
 				mode:['boss'],
@@ -1251,6 +1312,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			zhong:'从',
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',
+			boss_cirno:'琪露诺',
+			boss_cirno2:'琪露诺',
 			lingji:'灵击',
 			lingji_info:'锁定技，你造成或受到弹幕伤害后，须判定；若为红色，你获得1点灵力；否则，你获得判定牌。',
 			bianshen_reimu:'二阶段转换',

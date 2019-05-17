@@ -440,13 +440,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.finish();
 					}
 				},
+				/*
 				cshx1:{
 					mod:{
 						targetInRange:function(){
 							return true;
 						}
 					}
-				},
+				},*/
 			},
 			"ye’sbian":{
 				audio:2,
@@ -766,6 +767,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				cost:4,
 				audio:"ext:d3:true",
 				priority:5,
+				roundi:true,
 				trigger:{player:'phaseBeginStart'},
 				filter:function(event,player){
 					return player.lili > lib.skill.aidoulu.cost;
@@ -781,7 +783,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aidoulu_2:{
 				audio:2,
 				trigger:{global:'phaseBegin'},
-				roundi:true,
 				check:function(event,player){
 					return game.hasPlayer(function(current){
 						return get.attitude(player,current)<0;
@@ -1180,11 +1181,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					game.trySkillAudio('guaiqiao2',target,true);
 					target.gain(player.getCards('h'),player);
-					target.chooseControl('令'+get.translation(target)+'获得1点灵力','令'+get.translation(target)+'摸一张牌',function(event,player){
-						return '令'+get.translation(target)+'摸一张牌';
+					target.chooseControl('令'+get.translation(player)+'获得1点灵力','令'+get.translation(player)+'摸一张牌',function(event,player){
+						return '令'+get.translation(player)+'摸一张牌';
 					}, true);
 					'step 1'
-					if(result.control=='令'+get.translation(target)+'获得1点灵力'){
+					if(result.control=='令'+get.translation(player)+'获得1点灵力'){
 						player.gainlili();
 					}
 					else{
@@ -1197,8 +1198,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					result:{
 						target:5,
 						player:function(player,target){
-                            if (player.countCards('h') < 3 || player.countCards('h') - player.hp > 1){
-                            	return 1;
+							if (lib.config.pear_nobrain) return 1000000;
+                            if (player.countCards('h') <= 3){
+                            	return 0;
                             } else
                             	return -10000;
                         }
@@ -1223,7 +1225,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for (var i = 0; i < event.cards.length; i ++){
 						v += get.value(event.cards[i]);
 					}
-					return v / event.cards.length < 5;
+					return v / event.cards.length < 4;
 				},
 			},
 		},

@@ -1180,7 +1180,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var list=[];
 					var players = game.filterPlayer();
 					for(var i=0;i<players.length;i++){
-						if(get.distance(event.player,players[i])<=player.lili)list.push(players[i]);
+						if(get.distance(event.player,players[i])<=player.lili){
+							list.push(players[i]);
+							players[i].addTempSkill('sbrs_liansuo_4');
+						}
 					}
 					player.useCard({name:'sha'},list,false);
 				},
@@ -1227,6 +1230,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					threaten:2,
+					tag:{
+						damage:2,
+						thunderdamage:2,
+					},
 				},
 			},
 			explosion_2:{
@@ -2668,7 +2675,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			honglian_audio1:'艺术就是爆炸！',
 			honglian_audio2:'一切都是为了爆发！',
 			sbrs_liansuo:'莲锁',
-			sbrs_liansuo_info:'准备阶段，你可以指定一名角色：本回合一次，该角色因弃置或获得而失去牌后，你视为对其距离X以内的所有角色使用一张【轰！】；目标角色可以弃置一张非基本牌来抵消该【轰！】（X为你的灵力）。',
+			sbrs_liansuo_info:'准备阶段，你可以指定一名角色：本回合一次，该角色因弃置或获得而失去牌后，你视为对其距离X以内的所有角色使用一张【轰！】；该【轰！】的目标角色可以弃置一张非基本牌来抵消该【轰！】（X为你的灵力）。',
 			sbrs_liansuo_audio1:'别想跑掉！',
 			sbrs_liansuo_audio2:'什么东西不爆炸一次怎么能行！',
 			sbrs_liansuo_2:'莲锁',

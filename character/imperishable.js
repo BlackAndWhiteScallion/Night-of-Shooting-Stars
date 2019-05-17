@@ -767,11 +767,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     filter:function(event,player){
                       if (!player.storage.mitu) return false;
                       if (event.card.name != player.storage.mitu.name) return false;
-                      if (player.hasSkill('yuangu_1')){
+                      //if (player.hasSkill('yuangu_1')){
                         return get.distance(event.target,player,'attack')<=1;
-                      } else {
-                        return event.target == player;
-                      }
+                      //} else {
+                        //return event.target == player;
+                      //}
                     },
                     content:function(event,player){
                       'step 0'
@@ -857,6 +857,57 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   yuangu_1:{
                     // 结果这玩意就是个标记啊……
+                    audio:2,
+                    trigger:{global:'judge'},
+                    filter:function(event,player){
+                      return player.countCards('he')>0;
+                    },
+                    direct:true,
+                    content:function(){
+                      "step 0"
+                      player.chooseCard(get.translation(trigger.player)+'的'+(trigger.judgestr||'')+'判定为'+
+                      get.translation(trigger.player.judging[0])+'，'+get.prompt('yuangu'),'he',function(card){
+                        return true;
+                      }).set('ai',function(card){
+                        var trigger=_status.event.getTrigger();
+                        var player=_status.event.player;
+                        var judging=_status.event.judging;
+                        var result=trigger.judge(card)-trigger.judge(judging);
+                        var attitude=get.attitude(player,trigger.player);
+                        if(attitude==0||result==0) return 0;
+                        if(attitude>0){
+                          return result;
+                        }
+                        else{
+                          return -result;
+                        }
+                      }).set('judging',trigger.player.judging[0]);
+                      "step 1"
+                      if(result.bool){
+                        player.respond(result.cards,'highlight');
+                      }
+                      else{
+                        event.finish();
+                      }
+                      "step 2"
+                      if(result.bool){
+                        player.logSkill('guidao');
+                        player.$gain2(trigger.player.judging[0]);
+                        player.gain(trigger.player.judging[0]);
+                        trigger.player.judging[0]=result.cards[0];
+                        if(!get.owner(result.cards[0],'judge')){
+                          trigger.position.appendChild(result.cards[0]);
+                        }
+                        game.log(trigger.player,'的判定牌改为',result.cards[0]);
+                      }
+                      "step 3"
+                      game.delay(2);
+                    },
+                    ai:{
+                      tag:{
+                        rejudge:1
+                      }
+                    }
                   },
                   huanshi:{
                     audio:2,
@@ -1935,7 +1986,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mitu_storage_audio2:'这里什么都没有哟，什么都没有',
                   mitu_audio1:'中计啦，你个傻瓜！',
                   mitu_audio2:'真的是笨蛋呢你！',
-                  mitu_info:'弃牌阶段开始时，若你没有“伏”，你可以将一张牌扣置于角色牌上，称为“伏”；你成为牌的目标后，你可以展示同名“伏”，令来源判定；若为黑色，弃置“伏”，弃置来源一张牌，并令该牌对你无效。',
+                  mitu_info:'弃牌阶段开始时，若你没有“伏”，你可以将一张牌扣置于角色牌上，称为“伏”；你攻击范围内的一名角色成为牌的目标后，你可以展示同名“伏”，令来源判定；若为黑色，弃置“伏”，弃置来源一张牌，且若目标为你，令该牌对你无效。',
                   kaiyun:'开运',
                   kaiyun_1:'开运',
                   kaiyun_2:'开运',
@@ -1943,7 +1994,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yuangu:'远古的骗术',
                   yuangu_audio1:'狡兔可是有三窟的——',
                   yuangu_audio2:'哈哈，来玩到尽兴为止吧！',
-                  yuangu_info:'符卡技（2）<永续>【迷途】中的“你成为牌的目标后”视为“你攻击范围内的一名角色成为牌的目标后”；无视【迷途】中的“弃置"伏"”。',
+                  yuangu_info:'符卡技（2）<永续>一名角色的判定牌生效前，你可以打出一张牌替换之；无视【迷途】中的“弃置"伏"”。',
                   tewi_die:'你这家伙真的不好玩！',
                   reisen:'铃仙',
                   huanshi:'幻视',
