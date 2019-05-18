@@ -627,7 +627,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
             },
             shenxuan_viewAs:{
-                enable:'phaseUse',
+                enable:'chooseToUse',
                 usable:1,
                 audio:1,
                 filter:function(event,player){
@@ -653,7 +653,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return ui.create.dialog([list,'vcard']);
                     },
                     filter:function(button,player){
-                        return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent());
+                        return _status.event.getParent().filterCard({name:button.link[2]},player);
                     },
                     check:function(button){
                         var player=_status.event.player;
