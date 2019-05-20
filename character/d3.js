@@ -507,6 +507,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			huanshu:{
+				audio:2,
 				trigger:{player:'chooseToRespondBegin'},
 				filter:function(event,player){
 					var list = [];
@@ -650,6 +651,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							selectCard:-1,
 							popname:true,
 							log:false,
+							audio:'huanshu',
 							precontent:function(){
 								'step 0'
 								player.chooseTarget('幻术：选择两名角色，交换这些角色相同区域内一张牌',[2,2],function(card,player,target){	
@@ -765,7 +767,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aidoulu:{
 				spell:["aidoulu_2"],
 				cost:4,
-				audio:"ext:d3:true",
+				audio:2,
 				priority:5,
 				roundi:true,
 				trigger:{player:'phaseBeginStart'},
@@ -791,7 +793,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					trigger.player.addTempSkill('aidoulu_3','phaseEnd');
 					trigger.player.recover();
-				}
+				},
+				prompt2:'令当前回合角色回复1点体力，且其本回合使用【轰】造成的伤害+1',
 			},
 			aidoulu_3:{
 				trigger:{source:'damageBegin'},
@@ -1284,12 +1287,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			"schrÖdinger_audio1":'合拢的嘴，泄密的心……',
 			"schrÖdinger_audio2":'它还在楼上跳个不停。',
 			huanshu:'幻术',
-			huanshu_info:'你可以交换场上同区域的两张牌，视为你使用/打出了一张基本牌；然后，此技能无效，直到你的回合开始。',
+			huanshu_info:'你可以交换场上两张装备牌或两张技能牌的位置，视为你使用/打出了一张基本牌；然后，此技能无效，直到你的回合开始。',
+			huanshu_audio1:'只有红茶可以吗？',
+			huanshu_audio2:'别乱动！别乱动！',
 			huanshu2:'幻术',
 			huanshu_use:'幻术',
 			zuanqu:'赚取',
 			zuanqu_info:'锁定技，当你于出牌阶段外获得牌后，你获得1点灵力。',
+			zuanqu_audio1:'这个可以有！',
+			zuanqu_audio2:'114！514！',
 			aidoulu:'偶像',
+			aidoulu_2:'偶像（贴效果）',
+			aidoulu_audio1:'你NP，不是，灵力满了！',
+			aidoulu_audio2:'啊啊啊啊！啊，嗷嗷，啊啊啊啊啊！（迫真）',
 			aidoulu_info:'符卡技（4）【永续】一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
 			fenxue:"纷雪",
 			fenxue_info:"一回合一次，出牌阶段，你可以依次弃置至多X名角色与你的各一张牌，以此法弃置红桃牌的角色各摸一张牌（X为场上牌的花色数且至少为1）",

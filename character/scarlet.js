@@ -400,7 +400,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 var type=get.type(card,'trick');
                                 return type=='trick';
                             },'是否使用一张法术牌？').set('logSkill','qiyao');
-                        } else if (event.list[result.index] == '跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张法术牌'){
+                        } else if (event.list[result.index] == '跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张牌'){
                             player.skip('phaseDiscard');
                             player.loselili();
                             game.trySkillAudio('qiyao',player,true,3);

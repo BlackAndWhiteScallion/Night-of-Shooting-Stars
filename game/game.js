@@ -143,6 +143,12 @@
                         unfrequent:true,
                         intro:'当候选目标只有1个时，点击目标后无需再点击确认',
                     },
+                    auto_discard:{
+                        name:'自动弃牌',
+                        init:true,
+                        unfrequent:true,
+                        intro:'对方只有未知牌（只有暗置手牌）时，弃置和获得牌不选择牌，自动获得',
+                    },
                     wuxie_self:{
                         name:'不住口自己',
                         init:true,
@@ -11547,6 +11553,7 @@
                         event.dialog.add('选择'+get.translation(target)+'的一张牌');
                     }
                     var directh=true;
+                    if (!lib.config.auto_discard) directh = false;
                     for(var i=0;i<event.position.length;i++){
                         if(event.position[i]=='h'&&target.countCards('h')){
                             event.dialog.addText('手牌区');
@@ -11666,6 +11673,7 @@
                         event.dialog.add(event.prompt);
                     }
                     var directh=true;
+                    if (!lib.config.auto_discard) directh = false;
                     for(var i=0;i<event.position.length;i++){
                        	if(event.position[i]=='h'){
 							var hs=target.getDiscardableCards(player,'h');
@@ -11816,6 +11824,7 @@
                         event.dialog.add(event.prompt);
                     }
                     var directh=true;
+                    if (!lib.config.auto_discard) directh = false;
                     for(var i=0;i<event.position.length;i++){
                         if(event.position[i]=='h'){
 							var hs=target.getGainableCards(player,'h');
