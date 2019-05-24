@@ -888,7 +888,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.control){
                         if (result.control == '该【轰！】无效'){
-                            game.log('棱镜协奏曲：【轰！】对'+get.translation(player)+'无效');
+                            game.log('棱镜协奏曲：【轰！】对',player,'无效');
                             trigger.cancel();
                             event.finish();
                         } else if (result.control == '追加目标'){
@@ -931,7 +931,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.control){
                         if (result.control == '该【轰！】无效'){
-                            game.log('棱镜协奏曲：【轰！】对'+get.translation(player)+'无效');
+                            game.log('棱镜协奏曲：【轰！】对',player,'无效');
                             trigger.cancel();
                             event.finish();
                         } else if (result.control == '追加目标'){

@@ -396,8 +396,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		characterPack:{
 			mode_boss:{
-				//boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss']],
-				boss_cirno2:['female', '0', 4, [], ['hiddenboss']],
+				boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss']],
+				boss_cirno2:['female', '0', 4, ['jiqiang','zuanshi','jubing'], ['hiddenboss']],
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss']],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss']],
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
@@ -863,6 +863,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		boss:{
+			boss_cirno:{
+				loopType:2,
+				gameDraw:function(player){
+					return player==game.boss?9:4;
+				}
+			},
+			boss_cirno2:{
+				loopType:1,
+			},
 			boss_reimu:{
 				loopType:2,
 				gameDraw:function(player){
@@ -985,7 +994,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		},
     		bianshen_reimu:{
     			audio:1,
-    			trigger:{player:['damageAfter','gainliliAfter']},
+    			trigger:{player:['damageAfter','gainliliAfter','loseHpAfter']},
     			forced:true,
     			skillAnimation:true,
     			init:function(player){
@@ -1040,14 +1049,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		},
     		bianshen_cirno:{
     			audio:1,
-    			trigger:{player:['damageAfter','phaseBegin']},
+    			trigger:{player:['damageAfter','gainAfter','loseHpAfter']},
     			forced:true,
     			skillAnimation:true,
     			init:function(player){
 					player.lili = 0;
 				},
     			filter:function(event,player){
-    				return player.hp <= 4;
+    				return player.hp <= 4 || player.countCards('h') > game.countPlayer(function(current){
+						if(current != player) return current.countCards('h');
+					});
     			},
     			content:function(){
 					var lili=player.lili;
@@ -1073,7 +1084,128 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.roundStart=game.boss;
 					}
     			}
-    		},
+			},
+			jiqiang:{
+				global:'jiqiang1',
+				trigger:{global:'phaseEnd'},
+				forced:true,
+				filter:function(event,player){
+					return event.player.countCards('h') < player.countCards('h');
+				},
+				content:function(){
+					trigger.player.damage('thunder');
+					player.draw();
+					player.chooseToUse(trigger.player, -1,'冰柱机枪：你可以对',trigger.player,'使用一张牌');
+				}
+			},
+			jiqiang1:{
+				mod:{
+					maxHandcard:function(player,num){
+						return num - game.countPlayer(function(current){
+							if(current != player && current.hasSkill('jiqiang')) return 2;
+						});
+					}
+				},
+			},
+			zuanshi:{
+				forced:true,
+				trigger:{player:'phaseUseBegin'},
+				group:'zuanshi1',
+				global:'zuanshi2',
+				init:function(player){
+					player.storage.zuanshi = [];
+				},
+				intro:{
+					content:function(storage){
+						var str = '视为【轰！】的牌：';
+						if (storage){
+							for (var i = 0; i < storage.length; i ++){
+								str += get.translation(storage[i]) + ',';
+							}
+						}
+						return str; 
+					},
+				},
+				content:function(){
+					'step 0'
+					player.storage.zuanshi = [];
+					var num = player.countCards('h', {name:'sha'});
+					player.draw(num);
+				},
+				mod:{
+					maxHandcard:function(player,num){
+						return num + player.storage.zuanshi.length;
+					},
+				},
+			},
+			zuanshi1:{
+				direct:true,
+				trigger:{player:'gainBegin'},
+				filter:function(event,player){
+					return _status.event.getParent('zuanshi');
+				},
+				content:function(){
+					player.showCards(trigger.cards);
+					for(var i=0;i<trigger.cards.length;i++){
+						player.storage.zuanshi.add(trigger.cards[i].name);
+					}
+					player.markSkill('zuanshi');
+				},
+			},
+			zuanshi2:{
+				mod:{
+					cardEnabled:function(card,player){
+						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+						})) return false;
+					},
+					cardUsable:function(card,player){
+						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+						})) return false;
+					},
+					cardRespondable:function(card,player){
+						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+						})) return false;
+					},
+					cardSavable:function(card,player){
+						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+						})) return false;
+					},
+				},
+				enable:["chooseToUse",'chooseToRespond'],
+				filter:function(){
+					return true;
+				},
+				filterCard:function(card){
+					return game.hasPlayer(function(current){
+						return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+					});
+				},
+				viewAs:{name:"sha"},
+				prompt:"将【钻石风暴】指定的牌名当【轰！】使用",
+				sub:true,
+			},
+			jubing:{
+				trigger:{player:'phaseBegin'},
+				forced:true,
+				limited:true,
+				skillAnimation:true,
+				mark:true,
+				filter:function(event,player){
+					return player.hp == 1;
+				},
+				content:function(){
+					player.awakenSkill('jubing');
+					var list = game.filterPlayer();
+					for (var i = 0; i < list.length; i ++){
+						list[i].damage(9, 'thunder');
+					};
+					player.useCard({name:'bingyu'},list,false);
+				},
+			},
     		boss_damagecount:{
 				mode:['boss'],
 				global:'boss_damagecount2',
@@ -1312,14 +1444,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			zhong:'从',
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',
-			boss_cirno:'琪露诺',
-			boss_cirno2:'琪露诺',
 			lingji:'灵击',
 			lingji_info:'锁定技，你造成或受到弹幕伤害后，须判定；若为红色，你获得1点灵力；否则，你获得判定牌。',
 			bianshen_reimu:'二阶段转换',
-			bianshen_reimu_info:'体力值变为4，或灵力值变为5。',
+			bianshen_reimu_info:'体力值变为4时，或灵力值变为5时。',
 			mengxiangtiansheng:'梦想天生',
 			mengxiangtiansheng_info:'准备阶段，或结束阶段，你可以消耗1点灵力，视为对所有其他角色使用了一张【轰！】。',
+			boss_cirno:'琪露诺',
+			boss_cirno2:'琪露诺',
+			bianshen_cirno:'二阶段转换',
+			bianshen_cirno_info:'体力值变为4时，或你获得牌后，手牌数大于其他角色手牌数总和。',
+			jiqiang:"冰柱机枪",
+			jiqiang_info:'锁定技，所有其他角色的手牌上限-2；一名其他角色的回合结束时，若其手牌数小于你，摸一张牌，对其造成1点灵击伤害，然后你可以对其使用一张牌。',
+			zuanshi:'钻石风暴',
+			zuanshi_info:'锁定技，出牌阶段开始时，你摸X张牌并展示（X为你手牌中【轰！】的数量）：直到你的回合开始，与这些牌同名的牌均视为【轰！】，且你的手牌上限+X。',
+			zuanshi2:'钻石风暴（转化【轰！】）',
+			jubing:'巨冰破碎',
+			jubing_info:'限定技，锁定技，准备阶段，若你的体力为1，你对所有角色造成9点灵击伤害，然后视为使用了一张【冰域之宴】。',
 			boss_nianshou:'年兽',
 			boss_nianrui:'年瑞',
 			boss_nianrui_info:'锁定技，摸牌阶段，你额外摸两张牌。',

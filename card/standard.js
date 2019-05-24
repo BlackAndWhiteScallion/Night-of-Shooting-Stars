@@ -1214,6 +1214,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			fullskin:true,
 			type:'equip',
 			subtype:'equip3',
+			selectTarget:1,
 			filterTarget:function(card,player,target){
 				return true;
 			},
@@ -1227,21 +1228,19 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			skills:['frog_skill'],
 			ai:{
-					basic:{
-						order:1,
-						useful:[3,1],
-						value:2,
-						equipValue:0
-					},
-					result:{
-						target:function(player,target){
-							return -get.attitude(_status.event.player,target);
-						}
-					},
-					tag:{
-						thunderdamage:1
-					}
+				basic:{
+					order:1,
+					useful:[3,1],
+					value:2,
+					equipValue:0
+				},
+				result:{
+					target:-2,
+				},
+				tag:{
+					thunderdamage:1
 				}
+			}
 		},
 		magatama:{
 			fullskin:true,
@@ -1513,7 +1512,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					controls.push('lose_lili');
     				}
     				player.chooseControl(controls).ai=function(){
-    					if(player.lili > 3){
+    					if(player.lili > 3 && !player.hasSkill('gungirs')){
     						return 'lose_lili';
     					}
     					else{

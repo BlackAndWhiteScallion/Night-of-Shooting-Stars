@@ -70,7 +70,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	            if(this._nostart) start.style.display='none';
 	            else start.style.display='';
-	            game.save('currentBrawl',this.link);
+	            game.save('currentBrawl','help');
 	        }
 	        // 应该是这里是制作列表的地方
 	        var createNode=function(name){
@@ -292,6 +292,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    			if(init){
 	                    var player=ui.create.player(null,true);
 	                    lib.character['akyuu'] = ['female','1',3,['luguo'],[]];
+	                    lib.characterIntro['akyuu']='全名稗田阿求，将毕生奉献于记载幻想乡的历史的稗田家的现任家主。持有过目不忘的记忆能力。<br><b>画师：渡瀬　玲<br></b><br>现因一些原因，被赋予了幻想乡的管理员权限。不过依然是和平常一样做着记录屋的工作。';
 				        lib.skill['luguo'] = {};
 				        lib.translate['luguo'] = '隐藏';
 				        lib.translate['luguo_info'] = '达成多次异变胜利的话，可以解锁这个角色哟？';

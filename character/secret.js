@@ -28,7 +28,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		player.chooseBool('是否将本回合的摸牌改为从牌堆底摸？');
             		'step 1'
             		if (result.bool){
-                        game.log(get.translation(player)+'本回合摸牌改为从牌堆底摸');
+                        game.log(player,'本回合摸牌改为从牌堆底摸');
             			player.addTempSkill('xingdu_1');
             		}
             		player.draw();

@@ -861,7 +861,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return player.countCards('he')>0;
 				},
 				check:function(card){
-					return 5-get.value(card);
+					return 7-get.value(card);
 				}
 			},
 			huanrao_2:{
@@ -870,8 +870,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				direct:true,
 				filter:function(event,player){
-					if(event.skill!='huanrao') return false;
-					return true;
+					return event.skill && event.skill == 'huanrao';
 				},
 				content:function(){
 					"step 0"
@@ -894,7 +893,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.storage.huanrao.add(trigger.cards[i]);
 					}
 					player.showCards(trigger.cards);
-					player.removeSkill('huanrao_3')
+					player.removeSkill('huanrao_3');
 				}
 			},
 			huanrao_4:{
@@ -1265,7 +1264,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					 return lib.card[event.card.name].enhance;
 				},
 				content:function(){
-					game.log(get.translation(player)+'发动【孤樱】强化了'+get.translation(trigger.card.name)+'。');
+					game.log(player,'发动','【孤樱】','强化了',trigger.card);
 					if (!player.storage._enhance) player.storage._enhance = 1;
 					else player.storage._enhance++; 
 				},
@@ -2342,7 +2341,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 7'
                     if (result.bool && event.control == '♣：将一名角色的一张牌置于牌堆顶'){
                     	player.logSkill('ruizhi',event.target);
-                    	game.log(get.translation(event.target)+'的一张牌置于牌堆顶');
+                    	game.log(event.target,'的一张牌置于牌堆顶');
                     	var card=result.links[0];
                     	event.target.lose(card,ui.special);
                     	ui.cardPile.insertBefore(card,ui.cardPile.firstChild);

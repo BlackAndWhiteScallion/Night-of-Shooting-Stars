@@ -81,7 +81,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     					event.goto(2);
     				} 
     				else {
-                        game.log(get.translation(player)+'跳过了出牌阶段');
+                        game.log(player,'跳过了出牌阶段');
     					trigger.finish();
     					trigger.untrigger();
     					event.finish();
@@ -274,7 +274,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.finish();
                     }
                     "step 2"
-                    game.log(get.translation(trigger.card)+'转移给了'+get.translation(player));
+                    game.log(trigger.card,'转移给了',player);
                     trigger.untrigger();
                     trigger.trigger('useCardToBefore');
                     trigger.trigger('shaBefore');
@@ -996,7 +996,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 3"
                     if (event.cards){
                         var list=event.cards;
-                        game.log(get.translation(player)+'将'+list.length+'张牌置于牌堆顶');
+                        game.log(player,'将'+list.length+'张牌置于牌堆顶');
                         for (var i = list.length -1; i >= 0; i --){
                            ui.cardPile.insertBefore(list[i], ui.cardPile.firstChild);
                         }

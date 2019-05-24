@@ -15940,7 +15940,6 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         if(check) next.ai=check;
                         else next.ai=function(card){
                             var addi=(get.value(card)>=8&&get.type(card)!='equip')?-10:0;
-                            if(card.name=='du') addi+=5;
                             var source=_status.event.source;
                             var player=_status.event.player;
                             if(source&&source!=player&&get.attitude(player,source)>1){
@@ -27857,6 +27856,7 @@ smoothAvatar:function(player,vice){
             "step 2"
             var p = game.filterPlayer();
             for (var i = 0; i < p.length; i ++){
+                /*
                 if (p[i].storage._tanpai){
                     for (var j = 0; j < p[i].storage._tanpai.length; j ++){
                         if (p[i].storage._tanpai[j].name == 'death'){
@@ -27869,6 +27869,14 @@ smoothAvatar:function(player,vice){
                         }
                     }
                 }
+                */
+               if (p[i].hasSkill('death_win') && p.length > 1){
+                   return ;
+               } else {
+                if (p[i] == game.me) game.over(true);
+                else game.over();
+                return;
+               }
             }
             "step 3"
             /*  联机时使用的游戏结束设置
@@ -27910,10 +27918,14 @@ smoothAvatar:function(player,vice){
             // 如果有人有皆杀，游戏不结束
             var p = game.filterPlayer();
             for (var i = 0; i < p.length; i ++){
-                if (p[i].storage._tanpai){
+                
+                /*if (p[i].storage._tanpai){
                     for (var j = 0; j < p[i].storage._tanpai.length; j ++){
                         if (p[i].storage._tanpai[j].name == 'death' && p.length > 1) return;
                     }
+                }*/
+                if (p[i].hasSkill('death_win') && p.length > 1){
+                    return ;
                 }
             }
             if(_status.over) return;
@@ -46846,7 +46858,7 @@ smoothAvatar:function(player,vice){
                     return false;
                 }
                 case 'limited':{
-                    if(content){
+                    if(!content){
                         return '未发动';
                     }
                     return '已发动';

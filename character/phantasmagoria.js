@@ -11,7 +11,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   eiki:['female','1',4,['huiwu','caijue','shenpan']],
 		},
 		characterIntro:{
-			            lilyblack:'似乎就是莉莉白换了身衣服？<br><b>画师：Cloudy.R</b>',
+			lilyblack:'似乎就是莉莉白换了身衣服？<br><b>画师：Cloudy.R</b>',
                   medicine:'全名梅蒂欣·梅兰可莉。被人类抛弃，受铃兰之毒多年后妖怪化的人偶。<br><b>画师：はるとき</b>',
                   yuuka:'全名风间幽香。太阳花园之主。虽然只是种花的，但是实际战力是顶尖级别，还是战狂性格。不过最近比较满足于种花和养老。<br><b>画师：萩原</b>',
                   komachi:'全名小野塚小町。负责将死者灵魂带入冥界的，冥河上摆渡的死神。虽然是至关重要的工作，但是因为太懒怠工疑似弄出了异变来。<br><b>画师：MAY☆嵐（G.H）</b>',
@@ -234,10 +234,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               });
                               'step 1'
                               if (result.control == '令回复量-1'){
-                                    game.log(get.translation(player)+'令'+get.translation(trigger.player)+'回复体力量-1');
+                                    game.log(player,'令',trigger.player,'回复体力量-1');
                                     trigger.num--;
                               } else {
-                                    game.log(get.translation(player)+'令'+get.translation(trigger.player)+'回复体力量+1');
+                                    game.log(player,'令',trigger.player,'回复体力量+1');
                                     trigger.num++;
                               }
                         }

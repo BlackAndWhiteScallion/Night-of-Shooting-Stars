@@ -487,7 +487,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(game.bossinfo.checkResult&&game.bossinfo.checkResult(this)===false){
 						return;
 					}
-					if(this==game.boss||!game.hasPlayer(function(current){
+					if(this==game.boss|| !game.boss.isAlive() ||!game.hasPlayer(function(current){
 						return !current.side;
 					})){
 						game.checkResult();
@@ -1060,7 +1060,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					game.me.storage.tongguan = 0;
 					game.me.storage.fuhuo = 0;
-					lib.character['flandre'] = ['female','1',4,['kuangyan', 'flaninit'],[]];
+					lib.character['flandre'] = ['female','5',4,['kuangyan', 'flaninit'],[]];
 					lib.skill['kuangyan'].trigger = {player:'phaseUseBegin'};
 					lib.translate['kuangyan'] = '狂宴（改）';
 					lib.translate['kuangyan_info'] = '出牌阶段开始时，你可以弃置攻击范围内的所有其他角色各一张牌；然后，对其中没有手牌的角色各造成1点弹幕伤害；你发动此技能后，此技能改为锁定技，直到一名角色坠机。';
@@ -1106,7 +1106,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     player.node.turnedover.style.opacity=0.7;
 					game.delay(3);
 					setTimeout(function(){
-						game.log(get.translation(player)+'消耗了1个残机复活');
+						game.log(player,'消耗了1个残机复活');
 						player.node.turnedover.style.opacity=0;
 						player.hp = player.maxHp;
 						player.lili = 2;
@@ -1126,7 +1126,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return game.me.storage.reskill && game.me.storage.reskill.length > 0;
 				},
 				content:function(){
-					game.log(get.translation(player)+'进入下一个阶段！');
+					game.log(player,'进入下一个阶段！');
 					player.hp = player.maxHp;
 					player.lili = player.maxlili;
 					player.update();
@@ -1614,7 +1614,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					game.me.storage.tongguan ++; 
 					game.me.storage.fuhuo ++;
-					game.log(get.translation(game.me)+'获得了一个残机！');
+					game.log(game.me,'获得了一个残机！');
 					game.me.storage.reinforce = ['koakuma','patchouli'];
 					game.me.storage.stage = 'boss_chiyan5x';
 					if (game.me.name == 'reimu'){
@@ -1841,7 +1841,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					game.me.storage.tongguan ++; 
 					game.me.storage.fuhuo ++;
-					game.log(get.translation(game.me)+'获得了一个残机！');
+					game.log(game.me,'获得了一个残机！');
 					game.me.storage.reinforce = ['sakuya','remilia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [ 
@@ -2017,15 +2017,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							list[i].removeSkill('starbow1');
 							list[i].addSkill('zhihou');
 							list[i].useSkill('zhihou');
+							list[i].removeSkill('death_win');
 						}
 					}
 				},
 				content:function(){
+					//player.addSkill('death_win');
+					/*
 					lib.skill['die'] = {
 						init:function(player){
 							game.over(true);
 						},
 					},
+					*/
 					lib.translate['flandre_die'] = '';
 					game.me.storage.stage = 'die';
 					if (game.me.name == 'reimu'){
@@ -2345,6 +2349,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.logSkill('juguang',result.targets);
 						player.useCard({name:'sha'},result.targets[0],false);
 					}
+				},
+				check:function(event,player){
+					return player.lili > 1 && !player.countCards('h', {name:'sha'});
 				},
 			},
 			stg_needle_skill:{
@@ -2794,6 +2801,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}, 0);
 						player.useSkill('silent');
 						game.me.storage.reskill = ['royal'];
+						game.me.storage.reinforce = [];
 						player.addSkill('revive_boss');
 						player.equip(game.createCard('book'));
 					}
@@ -2893,8 +2901,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					game.me.storage.reskill = ['fourof','starbow','chiyan_ex_win'];
+					game.me.storage.reinforce = ['stg_maid', 'stg_maid','stg_maid','flandre'];
 					game.me.recover(game.me.maxHp);
 					game.me.storage.fuhuo ++;
+					game.log(game.me,'获得了一个残机！');
 				}
 			},
 			fourof:{

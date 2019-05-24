@@ -458,7 +458,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               'step 2'
                               if (result.bool&&result.links.length){
-                                    game.log(get.translation(player)+'将'+get.translation(trigger.player)+'的'+get.translation(result.links[0])+'置入牌堆底');
+                                    game.log(player,'将',trigger.player,'的',result.links[0],'置入牌堆底');
                                     trigger.player.showCards(result.links[0]);
                                     trigger.player.lose(result.links[0], ui.special);
                                     trigger.player.update();
@@ -551,7 +551,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     check:function(event,player){
                       if (event.target == player) return 0;
-                      return -get.attitude(player,event.target);
+                      return get.attitude(player,event.target) <= 0;
                     },
                   },
                   liuxing:{
@@ -1014,7 +1014,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if(result.bool&&result.links){
                         player.$throw(event.card,500);
                         player.lose(event.card);
-                        game.log(get.translation(player)+'将'+get.translation(event.card)+'当作'+get.translation(result.links[0][2])+'打出');
+                        game.log(player,'将',event.card,'当作',result.links[0][2],'打出');
                         trigger.cancel();
                         if (trigger.player.storage.huanshi){
                             var rcard = trigger.player.storage.huanshi[0];
@@ -1103,7 +1103,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.targets.randomSort();
                         trigger.targets.remove(trigger.targets[0]);
                         trigger.target=event.targets[0];
-                        game.log(get.translation(trigger.card)+'转移给了'+get.translation(event.targets[0]));
+                        game.log(trigger.card,'转移给了',event.targets[0]);
                         trigger.untrigger();
                         trigger.trigger('useCardToBefore');
                         trigger.trigger(trigger.card.name+'Before');
@@ -1414,14 +1414,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       "step 1"
                       if(result.control){
                         if (result.control == '体力'){
-                          game.log(get.translation(target)+'的体力调整为'+player.hp);
+                          game.log(target,'的体力调整为'+player.hp);
                           if (target.hp < player.hp){
                             target.recover(player.hp-target.hp);
                           } else if (target.hp > player.hp){
                             target.loseHp(target.hp-player.hp);
                           }
                         } else if (result.control == '灵力'){
-                          game.log(get.translation(target)+'的灵力调整为'+player.lili);
+                          game.log(target,'的灵力调整为'+player.lili);
                           if (target.lili < player.lili){
                             target.gainlili(player.lili-target.lili);
                           } else if (target.lili > player.lili){
@@ -1552,7 +1552,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },true);
                       'step 1'
                       if (result.control){
-                        game.log(get.translation(player)+'选择了'+result.control);
+                        game.log(player,'选择了'+result.control);
                         var valid = [];
                         for (var i in cards){
                           switch(result.control){
@@ -1581,19 +1581,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 2'
                       if (result.bool){
                         targets[0].showCards(result.cards);
-                        game.log(get.translation(targets[0])+'成功回答了难题！');
+                        game.log(targets[0],'成功回答了难题！');
                         player.gain(result.cards);
                         targets[0].$give(result.cards,player);
                         player.discard(cards);
                       } else {
-                        game.log(get.translation(targets[0])+'没有回答出难题。');
+                        game.log(targets[0],'没有回答出难题。');
                         targets[0].damage('thunder');
                         player.choosePlayerCard(targets[0],'he',
                           (Math.min(targets[0].countCards('he'), cards.length)),'重铸没有回答出难题的角色的牌', true);
                       }
                       'step 3'
                       if (result.bool && result.links.length){
-                        game.log(get.translation(targets[0])+'重铸了'+get.translation(result.links));
+                        game.log(targets[0],'重铸了',result.links);
                         targets[0].recast(result.links);
                       }
                     },
