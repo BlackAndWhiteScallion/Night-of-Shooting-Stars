@@ -597,7 +597,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						// 不在重整状态的玩家进行一个回合
 						// 在这里加入让玩家选顺序应该就可以
-						if (player != game.boss && game.me != game.boss && game.bossinfo.loopType==2){
+						if (lib.config.free_turn && player != game.boss && game.me != game.boss && game.bossinfo.loopType==2){
 							game.me.chooseTarget('选择下一名进行回合的我方角色',function(card,player,target){
                               return target.identity == 'cai';
                               }).set('ai',function(target){
@@ -606,7 +606,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					"step 1"
+					
+					//console.log(player);
 					if (result.bool){
+						//console.log(result.targets[0]);
 						result.targets[0].phase();
 					} else {
 						player.phase();
@@ -627,10 +630,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 						else{
-							_status.last=player;
-							event.player=game.boss;
-							if(player.nextSeat==game.boss){
-								delete _status.roundStart;
+							// 如果当前玩家已死亡（BOSS死亡会自动游戏结束，所以只检测盟军方），改为进入下一个盟军的回合。
+							if (player.isDead()){
+								event.player = player.nextSeat;
+								if (player.nextSeat == game.boss) event.player = game.boss.nextSeat;
+							} else {
+								_status.last=player;
+								event.player=game.boss;
+								if(player.nextSeat==game.boss){
+									delete _status.roundStart;
+								}
 							}
 						}
 					}

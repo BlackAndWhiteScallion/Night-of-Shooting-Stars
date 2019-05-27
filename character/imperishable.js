@@ -334,6 +334,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          cost:3,
                          spell:['richuguo2'],
                          roundi:true,
+                         limited:true,
                          trigger:{player:'phaseBegin'},
                          init:function(player){
                               player.storage.richuguo=true;
@@ -379,7 +380,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          'step 3'
                          if (event.bool){
                             player.turnOver();
-                            player.storage.richuguo=false;
+                            player.awakenSkill('richuguo');
+                            //player.storage.richuguo=false;
                               player.chooseTarget([1,1],'选择一名角色，重置其体力值，灵力值，手牌数',true,function(card,player,target){
                                 return true;
                               }).ai=function(target){
@@ -977,6 +979,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   huanshi_2:{
                     trigger:{target:'useCardToBegin'},
+                    direct:true,
                     filter:function(event,player){
                       return event.getParent().getParent().name == 'huanshi';
                     },
@@ -990,7 +993,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             return 7-get.value(card);
                         });
                       'step 1'
-                      if (!result.cards) event.finish();
+                      if (!result.cards){
+                        game.log('幻视：当作',trigger.card,'的牌是',trigger.player.storage.huanshi[0]);
+                        event.finish();
+                      }
                       event.card = result.cards[0];
                       var list = [];
                       for (var i in lib.card){
@@ -1015,17 +1021,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.$throw(event.card,500);
                         player.lose(event.card);
                         game.log(player,'将',event.card,'当作',result.links[0][2],'打出');
+                        game.log('幻视：当作',trigger.card,'的牌是',trigger.player.storage.huanshi[0]);
                         trigger.cancel();
                         if (trigger.player.storage.huanshi){
                             var rcard = trigger.player.storage.huanshi[0];
                             if (trigger.player.canUse(rcard, player)){
-                              if (result.links[2] == 'shan' && trigger.player.storage.huanshi[0].name != 'sha' ||
-                                result.links[2] == 'wuxie' && get.type(trigger.player.storage.huanshi[0]) != 'trick')
+                              if (result.links[0][2] == 'shan' && trigger.player.storage.huanshi[0].name != 'sha' ||
+                                result.links[0][2] == 'wuxie' && get.type(trigger.player.storage.huanshi[0]) != 'trick')
                               trigger.player.useCard(rcard,player);
                             }
                         }
                       } else {
-                          event.finish();
+                        game.log('幻视：当作',trigger.card,'的牌是',trigger.player.storage.huanshi[0]);
+                        event.finish();
                       }
                     },
                     mod:{
@@ -1044,7 +1052,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                   },
                   huanshi_3:{
-
                   },
                   zhenshi:{
                     audio:2,

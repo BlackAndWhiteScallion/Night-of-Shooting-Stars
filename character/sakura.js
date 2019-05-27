@@ -1539,6 +1539,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:1,
                 cost:1,
                 spell:['fanhundie2'],
+                group:'fanhundie_die',
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.fanhundie.cost;

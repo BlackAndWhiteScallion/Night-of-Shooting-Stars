@@ -457,7 +457,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			addRecord:function(bool){
 				if(typeof bool=='boolean'){
-					var data=lib.config.gameRecord.identity.data;
+					var data=lib.config.gameRecord.old_identity.data;
 					var identity=game.me.identity;
 					if(identity=='mingzhong'){
 						identity='zhong';
@@ -478,7 +478,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							str+=lib.translate[list[i]+'2']+'：'+data[list[i]][0]+'胜'+' '+data[list[i]][1]+'负<br>';
 						}
 					}
-					lib.config.gameRecord.identity.str=str;
+					lib.config.gameRecord.old_identity.str=str;
 					game.saveConfig('gameRecord',lib.config.gameRecord);
 				}
 			},

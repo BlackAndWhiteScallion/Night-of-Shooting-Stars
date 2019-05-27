@@ -1580,7 +1580,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				filter:function(event,player){
                     return player.countCards('he',function(card){
 								return get.bonus(card) > 0;	
-							})
+							});
                 },
                 chooseButton:{
                     dialog:function(){
@@ -2439,13 +2439,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			ng_pinjian3:{
 				trigger:{player:'chooseCardBegin'},
-				filter:function(event){
-					return event.type=='compare'&&!event.directresult;
+				filter:function(event, player){
+					return event.type=='compare'&&!event.directresult&&player.lili > 0;
 				},
 				content:function(){
 					if (trigger.parent && trigger.parent.target){
 						player.loselili();
-						player.discardPlayerCard('hej',trigger.parent.target,true);
+						if (player == trigger.parent.target){
+							player.discardPlayerCard('hej',trigger.parent.player,true);
+						} else {
+							player.discardPlayerCard('hej',trigger.parent.target,true);
+						}
 					}
 				},
 				prompt2:'消耗1点灵力，弃置与你拼点的角色一张牌',

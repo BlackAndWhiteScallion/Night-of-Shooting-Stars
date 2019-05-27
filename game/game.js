@@ -5344,6 +5344,12 @@
                         },
                         frequent:true,
                     },
+                    free_turn:{
+                        name:'回合顺序自选',
+                        init:true,
+                        frequent:true,
+                        intro:'在回合顺序1（盟军与魔王轮流进行回合）中，盟军的回合顺序由玩家决定',
+                    },
                     single_control:{
                         name:'单人控制',
                         init:false,
@@ -12067,6 +12073,7 @@
                     event.choosing=false;
                     if(event.dialog) event.dialog.close();
                 },
+                //移动卡牌
                 moveCard:function(){
                     'step 0'
                     if(!player.canMoveCard()){
@@ -22929,12 +22936,31 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 },
                 ai:{
                     effect:{
-                        player:function(card,player,target){
-                          if (get.bonus(card) < 0){
-                            if (player.lili == 1) return 0;
-                            if (player.isTurnedOver()) return 0;
-                          } 
-                          return ; 
+                        player:function(card,player,target,current){
+                            //console.log(card);
+                            /*
+                            console.log(card);
+                            console.log(get.bonus(card));
+                            console.log(player);
+                            console.log(target);
+                            console.log(current);
+                            */
+                            if (get.bonus(card) < 0){
+                                if (player.countCards('h') <= player.getHandcardLimit()){
+                                    return [1,-2];
+                                }
+                                if (player.lili < 3 && !player.countCards('he'),function(card){
+                                    return get.bonus(card) > 0;
+                                }) return [1,-1];
+                                if (player.isTurnedOver()) return [1,-1];
+                            } 
+                            if (get.bonus(card) > 0){
+                                if (player.lili > player.maxlili && player.countCards('he',function(card){
+                                    return get.bonus(card) < 0 || lib.card(card.name).enhance;	
+                                })) return [1,-1];
+                                if (player.isTurnedOver()) return [0,0];
+                            }
+                          return [1,0]; 
                         },
                     },
                 },
@@ -22987,12 +23013,12 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 ai:{
                     effect:{
                         target:function(card,player,target,current){
-                            if(player.lili == 0 &&get.tag(card,'damage') && !player.countCards('j',{name:'lingyong'})){
+                            if(player.lili == 0 && get.tag(card,'damage') && !player.countCards('j',{name:'lingyong'})){
                                 return 'zeroplayertarget';
                             }
                         },
                         player:function(card,player,target,current){
-                            if(card.source == 0 &&get.tag(card,'damage') && !card.source.countCards('j', {name:'lingyong'})){
+                            if(card.source == 0 && get.tag(card,'damage') && !card.source.countCards('j', {name:'lingyong'})){
                                 return 'zeroplayertarget';
                             }
                         },
@@ -30406,6 +30432,7 @@ smoothAvatar:function(player,vice){
                 if(card.filterTarget&&card.selectTarget==undefined){
                     card.selectTarget=1;
                 }
+                // autoviewas 好像是指自动当作别的卡处理？
                 if(card.autoViewAs){
                     if(!card.ai){
                         card.ai={};
@@ -30429,8 +30456,17 @@ smoothAvatar:function(player,vice){
                     if(card.toself==undefined) card.toself=true;
                     if(card.ai==undefined) card.ai={basic:{}};
                     if(card.ai.basic==undefined) card.ai.basic={};
-                    if(card.ai.result==undefined) card.ai.result={target:1.5};
+                    if(card.ai.result==undefined) card.ai.result={target:1};
+                    // order是使用顺序吧
                     if(card.ai.basic.order==undefined) card.ai.basic.order=function(card,player){
+                        // reverseequip是指想要被弃装备的（比如枭姬）
+                        if (get.bonus(card) > 0 && player.lili == 5) return 3;
+                        if (get.bonus(card) < 0){
+                            if (player.isTurnedOver() && player.countCards('h') <= player.getHandcardLimit()){
+                                return 0;
+                            } else if (player.isTurnedOver()) return 1;
+                            if (player.lili < 3) return 2;
+                        }
                         if(player&&player.hasSkillTag('reverseEquip')){
                             return 8.5-get.equipValue(card,player)/20;
                         }
@@ -30464,11 +30500,12 @@ smoothAvatar:function(player,vice){
                         if(typeof equipValue!='number') equipValue=0;
                         //if(player.countCards('e') < player.maxequip) return equipValue;
                         //return equipValue-value;
-                        if (player.countCards('e') >= player.maxequip) return 0;
+                        if (player.countCards('e') >= player.maxequip && player.countCards('h') < player.hp) return 0;
                         return equipValue;
                     }
                     card.ai.result.target=(function(name){
                         return (function(player,target){
+                            // result.target直接覆盖，无视装备区里写的多少？
                             return get.equipResult(player,target,name);
                         });
                     }(i));
@@ -47994,8 +48031,9 @@ smoothAvatar:function(player,vice){
         sgnAttitude:function(){
             return get.sgn(get.attitude.apply(this,arguments));
         },
+        // 这是检测卡牌的用处的
         useful:function(card){
-            if(get.position(card)=='j') return -1;
+            //if(get.position(card)=='j') return -1;
             if(get.position(card)=='e') return get.equipValue(card);
             var i=0;
             if(_status.event.player){
@@ -48025,6 +48063,7 @@ smoothAvatar:function(player,vice){
         unuseful3:function(card){
             return 10-get.useful(card);
         },
+        // 牌本身的价值
         value:function(card,player,method){
             var value;
 			if(Array.isArray(card)){
@@ -48059,6 +48098,7 @@ smoothAvatar:function(player,vice){
             }
             return 0;
         },
+        // 装备对使用者/目标的收益
         equipResult:function(player,target,name){
             var card=get.card();
             if(!card||card.name!=name){
@@ -48074,10 +48114,19 @@ smoothAvatar:function(player,vice){
                     return 0;
                 }
             }*/
+            // 这里混入青蛙AI……
+            if (card.name == 'frog'){
+                if (target.lili > 0 && target.countCards('e')){
+                    return -2;
+                } else if (target.lili > 0 || target.countCards('e')){
+                    return -1;
+                }
+            }
             if (!player.countCards('e') || player.countCards('e') < player.maxequip) return value1;
             //return Math.max(0,value1-value2)/5;
             return 0;
         },
+        // 装备的价值
         equipValue:function(card,player){
             if(player==undefined||get.itemtype(player)!='player') player=get.owner(card);
             if(player==undefined||get.itemtype(player)!='player') player=_status.event.player;
@@ -48148,7 +48197,11 @@ smoothAvatar:function(player,vice){
             }
             return result;
         },
+        // 这里获得牌/技能的收益
+        // 目标，卡牌，角色1（玩家），角色2是什么不清楚。
         effect:function(target,card,player,player2){
+            // 如果没有玩家，玩家为当前事件角色
+            // 
             var event=_status.event;
             var eventskill=null;
             if(player==undefined) player=_status.event.player;
@@ -48162,22 +48215,29 @@ smoothAvatar:function(player,vice){
                     }
                 }
             }
+            // result即收益。收益来自当前技能，收益1是起始为0，收益2起始为0
             var result=get.result(card,eventskill);
             var result1=result.player, result2=result.target;
             if(typeof result1=='function') result1=result1(player,target,card);
             if(typeof result2=='function') result2=result2(player,target,card);
             if(typeof result1!='number') result1=0;
             if(typeof result2!='number') result2=0;
+            // 
             var temp1,temp2,temp3,temp01=0,temp02=0,threaten=1;
+            // skills1 是玩家持有的所有技能（包括全场技能）
             var skills1=player.getSkills().concat(lib.skill.global);
             game.expandSkills(skills1);
+            // 是否确认不可以成为目标（zerotarget）或不能成为来源（zeroplayer）
             var zerotarget=false,zeroplayer=false;
+            // 每一个技能检测AI： 
+            // temp1是技能中的player换算
             for(var i=0;i<skills1.length;i++){
                 temp1=get.info(skills1[i]).ai;
                 if(temp1&&typeof temp1.effect=='object'&&typeof temp1.effect.player=='function'){
                     temp1=temp1.effect.player(card,player,target,result1);
                 }
                 else temp1=undefined;
+                // 如果换算结果是object，result1是temp1的一位，temp01是二位
                 if(typeof temp1=='object'){
                     if(temp1.length==2||temp1.length==4){
                         result1*=temp1[0];
@@ -48321,12 +48381,13 @@ smoothAvatar:function(player,vice){
             var card=button.link;
             var player=get.owner(card);
             if(!player) player=_status.event.player;
+            /* 虽然我不懂这个判定区的是什么东西但是砸掉就行了
             if(player.getCards('j').contains(card)){
                 var efff=get.effect(player,card,player,player);
                 if(efff>0) return 0.5;
                 if(efff==0) return 0;
                 return -1.5;
-            }
+            }*/
             if(player.getCards('e').contains(card)){
                 var evalue=get.equipValue(card);
                 if(player.hasSkillTag('noe')){
