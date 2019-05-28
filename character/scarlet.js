@@ -71,7 +71,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		    			}
 		    			player.chooseControl(choice).set('ai',function(){
 		    				if (player.countCards('h') > player.hp) return 'lose_lili';
-                            if (player.lili > 2) return 'lose_lili';
+                            if (player.lili > 3) return 'lose_lili';
                             return 'end_phase';
     					});
     				}
@@ -89,7 +89,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     			},
     			ai:{
     				expose:0.1,
-                    threaten:0.5,
     			},
     		},
     		yuezhi:{
@@ -100,7 +99,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     			trigger:{player:'phaseBegin'},
                 check:function(event,player){
                     if (player.hp < 3) return true;
-                    return false;
+                    return game.countPlayer(function(current){
+                        if (get.distance(player,current,'absolute') > player.lili - 2) return 0;
+                        if (ai.get.attitude(player,current) < 0) return 2;
+                        if (ai.get.attitude(player,current) >= 0) return -2;
+                        return 0;
+                    }) > 0;
                 },
     			filter:function(event,player){
     				return player.lili > lib.skill.yuezhi.cost;
@@ -241,7 +245,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 //priority:5,
                 group:'dizhuan2',
                 filter:function(event,player){
-                    if(player.countCards('he')==0) return false;
+                    if(player.countCards('hej')==0) return false;
                     if(player == event.target) return false;
                     if(event.targets.contains(player)) return false;
                     return get.distance(player,event.target,'attack')<=1 && lib.filter.targetEnabled(event.card,event.player,player);
@@ -342,6 +346,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 1"
                     if(result.bool){
                         player.logSkill('jicai',result.targets);
+                        player.line(result.targets,'green');
                         event.targets=result.targets;
                         player.discardPlayerCard(event.targets[0],'hej').set('ai',function(button){
                             if(!_status.event.att) return 0;
@@ -378,7 +383,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (event.list[0] == '跳过摸牌阶段，视为使用一种法术牌') return 0;
                         if (event.list[0] == '跳过出牌阶段，将一张牌当作一种法术牌使用'){
                             if (player.skipList.contains('phaseDiscard')) return 0;
-                            if (player.lili > 1  && player.countCards('h','sha') < 2) return 1;
+                            if (player.lili > 1  && player.countCards('h',{name:'sha'}) < 2) return 1;
                             else return 'cancel2';
                         }
                         return event.list.length - 1;
@@ -435,8 +440,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(list.length){
                         player.chooseButton(['视为使用一张法术牌',[list,'vcard']]).set('ai',function(button){
                             var player=_status.event.player;
-                            var card={name:button.link[2]};
-                            return get.value(card);
+                            var recover=0,lose=1,players=game.filterPlayer();
+                            for(var i=0;i<players.length;i++){
+                                if(!players[i].isOut()){
+                                    if (get.attitude(player, players[i]) >= 0) recover ++;
+                                    if (get.attitude(player, players[i]) < 0 ){
+                                        if (players[i].hp == 1 && get.effect(players[i],{name:'juedou'},player,player)) return (button.link[2] == 'juedou')?2:-1;
+                                        lose ++;
+                                    }
+                                }
+                            }
+                            if (recover - 2 >= lose) return (button.link[2] == 'reidaisai')?2:-1;
+                            return get.value({name:button.link[2]});
                         });
                     }
                     'step 1'
@@ -494,34 +509,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         var recover=0,lose=1,players=game.filterPlayer();
                         for(var i=0;i<players.length;i++){
                             if(!players[i].isOut()){
-                                if(players[i].hp<players[i].maxHp){
-                                    if(get.attitude(player,players[i])>0){
-                                        if(players[i].hp<2){
-                                            lose--;
-                                            recover+=0.5;
-                                        }
-                                        lose--;
-                                        recover++;
-                                    }
-                                    else if(get.attitude(player,players[i])<0){
-                                        if(players[i].hp<2){
-                                            lose++;
-                                            recover-=0.5;
-                                        }
-                                        lose++;
-                                        recover--;
-                                    }
-                                }
-                                else{
-                                    if(get.attitude(player,players[i])>0){
-                                        lose--;
-                                    }
-                                    else if(get.attitude(player,players[i])<0){
-                                        lose++;
-                                    }
+                                if (get.attitude(player, players[i]) >= 0) recover ++;
+                                if (get.attitude(player, players[i]) < 0 ){
+                                    if (players[i].hp == 1 && get.effect(players[i],{name:'juedou'},player,player)) return (button.link[2] == 'juedou')?2:-1;
+                                    lose ++;
                                 }
                             }
                         }
+                        if (recover - 2 >= lose) return (button.link[2] == 'reidaisai')?2:-1;
                         return (button.link[2]=='wuzhong')?1:-1;
                     },
                     backup:function(links,player){
@@ -597,7 +592,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 position:'he',
                 viewAs:{name:'wuxie'},
-                prompt:'将一张牌当魔法障壁使用',
+                prompt:'将一张牌当【请你住口！】使用',
                 selectCard:1,
                 check:function(card){return 8-get.value(card)},
                 threaten:1.2
@@ -675,19 +670,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.chooseControl(list, function(event,player){
                         if (player.getCards('h').length < 2 && player.getCards('h').length + 2 > player.hp) return 'phaseDiscard';
                         if (player.getCards('h').length > player.hp) return 'phaseDraw';
-                        return 'phaseUse';
+                        if (!player.countCards('h', function(card){
+                            return get.tag(card, 'damage');
+                        })) return 'phaseUse';
+                        return false;
                     });
                     "step 1"
                     if (result.control){
                         player.storage.qishu = result.control;
-                        player.chooseTarget(1,"选择一名角色，令其获得1点灵力并执行一个额外的"+get.translation(result.control),function(card,player,target){
+                        player.chooseTarget(1,"选择一名其他角色，令其获得1点灵力并执行一个额外的"+get.translation(result.control),function(card,player,target){
                             return target != player;
                         }).set('ai',function(target){
                             if (player.storage.qishu == 'phaseDiscard'){
-                                if (get.attitude(player,target)<0 && target.getCards('h') > target.hp) return target;
-                                return get.attitude(player,target)<0;
+                                if (get.attitude(player,target) < 0 && target.getCards('h') > target.hp) return target;
+                                if (get.attitude(player, target) > 0 && target.getCards('h') <= target.hp && target.lili < target.maxlili) return target;
+                                return get.attitude(player,target);
                             } else {
-                                return get.attitude(player,target)>0;
+                                return get.attitude(player,target)>0 && target.lili < target.maxlili;
                             }
                         });
                     }
@@ -704,7 +703,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 check:function(event,player){
-                    return player.lili > 1;
+                    return player.lili > 1 && game.countPlayer(function(current){
+                        return get.attitude(player, current) > 0;
+                    });
                 },
             },
             qishu2:{
@@ -749,13 +750,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 ai:{
                     effect:{
                         target:function(card,player,target,current){
-                            if(get.type(card)=='trick'&&player!=target) return 'zeroplayertarget';
+                            if(get.type(card)=='trick'&&player!=target&&player.storage._mubiao) return 'zerotarget';
                         },
                     }
                 }
             },
             huanzang:{
-                audio:2,
+                audio:0,
                 group:['huanzang_1'],
                 trigger:{target:'useCardToBegin'},
                 filter:function(event,player){
@@ -780,6 +781,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }).set('eff',eff);
                     'step 1'
                     if (result.bool){
+                        game.trySkillAudio('huanzang', player, true, Math.ceil(2*Math.random()));
                         trigger.cancel();
                     }
                 },
@@ -809,6 +811,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.bool){
+                        game.trySkillAudio('huanzang', player, true, Math.ceil(2*Math.random()));
                         trigger.cancel();
                     }
                 },
@@ -865,9 +868,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (player.countCards('e',{name:'stg_watch'})) event.num++;
                     if (event.num < 0) event.finish();
                     player.chooseCardButton(player.storage.shijing,'捡回'+event.num+'张牌',[1,event.num],true).ai=function(button){
-                        var val=get.value(button.link);
-                        if(val<0) return -10;
-                        return val;
+                        return get.value({name:button.link[2]});
                     }
                     'step 1'
                     player.loselili(); 
@@ -928,7 +929,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.turnOver();
                 },
                 check:function(event,player){
-                    return player.lili > 3;
+                    return player.lili > 3 && game.countPlayer(function(current){
+                        return get.attitude(player, current) > 0 && current.hp == 1; 
+                    });
                 },
             },
             world_skill:{
@@ -961,7 +964,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 check:function(event,player){
-                    return -get.attitude(player, event.player) && get.attitude(player, event.target);
+                    return -get.attitude(player, event.player) && get.attitude(player, event.target) && event.target.hp < 3;
                 },
                 prompt:'要不要使用The World的力量？',
             },
@@ -1009,6 +1012,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (event.name == 'damage') return true;
                     return player.getAttackRange() > 2;
                 },
+                ai:{
+                    maixie_defend:true,
+                },
                 prompt2:'要不要看看今天发牌姬带来了什么？',
             },
             mingyun2:{
@@ -1041,8 +1047,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.feise.cost);
                     player.turnOver();
                 },
-                check:function(){
-                    return false;
+                check:function(event, player){
+                    return game.countPlayer(function(current){
+                        return current.hp == 1 && get.attitude(player, current) > 0;
+                    });
+                },
+                ai:{
+                    damage:1,
                 },
             },
             feise_start:{
@@ -1130,10 +1141,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.markSkill('kuangyan');
                     if (get.mode() == 'stg') lib.skill['kuangyan'].audio = 0;
                 },
-                check:function(){
-                    return true;
+                check:function(event, player){
+                    return game.countPlayer(function(current){
+                        if (current != player && get.distance(player,current,'attack')<=1){
+                            if (get.attitude(player, current) > 0) return -2;
+                            else return 2;
+                        }
+                        return 0;
+                    }) > 0;
                 },
                 ai:{
+                    damage:1,
                     effect:{
                         player:function(card,player,target,current){
                             if(get.tag(card,'save') && target != player && get.mode() == 'stg'){
@@ -1167,7 +1185,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.turnOver();
                 },
                 check:function(event,player){
-                    return player.lili - player.hp >= 2;
+                    return player.lili - player.hp >= 2 && game.countPlayer(function(current){
+                        if (get.attitude(player, current) > 0) return -2;
+                        else return 2;
+                    }) > 0;
                 },
             },
             zhihou2:{
@@ -1219,9 +1240,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         trigger.player.discard(cards);
                     }
                 },
+                ai:{
+                    threaten:1.5,
+                },
             },
             zhihou3:{
-                forced:true,
+                direct:true,
                 trigger:{player:'dieEnd'},
                 content:function(){
                     var players = game.filterPlayer();

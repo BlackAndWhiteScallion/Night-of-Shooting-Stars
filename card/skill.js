@@ -124,6 +124,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				effect:function(){
 				},
 				ai:{
+					/*
+					maixie:true,
+					maixie_hp:true,
+					*/
+					maixie_defend:true,
 					basic:{
 						useful:4,
 						value:4,
@@ -168,7 +173,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				ai:{
 					basic:{
 						useful:7,
-						value:7,
+						value:function(card, player){
+							// 不知道怎么检测是下一名回合角色，选择死亡。
+							if (player.hasSkill('qianxing_skill2')) return 100;
+							else return 5;
+						},
 					},
 					result:{target:1},
 				},
@@ -188,8 +197,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					basic:{
-						useful:5,
-						value:3,
+						useful:3,
+						value:function(card, player){
+							if (player.lili > 2) return 2;
+							else return 8;
+						},
 					},
 					result:{target:1},
 				},
@@ -348,7 +360,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				"step 0"
-    				player.logSkill('shenyou_skill_2');
     				trigger.player.judging[0].suit = "heart";
     				"step 1"
     				var cards = player.getCards('j');
@@ -358,7 +369,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 								break;
 							}
 						}
-    				game.log(trigger.player,'的判定牌的花色改为'+get.translation("heart"));
+    				game.log('神佑：',trigger.player,'的判定牌的花色改为'+get.translation("heart"));
     			},
 			},
 			jinu_skill:{
@@ -370,7 +381,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				player.discardPlayerCard('ej',trigger.source,true);
     			},
-    			
+    			check:function(event,player){
+					return -get.attitude(player, event.source);
+				},
 			},
 			lianji_skill:{
 				mod:{
@@ -386,6 +399,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				onremove:function(player){
 					player.removeSkill('qianxing_skill2');
+				},
+				check:function(event,player){
+					return player.hp < 3 || player.countCards('h') < 2;
 				},
 			},
 			qianxing_skill2:{
@@ -412,14 +428,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						}
 					}
 				},
+				/*
 				ai:{
-					noh:true,
 					skillTagFilter:function(player,tag){
 						if(tag=='noh'){
 							if(player.countCards('h')!=1) return false;
 						}
 					}
 				}
+				*/
 			},
 			lingyong_skill:{
 				mod:{

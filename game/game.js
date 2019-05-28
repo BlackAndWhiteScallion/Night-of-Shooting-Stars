@@ -22946,6 +22946,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                             console.log(current);
                             */
                             if (get.bonus(card) < 0){
+                                if (player.lili == 0) return [1, 1];
                                 if (player.countCards('h') <= player.getHandcardLimit()){
                                     return [1,-2];
                                 }
@@ -22955,8 +22956,8 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                                 if (player.isTurnedOver()) return [1,-1];
                             } 
                             if (get.bonus(card) > 0){
-                                if (player.lili > player.maxlili && player.countCards('he',function(card){
-                                    return get.bonus(card) < 0 || lib.card(card.name).enhance;	
+                                if (player.lili >= player.maxlili && player.countCards('he',function(card){
+                                    return get.bonus(card) < 0 || lib.card[card.name].enhance;	
                                 })) return [1,-1];
                                 if (player.isTurnedOver()) return [0,0];
                             }
@@ -45633,7 +45634,7 @@ smoothAvatar:function(player,vice){
             }
             return num?Math.round(9*(num-1)/8+1):'x';
         },
-       		skillRank:function(skill,type,grouped){
+       	skillRank:function(skill,type,grouped){
 			var info=lib.skill[skill];
 			var player=_status.event.skillRankPlayer||_status.event.player;
 			if(!info) return 0;
@@ -48066,18 +48067,22 @@ smoothAvatar:function(player,vice){
         // 牌本身的价值
         value:function(card,player,method){
             var value;
+            // 如果是一堆卡，这些卡的价值是他们的平均数（的一倍还是啥的）
 			if(Array.isArray(card)){
 				value=0;
 				for(var i=0;i<card.length;i++){
 					value+=get.value(card[i],player,method);
 				}
 				return value/Math.sqrt(card.length);
-			}
+            }
+            // 如果卡的AI上有写价值，价值等于那个设置值
+            // 否则的话为默认值；默认值也没有的话就是0
 			var aii=get.info(card).ai;
             if(aii&&aii.value) value=aii.value;
             else if(aii&&aii.basic) value=aii.basic.value;
             if(value==undefined) return 0;
             if(player==undefined||get.itemtype(player)!='player') player=_status.event.player;
+            // geti返还的是角色手里这张卡的数量/和位置
             var geti=function(){
                 var num=0,i;
                 var cards=player.getCards('h',card.name);
@@ -48086,10 +48091,13 @@ smoothAvatar:function(player,vice){
                 }
                 return cards.length;
             };
+            // value是function的话，输入是card, player, geti
             if(typeof value=='function'){
                 return value(card,player,geti());
             }
+            // 是数字的话就是数字
             if(typeof value=='number') return value;
+            // 是Array的话就取array
             if(Array.isArray(value)){
                 if(method=='raw') return value[0];
                 var num=geti();

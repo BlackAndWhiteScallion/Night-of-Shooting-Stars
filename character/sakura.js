@@ -74,6 +74,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     tag:{
                         thunderdamage:1,
                     },
+                    effect:{
+                        player:function(card,player,target,current){
+							if(get.tag(card,'respond') && target.storage._mubiao && !target.storage.shuang && target.countCards('h') > 2 && target.lili != 0){
+								return -1;
+							}
+						}
+                    }
                 },
             },
             shuangjiang2:{
@@ -207,9 +214,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         list[i]=[get.type(list[i]),'',list[i]];
                     }
                     player.chooseButton(['选择【鸣动】这回合可以转化的牌',[list,'vcard']]).set('ai',function(button){
-                        if (trigger.card == 'sha') return 'shan';
-                        if (_status.currentPhase==player && player.hp == player.maxHp && !player.countCards('h','sha')) return 'sha';
-                        return 'tao';
+                        if (get.tag(trigger.card, 'respondShan')) return button.link[2] == 'shan';
+                        if (get.tag(trigger.card, 'respondSha')) return button.link[2] == 'sha';
+                        return button.link[2] == 'tao';
                     });
                     'step 1'
                     if (result.bool){
@@ -261,7 +268,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.chooseTarget('令一名角色获得1点灵力',function(card,player,target){
                         return true;
                     }).set('ai',function(target){
-                        return get.attitude(_status.event.player,target);
+                        return get.attitude(_status.event.player,target) && target.lili != target.maxlili;
                     });
                     'step 1'
                     if(result.bool){
@@ -284,7 +291,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 roundi:true,
                 trigger:{player:'phaseBegin'},
                 check:function(event,player){
-                    if (player.countCards('h') > player.hp) return false;
+                    if (player.countCards('h') > player.getHandcardLimit() && player.hp > 2) return false;
                     if (player.lili > 3) return true;
                     return false;
                 },
@@ -303,9 +310,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     'step 1'
                     if (result.bool){
                         player.logSkill('shuanggui',result.targets);
+                        player.draw();
                         result.targets[0].draw();
                         result.targets[0].addTempSkill('shuanggui4');
-                        player.draw();
                     }
                 },
             },
@@ -509,7 +516,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.lili >= player.hp;
                 },
                 check:function(event,player){
-                    return true;
+                    return game.countPlayer(function(current){
+                        if (get.attitude(player, current) > 0) return -2;
+                        else return 2;
+                    }) > 0;
                 },
                 content:function(){
                     "step 0"
@@ -607,7 +617,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){
-                        return 1;
+                        return get.value(card);
                     });
                     'step 1'
                     if (result.bool){
@@ -656,44 +666,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return _status.event.getParent().filterCard({name:button.link[2]},player);
                     },
                     check:function(button){
-                        var player=_status.event.player;
-                        var recover=0,lose=1,players=game.filterPlayer();
-                        for(var i=0;i<players.length;i++){
-                            if(players[i].hp==1&&get.damageEffect(players[i],player,player)>0&&!players[i].hasSha()){
-                                return (button.link[2]=='juedou')?2:-1;
-                            }
-                            if(!players[i].isOut()){
-                                if(players[i].hp<players[i].maxHp){
-                                    if(get.attitude(player,players[i])>0){
-                                        if(players[i].hp<2){
-                                            lose--;
-                                            recover+=0.5;
-                                        }
-                                        lose--;
-                                        recover++;
-                                    }
-                                    else if(get.attitude(player,players[i])<0){
-                                        if(players[i].hp<2){
-                                            lose++;
-                                            recover-=0.5;
-                                        }
-                                        lose++;
-                                        recover--;
-                                    }
-                                }
-                                else{
-                                    if(get.attitude(player,players[i])>0){
-                                        lose--;
-                                    }
-                                    else if(get.attitude(player,players[i])<0){
-                                        lose++;
-                                    }
-                                }
-                            }
-                        }
-                        if(lose>recover&&lose>0) return (button.link[2]=='nanman')?1:-1;
-                        if(lose<recover&&recover>0) return (button.link[2]=='taoyuan')?1:-1;
-                        return (button.link[2]=='wuzhong')?1:-1;
+                        return get.value({name:button.link[2]});
                     },
                     backup:function(links,player){
                         return {
@@ -717,7 +690,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 ai:{
-                    order:1,
+                    order:4,
                     result:{
                         player:function(player){
                             var num=0;
@@ -754,7 +727,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (event.list.length == 1) event.finish();
                     player.chooseControl(event.list,function(event,player){
                         if (event.list.contains('获得弃置的一张牌')) return '获得弃置的一张牌';
-                        if (player.storage.mingzhi.length > 1) return '将明置牌交给当前回合角色';
+                        if (player.storage.mingzhi.length > 1 && get.attitude(player, _status.currentPhase) > 0) return '将明置牌交给当前回合角色';
                         return 'cancel2';
                     }).set('prompt',get.prompt('zhenhun'));
                     "step 2"
@@ -776,6 +749,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             forced:true,
                             position:'hej',
                             prompt:'将一张明置牌交给当前回合角色',
+                            ai1:function(card){
+                                return 7-get.useful(card);
+                            },
                         });
                     } else if (result.control == 'cancel2'){
                         event.finish();
@@ -798,7 +774,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (result.bool && event.control == '将明置牌交给当前回合角色'){
                         if(result.targets&&result.targets[0]){
                             result.targets[0].gain(result.cards,player);
-                            player.$give(result.cards.length,result.targets[0]);
+                            player.$give(result.cards,result.targets[0]);
                         }
                     }
                     /*
@@ -970,7 +946,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){
-                        return 1;
+                        return get.value(card);
                     });
                     'step 1'
                     if (result.bool){
@@ -981,10 +957,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 ai:{
-                    order:5,
+                    order:1,
                     result:{
                         player:function(player,target){
-                            return 1;
+                            return 0.5;
                         }
                     }
                 }
@@ -1009,7 +985,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return list.contains(card.name);
                 },
                 check:function(card){
-                    return 8-get.value(card);
+                    return 5-get.value(card);
                 },
                 mod:{
                     cardEnabled:function(card,player){
@@ -1105,7 +1081,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){
-                        return 1;
+                        return get.useful(card);
                     });
                     'step 1'
                     if (result.bool){
@@ -1136,7 +1112,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player!=target;
                 },
                 check:function(card){
-                    return 10-get.value(card);
+                    return 7-get.value(card);
                 },
                 content:function(){
                     target.gain(cards,player);
@@ -2277,7 +2253,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mengya_info:'一回合两次，出牌阶段，你可以选择一项：获得1点灵力，然后弃置一张牌；或消耗1点灵力，然后摸一张牌。',
             mengya_audio1:'春天是万物复苏的季节！',
             mengya_audio2:'春天是风调雨顺的季节！',
-            lilywhite_die:'哎，原来立春其实是明天的吗？',
+            lilywhite_die:'哎，立春早就过掉了？',
             lunasa:'露娜萨',
             shenxuan:'神弦',
             shenxuan_audio1:'（🎻）',
@@ -2336,13 +2312,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             yinhuashan_audio2:'我的名字是魂魄妖梦！幽幽子大人之剑！',
             yinhuashan_audio3:'空观剑「六根清净斩」!',
             // 众所周知，六根有七个是常识
-            yinhuashan2_audio1:'眼根！',
-            yinhuashan2_audio2:'耳根！',
-            yinhuashan2_audio3:'鼻根！',
-            yinhuashan2_audio4:'舌根！',
-            yinhuashan2_audio5:'身根！',
-            yinhuashan2_audio6:'意根！',
-            yinhuashan2_audio7:'命根！',
+            yinhuashan2_audio1:'斩眼根！',
+            yinhuashan2_audio2:'斩耳根！',
+            yinhuashan2_audio3:'斩鼻根！',
+            yinhuashan2_audio4:'斩舌根！',
+            yinhuashan2_audio5:'斩身根！',
+            yinhuashan2_audio6:'斩意根！',
+            yinhuashan2_audio7:'斩命根！',
             'refresh':'重置',
             'extra_target':'额外目标',
             youmu_die:'幽幽子大人的晚饭又要延后了……',

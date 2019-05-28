@@ -156,7 +156,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				player.$skill('红月胜利',null,null,true);
     				game.incidentover(player,'scarlet');
-    			}	
+				},
+				ai:{
+					threaten:function(player, target){
+						if (target.hp == target.MaxHp) return 2;
+						return 1;
+					},
+				},
     		},
     		sakura_normal:{
     			trigger:{global:'dying'},
@@ -181,7 +187,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				player.$skill('散樱胜利',null,null,true);
     				game.incidentover(player,'sakura');
-    			}	
+				},
+				ai:{
+					threaten:function(player, target){
+						if (target.hp == 1) return 2;
+						return 0.7;
+					},
+				},	
     		},
     		imperishable_normal:{
     			trigger:{global:'loseEnd'},
@@ -216,12 +228,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     					player.$skill('永夜胜利', null, null, true);
     					game.incidentover(player,'imperishable');
     				};
-    			},
+				},
+				ai:{
+					threaten:function(player, target){
+						if (!target.storage.imperishable_win) return 1;
+						return Math.max(1,target.storage.imperishable_win - 3); 
+					},
+				}
     		},
     		phantasmagoria_normal:{
     			trigger:{global:'phaseEnd'},
     			forced:true,
-    			direct:true,
     			filter:function(event,player){
     				return true;
     			},
@@ -239,7 +256,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				player.$skill('花映胜利', null, null, true);
     				game.incidentover(player,'phantasmagoria');
-    			},
+				},
+				ai:{
+					threaten:function(player, target){
+						if (!game.dead) return 2;
+						return 1;
+					}	
+				}
     		},
     		immaterial_normal:{
 				enable:'phaseUse',
@@ -250,6 +273,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.useCard({name:'reidaisai'},game.filterPlayer());
 					player.loselili();
+				},
+				ai:{
+					order:5,
+					result:{
+						player:function(player){
+							return game.countPlayer(function(current){
+								if (get.attitude(player, current) < 0) return -1;
+								if (get.attitude(player, current) >= 0) return 1; 
+							});
+						}
+					},
 				},
     		},
     		immaterial_win:{
@@ -269,7 +303,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				    player.$skill('萃梦胜利',null,null,true); 
     					game.incidentover(player,'immaterial');
     				}
-    			},
+				},
+				ai:{
+					threaten:function(player, target){
+						if (ui.discardPile.childNodes.length > 70) return 2;
+						return 1;
+					}	
+				}
     		},
     		sb_normal:{
 				enable:'phaseUse',
@@ -331,7 +371,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				player.$skill('笨蛋胜利',null,null,true);
     				game.incidentover(player,'baka');
-    			},
+				},
+				ai:{
+					threaten:function(player, target){
+						var num=0;
+						for(var j=0;j<player.stat.length;j++){
+							if(player.stat[j].kill!=undefined) num += player.stat[j].kill;
+						}
+						if (num > 0) return 3;
+						return 1;
+					}	
+				}
     		},
     		death_normal:{
     			// 不给胜利应该怎么写比较好啊……
@@ -342,7 +392,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.draw(3);
 				},
 				ai:{
-					threaten:2,
 					effect:{
 						modAttitudeTo:function(from,to,att){
 							return -3;
@@ -361,8 +410,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				game.incidentover(player,'death');
-    			},
-    		},
+				},
+				ai:{
+					threaten:3,
+				}
+			},
 		},
 		translate:{
 			incident:'异变',
