@@ -1458,8 +1458,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       	player.draw(num);
                       }
                   },
-                  check:function(){
-                  	return true;
+                  check:function(event,player){
+                  	return player.getHandcardLimit() - player.countCards('h') >= 2;
                   },
 			},
 			ADA2:{

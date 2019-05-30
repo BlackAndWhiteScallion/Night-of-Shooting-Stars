@@ -2002,6 +2002,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.chooseToCompare(trigger.player);
 				"step 1"
 				if(result.bool){
+					game.log('人魂灯：【轰！】对',player,'无效');
 					trigger.cancel();
 				}
 			},
@@ -2554,10 +2555,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     }
                     cards.push(currentcard);
                 }
-                cards.randomSort();
                 for(var i=0;i<cards.length;i++){
                     ui.cardPile.appendChild(cards[i]);
                 }
+				for (var i = ui.cardPile.length; i >= 0; i --){
+					ui.cardPile.appendChild(ui.cardPile.childNodes[Math.random() * i | 0]);
+				}
                 game.log("天国之阶：弃牌堆加入牌堆");
                 if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
             },

@@ -114,6 +114,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                         ai:{
+                              skillTagFilter:function(player){
+						if(!player.countCards('h',{name:'sha'})) return false;
+					},
                               effect:{
                                     target:function(card,player,target,current){
                                           if(card.name=='sha'&&get.attitude(player,target)<0){
@@ -149,6 +152,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                       check:function(event,player){
                         return player.getCards('h').length < 3;
+                      },
+                      ai:{
+                        damage:true,
                       },
                   },
                   perfect_1:{
@@ -195,7 +201,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               return player.lili>0;
                         },
                         check:function(card){
-                              return 9-get.value(card)
+                              return 8-get.value(card)
                         },
                         filterTarget:function(card,player,target){
                               if(target.hp>=target.maxHp) return false;

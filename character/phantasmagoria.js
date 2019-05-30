@@ -51,6 +51,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               return false;
                           }).set('ai',function(target){
+                              if (-get.attitude(_status.event.player,target) && target.storage.chunmian) return 100;
                               return -get.attitude(_status.event.player,target);
                           }); 
                           "step 2"
@@ -87,7 +88,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       content:function(){
                           var choice = [];
                           if (player.num('hej') != 0){
-                              choice.push('消耗1点灵力，弃置1张牌');
+                              choice.push('消耗1点灵力，弃置一张牌');
                           }
                           if (player.lili != player.maxlili){
                               choice.push('获得1点灵力，摸一张牌');
@@ -97,7 +98,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               if (player.lili < 5){
                                   return '获得1点灵力，摸一张牌'; 
                               } else {
-                                  return '消耗1点灵力，弃置1张牌';
+                                  return '消耗1点灵力，弃置一张牌';
                               }
                               return '获得1点灵力，摸一张牌';
                           });
@@ -105,7 +106,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           if (result.control == '获得1点灵力，摸一张牌'){
                               player.gainlili();
                               player.draw();
-                          } else if (result.control == '消耗1点灵力，弃置1张牌') {
+                          } else if (result.control == '消耗1点灵力，弃置一张牌') {
                               player.chooseToDiscard(1,true,'hej');
                               player.loselili();
                           }
@@ -131,7 +132,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                            player.chooseTarget(prompt,function(card,player,target){
                               return target.lili <= player.lili;
                               }).set('ai',function(target){
-                                    if (player.storage.zaidu != 'heal') return -get.attitude(player,target);
+                                    if (!player.storage.zaidu || player.storage.zaidu != 'heal') return -get.attitude(player,target);
                                     else return get.attitude(player,target);
                               });
                               "step 1"
@@ -158,6 +159,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                         check:function(){
                           return true;
+                        },
+                        ai:{
+                              threaten:1.5,
                         },
                   },
                   zaidu2:{
@@ -229,7 +233,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         content:function(){
                               'step 0'
                               player.chooseControl('令回复量-1','令回复量+1',function(event,player){
-                                    if (get.attitude(player, event.player) > 0) return '令回复量+1';
+                                    if (get.attitude(player, event.player) > 0 && event.player.hp + 1 < event.player.maxHp) return '令回复量+1';
                                     return '令回复量-1';
                               });
                               'step 1'
@@ -266,41 +270,41 @@ game.import('character',function(lib,game,ui,get,ai,_status){
       					},
             		content:function(){
             			"step 0"
-        					player.chooseToCompare(target);
-                  if (target.name == 'marisa') game.trySkillAudio('zanghua',target,true,3);
-                  if (target.name == 'alice') game.trySkillAudio('zanghua', target, true, 4);
-        					"step 1"
-        					if (!result.tie){
-                      if(result.bool){
-              						if (player.canUse('juedou',target)) player.useCard({name:'juedou'},target);
-              					} else {
-              						if (target.canUse('juedou',player)) target.useCard({name:'juedou'},player);
-                      }
-                    } else {
-                          player.addTempSkill('zanghua_boom');
-                    }
-                    "step 2"
-                    if (target.hp < player.hp) player.addTempSkill('zanghua_boom');
-            		},
-                ai:{
-                    result:{
-                      target:function(player,target){
-                        var hs=player.getCards('h');
-                        if(hs.length<3) return 0;
-                        var bool=false;
-                        for(var i=0;i<hs.length;i++){
-                          if(hs[i].number>=9&&get.value(hs[i])<7){
-                            bool=true;
-                            break;
-                          }
+                              player.chooseToCompare(target);
+                              if (target.name == 'marisa') game.trySkillAudio('zanghua',target,true,3);
+                              if (target.name == 'alice') game.trySkillAudio('zanghua', target, true, 4);
+                              "step 1"
+                              if (!result.tie){
+                                    if(result.bool){
+                                          if (player.canUse('juedou',target)) player.useCard({name:'juedou'},target);
+                                    } else {
+                                          if (target.canUse('juedou',player)) target.useCard({name:'juedou'},player);
+                              }
+                              } else {
+                                    player.addTempSkill('zanghua_boom');
+                              }
+                              "step 2"
+                              if (target.hp < player.hp) player.addTempSkill('zanghua_boom');
+                        },
+                        ai:{
+                              result:{
+                                    target:function(player,target){
+                                          var hs=player.getCards('h');
+                                          if(hs.length<3) return 0;
+                                          var bool=false;
+                                          for(var i=0;i<hs.length;i++){
+                                          if(get.number(hs[i])>=9&&get.value(hs[i])<7){
+                                          bool=true;
+                                          break;
+                                          }
+                                          }
+                                          if(!bool) return 0;
+                                          if(target.countCards < hs.length) return -2; 
+                                          return -0.5;
+                                    }
+                              },
+                              order:7,
                         }
-                        if(!bool) return 0;
-                        if(target.countCards < hs.length) return -2; 
-                        return -0.5;
-                      }
-                    },
-                    order:9,
-                  }
             	},
             	xiaofeng:{
                         audio:2,
@@ -316,6 +320,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           else player.loselili(lib.skill.xiaofeng.cost);
                           player.turnOver();
                           player.useCard({name:'huazhi'},player);
+                        },
+                        check:function(event,player){
+                              return player.countCards('h') > 3 || player.countCards('hej', function(card){
+                                    return get.tag(card, 'damage');
+                              }) > 1;
+                        },
+                        ai:{
+                              damage:1,
                         },
             	},
                   xiaofeng1:{
@@ -345,7 +357,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                         filter:function(event,player){
-                          return !player.hasSkill('guihang_flag');
+                          return !game.hasPlayer(function(current){
+                                return current.hasSkill('guihang_flag');
+                          });
                         },
                         filterCard:function(card,player){
                               return true;
@@ -368,17 +382,31 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     if (player.lili < 2) return false;
                                     if(!player.countCards('he')) return false;
                               },
+                              result:{
+                                    player:function(player){
+                                          if (player.lili < 2) return -1;
+                                          return 0.1;
+                                    }
+                              }
                         }
                   },
                   guihang_cost:{
                        trigger:{source:'damageAfter'},
                         forced:true,
                         filter:function(event,player){
-                          return event.getParent().skill=='guihang';
+                          return event.getParent().skill=='guihang' && get.distance(player, event.player, 'absolute') > 1;
                         },
                         content:function(){
-                          player.addTempSkill('guihang_flag');
-                        }
+                              player.discardPlayerCard('hej', trigger.player, true);
+                              trigger.player.addTempSkill('guihang_flag');
+                        },
+                        mod:{
+                              globalFrom:function(from,to,distance){
+                                    if(to.hasSkill('guihang_flag')){
+                                          return distance-distance + 1;
+                                    }
+                              },
+                        },
                   },
                   guihang_flag:{
                   },
@@ -397,7 +425,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               list.push(i);
                         }
                         // 这里AI还没写
+                        // 不知道AI要怎么写
                         var choice = 0;
+                          for (var i = player.lili - 1; i > 0 ; i --){
+                                if (game.countPlayer(function(current){
+                                      if (player == current) return 0;
+                                      if (!get.distance(player, current, 'absolute') <= player.lili - i) return 0;
+                                      if (get.attitude(player, current) > 0) return -2;
+                                      if (get.attitude(player, current) < 0) return 2;
+                                }) > 0) {
+                                      choice = i - 1; 
+                                      break;
+                                }
+                          }
                           player.chooseControl(list,function(){
                                     return choice;
                               }).set('prompt','消耗任意点灵力').set('choice',choice);
@@ -409,8 +449,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           }
                       },
                       check:function(event,player){
-                        return player.lili > 2;
+                        var choice = false;
+                        for (var i = player.lili - 1; i > 0 ; i --){
+                                if (game.countPlayer(function(current){
+                                      if (player == current) return 0;
+                                      if (!get.distance(player, current, 'absolute') <= player.lili - i) return 0;
+                                      if (get.attitude(player, current) > 0) return -2;
+                                      if (get.attitude(player, current) < 0) return 2;
+                                }) > 0) {
+                                      choice = true; 
+                                      break;
+                                }
+                          }
+                          return choice;
                       },
+                      ai:{
+                            damage:1,
+                      }
                   },
                   wujian_skill:{
                         enable:'phaseUse',
@@ -419,23 +474,27 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               return player.getStat().skill.wujian_skill<player.storage.wujian;
                         },
                         content:function(){
-                              var list = [];
+                              'step 0'
+                              event.list = [];
                               var players = game.filterPlayer();
                               for (var i = 0; i < players.length; i ++){
                                     if (get.distance(player, players[i],'attack')<=1 && players[i] != player){
-                                          list.push(players[i]);
+                                          event.list.push(players[i]);
                                     }
                               }
-                              for (var j = 0; j < list.length; j++){
-                                    list[j].damage('thunder');
+                              for (var j = 0; j < event.list.length; j++){
+                                    event.list[j].damage('thunder');
                               }
-                              for (var j = 0; j < list.length; j++){
-                                    if (list[j].lili == 0 && list[j].countCards('hej')) player.gainPlayerCard(list[j],true,'hej');
-                              }
+                              'step 1'
+                              for (var j = 0; j < event.list.length; j++){
+                                     if (event.list[j].lili == 0 && event.list[j].countCards('ej') > 0){
+                                          player.gainPlayerCard(event.list[j],'ej', 1, true);
+                                    }
+                              }                                   
                         },
                         ai:{
                           basic:{
-                            order:10
+                            order:7
                           },
                           result:{
                             player:0.5,
@@ -542,7 +601,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          player.useCard({name:'lingbi'},game.filterPlayer());
                     },
                     check:function(event, player){
-                         return player.hp < 2;
+                         return player.hp < 3;
                     }
               },
               shenpan_1:{
@@ -639,7 +698,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   guihang_info:'你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法对距离大于１的角色造成弹幕伤害后，弃置其一张牌，并令你与其距离视为１，且此技能无效，直到回合结束。',
                   wujian:'无间之狭间',
                   wujian_skill:'无间之狭间',
-                  wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；你以此法令一名角色的灵力变成0后，获得其场上一张牌。',
+                  wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；然后，若其中有角色没有灵力，你获得其场上一张牌。',
                   wujian_audio1:'地狱「无间之狭间」！',
                   wujian_audio2:'地狱游览单程票！只要998！',
                   komachi_die:'被暴打可真的不能叫放松啊。',

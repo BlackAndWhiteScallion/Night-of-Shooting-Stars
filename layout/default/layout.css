@@ -914,7 +914,7 @@ table {
 #sidebar,#sidebar3 {
 	left: 0;
 	top: 0;
-	width: 200px;
+	/*width: 200px;*/
 	height: calc(100% - 40px);
 	text-align: left;
 	padding: 20px;

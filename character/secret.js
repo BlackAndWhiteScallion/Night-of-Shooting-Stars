@@ -25,7 +25,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		for(var i=0;i<cards.length;i++){
                         ui.cardPile.insertBefore(cards[i],ui.cardPile.firstChild);
                     }
-            		player.chooseBool('是否将本回合的摸牌改为从牌堆底摸？');
+            		player.chooseBool('是否将本回合的摸牌改为从牌堆底摸？').set('ai',function(){
+							return 7-get.value(cards);
+						});
             		'step 1'
             		if (result.bool){
                         game.log(player,'本回合摸牌改为从牌堆底摸');
@@ -197,7 +199,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         list.push('使用这张牌');
                     }
             		player.chooseControl(list,function(event,player){
-            			if (get.type(card) == 'equip') return '使用这张牌';
+            			if (get.type(event.card) == 'equip' || get.subtype(event.card) == 'attack' || get.subtype(event.card) == 'disrupt') return '使用这张牌';
             			return '将这张牌交给一名角色';
 					});
             		'step 1'
@@ -218,7 +220,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             		'step 2'
             		if (result.targets && player.hasSkill('sihuan_2')){
             			result.targets[0].gain(event.card,player);
-						player.$give(event.card,result.targets[0]);
+						player.$give(event.card.length,result.targets[0]);
 						if (result.targets[0].name == 'renko') game.trySkillAudio('xijian',result.targets[0],true,3);
             		}
             	},

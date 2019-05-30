@@ -327,6 +327,7 @@
                             fast:'较快',
                             vfast:'快',
                             vvfast:'很快',
+                            toofast:'射命丸文',
                         },
                         intro:'设置不同游戏操作间的时间间隔'
                     },
@@ -20519,10 +20520,12 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 					else{
 						game.addVideo('playerfocus2');
 						game.broadcastAll(function(){
-							ui.arena.classList.add('playerfocus');
-							setTimeout(function(){
+                            ui.arena.classList.add('playerfocus');
+                            var time = 1800;
+                            if (lib.config.game_speed=='toofast') time = 500;
+                            setTimeout(function(){
 								ui.arena.classList.remove('playerfocus');
-							},1800)
+							},time)
 						});
 						game.delay(3);
 					}
@@ -22231,7 +22234,8 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 						}
 					}
 				}
-				var info=get.info(skill);
+                var info=get.info(skill);
+                if (info.spell && player.isTurnedOver()) return false;
 				if(info.filter&&!info.filter(event,player,name)){
 					return false;
 				}
@@ -28799,7 +28803,8 @@ smoothAvatar:function(player,vice){
             if(typeof time!='number') time=1;
             if(typeof time2!='number') time2=0;
             time=time*lib.config.duration+time2;
-            if(lib.config.speed=='vvfast') time/=3;
+            if(lib.config.game_speed=='vvfast') time/=3;
+            if(lib.config.game_speed=='toofast') time=0;
             _status.timeout=setTimeout(game.resume,time);
         },
         delayx:function(time,time2){
@@ -28810,6 +28815,7 @@ smoothAvatar:function(player,vice){
                 case 'fast':time*=0.7;break;
                 case 'vfast':time*=0.4;break;
                 case 'vvfast':time*=0.2;break;
+                case 'toofast':time*=0;break;
             }
             return game.delay(time,time2);
         },
@@ -45162,6 +45168,7 @@ smoothAvatar:function(player,vice){
                 case 'fast':return Math.min(max,0.7*num);
                 case 'vfast':return Math.min(max,0.4*num);
                 case 'vvfast':return Math.min(max,0.2*num);
+                case 'toofast':return Math.min(max, 0);
                 default:return Math.min(max,num);
             }
         },

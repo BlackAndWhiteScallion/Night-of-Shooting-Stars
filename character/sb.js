@@ -173,7 +173,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   order:5,
                },
                result:{
-                  target:2,
+                  player:1,
                },
                tag:{
                   draw:2
@@ -369,7 +369,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
          },
       },
       translate:{
-                  hetate:'果果',
+                  hetate:'果',
                   nianxie:'念写',
                   nianxie_info:'结束阶段，你可以判定；若判定牌与本回合或上回合进入弃牌堆的一张牌的花色相同，你令一名角色获得判定牌。',
                   nianxie_storage:'念写 花色',
@@ -388,7 +388,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   lianxu_audio1:'连拍「连续摄像」！',
                   lianxu_audio2:'什么素材都躲不过我的相机的！……吧！',
                   hetate_die:'果然还是应该在家里待着！',
-                  aya:'文文',
+                  aya:'文',
                   kuanglan:'狂岚',
                   kuanglan_info:'一名角色的结束阶段，你可以指定一名本回合内满足以下一项的角色：1. 发动过符卡；2. 明置过异变牌；3. 击坠过角色; 4. 使用过禁忌牌；视为你对其使用一张【突击采访】。',
                   kuanglan_audio1:'幻想乡最速取材，射命丸文参上~',

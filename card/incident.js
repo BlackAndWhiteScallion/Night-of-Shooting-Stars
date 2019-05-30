@@ -294,6 +294,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			filter:function(event,player){
     				return true;
     			},
+				mark:true,
+				intro:{
+					content:function(content,player){
+						var num=0;
+						for(var i=0;i<ui.discardPile.childNodes.length;i++){
+							if (ui.discardPile.childNodes[i].name == 'tao') num ++;
+						}
+						return '弃牌堆里有'+num+'张【葱】';
+					}
+				},
     			content:function(){
     				var num=0;
 					for(var i=0;i<ui.discardPile.childNodes.length;i++){

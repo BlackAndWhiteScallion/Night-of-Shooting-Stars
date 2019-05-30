@@ -56,9 +56,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               game.addVideo('thrownhighlight1');
                               game.addVideo('centernode',null,get.cardInfo(event.card));
                               player.chooseTarget('选择获得此牌的角色',true).set('ai',function(target){
-                                    var att=get.attitude(_status.event.player,target);
-                                    if (target.countCards('j') > 2 && att > 0) att = 0; 
-                                    return att;
+                                    return get.attitude(_status.event.player,target) && target.countCards('j') < 3;
                               });
                               game.delay(2);
                               "step 1"
@@ -79,7 +77,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                         ai:{
                               threaten:1.4,
-                              noautowuxie:true,
                         }
                   },
                   yechong:{
@@ -117,7 +114,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               "step 2"
                               if(event.num<event.targets.length){
                                     if(event.targets[event.num].countCards('hej')){
-                                          player.discardPlayerCard('hej',event.targets[event.num],true);
+                                          player.discardPlayerCard('hej',event.targets[event.num],true).ai = function(button){
+                                            var val=get.buttonValue(button);
+                                            var type = get.type(button.link);
+                                            if(get.attitude(_status.event.player,get.owner(button.link))>0 && get.owner(button.link).countCards('hej') > player.countCards('hej')) return type != 'delay' && -val;
+                                            if(get.attitude(_status.event.player,get.owner(button.link))>0) return -val;
+                                            if (get.attitude(_status.event.player,get.owner(button.link))<0 && get.owner(button.link).countCards('hej') > player.countCards('hej')) return type == 'delay' && val;
+                                            return val;
+                                          };
                                     }
                               }
                               "step 3"
@@ -246,12 +250,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.turnOver();
                     },
                     check:function(event,player){
-                      return player.hp < 2;
+                      return player.hp < 2 || (player.hp < 3 && !player.countCards('h', {subtype:'defense'}));
                     },
                   },
                   wuye2:{
                           audio:2,
-                          trigger:{target:'useCardtoBefore'},
+                          trigger:{target:'useCardToBefore'},
                           direct:true,
                           priority:5,
                           filter:function(event,player){
@@ -280,10 +284,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             trigger.trigger('shaBefore');
                             game.delay();
                           },
+                          check:function(event,player){
+                            return get.subtype(event.card) != 'support' && get.type(event.card)!='equip';
+                          },
                           ai:{
                             effect:{
                               target:function(card,player,target){
-                                return 0;
+                                if (!get.subtype(card) == 'support' && !get.type(card) == 'equip') return 0;
+                                else return ;
                               }
                             }
                           }
@@ -312,8 +320,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          player.chooseTarget('将'+get.translation(trigger.card)+'交给一名角色',true,function(card,player,target){
                               return true;
                           }).set('ai',function(target){
-                              if (get.bonus(trigger.card) > 0) return player;
-                              return get.attitude(_status.event.player,target);
+                              if (get.bonus(trigger.card) > 0) return player == target;
+                              return get.attitude(player,target);
                           });
                           'step 1'
                           if (result.targets){
@@ -326,7 +334,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                       check:function(event,player){
                             //return get.value(event.card) >= 5;
-                          return player.lili > 1;
+                            if (player.lili == 1) return get.value(event.card) >= 6;
+                            if (player.lili > 1 && player.lili <= 3) return get.value(event.card) >= 4;
+                          return get.value(event.card);
                       },
                   },
                   richuguo:{
@@ -420,6 +430,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         forced:true,
                         content:function(){
                              player.storage.richuguo=true;
+                             player.restoreSkill('richuguo');
                              player.turnOver();
                         }
                   },
@@ -443,7 +454,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               player.chooseControl(controls).set('ai',function(){
                                     var trigger=_status.event.getTrigger();
-                                    if(trigger.player.countCards('hej')&&get.attitude(player,trigger.player)<0){
+                                    if(trigger.player.countCards('hej')&&get.attitude(player,trigger.player)<0 && player.countCards('h') > 2){
                                           return 'spin_card';
                                     }
                                     else{
@@ -472,6 +483,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                               player.storage.yinyang = false;
                         },
+                        ai:{
+                          threaten:0.7,
+                          maixie_defend:true,
+                        }
                   },
                   yinyang2:{
                         trigger:{player:['damageEnd','useCard']},
@@ -522,6 +537,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.loselili(lib.skill.mengxiang.cost);
                           player.turnOver();
                       },
+                      check:function(event, player){
+                        return player.lili > 3 && player.countCards('h') > 3;
+                      },
                   },
                   mengxiang1:{
                     audio:2,
@@ -552,8 +570,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                     },
                     check:function(event,player){
-                      if (event.target == player) return 0;
-                      return get.attitude(player,event.target) <= 0;
+                      if (event.target == player) return false;
+                      return get.attitude(player,event.target) < 0;
                     },
                   },
                   liuxing:{
@@ -569,7 +587,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             list.push(i+1);
                         }
                         player.chooseControl(list,function(){
-                            if (player.countCards('h')) return 0;
+                            if (!player.countCards('h') || !game.countPlayer(function(current){
+                              return get.attitude(player, current) <= 0 && current.countCards('hej') && get.distance(player,current,'attack')<=1; 
+                            })) return 'cancel2';
                             else return 0;
                         }).set('prompt','少摸任意张牌，增加等量攻击范围');
                         'step 1'
@@ -666,7 +686,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               list.push(i);
                         }
                         player.chooseControl(list,function(){
-                                  return 1;
+                              if (player.countCards('h') > 2) return player.lili - 2;
+                              return player.lili - 3;
                             }).set('prompt','消耗任意点灵力');
                         'step 1'
                         if (result.control){
@@ -682,7 +703,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     },
                     check:function(event,player){
-                      return player.lili > 3;
+                      return player.lili >= 3 && game.countPlayer(function(current){
+                        return current!=player&&current.countCards('h')&&get.attitude(player,current)<=0;
+                      }) >= 2;
                     },
                   },
                   stardust1:{
@@ -746,7 +769,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         result.targets[0].addTempSkill('kaiyun_4');
                     },
                     check:function(event,player){
-                      if(player.countCards('h')>=player.hp) return false;
+                      if (player.hp > 1 && (player.countCards('h') - 1 > player.getHandcardLimit() || player.countCards('h', function(card){
+                        return get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt';
+                      }) > 2)) return false;
                       return game.hasPlayer(function(current){
                         return current!=player&&current.hasSkill('kaiyun')&&get.attitude(player,current)>0;
                       });
@@ -770,7 +795,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       if (!player.storage.mitu) return false;
                       if (event.card.name != player.storage.mitu.name) return false;
                       //if (player.hasSkill('yuangu_1')){
-                        return get.distance(event.target,player,'attack')<=1;
+                        return get.distance(player,event.target,'attack')<=1;
                       //} else {
                         //return event.target == player;
                       //}
@@ -825,19 +850,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                       'step 0'
                       player.chooseCard('he','将一张牌作为“坑”放头上').set('ai',function(card){
+                          if (game.countPlayer(function(current){
+                            return get.attitude(player, current) < 0 && get.distance(player,current,'attack')<=1 && current.hp == 1;  
+                          }) && player.countCards('h', {name:'tao'})) return card.name == 'tao';
                             return card.name == 'sha';
                           });
                       'step 1'
                       if(result.cards&&result.cards.length){
                         player.lose(result.cards,ui.special);
                         player.storage.mitu=result.cards[0];
-                        //player.logSkill('mitu');
                         player.syncStorage('mitu');
                         player.markSkill('mitu');
                       }
                     },
                     check:function(event,player){
-                      return player.countCards('h',{name:'sha'});
+                      return player.countCards('h')>player.countCards('h', function(card){
+                          return !get.info(card).enable;
+                      });
                     },
                   },
                   yuangu:{
@@ -854,11 +883,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.turnOver();
                       },
                     check:function(event,player){
-                      return player.lili > 3 && player.storage.mitu;
+                      return (player.lili > 3 || player.hp < 2) && player.storage.mitu;
                     },
                   },
                   yuangu_1:{
-                    // 结果这玩意就是个标记啊……
+                    // 结果这玩意变成了鬼道了啊……
                     audio:2,
                     trigger:{global:'judge'},
                     filter:function(event,player){
@@ -893,7 +922,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                       "step 2"
                       if(result.bool){
-                        player.logSkill('guidao');
+                        player.logSkill('yuangu');
                         player.$gain2(trigger.player.judging[0]);
                         player.gain(trigger.player.judging[0]);
                         trigger.player.judging[0]=result.cards[0];
@@ -1067,7 +1096,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.turnOver();
                       },
                     check:function(event,player){
-                      return player.lili > 3 && player.countCards('hej') > 3;
+                      return player.lili > 3 && player.countCards('hej') > 3 && game.countPlayer(function(current){
+                        return get.attitude(player, current) && (current.hp == 1) || (current.hp < 3 && current.countCards('h') < 2);
+                      });
                       //return true;
                     },
                   },
@@ -1084,7 +1115,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       'step 0'
                       var next=player.chooseToDiscard('hej','为使用月亮的力量而弃置一张牌吧');
                         next.ai=function(card){
-                            return 9-get.value(card);
+                            return 7-get.value(card);
                         };
                       'step 1'
                       player.chooseTarget([1,2],'选择要被月光晒瞎的倒霉人吧',true,function(card,player,target){
@@ -1148,17 +1179,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             }
                         }
                         event.cards = cards;
-                        player.chooseCardButton(cards,'可以选择一张牌交给一名角色',1);
+                        player.chooseCardButton(cards,'可以选择一张牌交给一名角色',1).set('ai',function(button){
+                          return get.value(button);
+                        });
                       }
                       'step 2'
-                      if (result.links.length){
+                      if (result.links && result.links.length){
                         event.card = result.links;
                         player.chooseTarget('将'+get.translation(result.links)+'交给一名角色').set('ai',function(target){
                               return get.attitude(_status.event.player,target);
                           });;
                       }
                       'step 3'
-                      if (result.targets.length){
+                      if (result.targets && result.targets.length){
                         if (result.targets[0].name == 'kaguya') game.trySkillAudio('zhaixing',result.targets[0],true,3);
                         result.targets[0].gain(event.card);
                         event.cards.remove(event.card);
@@ -1175,23 +1208,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           if(event.dialog) event.dialog.close();
                           if(event.control) event.control.close();
                           var top=[];
-                          var judges=player.node.judges.childNodes;
-                          var stopped=false;
-                          if(!player.countCards('h','wuxie')){
-                            for(var i=0;i<judges.length;i++){
-                              var judge=get.judge(judges[i]);
-                              cards.sort(function(a,b){
-                                return judge(b)-judge(a);
-                              });
-                              if(judge(cards[0])<0){
-                                stopped=true;break;
-                              }
-                              else{
-                                top.unshift(cards.shift());
-                              }
-                            }
-                          }
                           var bottom;
+                          var stopped = false;
                           if(!stopped){
                             cards.sort(function(a,b){
                               return get.value(b,player)-get.value(a,player);
@@ -1580,7 +1598,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               case '属性': return !valid.contains(get.subtype(card)); break;
                             }
                         }).set('ai',function(card){
-                          return get.value(card);
+                          return 7 - get.value(card);
                         });
                       } else {
                         event.finish();
@@ -1617,7 +1635,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           return 0;
                         }
                       },
-                      threaten:0.5
                     },
                   },
                   poxiao:{
@@ -1628,8 +1645,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       'step 0'
+                      var suits = [];
+                      var cards = player.getCards('he');
+                      for (var i = 0; i < cards.length; i ++){
+                        if (get.suit(cards[i]) && !suits.contains(get.suit(cards[i]))) suits.push(get.suit(cards[i]))
+                      }
                       player.chooseCard('hej',[1,player.countCards('hej')],'破晓：可以重铸任意张牌',true).set('ai',function(card){
-                            return 7-get.value(card);
+                            if (suits.length == 4){
+                                var suit=get.suit(card);
+                                for(var i=0;i<ui.selected.cards.length;i++){
+                                  if(get.suit(ui.selected.cards[i])==suit) return false;
+                                }
+                                return true;
+                            }
+                            return 7-get.value(card) && !get.subtype(card) == 'defense';
                         });
                       'step 1'
                       if (result.bool && result.cards.length){
@@ -1655,8 +1684,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.insertPhase();
                     },
                     prompt:'是否发动【破晓】进行一个额外的回合？',
-                    check:function(){
-                      return true;
+                    check:function(event, player){
+                      return !player.isTurnedOver();
                     },
                   },
                   yongye:{
@@ -1740,6 +1769,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.recast(cards);
                     },
                     prompt:'是否重铸所有牌？',
+                    check:function(event,player){
+                      return !player.countCards('e');
+                    },
                   },
                   yongye3:{
                     audio:2,
@@ -1817,6 +1849,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                          player.loseHp();
                          player.getStat().card.sha--;
+                    },
+                    check:function(event,player){
+                      return (player.lili > 1 || player.hp > 2) && player.countCards('h', {name:'sha'});
                     },
                   },
                   businiao:{
