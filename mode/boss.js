@@ -396,21 +396,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		characterPack:{
 			mode_boss:{
-				boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss']],
-				boss_cirno2:['female', '0', 4, ['jiqiang','zuanshi','jubing'], ['hiddenboss']],
-				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss']],
-				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss']],
-				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
+				boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss'], 'wei'],
+				boss_cirno2:['female', '0', 4, ['jiqiang','zuanshi','jubing'], ['hiddenboss'], 'wei'],
+				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss'], 'shu'],
+				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
 				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'qun'],
+				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
+				boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],['qun'],'0'],
 			},
 		},
 		characterIntro:{
 			boss_reimu:'啊，真是一个好天气啊……如果今天能有赛钱的话就更好了……咦，我赛钱箱呢？<br>画师：萩原',
 			boss_reimu2:'不要在灵梦面前提钱，不要动灵梦的赛钱箱，不要对博丽神社做任何事情。<br>——来自造成了目前整个事态的某个魔法师的灵梦三戒律<br>画师：Ran',
-			boss_cirno:'要我说几遍啊，我不是什么⑨！我是幻想乡最强的！',
-			boss_cirno2:'虽然成功的获得了超越常人的力量，但是这力量对于超越常人的家伙们来说……还是杂鱼级别的。',
-			boss_nianshou:'比起加一堆没人想要的大杂烩设定，把本来欢乐的活动变成一个累死人的掀桌活动，还是回到最开始的简单日子好。',
+			boss_cirno:'要我说几遍啊，我不是什么⑨！我是幻想乡最强的！<br>画师：',
+			boss_cirno2:'虽然成功的获得了超越常人的力量，但是这力量对于超越常人的家伙们来说……还是⑨级别的。<br>画师：',
+			boss_nianshou:'比起加一堆没人想要的大杂烩设定，把本来欢乐的活动变成一个累死人的掀桌活动，还是回到最开始的简单欢乐日子好。',
 			boss_zhaoyun:'幻想乡是一切皆有可能的地方。<br>即使是那个只存在于传说中的男人……！',
+			boss_saitama:'买菜时因走错路偶然路过的光头<br>………等等，什么？<br>画师：',
 		},
 		cardPack:{
 		},
@@ -440,15 +442,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var data=lib.config.gameRecord.boss.data;
 					var identity=game.me.identity;
 					var name = game.boss.name;
+					var boss = game.boss;
 					if(!data[name]){
-						if (name == 'boss_nianshou'){
+						if (boss.hasSkill('boss_damagecount') || boss.hasSkill('boss_turncount')){
 							data[name] = [0];
 						} else {
 							data[name]=[0,0,0,0];
 						}
 					}
-					if (name == 'boss_nianshou' && _status.damageCount > data[name][0]){
+					if (boss.hasSkill('boss_damagecount') && _status.damageCount > data[name][0]){
 						data[name][0] = _status.damageCount;
+					} else if (boss.hasSkill('boss_turncount') && game.roundNumber) {
+						data[name][0] = game.roundNumber;
 					} else {
 						if(bool){
 							if (identity == 'cai'){
@@ -475,10 +480,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var str='';
 					for(var i=0;i<list.length;i++){
 						if(data[list[i]]){
-							if (list[i] == 'boss_nianshou'){
+							if (lib.character[list[i]][3].contains('boss_damagecount')){
 								str+= lib.translate[list[i]] + ': <br> 最高伤害：'+ data[list[i]][0] + '<br>';
-							}
-							else {
+							} else if (lib.character[list[i]][3].contains('boss_turncount')){
+								str+= lib.translate[list[i]] + ': <br> 最大轮次数：'+ data[list[i]][0] + '<br>';
+							} else {
 								str+=lib.translate[list[i]] + ': <br> 魔王：'+data[list[i]][0]+'胜 '+data[list[i]][1]+'负<br> 盟军：'+data[list[i]][2]+'胜  '+data[list[i]][3]+'负 <br>';
 							}
 						}
@@ -967,11 +973,26 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			boss_zhaoyun:{
 				loopType:1,
-				chongzheng:4,
 				init:function(){
 					//lib.backgroundmusicURL = ui.backgroundMusic.src;
                     ui.backgroundMusic.src = lib.assetURL+'audio/background/boss.mp3';
                     lib.config.background_music = 'boss';
+				},
+			},
+			boss_saitama:{
+				loopType:1,
+				chongzheng:false,
+				init:function(){
+                    if (ui.cardPileNumber.style.display=='none'){
+						ui.cardPileNumber.style.display='initial';
+					}
+					ui.cardPileNumber.style.color='red';
+					game.boss.say('？<br>我走哪儿来了？');
+					ui.backgroundMusic.src = '';
+					lib.config.background_music = '';
+				},
+				gameDraw:function(player){
+					return player==game.boss?12:4;
 				},
 			},
 			global:{
@@ -1446,6 +1467,60 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return get.suit(card)=='club';
 				}
 			},
+			punch:{
+				audio:2,
+				forced:true,
+				trigger:{source:'damageBegin'},
+				content:function(){
+					trigger.num += Number.MAX_SAFE_INTEGER;
+				},
+				mod:{
+					cardEnabled:function(card,player){
+						if(card.name == 'huazhi') return false;
+					},
+					cardUsable:function(card,player){
+						if(card.name == 'huazhi') return false;
+					},
+				},
+			},
+			// 用来从玩家游戏开始的技能
+			skipfirst:{
+				direct:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					trigger.cancel();
+					player.removeSkill('skipfirst');
+				},
+			},
+			serious:{
+				audio:2,
+				forced:true,
+				trigger:{player:'phaseEnd'},
+				content:function(){
+					player.draw(game.roundNumber);
+					if (player.maxlili < game.roundNumber){
+						player.gainMaxlili(game.roundNumber - player.maxlili);
+					}
+					player.gainlili(game.roundNumber - player.lili);
+				},
+			},
+			boss_turncount:{
+				mode:['boss'],
+				mod:{
+					cardEnabled:function(card,player){
+						if(player != _status.currentPhase) return false;
+					},
+					cardUsable:function(card,player){
+						if(player != _status.currentPhase) return false;
+					},
+					cardRespondable:function(card,player){
+						if(player != _status.currentPhase) return false;
+					},
+					cardSavable:function(card,player){
+						if(player != _status.currentPhase) return false;
+					},
+				},
+			},
 		},
 		translate:{
 			zhu:'魔王',
@@ -1477,7 +1552,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_qixiang1:'祺祥',
 			boss_qixiang2:'祺祥',
 			boss_qixiang_info:'乐不思蜀判定时，你的方块判定牌视为红桃；兵粮寸断判定时，你的黑桃判定牌视为草花',
-			boss_damagecount:'沙袋武将',
+			boss_damagecount:'沙袋挑战',
 			boss_damagecount_info:'锁定技，跳过你的出牌阶段。<br>你在6分钟之内可以对我造成多少伤害呢？',
 			mode_boss_character_config:'挑战角色',
 			boss_zhaoyun:'高达一号',
@@ -1490,6 +1565,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			longhun3:'龙魂♠︎',
 			longhun4:'龙魂♣︎',
 			longhun_info:'你可以将同花色的X张牌按下列规则使用或打出：红桃当【葱】，方块当具火焰伤害的【轰！】，梅花当【没中】，黑桃当【请你住口！】（X为你的体力且至少为1）',
+			boss_saitama:'斗篷光头',
+			punch:'普通的技能',
+			punch_audio1:'啊，用力过猛了。',
+			punch_audio2:'今天是星期几来着……',
+			punch_info:'锁定技，你造成伤害时，该伤害……啊，怎么又是一拳就打死了啊？！',
+			serious:'认真一点吧',
+			serious_audio1:'你们好像很厉害的样子。',
+			serious_audio2:'稍微认真一点吧？',
+			serious_info:'锁定技，结束阶段，你摸X张牌，并将灵力和灵力上限补至X（X为游戏轮次数）。',
+			boss_saitama_die:'啊……就是这种感觉……',
+			boss_turncount:'存活挑战',
+			boss_turncount_info:'你在游戏失败前，能够撑多少轮呢？<br><br>注：建议在左上角[选项-开始-挑战]中将[单人控制]选项打开',
 		},
 		get:{
 			rawAttitude:function(from,to){

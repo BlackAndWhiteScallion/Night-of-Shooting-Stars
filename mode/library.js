@@ -884,16 +884,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		        		var node = this;
 		        		this.style.height=(parseInt(this.style.height.substr(0,this.style.height.length-2))-this.offsetTop)+'px';
 	                    ui.create.div('.config.indent','<div><div style="width:100%;text-align:right;font-size:18px"><b><u>'+lib.config.connect_nickname+'的战绩：</b></u></div>',node);
-	                    for(var i=0;i<lib.config.all.mode.length;i++){
-                            if(!lib.config.gameRecord[lib.config.all.mode[i]]) continue;
-                            if(lib.config.gameRecord[lib.config.all.mode[i]].str){
-                                ui.create.div('.config.indent',lib.translate[lib.config.all.mode[i]]+'模式',node);
+	                    if (lib.config.gameRecord.general){
+							ui.create.div('.config.indent',lib.translate['general'],node);
+							var item=ui.create.div('.config.indent',lib.config.gameRecord.general.str+'<span><br><br></span>',node);
+                            item.style.height='auto';
+						}
+						for (var i in lib.config.gameRecord){
+						//for(var i=0;i<lib.config.all.mode.length;i++){
+                            //if(!lib.config.gameRecord[lib.config.all.mode[i]]) continue;
+                            if(lib.config.gameRecord[i].str && i != 'general'){
+                                ui.create.div('.config.indent',lib.translate[i]+'模式',node);
                                 //var item=ui.create.div('.config.indent',lib.config.gameRecord[lib.config.all.mode[i]].str+'<span>重置</span>',node);
-                                var item=ui.create.div('.config.indent',lib.config.gameRecord[lib.config.all.mode[i]].str+'<span><br><br></span>',node);
+                                var item=ui.create.div('.config.indent',lib.config.gameRecord[i].str+'<span><br><br></span>',node);
                                 item.style.height='auto';
                                 //item.lastChild.addEventListener('click',reset);
                                 item.lastChild.classList.add('pointerdiv');
-                                item.link=lib.config.all.mode[i];
+                                item.link=i;
                             }
                         }
                  	}

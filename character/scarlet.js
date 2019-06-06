@@ -62,7 +62,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
     				}
     				"step 3"
     				if(result.bool){
-    					player.useCard({name:'sha'},event.current, false);
+                        if (player.canUse({name:'sha'}, event.current, false, true)){
+    					    player.useCard({name:'sha'},event.current, false);
+                        }
     					event.goto(2);
     				} else {
     					var choice = ['end_phase'];
@@ -458,10 +460,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(result&&result.bool&&result.links[0]){
                         var card = {name:result.links[0][2]};
                         event.fakecard=card;
-                        player.chooseTarget(function(card,player,target){
+                        var select = get.info(card).selectTarget;
+                        if(select==undefined){
+                            if(get.info(card).filterTarget==undefined) return[0,0];
+                            range=[1,1];
+                        }
+                        else if(typeof select=='number') range=[select,select];
+                        else if(get.itemtype(select)=='select') range=select;
+                        else if(typeof select=='function') range=select(card,player);
+                        game.checkMod(card,player,range,'selectTarget',player);
+                        if (get.info(card).multitarget && range == [-1, -1]) range = [game.filterPlayer().length,game.filterPlayer().length];
+                        if (range == [-1, -1]) range = [1, 1];
+                        player.chooseTarget(range, function(card,player,target){
                             return player.canUse(event.fakecard,target,true);
-                        },true,'选择'+get.translation(card.name)+'的目标').set('ai',function(target){
-                            return 1;
+                        },true,'选择'+get.translation(card.name)+'的目标<br><br><div><div style="width:100%;text-align:center;font-size:14px">显示为-1的话，点一下框以外就会自动用了</div>').set('ai',function(target){
+                            return  get.effect(target,event.fakecard,_status.event.player);
                         });
                     } else {
                         event.finish();
@@ -1029,7 +1042,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     trigger.cancel();
                     trigger.player.judge();
                     "step 1"
-                     if (trigger.target && trigger.player.canUse(result.card,trigger.target,false,true)){
+                     //if (trigger.target && trigger.player.canUse(result.card,trigger.target,false,true)){
+                         
+                    if (trigger.target && lib.filter.targetEnabled2(result.card,trigger.player,trigger.target)){
                         trigger.player.useCard(result.card,trigger.target,'mingyun2');
                      }
                 }

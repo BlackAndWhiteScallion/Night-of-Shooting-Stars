@@ -625,10 +625,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				check:function(event, player){
 					//if (player.countCards('he') <= player.hp) return false;
 					if (get.attitude(player, event.player) > 0) return false;
+					if (player.countCards('hej') < 3) return false;
 					var good_att = false;
 					var players = game.filterPlayer();
 					for(var i=0;i<players.length;i++){
-						if (get.attitude(player, players[i])) good_att = true;
+						if (get.attitude(player, players[i]) && players[i].hp <= player.hp) good_att = true;
 					}
 					return good_att;
 				},
@@ -649,15 +650,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return 6-get.value(card);
 						},
 						ai2:function(target){
+							if (get.attitude(player, target) > 0 && target.hp == 1) return 1000;
 							return get.attitude(player, target);
 						},
 					});
 					"step 1"
 					if(result.targets){
 						result.targets[0].gain(result.cards[0],'draw');
+						player.$give(result.cards.length,result.targets[0]);
 						player.line(result.targets[0],'green');
 						player.logSkill('kc_yuzhi',result.targets[0]);
-						game.log(result.targets[0],'获得了'+get.cnNumber(result.cards[0].length)+'张牌');
 						result.targets[0].addTempSkill('kc_yuzhi_3');
 					}
 				},
@@ -676,6 +678,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return event.card.name == 'sha';
 				},
 				content:function(){
+					game.log('雨至：',trigger.card,'对',player,'无效');
 					trigger.untrigger();
 					trigger.finish();
 				},
@@ -702,7 +705,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return player.lili > lib.skill.zuoshibaozhan.cost;
 				},
 				check:function(event,player){
-					return true;
+					return player.countCards('h') < 2 || player.hp == 1;
 				},
 				content:function(){
 					'step 0'
@@ -805,6 +808,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				ai:{
 					expose:0.1,
+					player:1,
 					effect:{
 						target:function(card,player,target,current){
 							if(target.hasFriend()&&get.tag(card,'discard')){
@@ -831,17 +835,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					player.chooseTarget('令一名角色收回一张装备牌',function(card,player,target){
 						return target.countCards('e');
-					})
+					}).set('ai',function(target){
+							if (get.attitude(player, target) > 0 && target.countCards('e', function(card){
+								return get.bonus(card) > 0 || card.name == 'frog';
+							})){
+								return 1;
+							}
+							return get.attitude(player, target) < 0 && target.countCards('e', function(card){
+								return get.bonus(card) < 0 || get.subtype(card) == 'equip2';
+							});
+						});
 					'step 1'
 					if(result.targets){
 						event.target = result.targets[0];
-						player.choosePlayerCard(event.target,'e',true);
+						player.choosePlayerCard(event.target,'e',true).set('ai',function(button){
+							if (get.attitude(player, event.target) > 0){
+								return get.bonus(button.link) > 0 || card.name == 'frog';
+							} else {
+								return get.bonus(button.link) < 0 || get.subtype(card) == 'equip2';
+ 							}
+						});
 					}
 					'step 2'
 					if(result.bool){
 						event.target.gain(result.links,'gain2');
 						player.chooseTarget('弃置场上一张牌',function(card,player,target){
 							return target.countCards('ej');
+						}).set('ai', function(target){
+							return get.attitude(player, target) < 0;
 						});
 					}
 					'step 3'
@@ -874,7 +895,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					"step 0"
-					player.addTempSkill('huanrao_3')
+					player.addTempSkill('huanrao_3');
 				},
 			},
 			huanrao_3:{
@@ -936,7 +957,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return player.lili > lib.skill.sliver_arrow.cost;
 				},
 				check:function(event,player){
-					return false;
+					return game.countPlayer(function(current){
+						return get.attitude(player, current) < 0 && current.countCards('hej') <= player.countCards('h') + 2;
+					});
 				},
 				content:function(){
 					player.loselili(lib.skill.sliver_arrow.cost);
@@ -946,37 +969,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			sliver_arrow_2:{
 				audio:2,
 				trigger:{player:'phaseUseBefore'},
-				direct:true,
 				filter:function(event,player){
 					return player.countCards('h');
 				},
 				content:function(){
 					"step 0"
-					player.chooseTarget('弃置一名角色一张牌',function(card,player,target){
-						return (player!=target&&target.getCards('e'));
-					})
+					player.chooseTarget('弃置一名角色, 弃置其'+player.countCards('h')+'张牌',function(card,player,target){
+						return (player!=target);
+					}).set('ai')
 					'step 1'
 					if (result.bool){
-						var target = result.targets[0];
-						target.addTempSkill('sliver_arrow_3');
-						player.discardPlayerCard(target,'he',Math.min(target.countCards('hej'),player.countCards('h')),true);
-						target.removeSkill('sliver_arrow_3');
+						event.target = result.targets[0];
+						event.target.addTempSkill('sliver_arrow_3');
+						player.discardPlayerCard(event.target,'hej',Math.min(event.target.countCards('hej'),player.countCards('h')),true);
 					}
 					"step 2"
+					event.target.removeSkill('sliver_arrow_3');
 					//player.skip('phaseUse');
 					player.skip('phaseDiscard');
 					trigger.cancel();
-				}
+				},
+				prompt:'是否发动【白银之箭】跳过出牌阶段？',
 			},
 			sliver_arrow_3:{
 				trigger:{player:'loseEnd'},
-				forced:true,
+				direct:true,
 				filter:function(event,player){
 					if(player.countCards('hej')) return false;
-					for(var i=0;i<event.cards.length;i++){
-						if(event.cards[i].original) return true;
-					}
-					return false;
+					return true;
 				},
 				content:function(){
 					player.damage();
@@ -996,15 +1016,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if(!player.countCards('he')) return false;
 				},
 				prompt:'将一张牌当【轰！】使用',
-				check:function(card){return 4-get.value(card)},
+				check:function(card){return 6-get.value(card)},
 				intro:{
 					content:function(storage,player){
 						if(player.storage.hongxi){
-							return '你可以将一张牌当【轰！】使用；此【轰！】指定目标后，你根据转化牌的种类执行下列效果：<br />攻击或武器～你与目标角色同时进行一次拼点：若你赢至少一次，此【轰！】不能成为【没中】的目标；防御或防具～你弃置目标角色各一张牌；辅助、宝物或道具～此【轰！】造成的弹幕伤害＋１。';
+							return '你可以将一张牌当【轰！】使用；此【轰！】指定目标后，你根据转化牌的种类执行下列效果：<br />攻击或武器～你与目标角色拼点：若你赢，此【轰！】不能成为【没中】的目标；防御或防具～你弃置目标角色各一张牌；辅助、宝物或道具～此【轰！】造成的弹幕伤害＋１。';
 						}
 					}
 				},
 				ai:{
+					result:{
+						player:1,
+					},
 					skillTagFilter:function(player){
 						if(!player.countCards('he')) return false;
 					},
@@ -1086,12 +1109,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.gain(ui.skillPile.childNodes[i]);
 							break;
 						} else if (i == ui.skillPile.childNodes.length -1){
-							player.say('技能牌堆里居然没有【连击】了poi？？');					  
+							player.say('技能牌堆里居然没有【连击】了poi？');					  
 						}
 					}
 					'step 2'
 					game.log(player,'更改了','【轰袭】','的描述');
-					player.popup('更改描述');
 					player.markSkill('hongxi');
 					player.storage.hongxi=true;
 				},
@@ -1393,7 +1415,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     check:function(button){
                         var player=_status.event.player;
-                        return get.value({name:button.link[2]}) - 5;
+                        return get.value({name:button.link[2]}) - 5 && player.countCards('he') > 2;
                     },
                     backup:function(links,player){
                         return {
@@ -1517,7 +1539,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     check:function(button){
                         var player=_status.event.player;
-                        return (button.link[2]=='shenyou')?1:0.5;
+                        return get.value({name:button.link[2]}) - 4;
                     },
                     backup:function(links,player){
                         return {

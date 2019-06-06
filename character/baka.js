@@ -154,7 +154,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return player.getCards('h').length < 3;
                       },
                       ai:{
-                        damage:true,
+                        damage:1,
                       },
                   },
                   perfect_1:{
@@ -224,9 +224,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               order:9,
                               result:{
                                     target:function(player,target){
-                                          if(target.hp==1) return 5;
-                                          if(player==target) return 5;
-                                          return 2;
+                                          if(get.attitude(player,target)>0){
+							      return get.recoverEffect(target,player,player)+1;
+						      }
+                                          return 0;
                                     }
                               },
                               threaten:2

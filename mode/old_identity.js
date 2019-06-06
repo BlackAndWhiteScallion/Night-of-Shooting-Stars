@@ -209,7 +209,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				};
 				game.pause();
 				step1();
-				game.saveConfig('show_splash','always');
 			}
 			else{
 				if(!_status.connectMode){

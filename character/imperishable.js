@@ -145,6 +145,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                       'step 0'
                       player.chooseTarget('失明：洗混一名角色手牌').set('ai',function(target){
+                            if (_status.currentPhase == target && get.attitude(player, _status.currentPhase) < 0) return 100;
                             return -get.attitude(_status.event.player,target);
                           });
                       'step 1'
@@ -177,8 +178,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         "step 0"
                         var next = player.choosePlayerCard('h','失明：试图使用一张牌？', player,'invisible');
                         next.set('ai',function(card){
-                            if (_status.event.player.countCards('h') > _status.event.player.hp) return 2;
-                            return 0;
+                            return Math.random()-0.5;
                         });
                         "step 1"
                         if (result.bool){
@@ -193,8 +193,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.addTempSkill('shiming_3');
                         }
                       },
-                      check:function(){
-                        return true;
+                      check:function(event, player){
+                        return player.countCards('h') > player.hp || ((player.countCards('h', {name:'shan'}) || player.countCards('h', {name:'tao'})) && player.hp == 1);
                       },
                       ai:{
                         order:4,
@@ -819,7 +819,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                       }
                     },
-                    check:function(){return true},
+                    check:function(event, player){
+                      return get.attitude(player, event.target) < 0;
+                      },
                     intro:{
                         mark:function(dialog,content,player){
                           if(content){
@@ -1018,32 +1020,33 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       'step 0'
-                      player.chooseCard('he','将一张牌当作一种防御牌使用').set('ai',function(card){
+                      player.chooseCard('he','幻视：将一张牌当作一种防御牌使用').set('ai',function(card){
                             return 7-get.value(card);
                         });
                       'step 1'
                       if (!result.cards){
                         game.log('幻视：当作',trigger.card,'的牌是',trigger.player.storage.huanshi[0]);
                         event.finish();
-                      }
-                      event.card = result.cards[0];
-                      var list = [];
-                      for (var i in lib.card){
-                          if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
-                          if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
-                          if(lib.card[i].subtype == 'defense'){
-                              list.add(i);
-                          }
-                      }
-                      for(var i=0;i<list.length;i++){
-                          list[i]=[get.type(list[i]),'',list[i]];
-                      }
-                      if(list.length){
-                          player.chooseButton(['将'+get.translation(event.card)+'当作一张牌使用',[list,'vcard']]).set('ai',function(button){
-                              var player=_status.event.player;
-                              var card={name:button.link[2]};
-                              return get.value(card);
-                          });
+                      } else {
+                        event.card = result.cards[0];
+                        var list = [];
+                        for (var i in lib.card){
+                            if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                            if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if(lib.card[i].subtype == 'defense'){
+                                list.add(i);
+                            }
+                        }
+                        for(var i=0;i<list.length;i++){
+                            list[i]=[get.type(list[i]),'',list[i]];
+                        }
+                        if(list.length){
+                            player.chooseButton(['将'+get.translation(event.card)+'当作一张牌使用',[list,'vcard']]).set('ai',function(button){
+                                var player=_status.event.player;
+                                var card={name:button.link[2]};
+                                return get.value(card);
+                            });
+                        }
                       }
                       'step 2'
                       if(result.bool&&result.links){
@@ -1598,7 +1601,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               case '属性': return !valid.contains(get.subtype(card)); break;
                             }
                         }).set('ai',function(card){
-                          return 7 - get.value(card);
+                          return 5 - get.value(card);
                         });
                       } else {
                         event.finish();

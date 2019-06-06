@@ -81,6 +81,7 @@ window.config={
 	image_background:'shengshi_bg',
 
 	asset_image:true,
+	asset_full:true,
 	asset_font:true,
 
 	card_font:'xinwei',

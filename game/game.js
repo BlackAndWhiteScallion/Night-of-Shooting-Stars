@@ -57,7 +57,7 @@
         hook:{globaltrigger:{},globalskill:{}},
         hookmap:{},
         imported:{},
-        layoutfixed:['chess','tafang'],        
+        layoutfixed:['chess'],        
         characterDialogGroup:{
             '收藏':function(name,capt){
                 return lib.config.favouriteCharacter.contains(name)?capt:null;
@@ -882,6 +882,7 @@
                             big:'105%',
                             vbig:'110%',
                             ebig:'120%',
+                            biggest:'绯想天则',
                         },
                         onclick:function(zoom){
                             game.saveConfig('ui_zoom',zoom);
@@ -892,6 +893,7 @@
                                 case 'big':zoom=1.05;break;
                                 case 'vbig':zoom=1.1;break;
                                 case 'ebig':zoom=1.2;break;
+                                case 'biggest': zoom = 2; break;
                                 default:zoom=1;
                             }
                             game.documentZoom=game.deviceZoom*zoom;
@@ -9030,6 +9032,7 @@
             'default':"默认",
             special:'特殊',
             zhenfa:'异变',
+            general:'综合战绩',
             mode_derivation_card_config:'衍生',
             mode_banned_card_config:'禁卡',
             mode_favourite_character_config:'收藏',
@@ -9628,7 +9631,7 @@
 					for(var i=0;i<event.choice.length;i++){
 						controls.push(event.choice[i][0]);
 					}
-					event.current.chooseControl(controls).set('prompt','选择下一个触发的技能');
+					event.current.chooseControl(controls).set('prompt','选择下一个触发的技能<br><br><div><div style="width:100%;text-align:center;font-size:14px">都不想发动的话，随便选一个然后一个一个取消<br>英文名字的都是后台计数技能，不用介意</div>');
 					'step 2'
 					if(result.control){
 						for(var i=0;i<event.list.length;i++){
@@ -28011,6 +28014,7 @@ smoothAvatar:function(player,vice){
                 };
                 game.pause();
                 step1();
+				game.saveConfig('show_splash','always');
             } else {
                 var i,j,k,num,table,tr,td,dialog;
                 _status.over=true;
@@ -28432,7 +28436,29 @@ smoothAvatar:function(player,vice){
                     }
                 //}
                 dialog.add(ui.create.div('.placeholder'));
-
+                if (!lib.config.gameRecord.general){
+                    lib.config.gameRecord.general = {data:{}};
+                }
+                var data=lib.config.gameRecord.general.data;
+                if (!data['kill']){
+                    data['kill'] = 0;
+                }
+                if (!data['damage']){
+                    data['damage'] = 0;
+                }
+                if (!data['card']){
+                    data['card'] = 0;
+                }
+                for(j=0;j<game.me.stat.length;j++){
+                    if(game.me.stat[j].kill!=undefined) data['kill']+=game.me.stat[j].kill;
+                    if(game.me.stat[j].damage != undefined) data['damage'] += game.me.stat[j].damage;
+                    for(k in game.me.stat[j].card){
+                        data['card']+=game.me.stat[j].card[k];
+                    }
+                }
+                lib.config.gameRecord.general.str='总出牌张数：'+data['card']+'<br>总造成伤害值：'+data['damage']+'<br>总击坠人数：'+data['kill'];
+                game.saveConfig('gameRecord',lib.config.gameRecord);
+                
                 var clients=game.players.concat(game.dead);
                 for(var i=0;i<clients.length;i++){
                     if(clients[i].isOnline2()){
@@ -37759,7 +37785,7 @@ smoothAvatar:function(player,vice){
                         var span4_br=ui.create.node('br');
                         li2.lastChild.appendChild(span4_br);
 
-                        var span2=ui.create.div('','皮肤素材（21MB）');
+                        var span2=ui.create.div('','皮肤素材（24MB）');
                         span2.style.fontSize='small';
                         span2.style.lineHeight='16px';
                         li2.lastChild.appendChild(span2);
@@ -39988,6 +40014,7 @@ smoothAvatar:function(player,vice){
                     case 'big':zoom=1.05;break;
                     case 'vbig':zoom=1.1;break;
                     case 'ebig':zoom=1.2;break;
+                    case 'biggest':zoom=2;break;
                     default:zoom=1;
                 }
                 game.documentZoom=game.deviceZoom*zoom;
@@ -40244,7 +40271,7 @@ smoothAvatar:function(player,vice){
                             }
                             else{
                                 var func=function(){
-                                    if(confirm('是否下载图片和字体素材？（约40MB）')){
+                                    if(confirm('是否下载图片和字体素材？（约82MB）')){
                                         if(!ui.arena.classList.contains('menupaused')){
                                             ui.click.configMenu();
                                             ui.click.menuTab('其它');
@@ -48216,7 +48243,6 @@ smoothAvatar:function(player,vice){
         // 目标，卡牌，角色1（玩家），角色2是什么不清楚。
         effect:function(target,card,player,player2){
             // 如果没有玩家，玩家为当前事件角色
-            // 
             var event=_status.event;
             var eventskill=null;
             if(player==undefined) player=_status.event.player;
@@ -48237,7 +48263,7 @@ smoothAvatar:function(player,vice){
             if(typeof result2=='function') result2=result2(player,target,card);
             if(typeof result1!='number') result1=0;
             if(typeof result2!='number') result2=0;
-            // 
+            // 嘲讽默认为1
             var temp1,temp2,temp3,temp01=0,temp02=0,threaten=1;
             // skills1 是玩家持有的所有技能（包括全场技能）
             var skills1=player.getSkills().concat(lib.skill.global);
@@ -48266,6 +48292,7 @@ smoothAvatar:function(player,vice){
                 else if(typeof temp1=='number'){
                     result1*=temp1;
                 }
+                // 检测技能中是否有“被使用没用” “你使用没用” “用不用都没用”
                 else if(temp1=='zeroplayer'){
                     zeroplayer=true;
                 }
@@ -48277,6 +48304,7 @@ smoothAvatar:function(player,vice){
                     zerotarget=true;
                 }
             }
+            // 以上相同的步骤用于检测目标角色
             if(target){
                 var skills2=target.getSkills().concat(lib.skill.global);
                 game.expandSkills(skills2);
@@ -48314,6 +48342,7 @@ smoothAvatar:function(player,vice){
                         zeroplayer=true;
                         zerotarget=true;
                     }
+                    // 目标的嘲讽也乘以这个数值
                     if(typeof temp3=='function'&&temp3(player,target)!=undefined){
                         threaten*=temp3(player,target);
                     }
@@ -48359,8 +48388,12 @@ smoothAvatar:function(player,vice){
             if(player2){
                 return (result1*get.attitude(player2,player)+(target?result2*get.attitude(player2,target):0));
             }
+            //　具体的公式是：
+            // 前面result1的太乱了，看不懂
+            // 反正就是 对玩家收益*玩家对玩家态度 + （如果有目标）对目标收益*对目标态度（没目标为0）
             return (result1*get.attitude(player,player)+(target?result2*get.attitude(player,target):0));
         },
+        // 这里是检测伤害具体多有效
         damageEffect:function(target,player,viewer,nature){
             if (!target) return 0;
             if(!player){
@@ -48371,14 +48404,23 @@ smoothAvatar:function(player,vice){
             }
             var name='damage';
             if(nature=='fire'){
-                name='firedamage';
+                name='firedamage'; 
             }
             else if(nature=='thunder'){
                 name='thunderdamage';
             }
+            // 0灵力打不出伤害
             if (player.lili == 0) return 0;
+            // 目标不能被打伤害
+            if (target.hasSkillTag('nodamage')) return 0;
+            // 来源不能打出伤害
+            if (player.hasSkillTag('nodamagesource')) return 0;
+            // 对无限体力的角色攻击没有意义
+            if (target.hp == Infinity) return 0; 
+            // 对0灵力的角色打出灵击伤害没有意义
             if (target.lili == 0 && nature == 'thunder') return 0; 
             var eff=get.effect(target,{name:name},player,viewer);
+            // 护甲究竟是什么鬼呢……
             if(eff>0&&target.hujia>0) return 0;
             return eff;
         },
@@ -48557,14 +48599,17 @@ smoothAvatar:function(player,vice){
                     }
                 }
             },
+            // 这里是AI最基本的选择目标
             chooseTarget:function(check){
                 var event=_status.event;
                 if(event.filterTarget==undefined) return (check()>0);
                 var i,j,range,targets,targets2,effect;
                 var ok=false,forced=event.forced;
                 var iwhile=100;
+                // 重复100次：
                 while(iwhile--){
                     range=get.select(event.selectTarget);
+                    // 如果目标数量为-1（即目标固定），则检测对那个目标的态度
                     if(range[1]==-1){
                         j=0;
                         for(i=0;i<ui.selected.targets.length;i++){
@@ -48574,9 +48619,11 @@ smoothAvatar:function(player,vice){
                         }
                         return (j>0);
                     }
+                    // 如果目标为0那就随便了
                     else if(range[1]==0){
                         return check()>0
                     }
+                    // 如果目标有选择余地：
                     targets=get.selectableTargets();
                     if(targets.length==0){
                         return ok;
@@ -48586,9 +48633,11 @@ smoothAvatar:function(player,vice){
                     //  return check(b)-check(a);
                     // });
                     var ix=0;
+                    // check就是发进来的ai2的function
                     var checkix=check(targets[0],targets2);
                     for(i=1;i<targets.length;i++){
                         var checkixtmp=check(targets[i],targets2);
+                        // 选择check结果最高的那个
                         if(checkixtmp>checkix){
                             ix=i;
                             checkix=checkixtmp;

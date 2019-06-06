@@ -5706,6 +5706,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     	card:{
     		chess_shezhang:{
     			type:'basic',
+				subtype:'support',
     			fullskin:true,
     			modeimage:'chess',
     			enable:function(card,player){
@@ -5780,6 +5781,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		},
     		chess_chuzhang:{
     			type:'basic',
+				subtype:'support',
     			fullskin:true,
     			modeimage:'chess',
     			filterTarget:function(card,player,target){

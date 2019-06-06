@@ -25,6 +25,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				event.finish();
 				return;
 			}
+			// 已通关红魔乡的话会解锁EX关卡
 			if ((lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 0)
 			 || lib.config.connect_nickname == '路人'){
 				lib.characterPack.mode_stg['stg_scarlet_ex'] = ['female','0',0,['boss_chiyan_ex'],['boss'],'zhu'];
@@ -395,6 +396,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				return uiintro;
 			},180);
 
+			ui.boss = ui.create.system('BOSS剩余符卡',null,true);
+			lib.setPopped(ui.boss,function(){
+				var uiintro=ui.create.dialog('hidden');
+				var str = '';
+				if (!game.me.storage || !game.me.storage.reskill){ 
+					str = 'BOSS没有符卡';
+				} else if (game.me.storage.reskill){
+					str = 'BOSS剩余'+game.me.storage.reskill.length+'张符卡';
+				} 
+				uiintro.add('<div class="text center">'+str+'</div>');
+				uiintro.add(ui.create.div('.placeholder.slim'))
+
+				return uiintro;
+			},180);
+			ui.boss.style.display = 'none';
+
 			lib.setPopped(ui.create.system('规则',null,true),function(){
 				var uiintro=ui.create.dialog('hidden');
 
@@ -483,6 +500,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						ui.cardPile.innerHTML='';
             			ui.discardPile.innerHTML='';
 						ui.create.cardsAsync();
+						ui.boss.style.display = 'none';
 					}
 					if(game.bossinfo.checkResult&&game.bossinfo.checkResult(this)===false){
 						return;
@@ -500,6 +518,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6,
@@ -511,6 +530,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6,
@@ -522,6 +542,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -533,6 +554,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -544,6 +566,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -555,6 +578,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -566,6 +590,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -577,6 +602,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -588,6 +614,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -599,6 +626,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -610,6 +638,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'equip',
 				subtype:'equip4',
+				modeimage:'stg',
 				ai:{
 					basic:{
 						equipValue:6
@@ -715,6 +744,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.swapControl(boss);
 				}
 				*/
+				ui.boss.style.display = 'initial';
 				game.players.push(boss.animate('zoominanim'));
 				game.arrangePlayers();
 				if(!game.boss){
@@ -1204,7 +1234,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 				content:function(){
-					targets[0].damage(Number.MAX_SAFE_INTEGER);
+					targets[0].damage(Infinity);
 				}
 			},
 			// 红魔乡 （正常），直到1951行
@@ -2804,6 +2834,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.storage.reinforce = [];
 						player.addSkill('revive_boss');
 						player.equip(game.createCard('book'));
+						ui.boss.style.display = 'initial';
 					}
 				},
 				content:function(){
@@ -2905,6 +2936,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.recover(game.me.maxHp);
 					game.me.storage.fuhuo ++;
 					game.log(game.me,'获得了一个残机！');
+					ui.boss.style.display = 'none';
 				}
 			},
 			fourof:{
@@ -3085,7 +3117,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_needle_info:'锁定技，你的手牌上限+1；若你已受伤，你的摸牌数+1；你使用【轰！】指定目标后，目标的技能无效，直到结算完毕。',
 			stg_yinyangyu:'鬼神阴阳玉',
 			stg_yinyangyu_skill:'鬼神阴阳玉',
-			stg_yinyangyu_info:'你可以将一张非基本牌（可以为此牌）当作一种基本牌使用/打出；你将此牌当作的【轰！】造成弹幕伤害时，该伤害+1。',
+			stg_yinyangyu_info:'你可以将一张非基本牌（可以为此牌）当作一种基本牌使用；你将此牌当作的【轰！】造成弹幕伤害时，该伤害+1。',
 			//stg_yinyangyu_info:'你可以将一张非基本牌当作一种基本牌使用/打出。',
 			stg_missile:'魔法飞弹',
 			stg_missile_skill:'魔法飞弹',
@@ -3152,7 +3184,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_chiyan_ex:'红魔乡EX关卡',
 			boss_chiyan_ex_info:'异变结束后，蕾米来到博丽神社玩，然后因为回不去而赖着不走了。<br>去红魔馆检查一下情况（来把蕾米赶走）吧！<br><br> 关卡数：1 <br><br> 复活机会：0       道中击破后追加1次。',
 			silent:'月符「寂静月神」',
-			silent_info:'符卡技（0）<极意>准备阶段，你令一名其他角色选择一项：受到1点弹幕伤害，或令其对你造成的下一次伤害值-1。',
+			silent_info:'符卡技（0）<极意>结束阶段，你令一名其他角色选择一项：受到1点弹幕伤害，或令其对你造成的下一次伤害值-1。',
 			silent1:'月符「寂静月神」',
 			silent_audio1:'月符「寂静月神」！',
 			silent_audio2:'在月光的审判下，忏悔吧！',

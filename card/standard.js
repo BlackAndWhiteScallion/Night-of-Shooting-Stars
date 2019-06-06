@@ -8,7 +8,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		damage:{
 			ai:{
 				result:{
-					target:-1
+					target:-2
 				},
 				tag:{
 					damage:1
@@ -18,7 +18,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		recover:{
 			ai:{
 				result:{
-					target:1.5
+					target:2
 				},
 				tag:{
 					recover:1
@@ -28,7 +28,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		firedamage:{
 			ai:{
 				result:{
-					target:-1.5
+					target:-2
 				},
 				tag:{
 					damage:1,
@@ -827,7 +827,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							if (ai.get.attitude(player, current) > 0 && target.hp == 1) return -2;
 						});
 						if (num > 0) return -10000000000;
-						if (num <= 0) return 10000000000;
+						if (num < 0) return 10000000000;
+						if (num == 0) return 0;
 					},
 					target:function(player,target){
 						var nh=target.countCards('hej');
@@ -1207,7 +1208,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:2
 				}
 			},
-			skills:['pantsu_skill']
+			skills:['pantsu_skill', 'pantsu_skill2']
 		},
 		deathfan:{
 			fullskin:true,
@@ -1991,7 +1992,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		lantern_skill:{
 			audio:2,
-			trigger:{target:'useCardToBefore'},
+			trigger:{target:'useCardToBegin'},
 			forced:true,
 			filter:function(event,player){
 				return event.card.name=='sha'&& get.distance(player, event.player, 'attack') <= 1 && player.countCards('h') && event.player.countCards('h');
@@ -2002,14 +2003,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.chooseToCompare(trigger.player);
 				"step 1"
 				if(result.bool){
-					game.log('人魂灯：【轰！】对',player,'无效');
+					game.log('人魂灯：',trigger.card, '对',player,'无效');
 					trigger.cancel();
 				}
 			},
 		},
 		hourai_skill:{
 			audio:2,
-			trigger:{target:'useCardToBefore'},
+			trigger:{target:'useCardToBegin'},
 			filter:function(event,player){
 				return get.subtype(event.card) == 'attack' && player.countCards('e', {name:'hourai'});
 				//return event.card.name == 'sha';
@@ -2022,6 +2023,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						break;
 					}
 				}
+				game.log('替身人形：',trigger.card,'对',player,'无效');
 				trigger.untrigger();
 				trigger.finish();
 			},
@@ -2173,7 +2175,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				var cards = player.getCards('e');
 					for (var i = 0; i <= cards.length; i ++){
 						if(cards[i]&&cards[i].name == 'pantsu'){
-							trigger.source.gain(cards[i]);
+							trigger.player.gain(cards[i]);
 							break;
 						}
 					}
@@ -2194,7 +2196,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		ai:{
     			nofire:true,
     			nothunder:true,
-    			nodamage:true,
+    			nodamagesource:true,
     			notrick:true,
     			notricksource:true,
     			effect:{

@@ -791,7 +791,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 				},
 				content:function(){
-					trigger.player.addTempSkill('aidoulu_3','phaseEnd');
+					trigger.player.addTempSkill('aidoulu_3');
 					trigger.player.recover();
 				},
 				prompt2:'令当前回合角色回复1点体力，且其本回合使用【轰】造成的伤害+1',

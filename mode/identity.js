@@ -2497,7 +2497,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					"step 0"
-					lib.character['cong'] = ['female','10000',Infinity,['finalspark','mianyi'],[],[],Infinity];
+					lib.character['cong'] = ['female','100000',Infinity,['finalspark','mianyi'],[],[],Infinity];
 					lib.translate['cong']='黑白葱';
 					player.init('cong');
 					player.update();
@@ -2519,7 +2519,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     },2500);
 					"step 1"
 					if (game.me.name != 'marisa'){
-						game.me.damage(Number.MAX_SAFE_INTEGER);
+						game.me.damage(Infinity);
 					}
 					"step 2"
 					if (game.me.isAlive()){
