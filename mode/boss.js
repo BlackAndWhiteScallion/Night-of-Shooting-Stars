@@ -400,19 +400,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_cirno2:['female', '0', 4, ['jiqiang','zuanshi','jubing'], ['hiddenboss'], 'wei'],
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss'], 'shu'],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
-				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'qun'],
+				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'shen'],
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
-				boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],['qun'],'0'],
+				boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
 			},
 		},
 		characterIntro:{
 			boss_reimu:'啊，真是一个好天气啊……如果今天能有赛钱的话就更好了……咦，我赛钱箱呢？<br>画师：萩原',
 			boss_reimu2:'不要在灵梦面前提钱，不要动灵梦的赛钱箱，不要对博丽神社做任何事情。<br>——来自造成了目前整个事态的某个魔法师的灵梦三戒律<br>画师：Ran',
-			boss_cirno:'要我说几遍啊，我不是什么⑨！我是幻想乡最强的！<br>画师：',
-			boss_cirno2:'虽然成功的获得了超越常人的力量，但是这力量对于超越常人的家伙们来说……还是⑨级别的。<br>画师：',
+			boss_cirno:'要我说几遍啊，我不是什么⑨！我是幻想乡最强的！<br>画师：原悠衣',
+			boss_cirno2:'虽然成功的获得了超越常人的力量，但是这力量对于超越常人的家伙们来说……还是⑨级别的。<br>画师：しがらき',
 			boss_nianshou:'比起加一堆没人想要的大杂烩设定，把本来欢乐的活动变成一个累死人的掀桌活动，还是回到最开始的简单欢乐日子好。',
 			boss_zhaoyun:'幻想乡是一切皆有可能的地方。<br>即使是那个只存在于传说中的男人……！',
-			boss_saitama:'买菜时因走错路偶然路过的光头<br>………等等，什么？<br>画师：',
+			boss_saitama:'买菜时因走错路偶然路过幻想乡的光头<br>………等等，什么？<br>画师：',
 		},
 		cardPack:{
 		},
@@ -1004,6 +1004,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			lingji:{
     			audio:2,
     			trigger:{player:'damageAfter',source:'damageAfter'},
+				group:['saiqian_use','saiqian_die'],
     			forced:true,
     			filter:function(event,player){
     				return event.nature != 'thunder';
@@ -1022,6 +1023,38 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		},
+			saiqian_use:{
+				direct:true,
+				trigger:{global:'useCard'},
+				filter:function(event, player){
+					return event.player != player && event.card.name == 'saiqian';
+				},
+				content:function(){
+					player.say('我的赛钱箱！你要是敢对它做什么奇怪的事情……');
+				}
+			},
+			saiqian_die:{
+				direct:true,
+				trigger:{global:'loseEnd'},
+				filter:function(event,player){
+					for (var i = 0; i < event.cards.length; i ++){
+						if (event.cards[i].name == 'saiqian') return true;
+					}
+					return false;
+				},
+				content:function(){
+					game.pause();
+					player.say('啊啊啊啊啊啊啊啊，你对我的赛钱箱做了什么！！！！！！');
+					setTimeout(function(){
+						player.say('你，我要把你变成十八层地狱底层的锅底废油！');
+						setTimeout(function(){
+							player.maxlili = 10;
+							player.gainlili(2000);
+							game.resume();
+						}, 2500);
+					}, 2500);
+				},
+			},
     		bianshen_reimu:{
     			audio:1,
     			trigger:{player:['damageAfter','gainliliAfter','loseHpAfter']},
@@ -1035,9 +1068,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
 					var lili=player.lili;
+					var maxlili = player.maxlili;
 					player.init('boss_reimu2');
 					player.$skill('到此为止了！',null,null,true);
 					player.lili=lili;
+					player.maxlili=maxlili;
 					player.update();
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
@@ -1504,6 +1539,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.gainlili(game.roundNumber - player.lili);
 				},
 			},
+			// 无限血的家伙回合外没有理由出牌
 			boss_turncount:{
 				mode:['boss'],
 				mod:{

@@ -354,6 +354,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               content:'limited'
                          },
                         filter:function(event,player){
+                          if (player.lili == 0) return false;
                          if (!player.storage.richuguo) return false;
                           var num = 0;
                           if (player.countCards('h',{type:'basic'}) > 0) num ++;
@@ -769,6 +770,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         result.targets[0].addTempSkill('kaiyun_4');
                     },
                     check:function(event,player){
+                      if (game.countPlayer(function(current){
+                        return current.countCards('j', {name:'shenyou'});
+                      }) > 1) return false;
                       if (player.hp > 1 && (player.countCards('h') - 1 > player.getHandcardLimit() || player.countCards('h', function(card){
                         return get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt';
                       }) > 2)) return false;

@@ -354,7 +354,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         mod:{
                               targetInRange:function(card){
                                     if(_status.event.skill=='guihang') return true;
-                              }
+                              },
+                              /*
+                              cardUsable:function(card,player,num){
+						if(card.name=='sha' && !game.hasPlayer(function(current){
+                                          return current.hasSkill('guihang_flag');
+                                    })) return num + 1;
+					},*/
                         },
                         filter:function(event,player){
                           return !game.hasPlayer(function(current){
@@ -373,14 +379,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         onuse:function(result,player){
                             player.loselili();
                             if (player.getStat().card.sha) player.getStat().card.sha--;
-                            else player.getStat().card.sha = -1;
+                            else player.getStat().card.sha = 0;
                         },
                         prompt:'消耗1点灵力，将一张牌当【轰！】使用',
-                        check:function(card){return 4-get.value(card)},
+                        check:function(card){return 6-get.value(card)},
                         ai:{
+                              ignoreviewas:true,
                               skillTagFilter:function(player){
                                     if (player.lili < 2) return false;
-                                    if(!player.countCards('he')) return false;
+                                    if (!player.countCards('he')) return false;
+                                    if (game.hasPlayer(function(current){
+                                          return current.hasSkill('guihang_flag');
+                                    })) return false;
+                                    return player.hasUseTarget('sha', false, false);
                               },
                               result:{
                                     player:function(player){
@@ -394,7 +405,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                        trigger:{source:'damageAfter'},
                         forced:true,
                         filter:function(event,player){
-                          return event.getParent().skill=='guihang' && get.distance(player, event.player, 'absolute') > 1;
+                          return event.getParent().skill=='guihang';
                         },
                         content:function(){
                               player.discardPlayerCard('hej', trigger.player, true);
@@ -541,31 +552,31 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return !player.storage.caijue;
                 },
                 content:function(){
-                    'step 0'
-                    player.chooseTarget('选择一名裁决的罪人',function(card,player,target){
-                              return target.countCards('h') > 0;
-                              }).set('ai',function(target){
-                                    return get.attitude(player, target) < 0 && target.countCards('h') > 3;
-                              });
-                    'step 1'
-                    if (result.bool && result.targets[0]){
-                        result.targets[0].showHandcards();
-                        var cards = result.targets[0].getCards('h');
-                        var list = [];
-                        for (var i = 0; i < cards.length; i ++){
-                            if (get.subtype(cards[i]) == 'attack'){
-                                list.push(cards[i]);
-                            }
+                        'step 0'
+                        player.chooseTarget('选择一名裁决的罪人',function(card,player,target){
+                                    return target.countCards('h') > 0;
+                                    }).set('ai',function(target){
+                                          return get.attitude(player, target) < 0 && target.countCards('h') > 3;
+                                    });
+                        'step 1'
+                        if (result.bool && result.targets[0]){
+                              result.targets[0].showHandcards();
+                              var cards = result.targets[0].getCards('h');
+                              var list = [];
+                              for (var i = 0; i < cards.length; i ++){
+                              if (get.subtype(cards[i]) == 'attack'){
+                                    list.push(cards[i]);
+                              }
                         }
                         var num = list.length;
                         if (list.length > 0){
-                            result.targets[0].discard(list);
-                            result.targets[0].damage(Math.min(num, player.lili-1), 'thunder');
-                            player.loselili(Math.min(num, player.lili-1));
+                        result.targets[0].discard(list);
+                        result.targets[0].damage(Math.min(num, player.lili-1), 'thunder');
+                        player.loselili(Math.min(num, player.lili-1));
                         } else {
-                            player.storage.caijue = true;
+                        player.storage.caijue = true;
                         }
-                    }
+                  }
                 },
               },
               caijue2:{
@@ -593,12 +604,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       return player.lili > player.hp;
                     },
                     content:function(){
-                         player.loselili(player.hp);
-                         player.turnOver();
-                         player.storage.shenpan=false;
-                         player.syncStorage('shenpan');
-                         player.unmarkSkill('shenpan');
-                         player.useCard({name:'lingbi'},game.filterPlayer());
+                        player.loselili(player.hp);
+                        player.turnOver();
+                        player.storage.shenpan=false;
+                        player.syncStorage('shenpan');
+                        player.unmarkSkill('shenpan');
+                        player.useCard({name:'lingbi'},game.filterPlayer());
                     },
                     check:function(event, player){
                          return player.hp < 3;
@@ -695,7 +706,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   guihang:'归航',
                   guihang_audio1:'给我过来！',
                   guihang_audio2:'想在我面前跑？跑到世界尽头你也跑不掉！',
-                  guihang_info:'你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法对距离大于１的角色造成弹幕伤害后，弃置其一张牌，并令你与其距离视为１，且此技能无效，直到回合结束。',
+                  guihang_info:'你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法造成弹幕伤害后，弃置受伤角色一张牌，令你与其距离视为１，且此技能无效，直到回合结束。',
                   wujian:'无间之狭间',
                   wujian_skill:'无间之狭间',
                   wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；然后，若其中有角色没有灵力，你获得其场上一张牌。',

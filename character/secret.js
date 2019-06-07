@@ -244,6 +244,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             rumeng_2:{
             	trigger:{player:'phaseBeginStart'},
             	filter:function(event,player){
+					if (player.lili == 0) return false;
             		return player.maxlili > 4;
             	},
             	content:function(){
@@ -251,6 +252,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.addSkill('mengjing');
             		player.useSkill('mengjing');
             		player.maxlili -= 4;
+					game.log(player,'减少了'+get.cnNumber(num)+'点灵力上限');
                     player.update();
             		player.removeSkill('rumeng');
             	},

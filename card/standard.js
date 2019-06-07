@@ -1096,7 +1096,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						if(player.hasUnknown(2)){
 							return 0;
 						}
-						return -1;
+						if (target.countCards('h') && player.countCards('h'))	return -1;
+						return 0;
 					}
 				},
 				tag:{
@@ -1917,6 +1918,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			mark:true,
 			audio:false,
 			popup:false,
+			init:function(player){
+				player.storage.lunadial = player.node.framebg.dataset.auto;
+				player.node.framebg.dataset.auto='lock';
+			},
+			onremove:function(player){
+				player.node.framebg.dataset.auto=player.storage.lunadial;
+				delete player.storage.lingbi;
+			},
 			content:function(){
 				player.removeSkill('lunadial2');
 			},
@@ -2217,6 +2226,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			global:['bingyu1','bingyu3'],
 			trigger:{player:'phaseBegin'},
 			forced:true,
+			init:function(player){
+				var players = game.filterPlayer();
+				for (var i = 0; i < players.length; i ++){
+					players[i].storage.bingyu = players[i].node.framebg.dataset.auto;
+					players[i].node.framebg.dataset.auto='snow';
+				}
+			},
+			onremove:function(player){
+				var players = game.filterPlayer();
+				for (var i = 0; i < players.length; i ++){
+					players[i].node.framebg.dataset.auto=players[i].storage.bingyu;
+					delete players[i].storage.bingyu;
+				}
+			},
 			content:function(){
 				var players = game.filterPlayer();
 				for (var i = 0; i < players.length; i++){
@@ -2736,6 +2759,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				content:'cards'
 			},
 			forced:true,
+			init:function(player){
+				var players = game.filterPlayer();
+				for (var i = 0; i < players.length; i ++){
+					players[i].storage.lingbi = players[i].node.framebg.dataset.auto;
+					players[i].node.framebg.dataset.auto='lock';
+				}
+			},
+			onremove:function(player){
+				var players = game.filterPlayer();
+				for (var i = 0; i < players.length; i ++){
+					players[i].node.framebg.dataset.auto=players[i].storage.lingbi;
+					delete players[i].storage.lingbi;
+				}
+			},
 			filter:function(event,player){
 				if (!player.storage._lingbi2) return false;
 				return player.storage._lingbi2.length > 0;
@@ -3005,7 +3042,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		bingyu1_bg:'冰',
 		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，跳过弃牌阶段，直到你的回合开始，或你坠机时。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
 		jingxia:'惊吓派对',
-		_jingxia:'惊吓派对',
+		_jingxia:'惊吓派对（→潜行）',
 		jingxia_bg:'潜',
 		jingxia_info:'出牌阶段，对所有其他角色使用：与目标各拼点：若你赢，对其造成1点灵击伤害。</br> <u>追加效果：出牌阶段，可以弃置此牌，摸一张【潜行】技能牌。</u>',
 	},

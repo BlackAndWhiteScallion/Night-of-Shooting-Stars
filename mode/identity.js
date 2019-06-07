@@ -2326,6 +2326,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					game.saveConfig('akyuu',true);
 					lib.config.gameRecord.incident.data['akyuu'] = 0;
+					lib.config.gameRecord.general.data['akyuu'] ++;
+					var data=lib.config.gameRecord.general.data;
+					 lib.config.gameRecord.general.str='总出牌张数：'+data['card']+'<br>总造成伤害值：'+data['damage']+'<br>总击坠角色数：'+data['kill']+'<br>阿求出场次数：'+data['akyuu'];
+					if (data['cong'] == 0) lib.config.gameRecord.general.str += '<br>???出场次数：0';
+					else lib.config.gameRecord.general.str += '<br>黑白葱出场次数：'+data['cong'];
 					game.saveConfig('gameRecord',lib.config.gameRecord);
 					var recent=get.config('recentCharacter');
 					var fav=lib.config.favouriteCharacter;
@@ -2497,9 +2502,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					"step 0"
-					lib.character['cong'] = ['female','100000',Infinity,['finalspark','mianyi'],[],[],Infinity];
+					lib.character['cong'] = ['female','100000',Infinity,['finalspark','mianyi'],[],[],'100000'];
 					lib.translate['cong']='黑白葱';
 					player.init('cong');
+					lib.config.gameRecord.general.data['cong'] ++;
+					var data=lib.config.gameRecord.general.data;
+					lib.config.gameRecord.general.str='总出牌张数：'+data['card']+'<br>总造成伤害值：'+data['damage']+'<br>总击坠角色数：'+data['kill']+'<br>阿求出场次数：'+data['akyuu'];
+					lib.config.gameRecord.general.str += '<br>黑白葱出场次数：'+data['cong'];
+					game.saveConfig('gameRecord',lib.config.gameRecord);
 					player.update();
 					game.pause();
 					player.say('居然击坠了管理员，你也是挺有勇气的呢。');
@@ -2529,6 +2539,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        player.init('akyuu');
 	                        game.resume();
 	                    },2500);
+					} else {
+						game.over();
 					}
 					"step 3"
 					trigger.cancel();

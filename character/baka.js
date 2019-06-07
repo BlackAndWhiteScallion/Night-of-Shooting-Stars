@@ -42,14 +42,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                           game.trySkillAudio('jidong',player,true,3);
                                     }
                                     if (get.position(result.cards[0]) == 'e'){
-                                          var info=get.info(result.cards[0]);
-                                          if(info.skills){
-                                              for(var i=0;i<info.skills.length;i++){
-                                                  player.removeSkillTrigger(info.skills[i]);
-                                              }
-                                          }
+                                          event.target.removeEquipTrigger(result.cards[0], false);
                                     }
                               }
+                              'step 3'
                         },
                   },
                   jidong_2:{

@@ -2215,6 +2215,27 @@ div:not(.handcards)>.card>.info>span,
 	background-image:url('../../theme/style/player/bronze3.png');
 }
 
+#window .player>.framebg[data-auto="snow"],
+#window #arena.long.mobile:not(.fewplayer) .player[data-position='0']>.framebg[data-auto="snow"]{
+	display:block;
+	background-image:url('../../theme/style/player/snow1.png');
+}
+#window #arena.long:not(.fewplayer) .player>.framebg[data-auto="snow"],
+#arena.oldlayout .player>.framebg[data-auto="snow"]{
+	display:block;
+	background-image:url('../../theme/style/player/snow3.png');
+}
+
+#window .player>.framebg[data-auto="lock"],
+#window #arena.long.mobile:not(.fewplayer) .player[data-position='0']>.framebg[data-auto="lock"]{
+	display:block;
+	background-image:url('../../theme/style/player/lock1.png');
+}
+#window #arena.long:not(.fewplayer) .player>.framebg[data-auto="lock"],
+#arena.oldlayout .player>.framebg[data-auto="lock"]{
+	display:block;
+	background-image:url('../../theme/style/player/lock3.png');
+}
 .avatar {
 	width: 100px;
 	height: 100px;
@@ -3451,18 +3472,16 @@ span[data-nature='firemx'] {
 .player .identity[data-color="friend2"],
 div[data-nature='metal'],
 span[data-nature='metal'] {
-	text-shadow: black 0 0 1px,rgba(255, 203, 0,1) 0 0 2px,rgba(255, 203, 0,1) 0 0 5px,rgba(255, 203, 0,1) 0 0 10px,
-		rgba(255, 203, 0,1) 0 0 10px
+	text-shadow:black 0 0 1px, rgb(153, 153, 153) 0 0 2px, rgb(0, 0, 0) 0 0 2px, rgb(255, 255, 255) 0 0 2px, rgb(0, 0, 0) 0 0 2px, white 0 0 1px
 }
 div[data-nature='metalm'],
 span[data-nature='metalm'] {
-	text-shadow: black 0 0 1px,rgba(255, 203, 0,1) 0 0 2px,rgba(255, 203, 0,1) 0 0 5px,rgba(255, 203, 0,1) 0 0 5px,
-		rgba(255, 203, 0,1) 0 0 5px,black 0 0 1px;
+	text-shadow: black 0 0 1px, rgb(153, 153, 153) 0 0 2px, rgb(0, 0, 0) 0 0 2px, rgb(255, 255, 255) 0 0 2px, rgb(0, 0, 0) 0 0 2px, white 0 0 1px;
 }
 div[data-nature='metalmm'],
 span[data-nature='metalmm'] {
-	text-shadow: black 0 0 1px,rgba(255, 203, 0,1) 0 0 2px,rgba(255, 203, 0,1) 0 0 2px,rgba(255, 203, 0,1) 0 0 2px,
-		rgba(255, 203, 0,1) 0 0 2px,black 0 0 1px;
+	
+	text-shadow: black 0 0 1px, rgb(153, 153, 153) 0 0 2px, rgb(0, 0, 0) 0 0 2px, rgb(255, 255, 255) 0 0 2px, rgb(0, 0, 0) 0 0 2px, white 0 0 1px;
 }
 
 .player .identity[data-color="ye"],

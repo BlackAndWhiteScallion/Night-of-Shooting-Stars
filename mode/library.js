@@ -446,9 +446,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
 	    				'<b>6. 其实，点击我是可以跟我说话的啦。就上方那个。</b>',
 	    				]; 
-	                	dialog.addText('<div><div style="display:block;left:180px;text-align:left;font-size:16px">'+i.join('<br>'));
-	                	dialog.addText('<div><div style="display:block;top:140px;text-align:left;font-size:16px">'+j.join('<br>'));
-	                }
+						if (!game.layout=='nova'){
+							dialog.addText('<div><div style="display:block;left:180px;text-align:left;font-size:16px">'+i.join('<br>'));
+							dialog.addText('<div><div style="display:block;top:140px;text-align:left;font-size:16px">'+j.join('<br>'));
+						} else {
+							dialog.addText('<div><div style="display:block;left:150px;text-align:left;font-size:16px">'+i.join('<br>'));
+							dialog.addText('<div><div style="display:block;top:160px;text-align:left;font-size:16px">'+j.join('<br>'));
+						}
+					}
 	        	},
 	    	},
 	    	/*
@@ -487,7 +492,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'覆盖完毕后，需要重启流星夜程序！',
 	    				'',
 	    				'2. 游戏内更新，在<b>[选项-其他-更新]</b>下有多个更新选项',
-	    				'[检查游戏更新]是检查游戏的文件更新（需要把下方的更新地址换成github），有可能可以使用，也有可能不能使用。',
+	    				'[检查游戏更新]是检查游戏的文件更新，有可能可以使用，也有可能不能使用。',
 	    				'[检查素材更新]是检查游戏新加的素材。 但是只能检查新加的素材，无法更新被覆盖的旧素材。',
 	    				'检查素材更新在电脑和手机端都可以进行。',
 	    				'',

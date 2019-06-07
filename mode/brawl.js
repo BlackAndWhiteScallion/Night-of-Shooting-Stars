@@ -909,6 +909,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    player.node.avatar.show();
 	                    player.style.left='calc(50% - 75px)';
 	                    player.style.top='20px';
+						if (game.layout == 'nova') player.style.top='0px';
 	                    player.node.count.remove();
 	                    player.node.hp.remove();
 	                    player.node.lili.remove();
@@ -933,7 +934,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		                    ui.create.node('span','<br>阿求老师来一起玩！ ',line2,{});
 		                    var akyuu=ui.create.node('input',line2,{});
 		                    akyuu.type='checkbox';
-		                    ui.create.div('.menubutton.large','确定',line3,{position:'relative'},function(){
+		                    ui.create.div('.menubutton.large','设置完毕',line3,{position:'relative'},function(){
 		                    	lib.config['library'] = [linked.checked,turn.checked,round.checked,akyuu.checked];
 		                    });
 	        			} else {
