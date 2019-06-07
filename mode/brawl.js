@@ -36,6 +36,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        dialog.contentContainer.style.transition='all 0s';
 	        if(!lib.storage.directStage) dialog.open();
 	        var packnode=ui.create.div('.packnode',dialog);
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+					uiintro.add('<div class="text left">选好了按下面那个大红按钮就行了</div>');
+					uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
 	        lib.setScroll(packnode);
 	        var clickCapt=function(){
 	            var active=this.parentNode.querySelector('.active');

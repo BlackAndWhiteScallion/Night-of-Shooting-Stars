@@ -131,6 +131,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			// game.delay();
 			"step 2"
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+				if (get.config('versus_mode') == 'two'){
+ 					uiintro.add('<div class="text left">把对面两个击坠就赢啦！<br> 先手第一回合少摸一张牌。</div>');
+				} else if (get.config('versus_mode') == 'three'){
+					uiintro.add('<div class="text left">把对面三个击坠就赢啦！<br>每轮进行回合的角色由你选择，已经选择的角色不能再选择，都行动完了才可以再次选择。</div>');
+				} else if (get.config('versus_mode') == 'four'){
+					uiintro.add('<div class="text left">把对面主帅击坠就赢啦！</div>');
+				} else if (get.config('versus_mode') == 'standard'){
+					uiintro.add('<div class="text left">别忘了，左上角[选项]里还有更多的设置。</div>')
+				}
+				uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
 			if(_status.connectMode){
 				if(lib.configOL.versus_mode=='1v1'){
 					game.randomMapOL('hidden');

@@ -6,6 +6,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			var directstartmode=lib.config.directstartmode;
 			ui.create.menu(true);
 			event.textnode=ui.create.div('','输入联机地址');
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+				uiintro.add('<div class="text left">什么时候能有自己的服务器就好了……</div>');
+				uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
 			var createNode=function(){
 				if(event.created) return;
 				if(directstartmode&&lib.node){

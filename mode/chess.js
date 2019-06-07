@@ -28,6 +28,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		}
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+				if (get.config('chess_mode') == 'combat'){
+ 					uiintro.add('<div class="text left">选最多3名角色，和等量的角色作战！<br>也可以与BOSS作战<br>往下翻，下面有设置</div>');
+				} else if (get.config('chess_mode') == 'three'){
+					uiintro.add('<div class="text left">3v3，但是改用战棋了！</div>');
+				} else if (get.config('chess_mode') == 'leader'){
+					uiintro.add('<div class="text left">选择后宫王，选择角色，然后选择挑战谁咯。<br> 游戏难度会影响出现的角色强度，获得的奖励，和战斗失败的惩罚</div>');
+				}
+				uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
     		lib.init.css(lib.assetURL+'layout/mode','chess');
     		ui.chesssheet=document.createElement('style');
     		document.head.appendChild(ui.chesssheet);
@@ -541,6 +553,27 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		}
 
     		event.trigger('gameStart');
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+					uiintro.add('<div class="text left">路障不可以通过，角色周围九格里有至少4个路障的话，出牌阶段可以移除一个。<br>牌和技能都不会对与来源8距离以外的角色生效。</div>');
+					if (get.config('chess_treasure')){
+						uiintro.add('<div class="text left"><br>每轮结束时，有概率出现一个机关格子。机关不可以通过，每回合扣1点计数，计数为0后消失</div>');
+					}
+					if (get.config('end_draw')){
+						uiintro.add('<div class="text left"><br>每轮结束时，角色少的一方可以令（角色差）名角色摸牌。</div>');
+					}
+					if (get.config('reward')){
+						uiintro.add('<div class="text left"><br>击坠敌方角色后，奖励摸牌。</div>');
+					}
+					if (get.config('punish')){
+						uiintro.add('<div class="text left"><br>击坠己方角色后，惩罚弃牌。</div>');
+					}
+					if (get.config('damage_move')){
+						uiintro.add('<div class="text left"><br>对距离2以内的角色造成伤害后，那名角色向反方向移动一格。</div>');
+					}
+					uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
     		game.gameDraw(p);
     		game.me.classList.add('current_action');
     		if(_status.mode=='three'){
@@ -2310,7 +2343,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					dialog1.buttons[i].area='lord';
     				}
     				var j=i;
-    				dialog1.add('选择武将');
+    				dialog1.add('选择角色');
     				var getCapt=function(str){
     					if(str.indexOf('_')==-1){
     						return str[0];

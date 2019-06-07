@@ -159,6 +159,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        start.style.zIndex=3;
 	        start.style.transition='all 0s';
 	        start.hide();
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+					uiintro.add('<div class="text left">阿求已经有主人了！不要想奇怪的事情！</div>');
+					uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
 	        game.addScene=function(name,clear){
 	            var scene=lib.storage.scene[name];
 	            var brawl={
@@ -757,7 +763,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						    		'主帅选项：开启后，双方各选择一名角色成为主将。主将体力上限加一，主将坠机后，若有副将，副将代替之成为主将，否则游戏结束<li>'+
 						    		'无尽模式：开启后，任何一方有角色坠机都将选择一名新角色重新加入战场，直到点击左上角的结束游戏按钮手动结束游戏。结束游戏时，击坠数更多的一方获胜<li>'+
 						    		'行动顺序：行动顺序为[指定]时，双方无论存活角色角色多少都将轮流进行行动。<li>'+
-						    		'回合结束摸牌：在一方所有角色行动完毕进行下一轮行动时，若其人数比另一方少，另一方可指定至多X名角色名摸一张牌，X为人数之差'+
+						    		'回合结束摸牌：在一方所有角色行动完毕进行下一轮行动时，若其人数比另一方少，另一方可指定至多X名角色名摸一张牌，X为人数之差<li>'+
 						    		'战场机关：开启后，游戏开始时，场上会出现一个机关；且每个轮次结束后，有一定机率出现一个机关。机关不参与战斗，并有一个影响周围或全体角色的效果。机关在出现后的3个轮次内消失<li>'+
 						    		'伤害击飞：开启后，当一名角色对距离两格以内的目标造成伤害后，受伤害角色将沿反方向移动一格<li>'+
 						    		'路障：角色不能移动到路障。当一名角色的周围四格有至少三格为路障或在战场外时，其可以在回合内清除一个相邻路障</ul>'+

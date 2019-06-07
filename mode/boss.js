@@ -41,6 +41,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			}
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+					uiintro.add('<div class="text left">选3个角色，挑战大魔王！<br>也可以作为大魔王揍3个角色。<br>最右边两个是另类挑战，建议尝试。</div>');
+					uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
 			lib.translate.restart='返回';
 			lib.init.css(lib.assetURL+'layout/mode','boss');
 			game.delay(0.1);
@@ -937,6 +943,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},1000);
 					_status.damageCount=0;
 					ui.damageCount=ui.create.system('伤害: 0',null,true);
+					lib.setPopped(ui.rules,function(){
+						var uiintro=ui.create.dialog('hidden');
+							uiintro.add('<div class="text left">[选项→通用]里可以提高游戏速度<br>关掉[回合顺序自选]和[单人控制]也可以显著提升游戏速度<br>不要想了，快点打上去！</div>');
+							uiintro.add(ui.create.div('.placeholder.slim'))
+						return uiintro;
+					},400);
 				}
 			},
 			boss_patchy1:{
@@ -990,6 +1002,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.boss.say('？<br>我走哪儿来了？');
 					ui.backgroundMusic.src = '';
 					lib.config.background_music = '';
+					lib.setPopped(ui.rules,function(){
+						var uiintro=ui.create.dialog('hidden');
+							uiintro.add('<div class="text left">[选项→挑战]里可以打开单人控制<br>光头在回合外不会使用牌<br>不要放弃治疗啊！</div>');
+							uiintro.add(ui.create.div('.placeholder.slim'))
+						return uiintro;
+					},400);
 				},
 				gameDraw:function(player){
 					return player==game.boss?12:4;

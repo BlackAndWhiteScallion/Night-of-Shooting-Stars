@@ -40185,16 +40185,7 @@ smoothAvatar:function(player,vice){
                 if (lib.config.mode != 'identity') ui.incidents.style.display = 'none';
                 
                 ui.rules = ui.create.system('规则',null,true);
-                /*
-                lib.setPopped(ui.rules,function(){
-                    var uiintro=ui.create.dialog('hidden');
-
-                        uiintro.add('<div class="text center">1. 击坠敌人后，来源摸一张牌，获得1点灵力 <br> 2. 准备阶段，场上敌人数小于2，会刷出下一个敌人 <br> 3. 通关时，摸一张技能牌，回复1点体力，并重置牌堆 <br> 4.手牌上限+X（X为已通关卡数量） </div>');
-                        uiintro.add(ui.create.div('.placeholder.slim'))
-
-                    return uiintro;
-                },180);
-                */
+                
                 if(!lib.config.show_playerids||!game.showIdentity){
                     ui.playerids.style.display='none';
                 }
