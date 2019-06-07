@@ -290,33 +290,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.zhong.addSkill('sheshen');
 					}
 				}
-				var enhance_zhu=false;
-				if(_status.connectMode){
-					enhance_zhu=(_status.mode!='zhong'&&lib.configOL.enhance_zhu&&get.population('fan')>=3);
-				}
-				else{
-					enhance_zhu=(_status.mode!='zhong'&&get.config('enhance_zhu')&&get.population('fan')>=3);
-				}
-				if(enhance_zhu){
-					var skill;
-					switch(game.zhu.name){
-						case 'liubei':skill='jizhen';break;
-						case 'dongzhuo':skill='hengzheng';break;
-						case 'sunquan':skill='batu';break;
-						case 'sp_zhangjiao':skill='tiangong';break;
-						case 'liushan':skill='shengxi';break;
-						case 'sunce':skill='ciqiu';break;
-						case 'yuanshao':skill='geju';break;
-						case 're_caocao':skill='dangping';break;
-						case 'caopi':skill='junxing';break;
-						case 'liuxie':skill='moukui';break;
-						default:skill='tianming';break;
-					}
-					game.broadcastAll(function(player,skill){
-						player.addSkill(skill);
-						player.storage.enhance_zhu=skill;
-					},game.zhu,skill);
-				}
 			}
 			game.syncState();
 			event.trigger('gameStart');
@@ -964,6 +937,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(i in lib.character){
 						if(chosen.contains(i)) continue;
 						if(lib.filter.characterDisabled(i)) continue;
+						if (!i || !lib.character[i]) continue;
 						event.list.push(i);
 						if(lib.character[i][4]&&lib.character[i][4].contains('zhu')){
 							list2.push(i);

@@ -519,6 +519,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				type:'equip',
 				subtype:'equip4',
 				modeimage:'stg',
+				unique:true,
 				ai:{
 					basic:{
 						equipValue:6,
@@ -531,6 +532,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				type:'equip',
 				subtype:'equip4',
 				modeimage:'stg',
+				unique:true,
 				ai:{
 					basic:{
 						equipValue:6,
@@ -543,6 +545,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				type:'equip',
 				subtype:'equip4',
 				modeimage:'stg',
+				unique:true,
 				ai:{
 					basic:{
 						equipValue:6
@@ -555,6 +558,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				type:'equip',
 				subtype:'equip4',
 				modeimage:'stg',
+				unique:true,
 				ai:{
 					basic:{
 						equipValue:6
@@ -567,6 +571,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				type:'equip',
 				subtype:'equip4',
 				modeimage:'stg',
+				unique:true,
 				ai:{
 					basic:{
 						equipValue:6
@@ -579,6 +584,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				type:'equip',
 				subtype:'equip4',
 				modeimage:'stg',
+				unique:true,
 				ai:{
 					basic:{
 						equipValue:6

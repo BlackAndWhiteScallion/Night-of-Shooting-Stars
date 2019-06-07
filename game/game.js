@@ -9052,20 +9052,8 @@
                 cheat.g('juedou');
             },
             z:function(name){
-                switch(name){
-                    case 'cc':name='re_caocao';break;
-                    case 'lb':name='re_liubei';break;
-                    case 'sq':name='sunquan';break;
-                    case 'dz':name='dongzhuo';break;
-                    case 'ys':name='re_yuanshao';break;
-                    case 'zj':name='sp_zhangjiao';break;
-                    case 'ls':name='liushan';break;
-                    case 'sc':name='sunce';break;
-                    case 'cp':name='caopi';break;
-                    case 'cr':name='caorui';break;
-                    case 'sx':name='sunxiu';break;
-                    case 'lc':name='liuchen';break;
-                    case 'sh':name='sunhao';break;
+                switch(name){  
+                    default:name='remilia';
                 }
                 game.zhu.init(name);
                 game.zhu.maxHp++;
@@ -13255,6 +13243,7 @@
                     for(var i=0;i<cards.length;i++){
                         cards[i].style.transform+=' scale(0.2)';
                         cards[i].classList.remove('glow');
+                        cards[i].classList.remove('unequip');
                         cards[i].recheck();
                         var info=lib.card[cards[i].name];
                         if(info.destroy||cards[i]._destroy){
@@ -13352,7 +13341,7 @@
                     }
                     else{
                         if(event.loseEquip){
-                            player.addEquipTrigger();
+                            //player.addEquipTrigger();
                         }
                         event.finish();
                     }
@@ -15405,7 +15394,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     var i,j;
                     if(arg3!==false){
                         for(i=0;i<this.node.equips.childElementCount;i++){
-                            if(!this.node.equips.childNodes[i].classList.contains('removing')){
+                            if(!this.node.equips.childNodes[i].classList.contains('removing') && !this.node.equips.childNodes[i].classList.contains('unequip')){
                                 var equipskills=get.info(this.node.equips.childNodes[i]).skills;
                                 if(equipskills){
                                     es.addArray(equipskills);
@@ -15448,7 +15437,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         var es=[];
                         if(arg3!==false){
                             for(i=0;i<this.node.equips.childElementCount;i++){
-                                if(!this.node.equips.childNodes[i].classList.contains('removing')){
+                                if(!this.node.equips.childNodes[i].classList.contains('removing') && !this.node.equips.childNodes[i].classList.contains('unequip')){
                                     var equipskills=get.info(this.node.equips.childNodes[i]).skills;
                                     if(equipskills){
                                         es.addArray(equipskills);
@@ -18568,6 +18557,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                                 this.addSkillTrigger(info.skills[j]);
                             }
                         }
+                        card.classList.remove('unequip');
                     }
                     else{
                         var es=this.getCards('e');
@@ -18585,6 +18575,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                                 this.removeSkillTrigger(info.skills[j]);
                             }
                         }
+                        card.classList.add('unequip');
                         if(info.clearLose&&typeof info.onLose=='function'){
                             var next=game.createEvent('lose_'+card.name);
                             next.setContent(info.onLose);
@@ -18624,7 +18615,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         }
                         this.initedSkills.remove(skill);
                     }
-                    if(info.trigger){
+                    if(info.trigger&&this.playerid){
                         var playerid=this.playerid;
                         var removeTrigger=function(i,evt){
                             if(i=='global'){
@@ -22300,6 +22291,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 				return true;
 			},
             characterDisabled:function(i,libCharacter){
+                if (!i || !lib.character[i]) return false;
                 if(lib.character[i][4]&&lib.character[i][4].contains('forbidai')) return true;
                 if(lib.character[i][4]&&lib.character[i][4].contains('unseen')) return true;
                 if(lib.config.forbidai.contains(i)) return true;
@@ -23932,7 +23924,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 updaterooms:function(list,clients){
                     if(ui.rooms){
                         ui.window.classList.add('more_room');
-                        var list2=['re_caocao','re_liubei','sunquan','sp_zhangjiao','re_yuanshao','dongzhuo'];
+                        var list2=['','','','','',''];
                         for(var i=0;i<ui.rooms.length;i++){
                             ui.rooms[i].initRoom(list[i],list2[i]);
                         }
@@ -29057,6 +29049,7 @@ smoothAvatar:function(player,vice){
 						player.node.equips.classList.add('popequip');
 						auto_confirm=false;
 					}
+                    // 等下来试试给技能牌搞个栏？
                 }
                 if(custom.add.card){
                     custom.add.card();
@@ -38746,7 +38739,6 @@ smoothAvatar:function(player,vice){
             characterDialog2:function(filter){
                 var list=[];
                 for(var i in lib.character){
-                    console.log(i);
                     if(lib.character[i][4].contains('minskin')) continue;
                     if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
                         if(lib.config.mode=='boss') continue;

@@ -1374,6 +1374,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            discardPile:[],
 	                        };
 	                        for(var i=0;i<line7.childElementCount;i++){
+								console.log(line7.childNodes[i].info);
 	                            scene.players.push(line7.childNodes[i].info);
 	                        }
 	                        if(scene.players.length<2){
@@ -1699,11 +1700,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        player.info=info;
 	                        var name=info.name,name3=info.name2;
 	                        if(name=='random'){
-	                            name='re_caocao';
+	                            name='zigui';
 	                        }
 	                        if(name3!='none'){
 	                            if(name3=='random'){
-	                                name3='liubei';
+	                                name3='zigui';
 	                            }
 	                            player.init(name,name3);
 	                            if(info.name2=='random'){

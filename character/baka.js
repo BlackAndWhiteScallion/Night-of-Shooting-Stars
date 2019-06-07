@@ -279,7 +279,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             translate:{
                   cirno:'琪露诺',
                   jidong:'急冻',
-                  jidong_2:'急冻',
+                  jidong_2:'急冻（→轰）',
                   jidong_audio1:'就像青蛙一样！',
                   jidong_audio2:'接好这个大冰块！',
                   jidong_audio3:'大酱，你看！是青蛙！',

@@ -1280,8 +1280,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				target.loselili();
 				target.equip(event.card);
-				player.update();
 				if (player == game.me) ui.updatehl();
+				player.update();
 			},
 			skills:['frog_skill'],
 			ai:{
