@@ -512,7 +512,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
 	                    var versus=ui.create.node('button','已知BUG',line2,function(){
-	        				var i = ['<br>',
+	        				var i = [
 	    				'<u>已知bug列表：</u>',
 	    				'1. 永琳，紫妈，梅莉，还有莉格露观看牌堆时有时候会因不明原因卡住，暂停再取消暂停就行了。铃仙有时候也会卡住，使用同样方式解决。',
 	    				'2. 永琳使用符卡效果有时候会卡住，有时候可以通过暂停来解决，有时候就是卡死了。因原因不明，碰到的话请一定向制作组反馈情况。',

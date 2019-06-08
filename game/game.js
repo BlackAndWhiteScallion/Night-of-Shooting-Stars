@@ -8022,8 +8022,8 @@
                             node.addEventListener('mouseleave',upNode);
                         }
                         if (lib.config.all.mode[i] == 'identity' && lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] > 2){
-                            node.style.boxShadow='rgba(125, 90, 178, 1) 0 0 3px 5px, rgba(125, 90, 178, 1) 0 3px 10px';
-                            node.style.background='rgba(125, 90, 178, 1)';
+                            node.style.boxShadow='rgba(125, 90, 178, 0.4) 0 0 3px 5px, rgba(125, 90, 178, 0.4) 0 3px 10px';
+                            node.style.background='rgba(125, 90, 178, 0.4)';
                         }
                         setTimeout((function(node){
                             return function(){
@@ -40075,6 +40075,7 @@ smoothAvatar:function(player,vice){
                 ui.replay=ui.create.system('重来',game.reload,true);
                 ui.replay.id='restartbutton';
                 ui.config2=ui.create.system('选项',ui.click.config);
+                ui.config2.style.backgroundImage = 'linear-gradient(rgba(0, 133, 255, 0.8), rgba(0, 133, 255, 0.8))';
                 ui.pause=ui.create.system('暂停',ui.click.pause);
                 ui.pause.id='pausebutton';
                 if(!_status.video){
@@ -40185,7 +40186,7 @@ smoothAvatar:function(player,vice){
                 if (lib.config.mode != 'identity') ui.incidents.style.display = 'none';
                 
                 ui.rules = ui.create.system('规则',null,true);
-                
+
                 if(!lib.config.show_playerids||!game.showIdentity){
                     ui.playerids.style.display='none';
                 }
@@ -41966,6 +41967,13 @@ smoothAvatar:function(player,vice){
                     }
                     vol2.appendChild(span);
                 }
+
+                var off = ui.create.div('.menubutton','静音',{position:'relative'},function(){
+                        lib.config.volumn_background = 0;
+                        ui.backgroundMusic.volume = 0;
+                        lib.config.volumn_audio = 0;
+                    });
+                uiintro.add(off);
                 uiintro.add(ui.create.div('.placeholder'));
                 return uiintro;
             },
