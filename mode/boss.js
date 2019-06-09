@@ -609,7 +609,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						// 不在重整状态的玩家进行一个回合
 						// 在这里加入让玩家选顺序应该就可以
-						if (lib.config.free_turn && player != game.boss && game.me != game.boss && game.bossinfo.loopType==2){
+						if (get.config('free_turn') && player != game.boss && game.me != game.boss && game.bossinfo.loopType==2){
 							game.me.chooseTarget('选择下一名进行回合的我方角色',function(card,player,target){
                               return target.identity == 'cai';
                               }).set('ai',function(target){

@@ -5399,6 +5399,9 @@
                         init:true,
                         frequent:true,
                         intro:'在回合顺序1（盟军与魔王轮流进行回合）中，盟军的回合顺序由玩家决定',
+                        onclick:function(bool){
+                            game.saveConfig('free_turn',bool,this._link.config.mode);
+                        },
                     },
                     single_control:{
                         name:'单人控制',

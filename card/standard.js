@@ -2059,7 +2059,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		hourai_skill:{
-			audio:2,
+			audio:0,
 			trigger:{target:'useCardToBegin'},
 			filter:function(event,player){
 				return get.subtype(event.card) == 'attack' && player.countCards('e', {name:'hourai'});
