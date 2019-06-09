@@ -230,6 +230,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return target.hp<target.maxHp;
 			},
 			content:function(){
+				if (Math.random()<0.2){
+					target.say('这个不是用来插在后面的吗？');
+				}
 				target.recover();
 			},
 			ai:{
@@ -316,6 +319,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<player.storage._enhance;i++){
     					if (target.num('ej')) player.discardPlayerCard('ej',target,true);
     				}
+				}
+				if (player.name == 'aya'){
+					game.trySkillAudio('fengmi_1',player,true,Math.ceil(2*Math.random()));
 				}
 			},
 			ai:{
@@ -424,6 +430,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			selectTarget:-1,
 			filterTarget:function(card,player,target){
 				return true;
+			},
+			contentBefore:function(){
+				if (player.name == 'reimu'){
+					player.say('博丽神社例大祭开始啦！欢迎光临欢迎光临！赛钱箱在这边！');
+				}
 			},
 			content:function(){
 				'step 0'
@@ -708,6 +719,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			modTarget:true,
 			content:function(){
+				if (target.name == 'flandre'){
+					target.say('哈哈哈哈哈哈，来玩个够吧！');
+				}
 				if (player.storage._enhance){
 					for(var i=0;i<player.storage._enhance;i++){
     					target.draw(1);
@@ -755,6 +769,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			notarget:true,
 			content:function(){
+				if (player.name == 'patchouli'){
+					game.trySkillAudio('riyin2',player,true,Math.ceil(2*Math.random()));
+				}
 				event.result='wuxied';	// 效果无效（抵消）
 				if(player.isOnline()){
 					player.send(function(player){
@@ -1425,6 +1442,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			forceaudio:true,
 			prompt:'请选择要供奉的牌',
 			content:function(){
+				if (target.name == 'reimu') target.say('谢谢谢谢！太谢谢了太谢谢了！请你下次一定要再来！听见了没有，一定要再来啊！');
+				else target.say('谢谢！');
 				target.gain(cards);
 			},
 			ai:{
@@ -1464,6 +1483,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return event.card.name=='sha';
 			},
 			content:function(){
+				if (player.name == 'youmu'){
+					player.say('任何防御都挡不住我！');
+				}
 				for (var i = 0; i < trigger.targets.length; i ++){
 					trigger.targets[i].addTempSkill('unequip', 'useCardAfter');
 				}
@@ -1476,6 +1498,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return (event.card && get.subtype(event.card) == 'attack' && event.nature != 'thunder');
 			},
 			content:function(){
+				if (player.name == 'youmu'){
+					player.say('灵魂也躲不了我的这把剑！');
+				}
 				trigger.player.damage('thunder');
 			},
 			ai:{
@@ -1694,6 +1719,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				"step 0"
+				if (player.name == 'eiki'){
+					player.say('不要在阎魔面前隐藏任何东西。没用的。');
+				}
 				if(target.get('h').length==0){
 					event.finish();
 					return;
@@ -1794,6 +1822,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				'step 0'
+				if (player.name == 'kaguya'){
+					player.say('看呐，我的宝物哟。');
+				}
 				player.chooseControl('花色','点数').set('ai',function(){
 						return '点数';
 					}).set('prompt','想要更改哪一样？');
@@ -1883,7 +1914,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		lunadial_skill:{
-			audio:2,
+			audio:0,
 			enable:'phaseUse',
 			usable:1,
 			filterTarget:function(card,player,target){
@@ -1893,6 +1924,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				"step 0"
 				player.loselili();
 				target.addSkill('lunadial2');
+				if (player.name == 'sakuya'){
+					game.trySkillAudio('lunadial_skill',player,true,Math.ceil(2*Math.random()));
+				}
 			},
 			ai:{
 				basic:{
@@ -1988,6 +2022,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				player.loselili();
 				player.useCard({name:'sha'},target);
+				if (player.name == 'marisa'){
+					game.trySkillAudio('hakkero_skill',player,true,Math.ceil(2*Math.random()));
+				}
 			},
 			ai:{
 				basic:{
@@ -2037,6 +2074,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				}
 				game.log('替身人形：',trigger.card,'对',player,'无效');
+				if (player.name == 'alice'){
+					game.trySkillAudio('hourai_skill',player,true,Math.ceil(2*Math.random()));
+				}
 				trigger.untrigger();
 				trigger.finish();
 			},
@@ -2984,6 +3024,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		houraiyuzhi_info:'一回合一次，出牌阶段，你可以展示一张牌，并声明一种花色或点数；该牌该项视为与声明的相同，直到回合结束。',
 		hourai:'替身人形',
 		hourai_skill:'替身人形',
+		hourai_skill_audio1:'蓬莱，帮个忙。',
+		hourai_skill_audio2:'太简单了。',
 		hourai_info:'你成为攻击牌的目标后，可以收回装备区中的此牌，令该牌对你无效。',
 		frog:'冰镇青蛙',
 		frog_info:'你可以将此牌置入一名其他角色的装备区（可以替换），对其造成1点灵击伤害；你可以将此牌当作【轰！】使用。',
@@ -2995,6 +3037,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		*/
 		lunadial:'月时针',
 		lunadial_skill:'The World',
+		lunadial_skill_audio1:'砸瓦鲁多！',
+		lunadial_skill_audio2:'这一招，是跟谁学的来着？',
 		lunadial_info:'一回合一次，出牌阶段，你可以消耗1点灵力，然后令一名其他角色不能使用或打出手牌，直到结束阶段。',
 		/*
 		kusanagi:'草薙剑',
@@ -3003,6 +3047,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		*/
 		hakkero:'八卦炉',
 		hakkero_skill:'轰过去！',
+		hakkero_skill_audio1:'不要低估了我的火力！',
+		hakkero_skill_audio2:'这就是我的宝具，迷你八卦炉！',
 		hakkero_info:'出牌阶段，你可以消耗1点灵力，视为使用一张【轰！】',
 		lantern:'人魂灯',
 		lantern_skill:'人魂灯',

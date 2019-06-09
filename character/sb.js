@@ -398,6 +398,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   fengmi_audio1:'「幻想风靡」！',
                   fengmi_audio2:'放心，我会放水的啦~',
                   fengmi_1:'幻想风靡',
+                  fengmi_1_audio1:'风起！',
+                  fengmi_1_audio2:'手放下来！不要按裙子！',
                   fengmi_info:'符卡技（1）你的一个阶段开始时，可以消耗1点灵力，或跳过该阶段，然后视为使用一张无距离限制的【疾风骤雨】。',
                   aya_die:'明天的报纸上见！',
             },

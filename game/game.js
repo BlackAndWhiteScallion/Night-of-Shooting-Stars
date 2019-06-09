@@ -48099,6 +48099,7 @@ smoothAvatar:function(player,vice){
         },
         attitude:function(from,to){
             if(!from||!to) return 0;
+            if(from == to) return 5;
             if (from.name == 'eiki' && lib.config.eiki_silence && to == game.me) return -10000000;
             var att=get.rawAttitude.apply(this,arguments);
             if(from.isMad()) att=-att;
@@ -48120,7 +48121,7 @@ smoothAvatar:function(player,vice){
                 }
                 delete _status.tempnofake;
             }
-            if (from.hasSkill('death_win') || to.hasSkill('death_win')) att = -1;
+            if (from.hasSkill('death_win') || to.hasSkill('death_win') && from != to) att = -1;
             return att;
         },
         sgnAttitude:function(){

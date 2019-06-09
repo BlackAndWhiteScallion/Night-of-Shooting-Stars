@@ -407,7 +407,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss'], 'shu'],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
 				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'shen'],
-				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','boss_damagecount'],['boss'],'shu'],
+				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','skipfirst','boss_damagecount'],['boss'],'shu'],
 				boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
 			},
 		},
@@ -949,6 +949,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							uiintro.add(ui.create.div('.placeholder.slim'))
 						return uiintro;
 					},400);
+					game.boss.say('嗷呜~~~~');
 				}
 			},
 			boss_patchy1:{

@@ -330,7 +330,8 @@ window.noname_skin_list={
     lilywhite:2,
     alice:5,
     lunasa:2,
-    merlin:1,
+    merlin:2,
+    lyrica:2,
     youmu:2,
     yuyuko:3,
     ran:2,
@@ -355,4 +356,5 @@ window.noname_skin_list={
     kanade:2,
     boss_reimu:1,
     zigui:1,
+    renko:1,
 };

@@ -35,7 +35,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           event.players=game.filterPlayer();
                           player.line(event.players,'black');
                           "step 1"
-                          if (event.current.name == 'lilywhite') game.trySkillAudio('chunmian',event.current,true,3);
+                          if (event.current.name == 'lilywhite') game.trySkillAudio('chunmian',player,true,3);
                           event.current.chooseTarget([1,1],true,'弃置与你最近的一名其他角色一张牌',function(card,player,target){
                               // 不能选玩家
                               if(player==target) return false;

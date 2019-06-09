@@ -451,6 +451,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			immaterial_info:'<u>胜利条件：</u>结束阶段，弃牌堆内有8张【葱】。<br/><u>异变效果：</u>一回合一次，你可以消耗1点灵力，视为使用一张【博丽神社例大祭】。',
 			immaterial_normal:'【萃梦】异变效果',
 			immaterial_normal_info:'<u>一回合一次，你可以消耗1点灵力，视为使用一张【博丽神社例大祭】。</u>',
+			immaterial_win:'【萃梦】计数',
+			immaterial_bg:'萃',
 			sb:'文花',
 			sb_info:'<u>胜利条件：</u>所有存活角色均在此牌明置期间发动过符卡技。<br/><u>异变效果：</u>一回合一次，你可以将一张牌当作【突击采访】使用 。',
 			sb_normal:'【文花】异变效果',
