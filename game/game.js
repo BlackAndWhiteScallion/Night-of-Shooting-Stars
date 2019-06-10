@@ -5315,7 +5315,7 @@
                     },
                     connect_avatar:{
                         name:'联机头像',
-                        init:'caocao',
+                        init:'reimu',
                         item:{},
                         frequent:true,
                         onclick:function(item){
@@ -29174,6 +29174,7 @@ smoothAvatar:function(player,vice){
                         if(enable){
                             if(info.filter&&!info.filter(event,player)) enable=false;
                             // 强制0灵力不能开符卡
+                            if (info.spell && player.isTurnedOver()) return false;
                             if(info.spell&&player.lili == 0) enable=false;
                             // ignoreviewas 用于无视卡牌限制
                             if(info.viewAs&&event.filterCard&&!event.filterCard(info.viewAs,player)&&!player.hasSkillTag('ignoreviewas')) enable=false;

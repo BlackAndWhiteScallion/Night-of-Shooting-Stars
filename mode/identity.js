@@ -2153,11 +2153,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								return -7;
 							case 'mingzhong':return -5;
 							case 'nei':
-								//if(zhongmode&&to.ai.sizhong) return -7;
-								if(get.population('fan')==1) return 0;
-								//if(get.population('zhong')+get.population('mingzhong')==0) return -7;
-								if(game.zhu&&game.zhu.hp<=2) return -1;
-								return Math.min(3,situation);
+								return 0;
 							case 'fan': return 5;
 						}
 				}
@@ -2165,38 +2161,47 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			// 检测当前场上情况（好像不会计算内奸）
 			situation:function(absolute){
 				var i,j,player;
+				// 数值：主忠，共计，主，反
 				var zhuzhong=0,total=0,zhu,fan=0;
+				// 每一名角色检测：
 				for(i=0;i<game.players.length;i++){
 					player=game.players[i];
+					// 检测角色的体力
 					var php=player.hp;
-					if(player.hasSkill('benghuai')&&php>4){
-						php=4;
-					}
-					else if(php>6){
+					// 大于6就当作6了
+					if(php>6){
 						php=6;
 					}
-					j=player.countCards('h')+player.countCards('e')*1.5+php*2;
+					// j = 角色手牌数+角色装备数*1.5+体力值*2
+					j=player.countCards('h')+player.countCards('j')*1.2+player.countCards('e')*1.5+php*2;
+					// 如果玩家是主公，主忠+j*1.2+5，主=j，共计+1.2j+5
 					if(player.identity=='zhu'){
-						zhuzhong+=j*1.2+5;
-						total+=j*1.2+5;
+						zhuzhong+=j+5;
+						total+=j+5;
 						zhu=j;
 					}
+					// 如果玩家是忠，主忠+0.8j+3
 					else if(player.identity=='zhong'||player.identity=='mingzhong'){
-						zhuzhong+=j*0.8+3;
-						total+=j*0.8+3;
+						zhuzhong+=j+3;
+						total+=j+3;
 					}
+					// 如果玩家是反贼，主忠方-j-4
 					else if(player.identity=='fan'){
 						zhuzhong-=j+4;
 						total+=j+4;
 						fan+=j+4;
 					}
 				}
+				// 如果是绝对的，直接返回主忠计数
 				if(absolute) return zhuzhong;
+				// result是主忠计数/所有角色计数的十分比
 				var result=parseInt(10*Math.abs(zhuzhong/total));
+				// 如果主忠计数为负值，负数值翻过来
 				if(zhuzhong<0) result=-result;
+				// 如果不是明忠模式：
 				if(!game.zhong){
-					if(zhu<12&&fan>30) result--;
-					if(zhu<6&&fan>15) result--;
+					// 如果主公没有反贼强，或者主公要死了，result下降
+					if(fan >= 2 * zhu) result--;
 					if(zhu<4) result--;
 				}
 				return result;
