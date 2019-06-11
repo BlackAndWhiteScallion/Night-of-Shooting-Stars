@@ -677,7 +677,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					*/
 					else if (player.identity == 'nei' && (!_status.connectMode && ((lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] && lib.config.gameRecord.incident.data['akyuu'] >= 3) || lib.config.library && lib.config.library[3]))){
-						lib.character['akyuu'] = ['female','1',3,['luguo','mengji','boom'],[]];
+						lib.character['akyuu'] = ['female','1',3,['luguo','mengji','boom','yixiang'],[]];
 						lib.characterIntro['akyuu']='全名稗田阿求，将毕生奉献于记载幻想乡的历史的稗田家的现任家主。持有过目不忘的记忆能力。<br><b>画师：渡瀬　玲<br></b><br>现因一些原因，被赋予了幻想乡的管理员权限。不过依然是和平常一样做着记录屋的工作。';
 						player.init('akyuu');
 					}
@@ -1631,13 +1631,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			sheshen:'舍身',
 			sheshen_info:'锁定技，主公处于濒死状态即将死亡时，令主公+1体力上限，回复体力至X点（X为你的体力值数），获得你的所有牌，然后你死亡',
 			luguo:'无作',
-			luguo_info:'锁定技，此角色只能在路人身份使用；游戏开始时，你明置身份（不发动明置效果）并明置身份（不发动明置效果），并获得一张【平和】异变牌。',
+			luguo_info:'锁定技，此角色只能在路人身份使用；游戏开始时，你明置身份（不发动明置效果），并获得一张【平和】异变牌。',
 			library_skill2:'【平和】异变效果',
 			library_skill2_info:'<u>一名角色的回合结束时，若其本回合没有对其他角色使用攻击牌或控场牌，其摸一张牌。</u>',
 			library_info:'<u>胜利条件：</u>无。<br/><u>异变效果：</u>一名角色的回合结束时，若其本回合没有对其他角色使用攻击牌或控场牌，其摸一张牌。',
 			mengji:'缘起',
 			mengji2:'缘起',
 			mengji_info:'锁定技，游戏开始时，根据玩家最近所使用的角色，追加一至三条规则；准备阶段，根据游戏中至今出场过的异变牌，更换你的异变牌。',
+			yixiang:'忆想',
+			yixiang_info:'一回合一次，出牌阶段，你可以交给一名角色任意张牌：直到你的回合开始，一回合一次，其因牌以外的方式受到伤害时，或被其他角色弃置/获得牌时，可以弃置一张牌，防止之。',
+			yixiang_defend:'忆想（防止）',
 			shuchu:'输出',
 			shuchu_info:'一名角色的回合结束时，其摸X张牌（X为其本回合造成的伤害数）。',
 			fuzhu:'辅助',
@@ -1774,7 +1777,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				// 等下，这是AI用的吧？
 				logAi:function(targets,card){
-					if(this.ai.shown==1||this.isMad()) return;
+					if(this.ai.shown==1||this.hasSkill('mad')) return;
 					if(typeof targets=='number'){
 						this.ai.shown+=targets;
 					}
@@ -2531,14 +2534,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					threaten:-10
 				},
 			},
-			d:{
+			yixiang:{
 				enable:'phaseUse',
-				selectTarget:1,
-				filterTarget:function(){
-					return true;
+				audio:2,
+				filterCard:true,
+				selectCard:[1,Infinity],
+				discard:false,
+				prepare:'give',
+				usable:1,
+				filterTarget:function(card,player,target){
+					return player!=target;
+				},
+				check:function(card){
+					return -1;
 				},
 				content:function(){
-					
+					target.gain(cards,player);
+					target.addSkill('yixiang_defend');
 				},
 				ai:{
 					effect:{
@@ -2548,6 +2560,37 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			yixiang_defend:{
+				group:'yixiang_expire',
+				mark:true,
+				trigger:{target:['discardPlayerCardBegin','gainPlayerCardBegin'], player:'damageBefore'},
+				filter:function(event, player){
+					if (event.target && event.player == event.target) return false;
+					if (event.getParent('useCard')) return false; 
+					return player.countCards('hej');
+				},
+				content:function(){
+					'step 0'
+					player.chooseToDiscard(false,'hej');
+					'step 1'
+					if (result.bool){
+						trigger.cancel();
+					}
+				},
+				check:function(){
+					return true;
+				},
+			},
+			yixiang_expire:{
+				direct:true,
+				trigger:{global:'phaseBegin'},
+				filter:function(event, player){
+					return event.player.hasSkill('yixiang');
+				},
+				content:function(){
+					player.removeSkill('yixiang_defend');
+				},
+			},
 			finalspark:{
 				enable:'phaseUse',
 				selectTarget:1,
@@ -2555,7 +2598,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 				content:function(){
-					targets[0].damage(Number.MAX_SAFE_INTEGER);
+					targets[0].damage(Infinity);
 				},
 				ai:{
 					effect:{

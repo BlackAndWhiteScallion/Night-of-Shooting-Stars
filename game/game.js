@@ -611,6 +611,30 @@
                         init:false,
                         intro:'异变模式下，路人因异变胜利后，游戏不结束',
                     },
+                    double_hp:{
+                        name:'双将体力上限',
+                        init:'pingjun',
+                        item:{
+                            hejiansan:'和减三',
+                            pingjun:'平均值',
+                            zuidazhi:'最大值',
+                            zuixiaozhi:'最小值',
+                            zonghe:'相加',
+                        },
+                        restart:true,
+                    },
+                    double_lili:{
+                        name:'双将起始灵力',
+                        init:'pingjun',
+                        item:{
+                            hejiansan:'和减三',
+                            pingjun:'平均值',
+                            zuidazhi:'最大值',
+                            zuixiaozhi:'最小值',
+                            zonghe:'相加',
+                        },
+                        restart:true,
+                    },
                     eiki_silence:{
                         name:'映姬大人闭嘴啦！',
                         init:false,
@@ -1097,8 +1121,8 @@
                             ui.background=ui.create.div('.background');
 
                             if(lib.config.image_background_blur){
-                                ui.background.style.filter='blur(8px)';
-                                ui.background.style.webkitFilter='blur(8px)';
+                                ui.background.style.filter='blur(4px)';
+                                ui.background.style.webkitFilter='blur(4px)';
                                 ui.background.style.transform='scale(1.05)';
                             }
                             else{
@@ -1146,8 +1170,8 @@
                         onclick:function(bool){
                             game.saveConfig('image_background_blur',bool);
                             if(lib.config.image_background_blur){
-                                ui.background.style.filter='blur(8px)';
-                                ui.background.style.webkitFilter='blur(8px)';
+                                ui.background.style.filter='blur(4px)';
+                                ui.background.style.webkitFilter='blur(4px)';
                                 ui.background.style.transform='scale(1.05)';
                             }
                             else{
@@ -2760,11 +2784,6 @@
                         init:true,
                         unfrequent:true,
                     },
-                    jiu_effect:{
-                        name:'喝酒效果',
-                        init:true,
-                        unfrequent:true,
-                    },
                     animation:{
                         name:'游戏特效',
                         intro:'开启后出现属性伤害、回复体力等情况时会显示动画',
@@ -2863,7 +2882,7 @@
                 },
             },
             view:{
-                name:'显示',
+                name:'界面',
                 config:{
                     update:function(config,map){
                         if(lib.config.mode=='versus'||lib.config.mode=='chess'||lib.config.mode=='tafang'||lib.config.mode=='boss'){
@@ -3289,8 +3308,8 @@
                         unfrequent:true
                     },
                     hide_card_image:{
-                        name:'隐藏卡牌背景',
-                        intro:'所有卡牌将使用文字作为背景',
+                        name:'隐藏卡牌图片',
+                        intro:'所有卡牌将使用文字作为图片',
                         init:false,
                         unfrequent:true,
                         restart:true,
@@ -4123,12 +4142,6 @@
                                 map.special_identity.hide();
                             }*/
                         }
-                        if(config.double_character){
-                            map.double_hp.show();
-                        }
-                        else{
-                            map.double_hp.hide();
-                        }
                     },
                     identity_mode:{
                         name:'游戏模式',
@@ -4166,18 +4179,6 @@
                         name:'双将模式',
                         init:false,
                         frequent:true,
-                        restart:true,
-                    },
-                    double_hp:{
-                        name:'双将体力上限',
-                        init:'pingjun',
-                        item:{
-                            hejiansan:'和减三',
-                            pingjun:'平均值',
-                            zuidazhi:'最大值',
-                            zuixiaozhi:'最小值',
-                            zonghe:'相加',
-                        },
                         restart:true,
                     },
                     musicchange:{
@@ -4605,12 +4606,6 @@
                                 map.special_identity.hide();
                             }
                         }
-                        if(config.double_character){
-                            map.double_hp.show();
-                        }
-                        else{
-                            map.double_hp.hide();
-                        }
                     },
                     identity_mode:{
                         name:'游戏模式',
@@ -4663,18 +4658,6 @@
                         init:true,
                         frequent:true,
                         restart:true
-                    },
-                    double_hp:{
-                        name:'双将体力上限',
-                        init:'pingjun',
-                        item:{
-                            hejiansan:'和减三',
-                            pingjun:'平均值',
-                            zuidazhi:'最大值',
-                            zuixiaozhi:'最小值',
-                            zonghe:'相加',
-                        },
-                        restart:true,
                     },
                     auto_identity:{
                         name:'自动显示身份',
@@ -5364,7 +5347,7 @@
                 }
             },
             boss:{
-                name:'挑战',
+                name:'魔王',
                 config:{
                     free_choose:{
                         name:'自由选将',
@@ -7315,8 +7298,8 @@
                 if(lib.config.image_background&&lib.config.image_background!='default'&&lib.config.image_background.indexOf('custom_')!=0){
                     ui.background.setBackgroundImage('image/background/'+lib.config.image_background+'.jpg');
                     if(lib.config.image_background_blur){
-                        ui.background.style.filter='blur(8px)';
-                        ui.background.style.webkitFilter='blur(8px)';
+                        ui.background.style.filter='blur(4px)';
+                        ui.background.style.webkitFilter='blur(4px)';
                         ui.background.style.transform='scale(1.05)';
                     }
                 }
@@ -7350,8 +7333,8 @@
                             var data = fileLoadedEvent.target.result;
                             ui.background.style.backgroundImage='url('+data+')';
                             if(lib.config.image_background_blur){
-                                ui.background.style.filter='blur(8px)';
-                                ui.background.style.webkitFilter='blur(8px)';
+                                ui.background.style.filter='blur(4px)';
+                                ui.background.style.webkitFilter='blur(4px)';
                                 ui.background.style.transform='scale(1.05)';
                             }
                         };
@@ -9113,7 +9096,7 @@
             male:'男',
             female:'女',
             mad:'混乱',
-            mad_bg:'疯',
+            mad_bg:'乱',
             draw_card:'摸牌',
             discard_card:'弃牌',
             take_damage:'受伤害',
@@ -14238,6 +14221,7 @@
                     if(today.getMonth() == 3 && today.getDate() == 1){
                         character = 'cirno';
 					    if (character2) character2 = 'cirno';
+                        console.log('愚人节快乐！');
                     }
                     if(typeof character=='string'&&!lib.character[character]){
 						lib.character[character]=get.character(character);
@@ -14272,7 +14256,7 @@
                         info[1] = parseInt(info[1]);
                     }
                     // 默认灵力上限
-                    if(!info[6]){
+                    if(!info[6] || isNaN(parseInt(info[6]))){
                         info[6]=5;
                     } else {
                         info[6] = parseInt(info[6]);
@@ -14333,18 +14317,34 @@
                         if(!info2[4]){
                             info2[4]=[];
                         }
+                        if (info2[1] == '0'){
+                            info2[1] = 0;
+                        }
+                        else if(!info2[1] || isNaN(parseInt(info2[1]))){
+                            info2[1]=2;
+                        } else{
+                            info2[1] = parseInt(info2[1]);
+                        }
+                        if(!info2[6]){
+                            info2[6]=5;
+                        } else {
+                            info2[6] = parseInt(info2[6]);
+                        }
                         this.classList.add('fullskin2');
                         this.node.avatar2.setBackground(character2,'character');
 
                         this.node.avatar2.show();
                         this.name2=character2;
                         var hp1=info[2],hp2=info2[2];
-                        var double_hp;
+                        var lili1=info[1],lili2=info2[1];
+                        var double_hp, double_lili;
                         if(_status.connectMode){
                             double_hp='pingjun';
+                            double_lili='pingjun';
                         }
                         else{
-                            double_hp=get.config('double_hp');
+                            double_hp=lib.config.double_hp;
+                            double_lili=lib.config.double_lili;
                         }
                         switch(double_hp){
                             case 'pingjun':{
@@ -14358,6 +14358,17 @@
                             default:this.maxHp=hp1+hp2-3;
                         }
                         this.hp=this.maxHp;
+                        this.maxlili=Math.max(info[6], info2[6]);
+                        switch(double_lili){
+                            case 'pingjun':{
+                                this.lili=Math.floor((lili1+lili2)/2);
+                                break;
+                            }
+                            case 'zuidazhi':this.lili=Math.max(lili1,lili2);break;
+                            case 'zuixiaozhi':this.lili=Math.min(lili1,lili2);break;
+                            case 'zonghe':this.lili=lili1+lili2;break;
+                            default:this.lili=lili1+lili2-3;
+                        }
                         this.node.count.classList.add('p2');
                         skills=skills.concat(info2[3]);
 
@@ -17486,21 +17497,6 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         }
                     }
                 },
-                isMad:function(){
-                    return this.hasSkill('mad');
-                },
-                goMad:function(end){
-                    if(end){
-                        this.addTempSkill('mad',end);
-                    }
-                    else{
-                        this.addSkill('mad');
-                    }
-                    game.log(this,'进入混乱状态');
-                },
-                unMad:function(){
-                    this.removeSkill('mad');
-                },
                 addExpose:function(num){
                     if(typeof this.ai.shown=='number'&&!this.identityShown&&this.ai.shown<1){
                         this.ai.shown+=num;
@@ -19209,7 +19205,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 },
                 isUnderControl:function(self,me){
                     me=me||game.me;
-                    if(this.isMad()) return false;
+                    if(this.hasSkill('mad')) return false;
                     if(this===me){
                         if(self) return true;
                         return false;
@@ -21755,7 +21751,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     delete this.skill;
                 },
                 isMine:function(){
-                    return (this.player&&this.player==game.me&&!_status.auto&&!this.player.isMad());
+                    return (this.player&&this.player==game.me&&!_status.auto&&!this.player.hasSkill('mad'));
                 },
                 isOnline:function(){
                     return (this.player&&this.player.isOnline());
@@ -22655,6 +22651,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
             others:{},
             zhu:{},
             zhuSkill:{},
+            // 无效装备用的技能（贴给被无效的人就行）
             unequip:{
                 mark:true,
                 intro:{
@@ -22670,6 +22667,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                 },
                 ai:{unequip:true}
             },
+            // 22用的，死亡后换人的技能
             subplayer:{
 				trigger:{player:'dieBefore'},
 				forced:true,
@@ -22698,6 +22696,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 					nosave:true
 				}
 			},
+            // 单人控制使用的自动换人的技能
             autoswap:{
                 trigger:{player:['playercontrol','chooseToUseBegin','chooseToRespondBegin','chooseToDiscardBegin','chooseToCompareBegin',
 				'chooseButtonBegin','chooseCardBegin','chooseTargetBegin','chooseCardTargetBegin','chooseControlBegin',
@@ -22715,6 +22714,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     game.modeSwapPlayer(player);
                 },
             },
+            // 双面武将技能
             dualside:{
 				subSkill:{
 					turn:{
@@ -22826,6 +22826,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     }
                 }
             },
+            // 潜行技能（有就没法被指定目标）
             qianxing:{
                 mark:true,
                 nopop:true,
@@ -22841,6 +22842,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     }
                 }
             },
+            // 免疫：防止所有伤害
             mianyi:{
                 trigger:{player:'damageBefore'},
                 mark:true,
@@ -22865,6 +22867,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     content:'防止一切伤害'
                 }
             },
+            // 除外：被贴的角色视为不在游戏内
             chuwai:{
                 init:function(player){
                     player.classList.add('out');
@@ -22890,29 +22893,35 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     content:'视为不在游戏内'
                     // 那么应该使用game.player.isOut()之类的么？
                 },
-                group:['undist','mianyi'],
+                group:['undist','mianyi','qianxing'],
                 trigger:{player:'phaseBefore'},
                 content:function(){
                     trigger.cancel();
                     player.phaseSkipped=true;
                 },
             },
+            // 明置
             mingzhi:{
                 intro:{
                     content:'cards',
                 },
             },
+            // 混乱：对所有角色的态度是随机的
             mad:{
                 mark:true,
 				locked:true,
+                init:function(player){
+                    game.log(player,'进入混乱状态');
+                },
                 intro:{
-                    content:'已进入混乱状态',
+                    content:'对角色随机态度',
                     name:'混乱',
                     onunmark:function(storage,player){
                         game.log(player,'解除混乱状态');
                     }
                 }
             },
+            // 护甲……就是护甲
             ghujia:{
                 intro:{
                     content:function(content,player){
@@ -22929,6 +22938,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                     delete player.storage.counttrigger;
                 }
             },
+            // 检查是否回血（满血就防止回复了）
             _recovercheck:{
                 trigger:{player:'recoverBefore'},
                 forced:true,
@@ -38532,7 +38542,7 @@ smoothAvatar:function(player,vice){
                         });
                     }());
 
-
+                    /*
                     for(var i in lib.help){
                         var page=ui.create.div('');
                         var node=ui.create.div('.menubutton.large',i,start.firstChild,clickMode);
@@ -38594,7 +38604,7 @@ smoothAvatar:function(player,vice){
                             }
                         });
                     }
-
+                    */
                     var active=start.firstChild.querySelector('.active');
                     if(!active){
                         active=start.firstChild.firstChild;
@@ -48106,15 +48116,18 @@ smoothAvatar:function(player,vice){
             if(from == to) return 5;
             if (from.name == 'eiki' && lib.config.eiki_silence && to == game.me) return -10000000;
             var att=get.rawAttitude.apply(this,arguments);
-            if(from.isMad()) att=-att;
-            if(to.isMad()&&att>0){
+            if(from.hasSkill('mad')){
+                att = Math.floor(Math.random() * 2) - 1;
+            };
+            /*
+            if(to.hasSkill('mad')&&att>0){
                 if(to.identity=='zhu'){
                     att=1;
                 }
                 else{
                     att=0;
                 }
-            }
+            }*/
             if(!_status.tempnofake){
                 _status.tempnofake=true;
                 if(from.ai.modAttitudeFrom){

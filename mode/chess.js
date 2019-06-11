@@ -5335,7 +5335,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     							return 0;
     						}
     						var x=lib.skill._chessmove.ai.result.playerx(player);
-    						if(player.isMad()) return -x;
     						return x;
     					}
     				}

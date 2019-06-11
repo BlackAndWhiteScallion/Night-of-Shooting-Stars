@@ -1622,7 +1622,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 				},
 				logAi:function(targets,card){
-					if(this.ai.shown==1||this.isMad()) return;
+					if(this.ai.shown==1||this.hasSkill('mad')) return;
 					if(typeof targets=='number'){
 						this.ai.shown+=targets;
 					}

@@ -909,7 +909,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                var player;
 	        		if (init){
 	        			lib.config['library'] = [false,false,false,false];
-		                lib.character['akyuu'] = ['female','1',3,[],[]];
+		                lib.character['akyuu'] = ['female','1',3,['luguo','mengji','boom','yixiang'],[]];
 	    				player=ui.create.player(null,true);
 	                    player.init('akyuu');
 	                    player.node.avatar.show();

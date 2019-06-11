@@ -28,7 +28,7 @@ window.noname_package={
         identity:'异变',
         versus:'对决',
         connect:'联机',
-        boss:'挑战',
+        boss:'魔王',
         stg:'闯关',
         chess:'战棋',
         brawl:'场景',

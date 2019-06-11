@@ -264,6 +264,7 @@ table {
 	right: 7px;
 	bottom: 7px;
 	z-index: 1;
+	text-shadow: -1px -1px 0 #000,  1px -1px 0 #000,-1px  1px 0 #000, 1px  1px 0 #000, 2px 2px #000000;
 }
 #splash>div>.avatar {
 	width: 86px;

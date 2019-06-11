@@ -98,7 +98,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.control){
-                        player.discard(cards);
+						if (result.control != 'cancel2') player.discard(cards);
                     	if (event.list[result.index] == '获得5点灵力上限和5点灵力，直到回合结束'){
                     		player.addTempSkill('sihuan_1');
                             event.control = 'sihuan_1';
