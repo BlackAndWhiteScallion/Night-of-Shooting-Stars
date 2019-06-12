@@ -84,7 +84,7 @@
         },
         configMenu:{
             general:{
-                name:'通用',
+                name:'游戏',
                 config:{
                     low_performance:{
                         name:'流畅模式',
@@ -307,16 +307,6 @@
                             game.saveConfig('round_menu_func',item);
                         },
                     },
-                    show_splash:{
-                        name:'显示开始界面',
-                        intro:'游戏开始前进入模式选择画面',
-                        init:'off',
-                        item:{
-                            off:'关闭',
-                            init:'首次启动',
-                            always:'保持开启',
-                        }
-                    },
                     game_speed:{
                         name:'游戏速度',
                         init:'slow',
@@ -387,7 +377,7 @@
                         name:'悬停菜单弹出时间',
                         unfrequent:true,
                         intro:'鼠标移至目标到弹出菜单的时间间隔',
-                        init:'1000',
+                        init:'700',
                         item:{
                             '500':'0.5秒',
                             '700':'0.7秒',
@@ -460,28 +450,6 @@
                         intro:'进入游戏时检查更新',
                         init:false,
                         unfrequent:false
-                    },
-                    dev:{
-                        name:'开发者模式',
-                        intro:'开启后可使用浏览器控制台控制游戏，同时可更新到开发版',
-                        init:false,
-                        onclick:function(bool){
-                            game.saveConfig('dev',bool);
-                            if(_status.connectMode) return;
-                            if(bool){
-                                lib.cheat.i();
-                            }
-                            else{
-                                delete window.cheat;
-                                delete window.game;
-                                delete window.ui;
-                                delete window.get;
-                                delete window.ai;
-                                delete window.lib;
-                                delete window._status;
-                            }
-                        },
-                        unfrequent:true,
                     },
                     update:function(config,map){
                         if('ontouchstart' in document){
@@ -592,7 +560,7 @@
                 name:'体系',
                 config:{
                     compare_discard:{
-                        name:'拼点完摸一',
+                        name:'拼点后摸一张',
                         init:true,
                         intro:'拼点后，双方各摸一张牌',
                     },
@@ -2209,7 +2177,7 @@
                     },
                     control_style:{
                         name:'按钮背景',
-                        init:'default',
+                        init:'music',
                         item:{
                             wood:'木纹',
                             music:'音乐',
@@ -2453,7 +2421,7 @@
                     },
                     radius_size:{
                         name:'圆角大小',
-                        init:'default',
+                        init:'off',
                         item:{
                             off:'关闭',
                             reduce:'减小',
@@ -2490,8 +2458,8 @@
                     fold_mode:{
                         name:'折叠模式菜单',
                         intro:'关闭后模式菜单中“更多”内的项目将直接展开',
-                        init:true,
-                        unfrequent:true,
+                        init:false,
+                        unfrequent:false,
                     },
                     seperate_control:{
                         name:'分离选项条',
@@ -2659,25 +2627,6 @@
                             lib.init.cssstyles();
                         }
                     },
-                    global_font:{
-                        name:'界面字体',
-                        init:'default',
-                        unfrequent:true,
-                        item:{},
-                        textMenu:function(node,link){
-                            if(link!='default'){
-                                node.style.fontFamily=link;
-                            }
-                            else{
-                                node.style.fontFamily="'STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei',Helvetica,Arial,sans-serif";
-                            }
-                            node.style.fontSize='20px';
-                        },
-                        onclick:function(font){
-                            game.saveConfig('global_font',font);
-                            lib.init.cssstyles();
-                        }
-                    },
                     update:function(config,map){
                         if(lib.config.custom_button){
                             map.custom_button_system_top.show();
@@ -2768,118 +2717,6 @@
                         }
                     },
                 }
-            },
-            effect:{
-                name:'特效',
-                config:{
-                    damage_shake:{
-                        name:'伤害抖动',
-                        intro:'角色受到伤害时的抖动效果',
-                        init:true,
-                        unfrequent:true,
-                    },
-                    button_press:{
-                        name:'按钮效果',
-                        intro:'选项条被按下时将有按下效果',
-                        init:true,
-                        unfrequent:true,
-                    },
-                    animation:{
-                        name:'游戏特效',
-                        intro:'开启后出现属性伤害、回复体力等情况时会显示动画',
-                        init:true,
-                        unfrequent:true,
-                    },
-                    skill_animation:{
-                        name:'技能特效',
-                        intro:'开启后觉醒技、限定技将显示全屏文字',
-                        init:'default',
-                        unfrequent:true,
-                        item:{
-                            default:'默认',
-                            old:'旧版',
-                            off:'关闭'
-                        }
-                    },
-                    die_move:{
-                        name:'坠机效果',
-                        intro:'坠机后角色的显示效果',
-                        init:'flip',
-                        unfrequent:true,
-                        item:{
-                            off:'关闭',
-                            move:'移动',
-                            flip:'翻面',
-                        }
-                    },
-                    target_shake:{
-                        name:'目标效果',
-                        intro:'一名玩家成为卡牌或技能的目标时的显示效果',
-                        init:'off',
-                        item:{
-                            off:'关闭',
-                            zoom:'缩放',
-                            shake:'抖动',
-                        },
-                        unfrequent:true,
-                        onclick:function(bool){
-                            game.saveConfig('target_shake',bool);
-                            ui.arena.dataset.target_shake=bool;
-                        }
-                    },
-                    turned_style:{
-                        name:'翻面文字',
-                        intro:'角色被翻面时显示“翻面”',
-                        init:false,
-                        unfrequent:false,
-                        onclick:function(bool){
-                            game.saveConfig('turned_style',bool);
-                            if(bool){
-                                ui.arena.classList.remove('hide_turned');
-                            }
-                            else{
-                                ui.arena.classList.add('hide_turned');
-                            }
-                        }
-                    },
-                    link_style2:{
-                        name:'横置样式',
-                        intro:'设置角色被横置时的样式',
-                        init:'chain',
-                        unfrequent:true,
-                        item:{
-                            chain:'铁索',
-                            rotate:'横置',
-                            mark:'标记'
-                        },
-                        onclick:function(style){
-                            var list=[];
-                            for(var i=0;i<game.players.length;i++){
-                                if(game.players[i].isLinked()){
-                                    list.push(game.players[i]);
-                                }
-                            }
-                            game.saveConfig('link_style2',style);
-                            for(var i=0;i<list.length;i++){
-                                if(get.is.linked2(list[i])){
-                                    list[i].classList.add('linked2');
-                                    list[i].classList.remove('linked');
-                                }
-                                else{
-                                    list[i].classList.add('linked');
-                                    list[i].classList.remove('linked2');
-                                }
-                            }
-                            if(style=='chain'){
-                                ui.arena.classList.remove('nolink');
-                            }
-                            else{
-                                ui.arena.classList.add('nolink');
-                            }
-                            ui.updatem();
-                        }
-                    },
-                },
             },
             view:{
                 name:'界面',
@@ -2972,6 +2809,40 @@
                             map.show_extensionshare.hide();
                         }
                     },
+                    show_splash:{
+                        name:'显示开始界面',
+                        intro:'游戏开始前进入模式选择画面',
+                        init:'off',
+                        item:{
+                            off:'关闭',
+                            init:'首次启动',
+                            always:'保持开启',
+                        }
+                    },
+                    global_font:{
+                        name:'界面字体',
+                        init:'default',
+                        unfrequent:true,
+                        item:{},
+                        textMenu:function(node,link){
+                            if(link!='default'){
+                                node.style.fontFamily=link;
+                            }
+                            else{
+                                node.style.fontFamily="'STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei',Helvetica,Arial,sans-serif";
+                            }
+                            node.style.fontSize='20px';
+                        },
+                        onclick:function(font){
+                            game.saveConfig('global_font',font);
+                            lib.init.cssstyles();
+                        }
+                    },
+                    show_discardpile:{
+                        name:'暂停时显示弃牌堆',
+                        init:true,
+                        unfrequent:true,
+                    },
                     show_history:{
                         name:'出牌记录栏',
                         init:'off',
@@ -3008,7 +2879,7 @@
                     show_log:{
                         name:'历史记录栏',
                         init:'left',
-                        intro:'在屏幕中部显示出牌文字记录',
+                        intro:'在屏幕中显示出牌文字记录',
                         unfrequent:true,
                         item:{
                             off:'关闭',
@@ -3041,7 +2912,7 @@
                         intro:'开启后历史记录不同类别的信息将以不同颜色显示',
                     },
                     show_time:{
-                        name:'显示时间',
+                        name:'显示当前时间',
                         intro:'在屏幕顶部显示当前时间',
                         init:true,
                         unfrequent:true,
@@ -3056,7 +2927,7 @@
                         }
                     },
                     show_time2:{
-                        name:'显示时间',
+                        name:'显示当前时间',
                         intro:'在触屏按钮处显示当前时间',
                         init:false,
                         unfrequent:true,
@@ -3089,7 +2960,7 @@
                         unfrequent:true
                     },
                     show_statusbar_android:{
-                        name:'显示状态栏',
+                        name:'显示手机状态栏',
                         init:false,
                         unfrequent:true,
                         content:function(bool){
@@ -3107,7 +2978,7 @@
                         }
                     },
                     show_statusbar_ios:{
-                        name:'显示状态栏',
+                        name:'显示手机状态栏',
                         init:'off',
                         unfrequent:true,
                         item:{
@@ -3138,30 +3009,6 @@
                             }
                         }
                     },
-                    show_card_prompt:{
-                        name:'显示出牌信息',
-                        intro:'出牌时在使用者上显示卡牌名称',
-                        init:true,
-                        unfrequent:true,
-                    },
-                    hide_card_prompt_basic:{
-                        name:'隐藏基本牌信息',
-                        intro:'不显示基本牌名称',
-                        init:false,
-                        unfrequent:true,
-                    },
-                    hide_card_prompt_equip:{
-                        name:'隐藏装备牌信息',
-                        intro:'不显示装备牌名称',
-                        init:false,
-                        unfrequent:true,
-                    },
-                    show_phase_prompt:{
-                        name:'显示阶段信息',
-                        intro:'在当前回合不同阶段开始时显示阶段名称',
-                        init:true,
-                        unfrequent:true,
-                    },
                     show_phaseuse_prompt:{
                         name:'出牌阶段提示',
                         intro:'在你出牌时显示提示文字',
@@ -3179,22 +3026,6 @@
                         intro:'鼠标移至暂停按钮时弹出历史记录菜单',
                         init:false,
                         unfrequent:true,
-                    },
-                    show_round_menu:{
-                        name:'显示触屏按钮',
-                        init:true,
-                        unfrequent:true,
-                        onclick:function(bool){
-                            if(get.is.nomenu('show_round_menu',bool)) return false;
-                            game.saveConfig('show_round_menu',bool);
-                            if(bool&&ui.roundmenu){
-                                ui.roundmenu.style.display='';
-                            }
-                            else{
-                                ui.roundmenu.style.display='none';
-								alert('关闭触屏按钮后可通过手势打开菜单（默认为下划）')
-                            }
-                        }
                     },
                     remember_round_button:{
                         name:'记住按钮位置',
@@ -3242,17 +3073,6 @@
                             click:'单击',
                         },
                     },
-                    character_dialog_tool:{
-                        name:'自由选将显示',
-                        intro:'点击自由选将时默认显示的条目',
-                        init:'最近',
-                        item:{
-                            '收藏':'收藏',
-                            '最近':'最近',
-                            'all':'全部'
-                        },
-                        unfrequent:true,
-                    },
                     recent_character_number:{
                         name:'最近使用角色',
                         intro:'自由选将对话框中最近使用角色的数量',
@@ -3265,15 +3085,66 @@
                         },
                         unfrequent:true
                     },
+                    character_dialog_tool:{
+                        name:'自由选将显示',
+                        intro:'点击自由选将时默认显示的条目',
+                        init:'最近',
+                        item:{
+                            '收藏':'收藏',
+                            '最近':'最近',
+                            'all':'全部'
+                        },
+                        unfrequent:true,
+                    },
 					popequip:{
-						name:'触屏装备选择',
-						intro:'设置触屏布局中选择装备的方式',
+						name:'触屏装备弹出',
+						intro:'触屏布局中，选择装备时会弹出大装备栏',
 						init:true,
 						unfrequent:true,
 					},
                     filternode_button:{
                         name:'触屏筛选按钮',
                         intro:'设置自由选将对话框中筛选按钮的样式',
+                        init:true,
+                        unfrequent:true,
+                    },
+                    show_round_menu:{
+                        name:'显示触屏按钮',
+                        init:true,
+                        unfrequent:true,
+                        onclick:function(bool){
+                            if(get.is.nomenu('show_round_menu',bool)) return false;
+                            game.saveConfig('show_round_menu',bool);
+                            if(bool&&ui.roundmenu){
+                                ui.roundmenu.style.display='';
+                            }
+                            else{
+                                ui.roundmenu.style.display='none';
+								alert('关闭触屏按钮后可通过手势打开菜单（默认为下划）')
+                            }
+                        }
+                    },
+                    show_card_prompt:{
+                        name:'显示出牌信息',
+                        intro:'出牌时在使用者上显示卡牌名称',
+                        init:true,
+                        unfrequent:true,
+                    },
+                    hide_card_prompt_basic:{
+                        name:'隐藏基本牌信息',
+                        intro:'不显示基本牌名称',
+                        init:false,
+                        unfrequent:true,
+                    },
+                    hide_card_prompt_equip:{
+                        name:'隐藏装备牌信息',
+                        intro:'不显示装备牌名称',
+                        init:false,
+                        unfrequent:true,
+                    },
+                    show_phase_prompt:{
+                        name:'显示阶段信息',
+                        intro:'在当前回合不同阶段开始时显示阶段名称',
                         init:true,
                         unfrequent:true,
                     },
@@ -3306,13 +3177,6 @@
                         intro:'在角色的右键菜单中显示距离等信息',
                         init:true,
                         unfrequent:true
-                    },
-                    hide_card_image:{
-                        name:'隐藏卡牌图片',
-                        intro:'所有卡牌将使用文字作为图片',
-                        init:false,
-                        unfrequent:true,
-                        restart:true,
                     },
                     show_name:{
                         name:'显示角色名称',
@@ -3443,8 +3307,8 @@
                         }
                     },
                     show_wuxie:{
-                        name:'显示无懈按钮',
-                        intro:'在右上角显示不询问无懈',
+                        name:'显示住口按钮',
+                        intro:'在右上角显示不询问住口',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3458,14 +3322,16 @@
                         }
                     },
                     wuxie_right:{
-                        name:'无懈按钮靠左',
+                        name:'住口按钮靠左',
                         init:true,
                         unfrequent:true,
                     },
-                    show_discardpile:{
-                        name:'暂停时显示弃牌堆',
-                        init:true,
+                    hide_card_image:{
+                        name:'隐藏卡牌图片',
+                        intro:'所有卡牌将使用文字作为图片',
+                        init:false,
                         unfrequent:true,
+                        restart:true,
                     },
                     show_extensionmaker:{
                         name:'显示制作扩展',
@@ -3478,6 +3344,81 @@
                         unfrequent:true,
                     }
                 }
+            },
+            effect:{
+                name:'特效',
+                config:{
+                    damage_shake:{
+                        name:'伤害抖动',
+                        intro:'角色受到伤害时的抖动效果',
+                        init:true,
+                        unfrequent:true,
+                    },
+                    button_press:{
+                        name:'按钮效果',
+                        intro:'选项条被按下时将有按下效果',
+                        init:true,
+                        unfrequent:true,
+                    },
+                    animation:{
+                        name:'游戏特效',
+                        intro:'开启后出现属性伤害、回复体力等情况时会显示动画',
+                        init:true,
+                        unfrequent:true,
+                    },
+                    skill_animation:{
+                        name:'技能特效',
+                        intro:'开启后觉醒技、限定技将显示全屏文字',
+                        init:'default',
+                        unfrequent:true,
+                        item:{
+                            default:'默认',
+                            old:'旧版',
+                            off:'关闭'
+                        }
+                    },
+                    die_move:{
+                        name:'坠机效果',
+                        intro:'坠机后角色的显示效果',
+                        init:'flip',
+                        unfrequent:true,
+                        item:{
+                            off:'关闭',
+                            move:'移动',
+                            flip:'翻面',
+                        }
+                    },
+                    target_shake:{
+                        name:'目标效果',
+                        intro:'一名玩家成为卡牌或技能的目标时的显示效果',
+                        init:'off',
+                        item:{
+                            off:'关闭',
+                            zoom:'缩放',
+                            shake:'抖动',
+                        },
+                        unfrequent:true,
+                        onclick:function(bool){
+                            game.saveConfig('target_shake',bool);
+                            ui.arena.dataset.target_shake=bool;
+                        }
+                    },
+                    turned_style:{
+                        name:'符卡特效',
+                        intro:'角色发动符卡时显示“符卡”和符卡阵',
+                        init:true,
+                        unfrequent:true,
+                        onclick:function(bool){
+                            game.saveConfig('turned_style',bool);
+                            if(bool){
+                                ui.arena.classList.remove('hide_turned');
+                            }
+                            else{
+                                ui.arena.classList.add('hide_turned');
+                            }
+                        }
+                    },
+                },
             },
             audio:{
                 name:'音效',
@@ -3580,7 +3521,7 @@
                 }
             },
             others:{
-                name:'其它',
+                name:'文件',
                 config:{
                     // reset_database:{
                     //  name:'重置游戏',
@@ -3697,7 +3638,7 @@
                         onclick:function(){
                             var data;
                             var export_data=function(data){
-                                game.export(lib.init.encode(JSON.stringify(data)),'无名杀 - 数据 - '+(new Date()).toLocaleString());
+                                game.export(lib.init.encode(JSON.stringify(data)),'流星夜 - 数据 - '+(new Date()).toLocaleString());
                             }
                             if(!lib.db){
                                 data={};
@@ -3746,6 +3687,28 @@
                             },1000);
                         },
                         clear:true
+                    },
+                    dev:{
+                        name:'开发者模式',
+                        intro:'开启后可使用浏览器控制台控制游戏，同时可更新到开发版',
+                        init:false,
+                        onclick:function(bool){
+                            game.saveConfig('dev',bool);
+                            if(_status.connectMode) return;
+                            if(bool){
+                                lib.cheat.i();
+                            }
+                            else{
+                                delete window.cheat;
+                                delete window.game;
+                                delete window.ui;
+                                delete window.get;
+                                delete window.ai;
+                                delete window.lib;
+                                delete window._status;
+                            }
+                        },
+                        unfrequent:true,
                     },
                     update:function(config,map){
                         if(lib.device||lib.node){
@@ -5658,22 +5621,6 @@
             videoId:0,
             globalId:0,
         },
-        help:{
-            '游戏操作':'<ul><li>长按/鼠标悬停/右键单击显示信息<li>触屏模式中，双指点击切换暂停；下划显示菜单，上划切换托管<li>键盘快捷键<br>'+
-            '<table><tr><td>A<td>切换托管<tr><td>W<td>切换不询问无懈<tr><td>空格<td>暂停</table><li>编辑牌堆<br>在卡牌包中修改牌堆后，将自动创建一个临时牌堆，在所有模式中共用，当保存当前牌堆后，临时牌堆被清除。每个模式可设置不同的已保存牌堆，设置的牌堆优先级大于临时牌堆</ul>',
-            '游戏命令':'<div style="margin:10px">变量名</div><ul style="margin-top:0"><li>场上角色<br>game.players<li>阵亡角色<br>game.dead'+
-            '<li>玩家<br>game.me<li>玩家的上/下家<br>game.me.previous/next'+
-            '<li>玩家的上/下家（含阵亡）<br>game.me.previousSeat/<br>nextSeat'+
-            '<li>牌堆<br>ui.cardPile<li>弃牌堆<br>ui.discardPile</ul>'+
-            '<div style="margin:10px">角色属性</div><ul style="margin-top:0"><li>体力值<br>player.hp'+
-            '<li>体力上限<br>player.maxHp<li>身份<br>player.identity<li>手牌<br>player.get("h")<li>装备牌<br>player.get("e")<li>判定牌<br>player.get("j")'+
-            '<li>是否存活/横置/翻面<br>player.isAlive()/<br>isLinked()/<br>isTurnedOver()</ul>'+
-            '<div style="margin:10px">角色操作</div><ul style="margin-top:0"><li>受到伤害<br>player.damage(source,<br>num)'+
-            '<li>回复体力<br>player.recover(num)<li>摸牌<br>player.draw(num)<li>获得牌<br>player.gain(cards)<li>弃牌<br>player.discard(cards)'+
-            '<li>使用卡牌<br>player.useCard(card,<br>targets)<li>死亡<br>player.die()<li>复活<br>player.revive(hp)</ul>'+
-            '<div style="margin:10px">游戏操作</div><ul style="margin-top:0"><li>在命令框中输出结果<br>game.print(str)<li>清除命令框中的内容<br>cls<li>上一条/下一条输入的内容<br>up/down<li>游戏结束<br>game.over(bool)'+
-            '<li>角色资料<br>lib.character<li>卡牌资料<br>lib.card</ul>',
-        },
         setIntro:function(node,func,left){
 			if(lib.config.touchscreen){
 				if(left){
@@ -6501,11 +6448,11 @@
                             lib.configMenu.appearence.config.name_font.item[i]=pack.font[i];
                             lib.configMenu.appearence.config.identity_font.item[i]=pack.font[i];
                             lib.configMenu.appearence.config.cardtext_font.item[i]=pack.font[i];
-                            lib.configMenu.appearence.config.global_font.item[i]=pack.font[i];
+                            lib.configMenu.view.config.global_font.item[i]=pack.font[i];
                             ui.css.fontsheet.sheet.insertRule("@font-face {font-family: '"+i+"';src: url('"+lib.assetURL+"font/"+i+".ttf');}",0);
                         }
                         lib.configMenu.appearence.config.cardtext_font.item.default='默认';
-                        lib.configMenu.appearence.config.global_font.item.default='默认';
+                        lib.configMenu.view.config.global_font.item.default='默认';
                     }
 
                     var ua=navigator.userAgent.toLowerCase();
@@ -23182,7 +23129,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
                         if (player.storage.spell){
                             var info = lib.skill[player.storage.spell];
                             if (info.spell){
-                                game.log(get.translation(player)+'的【'+get.translation(player.storage.spell)+'】符卡结束。');
+                                game.log(player,'的【'+get.translation(player.storage.spell)+'】符卡结束。');
                                 for (var i = 0; i < info.spell.length; i ++){
                                     player.removeSkill(info.spell[i]);
                                 }
@@ -32331,7 +32278,7 @@ smoothAvatar:function(player,vice){
                         }
                     }
                     menux=createMenu(['开始','选项','角色','卡牌','扩展','其它'],{
-                        position:menuContainer,bar:40
+                        position:menuContainer,bar:15
                     });
                 }
                 else{
@@ -32820,7 +32767,7 @@ smoothAvatar:function(player,vice){
                             if(mode=='skill'){
                                 var autoskillexpanded=false;
                                 var banskillexpanded=false;
-                                ui.create.div('.config.more','自动发动 <div>&gt;</div>',page,function(){
+                                ui.create.div('.config.more','自动发动设置 <div>&gt;</div>',page,function(){
                                     if(autoskillexpanded){
                                         this.classList.remove('on');
                                         for(var k=0;k<autoskillNodes.length;k++){
@@ -33628,7 +33575,7 @@ smoothAvatar:function(player,vice){
                                 placeholder.style.display='block';
                                 placeholder.style.width='100%';
                                 placeholder.style.height='14px';
-                                createDash2('将','角色图片','image/character',page);
+                                createDash2(':)','角色图片','image/character',page);
                                 createDash2('肤','皮肤图片','image/skin',page);
                                 createDash2('卡','卡牌图片','image/card',page);
                                 createDash2('模','模式图片','image/mode',page);
@@ -34749,7 +34696,7 @@ smoothAvatar:function(player,vice){
                         inputExtLine.appendChild(inputExtSpan);
                         var inputExtName=document.createElement('input');
                         inputExtName.type='text';
-                        inputExtName.value='无名扩展';
+                        inputExtName.value='喵喵喵';
                         inputExtName.style.width='80px';
                         inputExtName.style.textAlign='center';
                         inputExtLine.appendChild(inputExtName);
@@ -34808,7 +34755,7 @@ smoothAvatar:function(player,vice){
 						var okExtLine=createExtLine(true);
 
 						game.editExtension=function(name){
-							page.currentExtension=name||'无名扩展';
+							page.currentExtension=name||'喵喵喵';
 							inputExtName.value=page.currentExtension;
 							if(name&&lib.extensionPack[name]){
 								authorExtLine.querySelector('input').value=lib.extensionPack[name].author||'';
@@ -34913,7 +34860,7 @@ smoothAvatar:function(player,vice){
                                         delete ext[i];
                                     }
                                 }
-                                page.currentExtension=inputExtName.value||'无名扩展';
+                                page.currentExtension=inputExtName.value||'喵喵喵';
                                 var str='{name:"'+page.currentExtension+'"';
                                 for(var i in ext){
                                     str+=','+i+':'+ext[i];
@@ -35367,17 +35314,17 @@ smoothAvatar:function(player,vice){
                             ui.create.div('.indent','体力：<input class="new_hp" type="text">',newCharacter).style.paddingTop='8px';
                             newCharacter.querySelector('input.new_name').onblur=updateButton;
                             var sexes=ui.create.selectlist([
-                                ['male','男'],
                                 ['female','女'],
                                 ['none','无'],
+                                ['male','男'],
                             ],null,ui.create.div('.indent','性别：',newCharacter));
                             var groups=ui.create.selectlist([
-                                ['wei','魏'],
-                                ['shu','蜀'],
-                                ['wu','吴'],
-                                ['qun','群'],
-                                ['shen','神'],
-                            ],null,ui.create.div('.indent','势力：',newCharacter));
+                                ['1','1'],
+                                ['2','2'],
+                                ['3','3'],
+                                ['4','4'],
+                                ['5','5'],
+                            ],null,ui.create.div('.indent','灵力：',newCharacter));
                             var options=ui.create.div('.add_skill.options','<span>主公<input type="checkbox" name="zhu"></span><span>BOSS<input type="checkbox" name="boss"></span><span>AI禁选<input type="checkbox" name="forbidai"></span><br>',newCharacter);
                             var addSkill=ui.create.div('.add_skill','添加技能<br>',newCharacter);
                             var list=[];
@@ -36841,7 +36788,7 @@ smoothAvatar:function(player,vice){
 
                             return page;
                         }());
-                        createDash('将','编辑角色',dash1);
+                        createDash(':)','编辑角色',dash1);
                         createDash('卡','编辑卡牌',dash2);
                         createDash('技','编辑技能',dash3);
                         createDash('码','编辑代码',dash4);
@@ -40673,6 +40620,7 @@ smoothAvatar:function(player,vice){
                     avatar:ui.create.div('.avatar',node,ui.click.avatar).hide(),
                     avatar2:ui.create.div('.avatar2',node,ui.click.avatar2).hide(),
                     //turnedover:ui.create.div('.turned','<div>翻<br>面<div>',node),
+                    // 这里是翻面UI
                     turnedover:ui.create.div('.turned','<div>符<br>卡<div>',node),
                     framebg:ui.create.div('.framebg',node),
                     intro:ui.create.div('.intro',node),

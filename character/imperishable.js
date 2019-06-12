@@ -588,9 +588,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             list.push(i+1);
                         }
                         player.chooseControl(list,function(){
-                            if (!player.countCards('h') || !game.countPlayer(function(current){
-                              return get.attitude(player, current) <= 0 && current.countCards('hej') && get.distance(player,current,'attack')<=1; 
-                            })) return 'cancel2';
+                            if (!player.countCards('h') || !game.hasPlayer(function(current){
+                              return get.attitude(player, current) <= 0 && current.countCards('hej') && get.distance(player,current,'attack')<=2; 
+                            })){
+                              return false;
+                            }
                             else return 0;
                         }).set('prompt','少摸任意张牌，增加等量攻击范围');
                         'step 1'
@@ -602,6 +604,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     mod:{
                         attackFrom:function(from,to,distance){
+                          if (!from.storage.liuxing) return distance;
                             return distance-from.storage.liuxing;
                         }
                     }

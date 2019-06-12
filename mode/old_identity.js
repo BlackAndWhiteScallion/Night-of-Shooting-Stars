@@ -152,7 +152,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(lib.config.touchscreen){
 						clear();
 						ui.create.dialog('触屏模式中，下划可以显示菜单，上划可以切换托管，双指单击可以暂停');
-						ui.dialog.add('<div class="text center">你可以在选项-通用-中更改手势设置');
+						ui.dialog.add('<div class="text center">你可以在选项-游戏-中更改手势设置');
 						ui.create.control('没问题！',step4);
 					}
 					else{
@@ -173,7 +173,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						ui.controls[0].replace('知道了',function(){
 							ui.click.configMenu();
 							ui.click.menuTab('选项');
-							text = ui.create.dialog('在[外观]中可以设置游戏的背景图，配色主题，和布局。<br>在[显示]中可以选择游戏中显示哪些按键和信息。<br>在[音效]中可以调整音量大小和角色及卡牌的音效。');
+							text = ui.create.dialog('在[外观]中可以设置游戏的背景图，配色主题，和布局。<br>在[界面]中可以选择游戏界面中显示哪些按键和信息。<br>在[音效]中可以调整音量大小和角色及卡牌的音效。');
 							ui.controls[0].replace('知道了知道了',function(){
 								ui.click.configMenu();
 								ui.click.menuTab('角色');

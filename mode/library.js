@@ -502,7 +502,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'[检查素材更新]是检查游戏新加的素材。 但是只能检查新加的素材，无法更新被覆盖的旧素材。',
 	    				'检查素材更新在电脑和手机端都可以进行。',
 	    				'',
-	    				'3. 手机端更新，可以在<b>[选项—选项—其他—重新下载游戏]</b>来进行更新。',
+	    				'3. 手机端更新，可以在<b>[选项—选项—文件—重新下载游戏]</b>来进行更新。',
 	    				'这样会保留所有的设置，但是并不会更新素材。素材需要另外进行更新。'];
 	        			dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});

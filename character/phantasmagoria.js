@@ -350,7 +350,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   guihang:{
                         group:['guihang_cost'],
                         audio:2,
-                        enable:['chooseToUse'],
+                        enable:['phaseUse'],
                         mod:{
                               targetInRange:function(card){
                                     if(_status.event.skill=='guihang') return true;
@@ -385,13 +385,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         check:function(card){return 6-get.value(card)},
                         ai:{
                               ignoreviewas:true,
-                              skillTagFilter:function(player){
+                              skillTagFilter:function(player, event){
                                     if (player.lili < 2) return false;
                                     if (!player.countCards('he')) return false;
                                     if (game.hasPlayer(function(current){
                                           return current.hasSkill('guihang_flag');
                                     })) return false;
-                                    return player.hasUseTarget('sha', false, false);
+                                    if (!player.hasUseTarget('sha', false, false)) return false;
+                                    return lib.filter.cardEnabled({name:'sha'},player,_status.event);
                               },
                               result:{
                                     player:function(player){
@@ -438,26 +439,26 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         // 这里AI还没写
                         // 不知道AI要怎么写
                         var choice = 0;
-                          for (var i = player.lili - 1; i > 0 ; i --){
-                                if (game.countPlayer(function(current){
-                                      if (player == current) return 0;
-                                      if (!get.distance(player, current, 'absolute') <= player.lili - i) return 0;
-                                      if (get.attitude(player, current) > 0) return -2;
-                                      if (get.attitude(player, current) < 0) return 2;
-                                }) > 0) {
-                                      choice = i - 1; 
-                                      break;
-                                }
-                          }
-                          player.chooseControl(list,function(){
-                                    return choice;
-                              }).set('prompt','消耗任意点灵力').set('choice',choice);
-                          'step 1'
-                          if (result.control){
+                        for (var i = player.lili - 1; i > 0 ; i --){
+                              if (game.countPlayer(function(current){
+                                    if (player == current) return 0;
+                                    if (!get.distance(player, current, 'absolute') <= player.lili - i) return 0;
+                                    if (get.attitude(player, current) > 0) return -2;
+                                    if (get.attitude(player, current) < 0) return 2;
+                              }) > 0) {
+                                    choice = i - 1; 
+                                    break;
+                              }
+                        }
+                        player.chooseControl(list,function(){
+                              return choice;
+                        }).set('prompt','消耗任意点灵力').set('choice',choice);
+                        'step 1'
+                        if (result.control){
                               player.loselili(result.control);
                               player.storage.wujian = result.control;
                               player.turnOver();
-                          }
+                        }
                       },
                       check:function(event,player){
                         var choice = false;
@@ -706,7 +707,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   guihang:'归航',
                   guihang_audio1:'给我过来！',
                   guihang_audio2:'想在我面前跑？跑到世界尽头你也跑不掉！',
-                  guihang_info:'你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法造成弹幕伤害后，弃置受伤角色一张牌，令你与其距离视为１，且此技能无效，直到回合结束。',
+                  guihang_info:'出牌阶段，你可以消耗１点灵力，然后将一张牌当作【轰！】使用；该【轰！】不计次数且无视距离；以此法造成弹幕伤害后，弃置受伤角色一张牌，令你与其距离视为１，且此技能无效，直到回合结束。',
                   wujian:'无间之狭间',
                   wujian_skill:'无间之狭间',
                   wujian_info:'符卡技（X）（X为任意值，至少为1）一回合X次，出牌阶段，你可以对攻击范围内的所有角色各造成1点灵击伤害；然后，若其中有角色没有灵力，你获得其场上一张牌。',

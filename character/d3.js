@@ -13,6 +13,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hemerocalliscitrinabaroni:['female','3',3,["yinyangliuzhuan","daofaziran"]],
 			wingedtiger:['female','1',4,["wt_zongqing","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
 			pear:['female','3',4,['guaiqiao','aaaaa']],
+			icetea:['female', '0', 5, ['chouka', 'kejing', 'renli'],[],[],'10'],
 		},
 		characterIntro:{
 			zigui:'咕咕咕~',
@@ -1231,6 +1232,137 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return v / event.cards.length < 4;
 				},
 			},
+			chouka:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event, player){
+					return player.lili > 0;
+				},
+				content:function(){
+					'step 0'
+					var list = [];
+					for (var i = 0; i < player.lili; i ++){
+						list.push(i+1);
+					}
+					player.chooseControl(list,function(){
+							return player.lili-2;
+					}).set('prompt','消耗任意点灵力');
+					'step 1'
+					if (result.control){
+						player.loselili(result.control);
+						event.num = result.control;
+					}
+					'step 2'
+					if (event.num){
+						player.judge(function(card){
+							if(get.number(card) == 1 || get.number(card) > 10) return 1;
+							return -1;
+						});
+					}
+					'step 3'
+					if(result.number){
+						if (get.number(result.card) == 1 || get.number(result.card) > 10){
+							game.trySkillAudio('chouka',player,true,3);
+							player.recover();
+						}
+					}
+					event.num --;
+					if (event.num > 0)event.goto(2);
+				},
+				ai:{
+					order:3,
+					result:{
+						player:1,
+					}
+				},
+			},
+			kejing:{
+				audio:2,
+				trigger:{player:'phaseBegin'},
+				filter:function(event, player){
+					return player.countCards('h') || player.hp > 0;
+				},
+				content:function(){
+					'step 0'
+					player.chooseToDiscard([1, Infinity],'h','你可以弃置任意张手牌，获得等量灵力').set('ai',function(card){
+							if (player.lili > 4) return false;
+							return 7-get.value(card);
+						});
+					'step 1'
+					if (result.bool){
+						player.gainlili(result.cards.length);
+					}
+					var list = [];
+					for (var i = 0; i < player.hp; i ++){
+						list.push(i);
+					}
+					player.chooseControl(list, function(){
+						return 0;
+					}).set('prompt','你可以失去任意点体力，获得等量灵力');
+					'step 2'
+					if (result.control){
+						player.loseHp(result.control);
+						player.gainlili(result.control);
+					}
+				},
+				check:function(){
+					return true;
+				},
+			},
+			renli:{
+				audio:0,
+				trigger:{player:'judgeEnd'},
+				forced:true,
+				init:function(player){
+					player.storage.renli=[];
+				},
+				intro:{
+					content:'card',
+				},
+				filter:function(event,player){
+					if(get.owner(event.result.card)){
+						return false;
+					}
+					if(event.nogain&&event.nogain(event.result.card)){
+						return false;
+					}
+					return get.number(event.result.card);
+				},
+				content:function(){
+					'step 0'
+					var numbers = [];
+					for (var i = 0; i < player.storage.renli.length; i ++){
+						numbers.push(get.number(player.storage.renli[i]));
+					}
+					if (!numbers.contains(get.number(trigger.result.card))){
+						game.trySkillAudio('renli',player,true,1);
+						trigger.result.card.goto(ui.special);
+						player.storage.renli.push(trigger.result.card);
+						trigger.result.node.moveDelete(player);
+						game.broadcast(function(cardid,player){
+							var node=lib.cardOL[cardid];
+							if(node){
+								node.moveDelete(player);
+							}
+						},trigger.result.node.cardid,player);
+						game.addVideo('gain2',player,get.cardsInfo([trigger.result.node]));
+						player.markSkill('renli');
+						game.addVideo('storage',player,['renli',get.cardsInfo(player.storage.renli),'cards']);
+					} else {
+						game.trySkillAudio('renli',player,true,2);
+						player.gain(trigger.result.card);
+						player.$gain2(trigger.result.card);
+					}
+					'step 1'
+					if (player.storage.renli.length == 13){
+						player.$skill('人理守护',null,null,true);
+						game.trySkillAudio('renli',player,true,3);
+						if (player == game.me) game.over(true);
+                		else game.over();
+					}
+				}
+			},
 		},
 		translate:{
 			zigui:'子规',
@@ -1347,6 +1479,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aaaaa_info:'你获得牌时，若你获得了至少两张牌，你可消耗1点灵力，重铸这些牌。',
 			aaaaa_audio1:'哼唧',
 			aaaaa_audio2:'什么嘛 真是的',
+			icetea:'冰茶',
+			chouka:'抽卡',
+			chouka_info:'一回合一次，出牌阶段，你可以消耗任意点灵力，并进行等量次判定：若判定牌点数为字母，你回复1点体力。',
+			chouka_audio1:'英灵桑，求求你来我迦吧',
+			chouka_audio2:'你是我唯一想要的卡',
+			chouka_audio3:'又抽到一张好卡呢',
+			kejing:'氪金',
+			kejing_info:'准备阶段，你可以弃置任意张手牌，或失去任意点体力，并获得等量的灵力。',
+			kejing_audio1:'玄能救非，氪必改命',
+			kejing_audio2:'再来一单，一定出货',
+			renli:'人理守护',
+			renli_bg:'英',
+			renli_info:'锁定技，你的判定牌生效后：若你没有与之相同点数的“英灵”，将之置于你的角色牌上，称为“英灵”；否则，你获得之；若你拥有13张“英灵”，你单独胜利。',
+			renli_audio1:'啊，出货了出货了',
+			renli_audio2:'流星夜，卸载！',
+			renli_audio3:'抽卡就能出货的世界不是很值得守护么',
 		},
 	};
 });

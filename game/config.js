@@ -50,6 +50,7 @@ window.config={
 	background_music:'music_default',
 	background_audio:true,
 	background_speak:true,
+	fold_mode:false,
 	glow_phase:'yellow',
 	die_move:'flip',
 	textequip:'text',
@@ -116,7 +117,7 @@ window.config={
 	damage_shake:true,
 	log_highlight:true,
 	player_border:'normal',
-	radius_size:'default',
+	radius_size:'off',
 
 	modeconfig:false,
 	gameconfig:false,

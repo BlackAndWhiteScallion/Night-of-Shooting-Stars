@@ -2026,8 +2026,8 @@ div:not(.handcards)>.card>.info>span,
 	z-index: 1;
 	border-radius: 2px;
 }
-#arena:not(.hide_turned):not(.oldlayout) .player.turnedover>.turned{
-	opacity: 0.2;
+#arena.hide_turned .player.turnedover>.turned{
+	display: none	!important
 }
 /* 整个东西的位置 */
 #window>.damage.fullscreenavatar{

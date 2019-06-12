@@ -1917,8 +1917,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:0,
 			enable:'phaseUse',
 			usable:1,
+			filter:function(event, player){
+				return player.lili > 0;
+			},
 			filterTarget:function(card,player,target){
-				return target!=player && player.lili > 0;
+				return target!=player;
 			},
 			content:function(){
 				"step 0"

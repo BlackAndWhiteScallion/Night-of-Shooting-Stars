@@ -95,6 +95,10 @@
 	/*text-align: left;*/
 	transform: none;
 }
+.hp.text[data-condition="high"],
+.player .actcount.hp.textstyle{
+	text-shadow: rgb(9, 206, 2) 0 0 2px,rgba(9, 206, 2) 0 0 5px,rgba(9, 206, 2) 0 0 10px
+}
 /* 这里是调整actcount位置的地方……天哪 */
 #arena.slim_player .player .actcount.hp{
 	left: 12px;

@@ -175,8 +175,8 @@
 	transform-origin: center center;
 }
 .menu.main{
-	width: 400px;
-	height:300px;
+	width: 630px;
+	height:500px;
 	position: absolute;
 	overflow:hidden;
 	padding:0;
@@ -328,12 +328,11 @@
 }
 .menu.main>.menu-tab{
 	height:37px;
-	text-align:center;
+	text-align:left;
 	width:calc(100% - 30px);
 	padding-left:15px;
 	padding-right:15px;
 	position:relative;
-	text-align:center;
 
 	border-width: 0 0 1px;
 	border-style:solid;
@@ -377,7 +376,7 @@
 	height:100%;
 }
 .menu.main>.menu-content>div>.left.pane{
-	width:34%;
+	width:25%;
     left:0;
     overflow: scroll;
 }
@@ -405,8 +404,8 @@
 	color:rgba(255,255,255,0.5);
 }
 .menu.main>.menu-content>div>.right.pane{
-	left:34%;
-	width:66%;
+	left:25%;
+	width:75%;
 	overflow:scroll;
 }
 .menu.main>.menu-content>div>.right.pane>div{
@@ -474,8 +473,8 @@
 	transition-property: transform;
 }
 .menu.main>.menu-content>div>.menubutton.round{
-	left:335px;
-	top:197px;
+	left:570px;
+	top:400px;
 	z-index:3;
     transition-property: color, box-shadow;
 	transition-duration:0.3s;

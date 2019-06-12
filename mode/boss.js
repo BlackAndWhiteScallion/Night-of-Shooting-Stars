@@ -407,7 +407,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss'], 'shu'],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
 				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'shen'],
-				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','skipfirst','boss_damagecount'],['boss'],'shu'],
+				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','skipfirst','boss_damagecount'],['boss'],'shu','10000'],
 				boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
 			},
 		},
@@ -945,7 +945,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.damageCount=ui.create.system('伤害: 0',null,true);
 					lib.setPopped(ui.rules,function(){
 						var uiintro=ui.create.dialog('hidden');
-							uiintro.add('<div class="text left">[选项→通用]里可以提高游戏速度<br>关掉[回合顺序自选]和[单人控制]也可以显著提升游戏速度<br>不要想了，快点打上去！</div>');
+							uiintro.add('<div class="text left">[选项→游戏]里可以提高游戏速度<br>关掉[回合顺序自选]和[单人控制]也可以显著提升游戏速度<br>不要想了，快点打上去！</div>');
 							uiintro.add(ui.create.div('.placeholder.slim'))
 						return uiintro;
 					},400);
