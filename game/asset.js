@@ -133,6 +133,7 @@ window.noname_asset_list=[
     'image/character/wingedtiger.jpg',
     'image/character/zither.jpg',
     'image/character/yukizakura.jpg',
+    'image/character/icetea.jpg',
     'image/character/hemerocalliscitrinabaroni.jpg',
     'image/character/bullygang.jpg',
     'image/character/pear.jpg',
