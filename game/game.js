@@ -26,7 +26,7 @@
         extensionURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/master/',
         //mirrorURL:'',
         mirrorURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
-        hallURL:'318sgs.6655.la',
+        hallURL:'47.100.162.52',
         //hallURL:'noname.pub',
         assetURL:'',
         backgroundmusicURL:'',
@@ -2468,7 +2468,7 @@
                         intro:'开启后玩家在进行选择时不同的选项将分开，而不是连在一起',
                     },
                     blur_ui:{
-                        name:'模糊效果',
+                        name:'暂停时模糊背景',
                         intro:'在暂停或打开菜单时开启模糊效果',
                         init:false,
                         unfrequent:true,
@@ -3959,7 +3959,6 @@
                             map.connect_player_number.hide();
                             //map.connect_enhance_zhu.hide();
                             map.connect_double_nei.hide();
-                            map.connect_zhong_card.show();
                             map.connect_special_identity.hide();
                         }
                         else{
@@ -3971,14 +3970,6 @@
                             else{
                                 map.connect_double_nei.hide();
                             }
-                            map.connect_zhong_card.hide();
-
-                            if(config.connect_player_number=='8'){
-                                map.connect_special_identity.show();
-                            }
-                            else{
-                                map.connect_special_identity.hide();
-                            }
                         }
                     },
                     connect_identity_mode:{
@@ -3987,11 +3978,10 @@
                         item:{
                             yibian:'异变',
                             normal:'经典',
-                            zhong:'明忠'
                         },
                         restart:true,
                         frequent:true,
-                        intro:'异变和明忠模式详见帮助'
+                        intro:'异变模式详见帮助'
                     },
                     connect_player_number:{
                         name:'游戏人数',
@@ -4008,31 +3998,18 @@
                         frequent:true,
                         restart:true,
                     },
-                    connect_zhong_card:{
-                        name:'明忠卡牌替换',
-                        init:true,
-                        frequent:true,
-                        restart:true
-                    },
                     connect_double_nei:{
-                        name:'双内奸',
+                        name:'双路人',
                         init:false,
                         restart:true,
                         // frequent:true,
-                        intro:'开启后游戏中将有两个内奸（内奸胜利条件仍为主内1v1时击杀主公）'
+                        intro:'开启后游戏中将有两个路人'
                     },
                     connect_double_character:{
                         name:'双将模式',
                         init:false,
                         frequent:true,
                         restart:true,
-                    },
-                    connect_special_identity:{
-                        name:'特殊身份',
-                        init:false,
-                        restart:true,
-                        frequent:true,
-                        intro:'开启后游戏中将增加军师、大将、贼首三个身份'
                     },
                     /*
                     connect_ban_weak:{
@@ -4449,13 +4426,12 @@
                         name:'游戏模式',
                         init:'normal',
                         item:{
-                            yibian:'异变',
                             normal:'经典',
                             zhong:'明忠'
                         },
                         restart:true,
                         frequent:true,
-                        intro:'异变和明忠模式详见帮助'
+                        intro:'明忠模式详见帮助'
                     },
                     connect_player_number:{
                         name:'游戏人数',
@@ -4479,11 +4455,11 @@
                         restart:true
                     },
                     connect_double_nei:{
-                        name:'双内奸',
+                        name:'双路人',
                         init:false,
                         restart:true,
                         // frequent:true,
-                        intro:'开启后游戏中将有两个内奸（内奸胜利条件仍为主内1v1时击杀主公）'
+                        intro:'开启后游戏中将有两个路人（路人胜利条件仍为主内1v1时击杀主公）'
                     },
                     connect_double_character:{
                         name:'双将模式',
@@ -5485,7 +5461,7 @@
                     },
                     chess_treasure:{
                       name:'战场机关',
-                      init:'0',
+                      init:'0.1',
                       frequent:true,
                       item:{
                           '0':'关闭',
@@ -10740,10 +10716,10 @@
                     if(player.isOnline()){
                         player.wait(sendback);
                         event.ol=true;
-                        player.send(function(ai){
-						game.me.chooseCard(str,true).set('type','compare').set('glow_result',true).ai=ai;
+                        player.send(function(str, ai){
+							game.me.chooseCard(str,true).set('type','compare').set('glow_result',true).ai=ai;
 							game.resume();
-						},event.ai);
+						},str, event.ai);
 					}
 					else{
 						event.localPlayer=true;
@@ -10752,10 +10728,10 @@
 					if(target.isOnline()){
 						target.wait(sendback);
 						event.ol=true;
-						target.send(function(ai){
+						target.send(function(str, ai){
 							game.me.chooseCard(str,true).set('type','compare').set('glow_result',true).ai=ai;
 							game.resume();
-						},event.ai);
+						},str, event.ai);
 					}
 					else{
 						event.localTarget=true;
@@ -11284,7 +11260,7 @@
                         event.controls.push('cancel2');
                     }
                     if(event.isMine()){
-                        						if(event.sortcard){
+                        if(event.sortcard){
 							var prompt=event.prompt||'选择一个位置';
 							if(event.tosort){
 								prompt+='放置'+get.translation(event.tosort);
@@ -13482,11 +13458,11 @@
                     if(lib.config.background_audio){
                         game.playAudio('effect',str);
                     }
-                    game.broadcast(function(){
+                    game.broadcast(function(str){
                         if(lib.config.background_audio){
                             game.playAudio('effect',str);
                         }
-                    });
+                    }, str);
                     if(num>player.maxlili-player.lili) num=player.maxlili-player.lili;
                     if(player.isTurnedOver()){
                         num = 0;
@@ -14793,7 +14769,7 @@
                         if(this==game.me&&ui.fakeme){
                             ui.fakeme.style.backgroundImage=node.style.backgroundImage;
                         }
-if(this==game.me&&ui.fakeme&&fakeme!==false){
+                        if(this==game.me&&ui.fakeme&&fakeme!==false){
 							ui.fakeme.style.backgroundImage=node.style.backgroundImage;
 						}
 						if(video!=false){
@@ -23775,6 +23751,7 @@ if(this==game.me&&ui.fakeme&&fakeme!==false){
 									game.reload();
 								}
 							});
+                            ui.connectRoom.style.right = '200px';
 							if(!get.config('room_button')){
 								ui.connectRoom.style.display='none';
 							}
@@ -31818,7 +31795,7 @@ smoothAvatar:function(player,vice){
                 ui.chatButton=chat;
                 lib.setPopped(chat,ui.click.chat,220);
             },
-	exit:function(){
+	        exit:function(){
 				if(!ui.exit){
 					ui.exit=ui.create.control('退出房间',ui.click.exit);
 				}
@@ -32312,7 +32289,7 @@ smoothAvatar:function(player,vice){
                     }
 
                     menux=createMenu(['模式','角色','卡牌'],{
-                        position:menuContainer,bar:123
+                        position:menuContainer,bar:12
                     });
                     menu=menux.menu;
                 }
@@ -41179,9 +41156,9 @@ smoothAvatar:function(player,vice){
                                 this.blur();
                                 this.disabled=true;
                                 this.style.opacity=0.6;
-                                button.textnode.innerHTML='发状态(10)';
+                                button.textnode.innerHTML='发状态(3)';
                                 button.intervaltext=button.textnode.innerHTML;
-                                var num=10;
+                                var num=3;
                                 var that=this;
                                 button.input.disabled=true;
                                 button.input.style.opacity=0.6;

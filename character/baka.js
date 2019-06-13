@@ -8,7 +8,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		},
 		characterIntro:{
 		    cirno:'冰之妖精，在众多妖精中是能力最强的！（然而对于其他人来说只是杂鱼）是个喜欢到处游荡和搞恶作剧的笨蛋。<br><b>画师：茨乃</b>',
-                daiyousei:'不知名不知能力不知长相的一只妖精。跟琪露诺的关系很不错（大部分时候充当她的监护人……）<br><b>画师：ジョンディー</b>',
+                daiyousei:'不知名不知能力不知长相的一只妖精。跟琪露诺的关系很不错（大部分时候充当她的监护人……）<br><b>画师：伊崎</b>',
 		},       
 		perfectPair:{
 		},
@@ -274,7 +274,33 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               },
                               threaten:0.8
                         }
-                  }
+                  },
+                  //  可以强制更改选项，但是choosecontrolafter只是选项选完，还没有到执行后续的位置。
+                  // 在choosecontrolafter处再次choose只会更改选项，后续效果不会执行
+                  // 需要找出在什么地方可以确定后续效果使用完毕了。
+                  // useskillafter太远了。choosecontrolafter太近了。并没有用于确认“选项执行完毕”的位置。
+                  nochoose:{
+                        forced:true,
+                        trigger:{player:'chooseControlBegin'},
+                        usable:1,
+                        content:function(){
+                              'step 0'
+                              event.num = 0;
+                              'step 1'
+                              trigger.cancel();
+                              console.log(trigger);
+                              trigger.result = {};
+                              trigger.result.control=trigger.controls[event.num];
+                              trigger.trigger('chooseControlAfter');
+                              'step 2'
+                              trigger.trigger('chooseControlBegin');
+                              event.num ++;
+                              if (event.num < trigger.controls.length){
+                                    event.goto(1);
+                              }
+
+                        },
+                  },
             },
             translate:{
                   cirno:'琪露诺',

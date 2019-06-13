@@ -23,6 +23,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hemerocalliscitrinabaroni:'今天你平衡了么？<br />我可以帮你好好<font size="5"><b>平衡</b></font>（物理）一下',
 			pear:'凤梨倒了~',
 			yukizakura:'信仰鸽子的幻想乡巫女',
+			icetea:'一个单机的抽卡玩家……',
 		},	   
 		perfectPair:{
 		},
@@ -1279,7 +1280,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			kejing:{
 				audio:2,
-				trigger:{player:'phaseBegin'},
+				trigger:{player:'phaseUseBegin'},
 				filter:function(event, player){
 					return player.countCards('h') || player.hp > 0;
 				},
@@ -1432,11 +1433,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aidoulu_2:'偶像（贴效果）',
 			aidoulu_audio1:'你NP，不是，灵力满了！',
 			aidoulu_audio2:'啊啊啊啊！啊，嗷嗷，啊啊啊啊啊！（迫真）',
-			aidoulu_info:'符卡技（4）【永续】一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
+			aidoulu_info:'符卡技（4）<永续>一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
 			fenxue:"纷雪",
 			fenxue_info:"一回合一次，出牌阶段，你可以依次弃置至多X名角色与你的各一张牌，以此法弃置红桃牌的角色各摸一张牌（X为场上牌的花色数且至少为1）",
 			ys_luoying:"落樱",
-			ys_luoying_info:"符卡技（1）【永续】当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
+			ys_luoying_info:"符卡技（1）<永续>当你因弃置而失去手牌时，你可以选择一项：获得一张本回合进入弃牌堆的与之花色不同的牌；或对一名角色造成1点灵击伤害。",
 			ys_luoying_3:"落樱",
 			ys_fenxue_audio1:"雪花像绽放的礼花 天地间肆意的飘洒 纵情在一霎那~<sup>♪</sup>",
 			ys_fenxue_audio2:"又到了《ホワイトアルバム》的季节呢",
@@ -1449,7 +1450,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			huangxueyuye:'阴阳流转',
 			huangxueyuye_info:'你可以交给当前回合角色一张手牌。',
 			daofaziran:'道法自然',
-			daofaziran_info:'符卡技（2）【永续】一名角色的弃牌阶段开始时，你可以令其手牌上限+1或-1，然后若其手牌数等于上限，你将手牌数调整至上限。',
+			daofaziran_info:'符卡技（2）<永续>一名角色的弃牌阶段开始时，你可以令其手牌上限+1或-1，然后若其手牌数等于上限，你将手牌数调整至上限。',
 			daofaziran2:'道法自然',
 			wy_fatian:'法天',
 			wy_fatian_info:'你的手牌上限+1',
@@ -1486,7 +1487,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			chouka_audio2:'你是我唯一想要的卡',
 			chouka_audio3:'又抽到一张好卡呢',
 			kejing:'氪金',
-			kejing_info:'准备阶段，你可以弃置任意张手牌，或失去任意点体力，并获得等量的灵力。',
+			kejing_info:'出牌阶段开始时，你可以弃置任意张手牌，或失去任意点体力，并获得等量的灵力。',
 			kejing_audio1:'玄能救非，氪必改命',
 			kejing_audio2:'再来一单，一定出货',
 			renli:'人理守护',
@@ -1495,6 +1496,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			renli_audio1:'啊，出货了出货了',
 			renli_audio2:'流星夜，卸载！',
 			renli_audio3:'抽卡就能出货的世界不是很值得守护么',
+			icetea_die:'就算死我也要氪给你看',
 		},
 	};
 });

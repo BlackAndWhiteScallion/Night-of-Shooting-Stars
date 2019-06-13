@@ -810,7 +810,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        cardview:{
 	        	name:'游戏牌',
 	        	mode:'',
-	        	intro:'卡牌花色点数以牌局内为准。',
+	        	intro:'卡牌的花色点数和灵力以牌局内为准。',
 	        	showcase:function(init){
 	        		if (init){
 		        		var i;

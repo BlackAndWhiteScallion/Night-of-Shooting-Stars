@@ -4156,7 +4156,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					event.finish();
     				}
     				'step 1'
-    				game.log('毒镖陷阱发动');
+    				game.log('流星雨发动');
     				player.damage('nosource');
     				player.draw(2);
     			}
@@ -4448,7 +4448,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					event.finish();
     				}
     				'step 1'
-    				game.log('神秘雕像发动');
+    				game.log('黑洞酱发动');
     				player.moveTowards(event.source);
     			}
     		},
@@ -5434,6 +5434,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		},
+			boss_shezhang:{
+				usable:1,
+				enable:['chooseToRespond','chooseToUse'],
+				filterCard:function(card,player){
+					return true;
+				},
+				position:'he',
+				viewAs:{name:'chess_shezhang'},
+				prompt:'将一张牌当【设置路障】使用或打出',
+				check:function(card){return 10-get.value(card)},
+				ai:{
+					result:{
+						player:1,
+					}
+				}
+			},
+			/*
     		boss_wushang:{
     			trigger:{player:'phaseBegin'},
     			forced:true,
@@ -5473,6 +5490,48 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				}
     			}
     		}
+			*/
+			shenmidiaoxiang2:{
+    			trigger:{player:'phaseAfter'},
+    			forced:true,
+    			popup:false,
+    			filter:function(event,player){
+    				for(var i=0;i<game.treasures.length;i++){
+    					if(game.treasures[i].name=='treasure_shenmidiaoxiang'){
+    						return player.canMoveTowards(game.treasures[i])&&
+    							get.chessDistance(game.treasures[i],player)>2;
+    					}
+    				}
+    				return false;
+    			},
+    			content:function(){
+    				'step 0'
+    				var source=null;
+    				for(var i=0;i<game.treasures.length;i++){
+    					if(game.treasures[i].name=='treasure_shenmidiaoxiang'){
+    						source=game.treasures[i];break;
+    					}
+    				}
+    				if(source){
+    					event.source=source;
+    					source.chessFocus();
+    					source.playerfocus(1000);
+    					source.line(player,'thunder');
+    					if(lib.config.animation&&!lib.config.low_performance){
+    						setTimeout(function(){
+    							source.$epic2();
+    						},300);
+    					}
+    					game.delay(2);
+    				}
+    				else{
+    					event.finish();
+    				}
+    				'step 1'
+    				game.log('神秘雕像发动');
+    				player.moveTowards(event.source);
+    			}
+    		},
     	},
     	translate:{
     		zhu_config:'启用主帅',
@@ -5732,7 +5791,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			return Math.abs(fxy[0]-txy[0])+Math.abs(fxy[1]-txy[1]);
     		},
     		rawAttitude:function(from,to){
-    			return (from.side===to.side?6:-6);
+    			return (from.side===to.side?3:-3);
     		}
     	},
     	card:{
@@ -5935,7 +5994,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			chess_diaochan:['female','qun',3,['gongji','pianyi','biyue']],
     			chess_jinchidiao:['male','qun',7,['boss_bfengxing','boss_chiyu'],['boss','chessboss']],
     			chess_beimingjukun:['male','qun',12,['boss_wuying','cangming'],['boss','chessboss']],
-    			chess_wuzhaojinlong:['male','qun',10,['boss_tenglong','boss_wushang'],['boss','chessboss']],
+    			chess_wuzhaojinlong:['male','qun',10,['boss_tenglong','boss_shezhang'],['boss','chessboss']],
     			chess_dongzhuo:['male','qun',10,['jiuchi','boss_stoneqiangzheng','boss_stonebaolin'],['boss','chessboss']],
     			chess_xingtian:['male','qun',99,['boss_moyan','wushuang'],['boss','chessboss']],
 
