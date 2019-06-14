@@ -343,6 +343,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},500);
 			}
 
+			lib.setPopped(ui.rules,function(){
+				var uiintro=ui.create.dialog('hidden');
+					uiintro.add('<div class="text left"></div>');
+				if (game.bossinfo.loopType == 2){
+					uiintro.add('<div class="text left">回合顺序：魔王→勇者→魔王</div>');
+					if (get.config('free_turn')){
+						uiintro.add('<div class="text left">进行回合的勇者由你选择</div>');
+					}
+				} else {
+					uiintro.add('<div class="text left">回合顺序：魔王→勇者→勇者→勇者→魔王</div>');
+				}
+				if (game.bossinfo.chongzheng){
+					uiintro.add('<div class="text left">勇者坠机后进入重整状态<br>重整需要'+game.bossinfo.chongzheng+'个回合');
+				}
+				uiintro.add(ui.create.div('.placeholder.slim'))
+				return uiintro;
+			},400);
 			event.bosslist.delete();
 
 			game.arrangePlayers();
@@ -402,7 +419,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		characterPack:{
 			mode_boss:{
-				boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss'], 'wei'],
+				boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss'], 'wei','9'],
 				boss_cirno2:['female', '0', 4, ['jiqiang','zuanshi','jubing'], ['hiddenboss'], 'wei'],
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss'], 'shu'],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
