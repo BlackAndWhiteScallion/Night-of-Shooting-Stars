@@ -301,6 +301,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       usable:1,
                       audio:2,
                       filter:function(event,player){
+                        console.log(event.card);
+                        console.log(event);
                         var i = event;
                         var use = false;
                         while (i.name != 'phaseLoop'){
@@ -312,15 +314,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           }
                         }
                         if(!use) return false;
-                        return (get.position(event.card)=='d'&&get.itemtype(event.card)=='card'&&player.lili>0);
+                        var card = event.card;
+                        if (!get.position(card) && card.cards && card.cards.length >= 1){
+                          card = card.cards[0];
+                        }
+                        return (get.position(card)=='d'&&get.itemtype(card)=='card'&&player.lili>0);
                       },
                       content:function(){
                          'step 0'
                          player.loselili();
-                         player.chooseTarget('将'+get.translation(trigger.card)+'交给一名角色',true,function(card,player,target){
+                         event.card = trigger.card;
+                         if (!get.position(event.card) && event.card.cards && event.card.cards.length >= 1){
+                           event.card = trigger.card.cards; 
+                         }
+                         player.chooseTarget('将'+get.translation(event.card)+'交给一名角色',true,function(card,player,target){
                               return true;
                           }).set('ai',function(target){
-                              if (get.bonus(trigger.card) > 0) return player == target;
+                              if (get.bonus(event.card) > 0) return player == target;
                               return get.attitude(player,target);
                           });
                           'step 1'
@@ -328,8 +338,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             if (result.targets[0].name == 'mokou'){
                               game.trySkillAudio('jiehuo',result.targets[0],true,3);
                             }
-                              result.targets[0].gain(trigger.card);
-                              result.targets[0].$gain2(trigger.card);
+                              result.targets[0].gain(event.card);
+                              result.targets[0].$gain2(event.card);
                           }
                       },
                       check:function(event,player){

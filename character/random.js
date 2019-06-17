@@ -878,6 +878,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				viewAs:{name:'wuzhong'},
 				usable:1,
 				filterCard:true,
+				position:'he',
 				viewAsFilter:function(player){
 					return player.countCards('he')>0;
 				},

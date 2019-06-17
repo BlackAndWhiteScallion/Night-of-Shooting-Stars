@@ -1380,7 +1380,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            discardPile:[],
 	                        };
 	                        for(var i=0;i<line7.childElementCount;i++){
-								console.log(line7.childNodes[i].info);
 	                            scene.players.push(line7.childNodes[i].info);
 	                        }
 	                        if(scene.players.length<2){

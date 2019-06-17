@@ -764,7 +764,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					useful:[6,4],
 					value:[6,4],
 				},
-				result:{player:1},
+				result:{player:0.5},
 				expose:0.2
 			},
 			notarget:true,
