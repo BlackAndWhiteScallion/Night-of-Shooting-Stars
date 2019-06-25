@@ -231,6 +231,7 @@
 #arena>.player:not(.minskin)>.name.name2{
     left: auto !important;
     right: 13px;
+    top: 110px;
 }
 
 #arena>.player:not(.minskin){

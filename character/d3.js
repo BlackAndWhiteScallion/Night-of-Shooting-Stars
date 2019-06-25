@@ -1359,8 +1359,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if (player.storage.renli.length == 13){
 						player.$skill('人理守护',null,null,true);
 						game.trySkillAudio('renli',player,true,3);
-						if (player == game.me) game.over(true);
-                		else game.over();
+						if (player == game.me){
+							game.over(true);
+						} else {
+							game.over(false);
+						}
 					}
 				}
 			},

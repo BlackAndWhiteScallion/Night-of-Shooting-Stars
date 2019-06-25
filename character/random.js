@@ -850,9 +850,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.target = result.targets[0];
 						player.choosePlayerCard(event.target,'e',true).set('ai',function(button){
 							if (get.attitude(player, event.target) > 0){
-								return get.bonus(button.link) > 0 || card.name == 'frog';
+								return get.bonus(button.link) > 0 || button.link.name == 'frog';
 							} else {
-								return get.bonus(button.link) < 0 || get.subtype(card) == 'equip2';
+								return get.bonus(button.link) < 0 || get.subtype(button.link) == 'equip2';
  							}
 						});
 					}

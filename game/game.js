@@ -5559,23 +5559,53 @@
             brawl:{
                 name:'场景',
                 config:{
+                    practise:{
+                        name:'对战练习',
+                        init:true,
+                        frequent:true
+                    },
                     weiwoduzun:{
                         name:'唯我独尊',
                         init:true,
                         frequent:true
                     },
                     tongjiangmoshi:{
-                        name:'同将模式',
+                        name:'同⑨模式',
                         init:true,
                         frequent:true
                     },
-                    practise:{
-                        name:'对战练习',
+                    shenxian:{
+                        name:'神仙打架',
+                        init:true,
+                        frequent:true
+                    },
+                    landlord:{
+                        name:'斗地主',
+                        init:true,
+                        frequent:true
+                    },
+                    marisa:{
+                        name:'偷书贼！',
+                        init:true,
+                        frequent:true
+                    },
+                    pubg:{
+                        name:'吃鸡模式',
+                        init:true,
+                        frequent:true
+                    },
+                    library:{
+                        name:'稗田教室',
                         init:true,
                         frequent:true
                     },
                     scene:{
                         name:'创建场景',
+                        init:true,
+                        frequent:true
+                    },
+                    stage:{
+                        name:'创建关卡',
                         init:true,
                         frequent:true
                     }
@@ -12719,6 +12749,42 @@
                     }
                     event.result=cards;
                 },
+                drawSkill:function(){
+                    if(typeof event.minnum=='number'&&num<event.minnum){
+						num=event.minnum;
+					}
+                    if(event.log!=false){
+                        if(num>0){
+                            game.log(player,'摸了'+get.cnNumber(num)+'张牌');
+                        }
+                    }
+                    var cards;
+                    if(num>0){
+                        cards=get.cards(num);
+                    }
+                    else{
+                        cards=[];
+                    }
+                    if(event.drawDeck){
+                        cards=cards.concat(player.getDeckCards(event.drawDeck));
+                    }
+                    if(event.animate!=false){
+                        if(event.visible){
+                            player.gain(cards,'gain2');
+                            game.log(player,'摸了'+get.cnNumber(num)+'张牌（',cards,'）');
+                        }
+                        else{
+                            player.gain(cards,'draw');
+                        }
+                    }
+                    else{
+                        player.gain(cards);
+                        if(event.$draw){
+                            player.$draw(cards.length);
+                        }
+                    }
+                    event.result=cards;
+                },
                 discard:function(){
                     "step 0"
                     game.log(player,'弃置了',cards);
@@ -14296,6 +14362,7 @@
                         skills=skills.concat(info2[3]);
 
                         // var name=get.translation(character2);
+                        this.node.name2.dataset.nature=get.groupnature(this.group);
                         this.node.name2.innerHTML=get.slimName(character2);
                         // this.node.name2.dataset.nature=get.groupnature(info2[1]);
                         // if(!lib.config.show_name){
@@ -14994,8 +15061,8 @@
                     }
                     if(numh>=10){
                         numh=numh.toString();
-                        this.node.count.dataset.condition='low';
-                        this.node.count.innerHTML=numh[0]+'<br>'+numh[1];
+                        this.node.count.dataset.condition='higher';
+                        this.node.count.innerHTML=numh[0]+''+numh[1];
                     }
                     else{
                         if(numh>5){
@@ -16767,6 +16834,25 @@
                     }
                     return next;
                 },
+                drawSkill:function(){
+                    var next=game.createEvent('drawSkill');
+                    next.player=this;
+                    for(var i=0;i<arguments.length;i++){
+                        if(get.itemtype(arguments[i])=='player'){
+                            next.source=arguments[i];
+                        }
+                        else if(typeof arguments[i]=='number'){
+                            next.num=arguments[i];
+                        }
+                        else if(typeof arguments[i]=='boolean'){
+                            next.animate=arguments[i];
+                        }
+                    }
+                    if(next.num==undefined) next.num=1;
+                    if(next.num<=0) _status.event.next.remove(next);
+                    next.setContent('drawSkill');
+                    return next;
+                },
                 randomDiscard:function(){
                     var position='he',num=1,delay=null;
                     for(var i=0;i<arguments.length;i++){
@@ -18250,7 +18336,7 @@
                                 }
                             }
                         }
-                        if(this.initedSkills.contains(skill)) return this;
+                        //if(this.initedSkills.contains(skill)) return this;
                         this.initedSkills.push(skill);
                         if(info.init&&!_status.video){
                             info.init(this,skill);
@@ -18308,7 +18394,7 @@
                         }
                     }
                     else{
-                        if(this.skills.contains(skill)) return;
+                        //if(this.skills.contains(skill)) return;
                         var info=lib.skill[skill];
                         if(!info) return;
                         if(!nobroadcast){
@@ -27766,12 +27852,13 @@ smoothAvatar:function(player,vice){
             }
             game.saveConfig('recentCharacter',list,true);
         },
-        createCard:function(name,suit,number,nature){
+        createCard:function(name,suit,number,nature,bonus){
             if(typeof name=='object'){
                 nature=name.nature;
                 number=name.number;
                 suit=name.suit;
                 name=name.name;
+                bonus=name.bouns;
             }
             if(typeof name!='string'){
                 name='sha';
@@ -27786,6 +27873,9 @@ smoothAvatar:function(player,vice){
             }
             if(!nature&&lib.card[name]&&lib.card[name].cardnature){
                 nature=lib.card[name].cardnature;
+            }
+            if(!bonus&&lib.card[name]&&lib.card[name].bonus){
+                bonus=lib.card[name].bonus;
             }
             if(typeof suit!='string'){
                 suit=['heart','diamond','club','spade'].randomGet();
@@ -27811,9 +27901,10 @@ smoothAvatar:function(player,vice){
                 suit = null;
                 number = null;
                 nature = null;
+                bonus = null;
             }
             card.storage.vanish=true;
-            return card.init([suit,number,name,nature]);
+            return card.init([suit,number,name,nature,bonus]);
         },
         forceOver:function(bool,callback){
             _status.event.next.length=0;

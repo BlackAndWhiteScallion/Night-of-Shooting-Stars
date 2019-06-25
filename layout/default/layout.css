@@ -1927,7 +1927,7 @@ div:not(.handcards)>.card>.info>span,
 	top: 21px;
 }
 #arena.slim_player .player>.name.name2 {
-	left: 78px
+	left: 78px;
 }
 
 #arena .player.minskin>.name,

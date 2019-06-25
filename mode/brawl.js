@@ -7,8 +7,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    },
 	    start:function(){
 	        ui.auto.hide();
-	        if(!lib.storage.scene){
-	            lib.storage.scene={};
+	        if(!lib.storage.scene || Object.keys(lib.storage.scene).length == 0){
+	            lib.storage.scene={
+					斗地主II:{
+						name:'斗地主（新）',
+						intro:['两名单将的农民，对战双将的地主！'],
+						players:[
+							{equips: [], handcards: [], hp: NaN, identity: "zhu", judges: [], lili: NaN, maxHp: NaN, maxlili: NaN, name: "random", name2: "random", playercontrol: false, position: 1},
+							{equips: [], handcards: [], hp: NaN, identity: "fan", judges: [], lili: NaN, maxHp: NaN, maxlili: NaN, name: "random", name2: "none", playercontrol: false, position: 2},
+							{equips: [], handcards: [], hp: NaN, identity: "fan", judges: [], lili: NaN, maxHp: NaN, maxlili: NaN, name: "random", name2: "none", playercontrol: false, position: 3},
+						],
+						gameDraw:true,
+						cardPileBottom:[],
+						cardPileTop:[],
+						discardPile:[],
+					},
+				};
 	        }
 	        if(!lib.storage.stage){
 	            lib.storage.stage={};
@@ -215,7 +229,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	                lib.translate.restart='返回';
 	                dialog.delete();
-	                ui.brawlinfo=ui.create.system('乱斗',null,true);
+	                ui.brawlinfo=ui.create.system('场景',null,true);
 	                lib.setPopped(ui.brawlinfo,function(){
 	                    var uiintro=ui.create.dialog('hidden');
 	                    uiintro.add(info.name);
@@ -346,6 +360,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            if(get.config(i)===false) continue;
 	            if(i=='scene'){
 	                sceneNode=createNode(i);
+					sceneNode.style.color = '#3fff00';
 	            }
 	            else{
 	                createNode(i);
@@ -653,6 +668,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            }
 	        },
+			/*
 	        pandora:{
 	        	name:'禁忌解放',
 	            mode:'identity',
@@ -747,12 +763,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            }
 	        },
+			*/
 		    shenxian:{
 	            name:'神仙打架',
 	            mode:'identity',
 	            intro:[
 	            	'高达一号凭依了幻想乡里的所有人！',
-	                '所有角色在使用一张牌后摸一张牌！',
+	                '所有角色在失去一张牌后摸一张牌！',
 	                '顺便，牌堆牌数翻倍了。',
 	            ],
 	            showcase:function(init){
@@ -777,7 +794,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            },
 	            init:function(){
 	                lib.skill._gaoda={
-	                	trigger:{player:'useCard'},
+	                	trigger:{player:'loseAfter'},
 	                	direct:true,
 	                	content:function(){
 	                		player.draw();
@@ -796,9 +813,280 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	            }
 	        },
+			landlord:{
+				name:'斗地主',
+				intro:['两名农民对战一名地主！',
+					'地主体力上限+1，回合开始时摸一张牌，且可以额外使用一张【轰！】'],
+				mode:'old_identity',
+				init:function(){
+					_status.brawl.playerNumber=3;
+					lib.skill.landlord={
+						direct:true,
+						init:function(player){
+							player.gainMaxHp();
+							player.recover();
+							player.say('初次见面，那么，永别了。');
+						},
+						trigger:{player:'phaseBegin'},
+						content:function(){
+							player.draw();
+						},
+						mod:{
+							cardUsable:function(card,player,num){
+								if(card.name=='sha') return num + 1;
+							}
+						},
+					};
+					lib.translate['landlord'] = '地主技能（摸牌）';
+				},
+				showcase:function(init){
+	                var node=this;
+	                var player, player1, player2;
+	                if(init){
+						this.style.margin = '-200px';
+						this.style.padding = '200px';
+	                    player=ui.create.player(null,true);
+	                    player.init('remilia');
+	                    player.node.avatar.show();
+	                    player.style.left='calc(50% - 75px)';
+	                    player.style.top='200px';
+						player.maxHp++;
+						player.hp++;
+						player.update();
+	                    player.node.count.innerHTML='100';
+	                    player.style.transition='all 0.5s';
+						player1=ui.create.player(null,true);
+	                    player1.init('zigui');
+	                    player1.node.avatar.show();
+	                    player1.style.left='calc(50% - 250px)';
+	                    player1.style.top='400px';
+	                    player1.style.transition='all 0.5s';
+						player1.style.transform='scale(0.7)';
+						player2=ui.create.player(null,true);
+	                    player2.init('zigui');
+	                    player2.node.avatar.show();
+	                    player2.style.left='calc(50% + 100px)';
+	                    player2.style.top='400px';
+	                    player2.style.transition='all 0.5s';
+						player2.style.transform='scale(0.7)';
+	                    node.appendChild(player);
+	                    node.appendChild(player1);
+						node.appendChild(player2);
+	                    node.playernode=player;
+	                }
+	                else{
+	                    player=node.playernode;
+	                }
+					var list = [
+						'我不是针对你们任何一个人，我是说你们在座的各位，都是垃圾！',
+						'想打我？我怀疑你们脑子有点问题。',
+						'你们这些战五渣连看我都不配！',
+						'你们这些龙套炮灰，连第一集的ED都活不到！',
+						'我看看，左边的是白板，右边的，什么，还是白板？',
+						'你们这几个白板是哪个二货设计的，推了重来推了重来！',
+						'才两个人？就是来100个也打不过本小姐的！',
+						'我查下百科，等下、你居然掉心脏？',
+						'你们打的这么菜，就是氪金也救不了你们了！',
+						'找不到回家的路了吗？出门右转有垃圾桶哦',
+						'我认得你，你就是《如何与傻逼相处》的封面！',
+					];
+	                this.showcaseinterval=setInterval(function(){
+						if (list.length != 0){
+							node.playernode.say(list.randomRemove());
+						} else {
+							node.playernode.say('大傻逼！都是大傻逼！');
+						}
+					},5000);
+				},
+				content:{
+					gameStart:function(){
+	                	var players = game.filterPlayer();
+	                	for (var i = 0; i < players.length; i ++){
+							if (players[i].identity == 'nei') players[i].identity = 'fan';
+							if (players[i].identity == 'zhu') players[i].addSkill('landlord');
+							players[i].identityShown = true;
+	                	}
+						game.showIdentity();
+                        _status.identityShown=true;
+	                }
+				},
+			},
+			marisa:{
+				name:'偷书贼！',
+				intro:['该死的老鼠又来偷东西了！',
+					'魔理沙对战帕秋莉与小恶魔',
+					'魔理沙增加1点体力上限，且在3号位行动前进行一个额外的回合（3号位坠机则不执行）。',
+					'小恶魔游戏开始时装备3张【魔导书】。',
+					'双方胜利条件均为：对方全部坠机。',
+					'额外的，魔理沙回合开始时，如果魔理沙装备了至少2张【魔导书】，魔理沙胜利。',
+					],
+				mode:'old_identity',
+				init:function(){
+					ui.background.setBackgroundImage('image/background/stg_library.jpg');
+					_status.brawl.playerNumber=3;
+					lib.skill.steal={
+						direct:true,
+						group:'steal2',
+						init:function(player){
+							player.say('帕秋莉，听说你今天没时间，所以我就来啦！');
+							player.gainMaxHp();
+							player.recover();
+						},
+						trigger:{player:'phaseBegin'},
+						content:function(){
+							if (player.countCards('e', 'book') > 1){
+								if (game.me == player) game.over(true);
+								else game.over(false);
+							}
+						},
+					};
+					lib.skill.steal2={
+						direct:true,
+						trigger:{global:'phaseAfter'},
+						filter:function(event,player){
+							return game.filterPlayer().length == 3 && player == event.player.nextSeat.nextSeat;
+						},
+						content:function(){
+							player.insertPhase();
+						},
+					};
+				},
+				showcase:function(init){
+					var node=this;
+					var player1,player2,player3;
+					if(init){
+						player1=ui.create.player(null,true).init('marisa');
+						player2=ui.create.player(null,true).init('patchouli');
+						player3=ui.create.player(null,true).init('koakuma');
+						player1.style.left='20px';
+						player1.style.top='20px';
+						player1.style.transform='scale(0.9)';
+						player1.node.count.hide();
+						player2.style.left='auto';
+						player2.style.right='20px';
+						player2.style.top='20px';
+						player2.style.transform='scale(0.9)';
+						player2.node.count.hide();
+						player3.style.left='auto';
+						player3.style.right='200px';
+						player3.style.top='20px';
+						player3.style.transform='scale(0.9)';
+						player3.$equip(game.createCard('book',null,null,null,'1'));
+						player3.$equip(game.createCard('book',null,null,null,'1'));
+						player3.$equip(game.createCard('book',null,null,null,'1'));
+						player3.node.count.hide();
+						this.appendChild(player1);
+						this.appendChild(player2);
+						this.appendChild(player3);
+						this.player1=player1;
+						this.player2=player2;
+						this.player3=player3;
+					}
+					else{
+						player1=this.player1;
+						player2=this.player2;
+						player3=this.player3;
+					}
+					var rect1=player1.getBoundingClientRect();
+					var rect2=player2.getBoundingClientRect();
+					var rect3=player3.getBoundingClientRect();
+					var left1=rect1.left+rect1.width/2-ui.arena.offsetLeft;
+					var left2=rect2.left+rect2.width/2-ui.arena.offsetLeft;
+					var left3=rect3.left+rect3.width/2-ui.arena.offsetLeft;
+					var top1=rect1.top+rect1.height/2-ui.arena.offsetTop;
+					var top2=rect2.top+rect2.height/2-ui.arena.offsetTop;
+					var top3=rect3.top+rect3.height/2-ui.arena.offsetTop;
+
+					var createCard=function(wuxie){
+						var card;
+						if(wuxie){
+							card=game.createCard('wuxie','noclick');
+							card.style.transform='scale(0.9)';
+						}
+						else{
+							card=game.createCard('shunshou','noclick');
+						}
+						card.style.opacity=0;
+						card.style.position='absolute';
+						card.style.zIndex=2;
+						card.style.margin=0;
+						return card;
+					}
+
+					var func=function(){
+						game.linexy([left1,top1,left3,top3]);
+						var card=createCard();
+						card.style.left='43px';
+						card.style.top='58px';
+						node.appendChild(card);
+						ui.refresh(card);
+						card.style.opacity=1;
+						card.style.transform='scale(0.9) translate(137px,152px)';
+						setTimeout(function(){
+							card.delete();
+						},1500);
+
+						setTimeout(function(){
+							if(!node.showcaseinterval) return;
+							game.linexy([left2,top2,left1,top1]);
+							var card=createCard(true);
+							card.style.left='auto';
+							card.style.right='43px';
+							card.style.top='58px';
+							node.appendChild(card);
+							ui.refresh(card);
+							card.style.opacity=1;
+							card.style.transform='scale(0.9) translate(-137px,152px)';
+							setTimeout(function(){
+								card.delete();
+							},500);
+						},1000);
+					};
+					node.showcaseinterval=setInterval(func,2200);
+					func();
+				},
+				content:{
+					list:['patchouli', 'koakuma'],
+					chooseCharacterFixed:true,
+					chooseCharacterAi:function(player){
+						if(player==game.zhu){
+							player.init('marisa');
+						}
+						else{
+							_status.brawl.list.remove(game.me.name);
+							player.init(_status.brawl.list.randomRemove());
+						}
+					},
+					chooseCharacter:function(){
+						if(game.me==game.zhu){
+							return ['marisa'];
+						}
+						else{
+							_status.brawl.list.randomSort();
+							return _status.brawl.list;
+							// return _status.brawl.list.randomGets(1);
+						}
+					},
+					gameStart:function(){
+	                	var players = game.filterPlayer();
+	                	for (var i = 0; i < players.length; i ++){
+							if (players[i].identity == 'nei') players[i].identity = 'fan';
+							if (players[i].identity == 'zhu') players[i].addSkill('steal');
+							players[i].identityShown = true;
+							if (players[i].name == 'koakuma'){
+								players[i].equip(game.createCard('book',null,null,null,'1'));
+								players[i].equip(game.createCard('book',null,null,null,'1'));
+								players[i].equip(game.createCard('book',null,null,null,'1'));
+							}
+	                	}
+						game.showIdentity();
+                        _status.identityShown=true;
+	                }
+				},
+			},
 	        pubg:{
 	        	name:'吃鸡模式',
-	        	mode:'identity',
+	        	mode:'old_identity',
 	        	intro:[
 	        		'游戏开始时，所有角色获得一张【皆杀】异变牌。',
 	        		'简单来说，所有角色的胜利条件仅为击坠所有其他角色，且所有角色击坠角色后，摸3张牌，获得1点灵力，摸一张技能牌。',
@@ -980,7 +1268,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            template:{
 	                mode:'old_identity',
 	                init:function(){
-	                    game.saveConfig('double_character',false,'identity');
+	                    game.saveConfig('double_character',false,'old_identity');
 	                    _status.brawl.playerNumber=_status.brawl.scene.players.length;
 	                },
 	                showcase:function(init){

@@ -28,6 +28,7 @@
 #arena:not(.fewplayer)>.player:not(.minskin):not(*[data-position='0'])>.name.name2{
     left: auto;
     right: 13px;
+    top: 110px;
 }
 
 #arena:not(.fewplayer)>.player:not(.minskin):not(*[data-position='0']){

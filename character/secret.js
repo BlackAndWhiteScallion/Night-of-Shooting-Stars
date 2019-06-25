@@ -121,6 +121,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			                      player.say('哎，技能牌堆里居然没有【灵涌】？');                      
 			                  }
 			                }
+							//player.draw(1, ui.skillPile, 'visible');
 			                player.gain(ui.skillPile.childNodes[0],'draw2');
                     	} else if (event.list[result.index] == '将弃置牌交给一名符卡发动中的角色') {
                     		player.addTempSkill('sihuan_4');
@@ -189,6 +190,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         ui.cardPile.insertBefore(cards,ui.cardPile.firstChild);
         			}
             		var card = ui.cardPile.childNodes[ui.cardPile.childNodes.length-1];
+					card.style.transform='scale(1)';
             		player.viewCards('牌堆底的牌',card);
             		event.card = card;
                     var list = ['将这张牌交给一名角色'];
