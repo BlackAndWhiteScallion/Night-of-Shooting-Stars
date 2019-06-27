@@ -37643,9 +37643,7 @@ smoothAvatar:function(player,vice){
                                         p.appendChild(span7);
 
                                         var finish=function(){
-                                            if(n1==n2){
-                                                game.saveConfig('asset_version',asset_version);
-                                            }
+                                            game.saveConfig('asset_version',asset_version);
                                             span.innerHTML='素材更新完毕（'+n1+'/'+n2+'）';
                                             p.appendChild(document.createElement('br'));
                                             var button=document.createElement('button');
