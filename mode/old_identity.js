@@ -207,8 +207,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}, 2500);
 					})
 				};
-				game.pause();
-				step1();
+				if (lib.config.asset_version){
+					game.pause();
+					step1();
+				}
 			}
 			else{
 				if(!_status.connectMode){

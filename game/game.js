@@ -39954,6 +39954,7 @@ smoothAvatar:function(player,vice){
                 ui.roundmenu=ui.create.div('#roundmenu.roundarenabutton.menubutton.round',ui.arena);
                 ui.roundmenu._position=[180,210];
                 ui.roundmenu.style.backgroundImage='linear-gradient(rgba(0, 133, 255, 0.8), rgba(0, 133, 255, 0.8))';
+                ui.roundmenu.classList.add('mobile');
                 ui.create.div(ui.roundmenu);
                 ui.create.div(ui.roundmenu);
                 ui.create.div(ui.roundmenu);
@@ -39972,7 +39973,7 @@ smoothAvatar:function(player,vice){
                 ui.create.div(ui.roundmenu);
 
                 ui.create.div(ui.roundmenu);
-                
+
                 if(lib.config.show_time2){
                     ui.roundmenu.classList.add('clock');
                 }
