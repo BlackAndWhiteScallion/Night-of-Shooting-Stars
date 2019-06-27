@@ -379,7 +379,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             i --;
                         } else list[i] = get.translation(list[i] + '_qiyao');
                     }
-                    if (list.length == 0) event.finish();
+                    if (!list.length) event.finish();
                     event.list = list;
                     player.chooseControlList(event.list,function(event,player){
                         if (event.list[0] == '跳过摸牌阶段，视为使用一种法术牌') return 0;
@@ -1309,7 +1309,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             meiling_die:'好吧好吧……还是你强一些呢。',
             patchouli:'帕秋莉',
             qiyao:'七曜',
-            qiyao_info:'准备阶段，你可以选择任意项：跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张牌；跳过摸牌阶段，视为使用一种法术牌；跳过出牌阶段，将一张牌当作法术牌使用；你不能以此法使用同名牌。',
+            qiyao_info:'准备阶段，你可以选择任意项：跳过弃牌阶段并消耗1点灵力，强化你本回合使用的下一张牌；跳过摸牌阶段，视为使用一种法术牌；跳过出牌阶段，将一张牌当作法术牌使用。',
             qiyao3:'七曜',
             qiyao_audio1:'就稍微用点手段吧。',
             qiyao_audio2:'我记得明明有更多法术牌的啊……？',

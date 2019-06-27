@@ -181,6 +181,10 @@
 	overflow:hidden;
 	padding:0;
 }
+.menu.main.mobile{
+	width: 400px;
+	height:300px;
+}
 .removing>.menubg.charactercard{
 	transform: scale(0.8);
 	opacity: 0;
@@ -479,6 +483,10 @@
     transition-property: color, box-shadow;
 	transition-duration:0.3s;
 	position:absolute;
+}
+.menu.main>.menu-content>div>.menubutton.round.mobile{
+	left:335px;
+	top:197px;
 }
 .menu.main>.menu-content>div>.menubutton.round.glowing{
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px, rgba(0, 133, 255, 0.8) 0 0 10px, rgba(0, 133, 255, 0.8) 0 0 15px !important;
@@ -861,6 +869,14 @@ input.fileinput::-webkit-file-upload-button {
 	border-radius:100%;
 	font-size:100px;
 	line-height:100px;
+	font-family:'xinwei'
+}
+.menubutton.round.mobile{
+	width:40px;
+	height:40px;
+	border-radius:100%;
+	font-size:36px;
+	line-height:40px;
 	font-family:'xinwei'
 }
 .menubutton.left{

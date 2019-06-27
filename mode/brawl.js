@@ -108,7 +108,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	            var intro;
 	            if(Array.isArray(info.intro)){
-	                intro='<ul style="text-align:left;margin-top:0;width:450px">';
+	                intro='<ul style="text-align:left;margin-top:0">';
 	                if(modeinfo){
 	                    intro+='<li>'+modeinfo;
 	                }
@@ -856,14 +856,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    player.node.count.innerHTML='100';
 	                    player.style.transition='all 0.5s';
 						player1=ui.create.player(null,true);
-	                    player1.init('zigui');
+	                    player1.node.avatar.style.backgroundSize='cover';
+						player1.node.avatar.setBackgroundImage('image/character/zigui.jpg');
 	                    player1.node.avatar.show();
 	                    player1.style.left='calc(50% - 250px)';
 	                    player1.style.top='400px';
 	                    player1.style.transition='all 0.5s';
 						player1.style.transform='scale(0.7)';
 						player2=ui.create.player(null,true);
-	                    player2.init('zigui');
+	                    player2.node.avatar.style.backgroundSize='cover';
+						player2.node.avatar.setBackgroundImage('image/character/zigui.jpg');
 	                    player2.node.avatar.show();
 	                    player2.style.left='calc(50% + 100px)';
 	                    player2.style.top='400px';
@@ -889,6 +891,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						'你们打的这么菜，就是氪金也救不了你们了！',
 						'找不到回家的路了吗？出门右转有垃圾桶哦',
 						'我认得你，你就是《如何与傻逼相处》的封面！',
+						'你打牌菜的像子规！',
 					];
 	                this.showcaseinterval=setInterval(function(){
 						if (list.length != 0){

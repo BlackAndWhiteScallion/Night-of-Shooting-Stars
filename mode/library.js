@@ -916,11 +916,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	},
 	        },
 	        download:{
-	        	name:'联系制作',
+	        	name:'联系我们',
 	        	intro:[
 	        		'你玩流星夜觉得开心吗？觉得不开心吗？觉得制作组是傻逼吗？自己也想要做吗？那么…………',
 	                '欢迎大家光临雾雨魔法店！',
-	                '官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜总会</a>',
+					'官方微信公众号：<a href = >东方流星夜 大葱专线</a>',
+	                //'官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜 总会</a>',
 	                '实卡淘宝链接：<a href = "https://item.taobao.com/item.htm?spm=a2126o.11854294.0.0.19cf4831lNX5xr&id=586815026235">游家桌游店</a>',
 	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA">雾雨家的魔法店吧</a>',
 	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com">雾雨魔法店的仓库</a>',

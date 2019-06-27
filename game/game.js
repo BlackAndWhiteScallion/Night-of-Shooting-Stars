@@ -32102,6 +32102,7 @@ smoothAvatar:function(player,vice){
                     var menu=ui.create.div('.main.menu.dialog.popped.static',config.position,function(e){
                         e.stopPropagation();
                     });
+                    if (lib.device) menu.classList.add('mobile');
                     if(connectMenu){
                         menu.classList.add('center');
                         menuContainer.classList.add('centermenu');
@@ -32475,6 +32476,7 @@ smoothAvatar:function(player,vice){
                             }
                         }
                     });
+                    if (lib.device) startButton.classList.add('mobile');
 
                     var clickMode=function(){
                         if(this.classList.contains('unselectable')) return;
@@ -33172,7 +33174,7 @@ smoothAvatar:function(player,vice){
                     (function(){
                         if(!game.download&&!lib.device) return;
                         var page=ui.create.div('#create-extension');
-                        var node=ui.create.div('.menubutton.large','文件',start.firstChild,clickMode);
+                        var node=ui.create.div('.menubutton.large','素材',start.firstChild,clickMode);
                         node.link=page;
                         node.mode='create';
                         var pageboard=ui.create.div(page);
@@ -37232,7 +37234,7 @@ smoothAvatar:function(player,vice){
                                 return 'GitHub';
                             }
                             if(str==lib.mirrorURL){
-                                return 'Gitee';
+                                return 'Coding';
                             }
                             var index;
                             index=str.indexOf('://');
@@ -37670,6 +37672,7 @@ smoothAvatar:function(player,vice){
                             }
                             else{
                                 alert('此版本不支持游戏内更新素材，请手动更新');
+                                if(!lib.config.asset_version) game.saveConfig('asset_version','无');
                             }
                         };
 
@@ -39950,6 +39953,7 @@ smoothAvatar:function(player,vice){
 
                 ui.roundmenu=ui.create.div('#roundmenu.roundarenabutton.menubutton.round',ui.arena);
                 ui.roundmenu._position=[180,210];
+                ui.roundmenu.style.backgroundImage='linear-gradient(rgba(0, 133, 255, 0.8), rgba(0, 133, 255, 0.8))';
                 ui.create.div(ui.roundmenu);
                 ui.create.div(ui.roundmenu);
                 ui.create.div(ui.roundmenu);
@@ -39968,7 +39972,7 @@ smoothAvatar:function(player,vice){
                 ui.create.div(ui.roundmenu);
 
                 ui.create.div(ui.roundmenu);
-
+                
                 if(lib.config.show_time2){
                     ui.roundmenu.classList.add('clock');
                 }
@@ -40347,22 +40351,31 @@ smoothAvatar:function(player,vice){
                 if(!lib.config.asset_version){
                     lib.onfree.push(function(){
                         setTimeout(function(){
+                            // game.download指的是，游戏需不需要下载
+                            // 比如，电脑版（自带资源）就会触发这段，而手机版不会。
                             if(!game.download){
                                 game.saveConfig('asset_version','无');
                             }
                             else{
+                                // 我应该把这个变成强制吗？
                                 var func=function(){
-                                    if(confirm('是否下载图片和字体素材？（约82MB）')){
+                                    alert('开始下载图片和字体素材（约82MB）');
+                                    game.pause();
+                                    /*
                                         if(!ui.arena.classList.contains('menupaused')){
                                             ui.click.configMenu();
                                             ui.click.menuTab('其它');
                                         }
-                                        setTimeout(game.checkForAssetUpdate,500);
-                                    }
+                                    */
+                                    setTimeout(game.checkForAssetUpdate,500);
+                                    //}
+                                    /*
                                     else{
                                         game.saveConfig('asset_version','无');
                                     }
+                                    */
                                 }
+                                
                                 if(_status.new_tutorial){
                                     _status.new_tutorial=func;
                                 }
