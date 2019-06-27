@@ -21,11 +21,11 @@
     var lib={
         configprefix:'star_1.9_',
         versionOL:27,
-        updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
-        //updateURL:'https://raw.githubusercontent.com/libccy/noname',
+        //updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
+        updateURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
         extensionURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/master/',
-        //mirrorURL:'',
-        mirrorURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
+        mirrorURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
+        //mirrorURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
         //hallURL:'47.100.162.52',
         hallURL:'noname.pub',
         assetURL:'',
@@ -37379,7 +37379,7 @@ smoothAvatar:function(player,vice){
                                 // 似乎是在这里进行更新的
                                 if (!lib.config.updateURL || lib.config.updateURL.includes("github")){
                                     updateURL = lib.updateURL+'/master/';
-                                } else if (lib.config.updateURL.includes('gitee')){
+                                } else if (lib.config.updateURL.includes('coding')){
                                     updateURL = lib.mirrorURL+'/master/';
                                 } else {
                                     updateURL = lib.config.updateURL;
@@ -37737,7 +37737,7 @@ smoothAvatar:function(player,vice){
                         // li3.lastChild.appendChild(button4);
 
                         var button6=document.createElement('button');
-                        button6.innerHTML='设为国内镜像';
+                        button6.innerHTML='改为国外镜像';
                         // button6.style.marginLeft='5px';
                         button6.onclick=function(){
                             game.saveConfig('updateURL',lib.mirrorURL);
@@ -37748,7 +37748,7 @@ smoothAvatar:function(player,vice){
                         li3.lastChild.appendChild(button6);
 
                         button5=document.createElement('button');
-                        button5.innerHTML='设为默认镜像';
+                        button5.innerHTML='改为国内镜像';
                         // button5.style.marginLeft='5px';
                         button5.onclick=function(){
                             game.saveConfig('updateURL');
