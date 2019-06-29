@@ -1287,7 +1287,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					'step 0'
 					player.chooseToDiscard([1, Infinity],'h','你可以弃置任意张手牌，获得等量灵力').set('ai',function(card){
-							if (player.lili > 4) return false;
+							if (player.lili > 6) return false;
 							return 7-get.value(card);
 						});
 					'step 1'
@@ -1299,6 +1299,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						list.push(i);
 					}
 					player.chooseControl(list, function(){
+						if (player.hp > 3 && player.lili < 7) return 1;
 						return 0;
 					}).set('prompt','你可以失去任意点体力，获得等量灵力');
 					'step 2'

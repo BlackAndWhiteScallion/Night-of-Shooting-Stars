@@ -37231,10 +37231,10 @@ smoothAvatar:function(player,vice){
                         var li3=document.createElement('li');
                         var trimurl=function(str){
                             if(str==lib.updateURL){
-                                return 'GitHub';
+                                return 'Coding';
                             }
                             if(str==lib.mirrorURL){
-                                return 'Coding';
+                                return 'Github';
                             }
                             var index;
                             index=str.indexOf('://');

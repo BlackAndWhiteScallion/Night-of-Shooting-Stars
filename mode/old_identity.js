@@ -1188,8 +1188,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.maxHp++;
 						game.me.update();
 					}
-					event.list.randomSort();
-					if (!lib.config.new_tutorial) event.list[0] = 'zigui';
+					if (!lib.config.new_tutorial){
+						event.list = ['koakuma','lilywhite','cirno','keine','chen','yuuka','hetate','wriggle'];
+						event.list.randomSort();
+						event.list[0] = 'zigui';
+					} else {
+						event.list.randomSort();
+					}
 					for(var i=0;i<game.players.length;i++){
 						if(game.players[i]!=game.zhu&&game.players[i]!=game.me){
 							event.ai(game.players[i],event.list.splice(0,get.config('choice_'+game.players[i].identity)),null,event.list)

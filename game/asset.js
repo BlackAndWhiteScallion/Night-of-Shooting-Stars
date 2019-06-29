@@ -188,6 +188,7 @@ window.noname_asset_list=[
     'image/mode/chess/character/leader_caocao.jpg',
     'image/mode/chess/character/leader_liubei.jpg',
     'image/mode/chess/character/leader_sunquan.jpg',
+    'image/mode/chess/character/leader_marisa.jpg',
     'image/mode/chess/difficulty/leader_easy.jpg',
     'image/mode/chess/difficulty/leader_hard.jpg',
     'image/mode/chess/difficulty/leader_medium.jpg',
