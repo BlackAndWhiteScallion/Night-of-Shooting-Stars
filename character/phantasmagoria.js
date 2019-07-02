@@ -27,7 +27,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           return player.lili <= player.hp;
                       },
                       check:function(event,player){
-                          return true;
+                          return game.countPlayer(function(current){
+                              if (get.attitude(player, current) < 0) return -2;
+                              else return 2;
+                        }) > 0;
                       },
                       content:function(){
                           "step 0"

@@ -517,7 +517,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 check:function(event,player){
                     return game.countPlayer(function(current){
-                        if (get.attitude(player, current) > 0) return -2;
+                        if (get.attitude(player, current) < 0) return -2;
                         else return 2;
                     }) > 0;
                 },

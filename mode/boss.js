@@ -1652,7 +1652,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		get:{
 			rawAttitude:function(from,to){
-				return (from.side===to.side?3:-3);
+				return (from.side===to.side?10:-10);
 			}
 		}
 	};

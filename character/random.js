@@ -1325,7 +1325,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(result&&result.bool&&result.links[0]){
                         var card = {name:result.links[0][2]};
                         event.fakecard=card;
-                        if (trigger.player.canUse(event.fakecard,trigger.targets[0],true)){
+                        if (lib.filter.targetEnabled2(event.fakecard,trigger.player,trigger.target)){
                         	trigger.player.useCard(event.fakecard, trigger.targets[0]);
                     	}
                     } else {
@@ -1398,6 +1398,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 chooseButton:{
                     dialog:function(){
                         var list = [];
+						console.log(lib.config.mode);
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
@@ -1405,6 +1406,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 list.add(i);
                             }
                         }
+						console.log(list);
                         for(var i=0;i<list.length;i++){
                             list[i]=[get.type(list[i]),'',list[i]];
                         }
@@ -2778,7 +2780,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ruizhi:'魔境智慧',
 			ruizhi_audio1:'这是魔境，深渊的睿智。',
 			ruizhi_audio2:'我杀不了的人,基本上没有。',
-			ruizhi_info:'准备阶段，你可以判定3次，然后选择一项：若结果中有方片，你获得1点灵力；若有黑桃，你视为使用一张【轰！】；若有梅花，你将一张角色的一张牌置于牌堆顶。',
+			ruizhi_info:'准备阶段，你可以判定3次，然后选择一项：若结果中有黑桃，你获得1点灵力；若有方片，你视为使用一张【轰！】；若有梅花，你将一张角色的一张牌置于牌堆顶。',
 			mojing:'满溢死亡的魔境之门',
 			mojing_audio1:'以我之名连接的力量，回应我的呼唤开启大门。',
 			mojing_audio2:'来尝试将我杀死吧！',

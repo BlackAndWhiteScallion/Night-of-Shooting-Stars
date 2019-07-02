@@ -3222,7 +3222,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		get:{
 			rawAttitude:function(from,to){
-				var num=(to.identity=='zhong')?5:6;
+				var num=(to.identity=='zhong')?10:10;
 				return (from.side===to.side?num:-num);
 			}
 		}

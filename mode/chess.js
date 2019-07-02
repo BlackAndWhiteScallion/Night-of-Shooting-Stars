@@ -5791,7 +5791,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			return Math.abs(fxy[0]-txy[0])+Math.abs(fxy[1]-txy[1]);
     		},
     		rawAttitude:function(from,to){
-    			return (from.side===to.side?3:-3);
+    			return (from.side===to.side?10:-10);
     		}
     	},
     	card:{
