@@ -196,11 +196,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				};
 				var step5=function(){
 					clear();
-					ui.create.dialog('如果还有其它问题，在图鉴模式里可以找到更多的帮助<br>顺便，游戏中的绝大部分界面都是可以往下划的哟？');
+					ui.create.dialog('如果还有其它问题，在图鉴模式里可以找到更多的帮助<br>记得关注一下官方微信公众号<br>东方流星夜 大葱专线！<br>顺便，游戏中的绝大部分界面都是可以往下划的哟？');
 					ui.create.control('所以能玩了没',function(){
 						clear();
 						clear2();
-						ui.create.dialog('那么就到此了！<br>祝你在幻想乡玩的愉快！');
+						ui.create.dialog('那么就到此了！<br>祝你在幻想乡游玩愉快！');
 						ui.dialog.add('<div class="text center">你可以在左上角的选项-其它中重置新手向导');
 						setTimeout(function(){
 							game.resume();
