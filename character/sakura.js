@@ -423,7 +423,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (event.index == 0){
                             trigger.target.gain(result.links[0],'log');
                             player.$give(1,trigger.target);
-                            if (get.type(result.links[0]) == 'equip'){
+                            if (get.type(result.links[0]) == 'equip' && trigger.target.countCards('e') < trigger.target.maxequip){
                                 event.card = result.links[0];
                                 player.chooseBool('是否将'+get.translation(result.links[0])+'置入'+get.translation(trigger.target)+'的装备区内？').set('choice',get.bonus(result.links[0])<=0);
                             }
@@ -432,11 +432,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             for(var i=0;i<3;i++){
                                 cards.push(ui.skillPile.childNodes[i]);
                             }
-                            player.chooseCardButton(cards,'选择一张技能牌交给'+get.translation(trigger.player),1,true);
+                            player.chooseCardButton(cards,'选择一张技能牌交给'+get.translation(trigger.target),1,true);
                         }
                     }
                     'step 3'
-                    if (event.index == 1 && result.links) trigger.target.gain(result.links[0],'log');
+                    if (event.index == 1 && result.links) trigger.target.gain(result.links[0]);
                     if (event.index == 0 && result.bool && event.card) trigger.target.equip(event.card);
                 },
             },

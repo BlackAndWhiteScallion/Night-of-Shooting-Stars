@@ -492,8 +492,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					uiintro.add('<div class="text chat">四号位换牌：'+(lib.configOL.replace_handcard?'开启':'关闭'));
 				}
 				uiintro.add('<div class="text chat">出牌时限：'+lib.configOL.choose_timeout+'秒');
-				uiintro.add('<div class="text chat">屏蔽弱将：'+(lib.configOL.ban_weak?'开启':'关闭'));
-				var last=uiintro.add('<div class="text chat">屏蔽强将：'+(lib.configOL.ban_strong?'开启':'关闭'));
 				if(lib.configOL.banned.length){
 					last=uiintro.add('<div class="text chat">禁用武将：'+get.translation(lib.configOL.banned));
 				}
@@ -512,8 +510,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					case 'two':str2='欢乐成双';break;
 					case 'endless':str2='无尽模式';break;
 					case 'three':str2='统率三军';break;
-					case 'siguo':str2='同舟共济';break;
-					case 'jiange':str2='守卫剑阁';break;
 					case 'four':str2='对决 - 4v4';break;
 					default:str2='对决 - '+lib.storage.number+'v'+lib.storage.number
 				}

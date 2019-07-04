@@ -3424,7 +3424,8 @@
                 name:'音效',
                 config:{
                     update:function(config,map){
-                        if(lib.config.background_music=='music_custom'&&(lib.device||lib.node)){
+                        //if(lib.config.background_music=='music_custom'&&(lib.device||lib.node)){
+                        if(lib.config.background_music=='music_custom'){
                             map.import_music.show();
                         }
                         else{
@@ -6431,9 +6432,9 @@
                         lib.configMenu.appearence.config.image_background.item.default='默认';
                     }
                     if(pack.music){
-                        if(lib.device||typeof window.require=='function'){
+                        //if(lib.device||typeof window.require=='function'){
                             lib.configMenu.audio.config.background_music.item.music_custom='自定';
-                        }
+                        //}
                         lib.config.all.background_music=['music_default'];
                         for(i in pack.music){
                             lib.config.all.background_music.push(i);
@@ -33121,10 +33122,18 @@ smoothAvatar:function(player,vice){
                                     }
                                 }
                                 else if(j=='import_music'){
+                                    // 没弄完，过会儿再看
                                     cfgnode.querySelector('button').onclick=function(){
                                         var fileToLoad=this.previousSibling.files[0];
                                         if(fileToLoad){
-                                            game.saveConfig('background_music_src',fileToLoad.path);
+                                            if (fileToLoad.path){
+                                                game.saveConfig('background_music_src',fileToLoad.path);
+                                            } else {
+                                                var str = 'audio/background/music_custom';
+                                                str += fileToLoad.name.substring(fileToLoad.name.length, fileToLoad.name.length - 4);
+                                                game.writeFile(fileToLoad,str,function(){});
+                                                game.saveConfig('background_music_src',str);
+                                            }
                                             game.playBackgroundMusic();
                                         }
                                     }

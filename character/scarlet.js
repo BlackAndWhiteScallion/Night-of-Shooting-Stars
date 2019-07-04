@@ -973,7 +973,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     'step 2'
                     if (result.cards && result.cards[0].type != 'delay'){
-                        if (trigger.player.canUse(result.cards[0],trigger.target,false,true)) trigger.player.useCard(result.cards[0],trigger.target);
+                          if (lib.filter.targetEnabled2(result.card,trigger.player,trigger.target)){
+                            trigger.player.useCard(result.cards[0],trigger.target,'world_skill');
+                        }
                     }
                 },
                 check:function(event,player){
@@ -1294,7 +1296,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             xingmai2_audio1:'啊？什么时候开始打架的？',
             xingmai2_audio2:'元气弹！',
             dizhuan:'地转',
-            dizhuan_info:'你攻击范围内的一名其他角色成为“轰！”的目标时，你可以弃置一张牌，然后将目标转移给你；你受到以此法转移的牌造成的弹幕伤害后，获得1点灵力。',
+            dizhuan_info:'你攻击范围内的一名其他角色成为“轰！”的目标时，你可以交给目标一张牌，然后将目标转移给你；你受到【轰！】造成的弹幕伤害后，获得1点灵力。',
 		    dizhuang_audio1:'啊？有敌人？',
             dizhuang_audio2:'你在往哪里打呢！',
             dizhuang_audio3:'别想动咲夜一下！',

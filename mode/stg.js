@@ -512,10 +512,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(game.bossinfo.checkResult&&game.bossinfo.checkResult(this)===false){
 						return;
 					}
-					if(this==game.boss|| !game.boss.isAlive() ||!game.hasPlayer(function(current){
+					if(this==game.boss || !game.boss.isAlive() ||!game.hasPlayer(function(current){
 						return !current.side;
 					})){
-						game.checkResult();
+						if (game.bossinfo.checkResult) game.bossinfo.checkResult(this);
+						else game.checkResult();
 					}
 				},
 			}
@@ -1462,7 +1463,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.removeSkill('boss_chiyan2x');
-					game.boss.removeSkill('boss_chiyan2');
 					game.me.storage.unskill = ['perfect'];
 					game.me.storage.musicchange=['music_default',1039];
 					ui.background.setBackgroundImage('image/background/baka.jpg');

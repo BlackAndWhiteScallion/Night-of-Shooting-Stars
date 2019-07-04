@@ -2210,11 +2210,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return player.countCards('e', {name:'pantsu'}) && event.player != event.target;
 			},
 			content:function(){
-				trigger.cancel();
 				var cards = player.getCards('e');
 				for (var i = 0; i <= cards.length; i ++){
 					if(cards[i]&&cards[i].name == 'pantsu'){
-						player.discard(cards[i]);
+						trigger.directresult = [cards[i]];
 						break;
 					}
 				}
@@ -2227,11 +2226,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return player.countCards('e', {name:'pantsu'}) && event.player != event.target;
 			},
 			content:function(){
-				trigger.cancel();
+				//trigger.cancel();
 				var cards = player.getCards('e');
 					for (var i = 0; i <= cards.length; i ++){
 						if(cards[i]&&cards[i].name == 'pantsu'){
-							trigger.player.gain(cards[i]);
+							//trigger.player.gain(cards[i]);
+							trigger.directresult =[cards[i]];
 							break;
 						}
 					}
