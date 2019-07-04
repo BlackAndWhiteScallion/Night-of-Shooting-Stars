@@ -2142,11 +2142,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                  spell:['mercury1'],
                  skillAnimation:true,
                  trigger:{},
-                  init:function(event,player){
+                  init:function(player){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
                   	});
+					console.log(target);
                   	if (!target) target = player;
+					console.log(target);
                   	if (target){
                   		target.equip(game.createCard('stg_goldbook'));
                   		target.equip(game.createCard('stg_waterbook'));
@@ -2186,7 +2188,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 infinite:true,
                 spell:['emerald1'],
                 skillAnimation:true,
-                init:function(event,player){
+                init:function(player){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
                   	});
@@ -2235,7 +2237,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 infinite:true,
                  spell:['waterfairy1'],
                  skillAnimation:true,
-                   init:function(event,player){
+                   init:function(player){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
                   	});

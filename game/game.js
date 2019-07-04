@@ -4012,6 +4012,19 @@
                         frequent:true,
                         restart:true,
                     },
+                    free_choose:{
+                        name:'自由选将',
+                        init:true,
+                        onclick:function(bool){
+                            game.saveConfig('free_choose',bool,this._link.config.mode);
+                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
+                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
+                            else if(ui.cheat2&&!get.config('free_choose')){
+                                ui.cheat2.close();
+                                delete ui.cheat2;
+                            }
+                        }
+                    },
                     /*
                     connect_ban_weak:{
                         name:'屏蔽弱将',
@@ -4035,7 +4048,6 @@
                     update:function(config,map){
                         if(config.identity_mode=='zhong'){
                             map.player_number.hide();
-                            map.enhance_zhu.hide();
                             map.double_nei.hide();
                             map.auto_identity.hide();
                             map.choice_zhu.hide();
