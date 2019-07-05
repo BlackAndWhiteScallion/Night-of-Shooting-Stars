@@ -4012,7 +4012,7 @@
                         frequent:true,
                         restart:true,
                     },
-                    free_choose:{
+                    connect_free_choose:{
                         name:'自由选将',
                         init:true,
                         onclick:function(bool){
@@ -4480,6 +4480,19 @@
                         frequent:true,
                         restart:true,
                     },
+                    connect_free_choose:{
+                        name:'自由选将',
+                        init:true,
+                        onclick:function(bool){
+                            game.saveConfig('free_choose',bool,this._link.config.mode);
+                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
+                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
+                            else if(ui.cheat2&&!get.config('free_choose')){
+                                ui.cheat2.close();
+                                delete ui.cheat2;
+                            }
+                        }
+                    },
                     connect_special_identity:{
                         name:'特殊身份',
                         init:false,
@@ -4930,6 +4943,19 @@
                             '3':'3人',
                             '4':'4人',
                             '5':'5人',
+                        }
+                    },
+                    connect_free_choose:{
+                        name:'2v2自由选将',
+                        init:true,
+                        onclick:function(bool){
+                            game.saveConfig('free_choose',bool,this._link.config.mode);
+                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
+                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
+                            else if(ui.cheat2&&!get.config('free_choose')){
+                                ui.cheat2.close();
+                                delete ui.cheat2;
+                            }
                         }
                     },
                     /*
@@ -24586,6 +24612,7 @@
             }
         },
         // 这是联机时使用的座位分配
+        // 还包括了启动选将
         randomMapOL:function(type){
             if(type=='hidden'){
                 ui.arena.classList.add('playerhidden');

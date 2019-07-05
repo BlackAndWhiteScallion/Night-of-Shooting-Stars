@@ -1137,7 +1137,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.node.identity.firstChild.innerHTML=get.translation(game.me.special_identity+'_bg');
 					}
 					else{
-						dialog.setCaption('选择角色');
+						dialog.setCaption('选择角色（'+get.translation(game.me.identity)+'）');
 						game.me.setIdentity();
 					}
 					if(!event.chosen.length){
@@ -1363,6 +1363,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					identityList.randomSort();
+					//　随机分发身份
 					for(i=0;i<game.players.length;i++){
 						game.players[i].identity=identityList[i];
 						game.players[i].setIdentity('cai');
@@ -1418,6 +1419,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.zhu.isZhu=(game.zhu.identity=='zhu');
 					game.zhu.node.identity.classList.remove('guessing');
 					*/
+					// 玩家可以看身份了
 					game.me.setIdentity();
 					game.me.node.identity.classList.remove('guessing');
 					if(game.me.special_identity){
@@ -1531,19 +1533,72 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							num2=2;
 						}
 					}
+					
 					for(var i=0;i<game.players.length;i++){
 						//if(game.players[i]!=game.zhu){
 							var str='选择角色';
 							if(game.players[i].special_identity){
 								str+='（'+get.translation(game.players[i].special_identity)+'）';
 							}
-							list.push([game.players[i],[str,[event.list.randomRemove(num),'character']],selectButton,true]);
+							if(lib.configOL.free_choose){
+								list.push([game.players[i],[str,[event.list,'character']],selectButton,true]);
+							} else {
+								list.push([game.players[i],[str,[event.list.randomRemove(num),'character']],selectButton,true]);
+							}
 						//}
 					}
+					// 这里是选将处
 					game.me.chooseButtonOL(list,function(player,result){
 						if(game.online||player==game.me) player.init(result.links[0],result.links[1]);
 					});
+					/*
+					ui.create.cheat2=function(){
+						ui.cheat2=ui.create.control('自由选将',function(){
+							if(this.dialog==_status.event.dialog){
+								if(game.changeCoin){
+									game.changeCoin(50);
+								}
+								this.dialog.close();
+								_status.event.dialog=this.backup;
+								this.backup.open();
+								delete this.backup;
+								game.uncheck();
+								game.check();
+								if(ui.cheat){
+									ui.cheat.animate('controlpressdownx',500);
+									ui.cheat.classList.remove('disabled');
+								}
+							}
+							else{
+								if(game.changeCoin){
+									game.changeCoin(-10);
+								}
+								this.backup=_status.event.dialog;
+								_status.event.dialog.close();
+								_status.event.dialog=_status.event.parent.dialogxx;
+								this.dialog=_status.event.dialog;
+								this.dialog.open();
+								game.uncheck();
+								game.check();
+								if(ui.cheat){
+									ui.cheat.classList.add('disabled');
+								}
+							}
+						});
+						if(lib.onfree){
+							ui.cheat2.classList.add('disabled');
+						}
+					}
+					if(!_status.brawl||!_status.brawl.chooseCharacterFixed){
+						if(!ui.cheat2&&lib.configOL.free_choose)
+						ui.create.cheat2();
+					}
+					*/
 					"step 2"
+					if(ui.cheat2){
+						ui.cheat2.close();
+						delete ui.cheat2;
+					}
 					for(var i in result){
 						if(result[i]&&result[i].links){
 							for(var j=0;j<result[i].links.length;j++){

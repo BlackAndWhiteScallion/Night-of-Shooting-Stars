@@ -1364,6 +1364,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					else{
 						list=list2.concat(list3.randomGets(3));
 					}
+					if(lib.configOL.free_choose){
+						list = event.list;
+					}
 					var next=game.zhu.chooseButton(true);
 					next.set('selectButton',(lib.configOL.double_character?2:1));
 					next.set('createDialog',['选择角色（黑幕）',[list,'character']]);
@@ -1435,7 +1438,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							//if(game.players[i].special_identity){
 								str+='（'+get.translation(game.players[i].identity+'2')+'）';
 							//}
-							list.push([game.players[i],[str,[event.list.randomRemove(num+num3),'character']],selectButton,true]);
+							if(lib.configOL.free_choose){
+								list.push([game.players[i],[str,[event.list,'character']],selectButton,true]);
+							} else {
+								list.push([game.players[i],[str,[event.list.randomRemove(num+num3),'character']],selectButton,true]);
+							}
 						}
 					}
 					game.me.chooseButtonOL(list,function(player,result){

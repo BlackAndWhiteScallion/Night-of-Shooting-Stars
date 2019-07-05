@@ -190,53 +190,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			else if(_status.mode=='endless'){
 				game.chooseCharacterEndless();
 			}
-			else if(_status.mode=='siguo'){
-				var list=['wei','wei','shu','shu','wu','wu','qun','qun'].randomSort();
-				for(var i=0;i<game.players.length;i++){
-					game.players[i].side=list[i];
-					game.players[i].identity=list[i];
-					game.players[i].setIdentity(list[i]);
-					game.players[i].node.identity.style.display='none';
-					game.players[i].getId();
-					game.players[i].node.action.innerHTML='获即<br>胜将';
-					game.players[i].node.action.style.letterSpacing='0px';
-					game.players[i].node.action.style.lineHeight='22px';
-					game.players[i].node.action.style.top='3px';
-					game.players[i].node.action.style.right='3px';
-				}
-				game.chooseCharacterSiguo();
-			}
-			else if(_status.mode=='jiange'){
-				var list=['shumech','shu','shuboss','shu','wei','weiboss','wei','weimech'];
-				var pos=Math.floor(Math.random()*8);
-				for(var i=0;i<8;i++){
-					var j=pos+i;
-					if(j>=8){
-						j-=8;
-					}
-					if(list[i][0]=='w'){
-						game.players[j].side=true;
-						game.players[j].setIdentity('wei');
-						game.players[j].identity='wei';
-					}
-					else{
-						game.players[j].side=false;
-						game.players[j].setIdentity('shu');
-						game.players[j].identity='shu';
-					}
-					if(list[i].indexOf('mech')!=-1){
-						game.players[j].type='mech';
-					}
-					else if(list[i].indexOf('boss')!=-1){
-						game.players[j].type='boss';
-					}
-					else{
-						game.players[j].type='human';
-					}
-					game.players[i].getId();
-				}
-				game.chooseCharacterJiange();
-			}
 			else if(_status.mode=='three'){
 				game.chooseCharacterThree();
 			}
@@ -278,15 +231,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 				else if(_status.mode=='2v2'||_status.mode=='3v3'){
 					_status.first_less=true;
-					var firstChoose=game.players.randomGet();
-					if(firstChoose.next.side==firstChoose.side){
-						firstChoose=firstChoose.next;
-					}
-					game.gameDraw(firstChoose);
+					game.gameDraw(_status.firstChoose);
 					if(lib.configOL.replace_handcard){
-						game.replaceHandcards(firstChoose.previous);
+						game.replaceHandcards(_status.firstChoose.previous);
 					}
-					game.phaseLoop(firstChoose);
+					game.phaseLoop(_status.firstChoose);
 				}
 				else if(_status.mode=='4v4'){
 					game.gameDraw(_status.firstAct,function(player){
@@ -2742,11 +2691,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							}
 						}
 					}];
+					var firstChoose=game.players.randomGet();
+					if(firstChoose.next.side==firstChoose.side){
+						firstChoose=firstChoose.next;
+					}
+					_status.firstChoose=firstChoose;
 					var list=get.charactersOL();
 					var choose=[];
 					event.list=list;
 					for(var i=0;i<game.players.length;i++){
-						choose.push([game.players[i],['选择角色',[list.randomRemove(7),'character']],true]);
+						var str = '选择角色（'+lib.translate['unknown'+get.distance(firstChoose, game.players[i],'absolute')]+'）';
+						if(lib.configOL.free_choose && (game.players[i].nickname || player == game.me)){
+							choose.push([game.players[i],[str,[list,'character']],true]);
+						} else {
+							choose.push([game.players[i],[str,[list.randomRemove(7),'character']],true]);
+						}
 					}
 					game.me.chooseButtonOL(choose,function(player,result){
 						if(game.online||player==game.me) player.init(result.links[0]);

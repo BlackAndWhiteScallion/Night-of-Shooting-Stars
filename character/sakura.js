@@ -497,6 +497,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         else {
                             player.chooseTarget(('选择'+get.translation(trigger.target)+'使用'+get.translation(event.card)+'的目标'),function(card,player,target){
                                 return f.contains(target);
+                            }).set('ai', function(target){
+                                return get.effect(target,event.card,player, player);
                             });
                         }
                     }
@@ -1308,7 +1310,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if(player==target) return false;
                         return player.canUse({name:'sha'},target,false);
                     }).set('ai',function(target){
-                        return get.effect(target,{name:'sha'},_status.event.player);
+                        return get.effect(target,{name:'sha'},player, player);
                     });
                     "step 1"
                     if(result.bool){

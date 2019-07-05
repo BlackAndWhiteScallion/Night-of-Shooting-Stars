@@ -620,7 +620,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			},
     		},
     		player:{
-    			createRangeShadow:function(num,move){
+    			createRangeShadow:function(num,move,glow){
     				num++;
     				var shadows=this.parentNode.getElementsByClassName('playergrid');
     				while(shadows.length){
@@ -641,7 +641,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     									grid.listen(ui.click.playergrid);
     									ui.movegrids.push(grid);
     								}
-    								else{
+    								else if (glow){
+										grid.classList.add('glow');
+									} else {
     									grid.classList.add('temp');
     								}
     							}
@@ -4118,7 +4120,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 },
             },
     		dubiaoxianjing:{
-    			global:'dubiaoxianjing2'
+    			global:'dubiaoxianjing2',
+				/*
+				init:function(player){
+					player.createRangeShadow(2, false, true);
+				},
+				*/
     		},
     		dubiaoxianjing2:{
     			trigger:{player:'phaseAfter'},
@@ -4162,7 +4169,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			}
     		},
     		jiqishi:{
-    			global:'jiqishi2'
+    			global:'jiqishi2',
+				/*
+				init:function(player){
+					player.createRangeShadow(2, false, true);
+				},
+				*/
     		},
     		jiqishi2:{
     			trigger:{player:'phaseAfter'},
@@ -4209,7 +4221,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			}
     		},
             shrine1:{
-                global:'shrine2'
+                global:'shrine2',
+				/*
+				init:function(player){
+					player.createRangeShadow(2, false, true);
+				},
+				*/
             },
             shrine2:{
                 trigger:{player:'phaseBegin'},
@@ -4234,7 +4251,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 }
             },
             shrine3:{
-                global:'shrine4'
+                global:'shrine4',
+				/*
+				init:function(player){
+					player.createRangeShadow(2, false, true);
+				},
+				*/
             },
             shrine4:{
                 trigger:{player:'phaseBegin'},
@@ -4263,151 +4285,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     }
                 }
             },
-    		wuyashenxiang:{
-    			global:'wuyashenxiang2'
-    		},
-    		wuyashenxiang2:{
-    			trigger:{player:'phaseAfter'},
-    			forced:true,
-    			popup:false,
-    			filter:function(event,player){
-    				if(player.hp>1) return false;
-    				for(var i=0;i<game.treasures.length;i++){
-    					if(game.treasures[i].name=='treasure_wuyashenxiang'){
-    						return get.chessDistance(game.treasures[i],player)<=3;
-    					}
-    				}
-    				return false;
-    			},
-    			content:function(){
-    				'step 0'
-    				var source=null;
-    				for(var i=0;i<game.treasures.length;i++){
-    					if(game.treasures[i].name=='treasure_wuyashenxiang'){
-    						source=game.treasures[i];break;
-    					}
-    				}
-    				if(source){
-    					source.chessFocus();
-    					source.playerfocus(1000);
-    					source.line(player,'thunder');
-    					if(lib.config.animation&&!lib.config.low_performance){
-    						setTimeout(function(){
-    							source.$epic2();
-    						},300);
-    					}
-    					game.delay(2);
-    				}
-    				else{
-    					event.finish();
-    				}
-    				'step 1'
-    				game.log('乌鸦神像发动');
-    				player.recover('nosource');
-    				// player.draw();
-    				var card=get.cardPile(function(c){
-    					return get.type(c)=='delay';
-    				});
-    				if(card){
-    					player.addJudge(card);
-    				}
-    			}
-    		},
-    		shenpanxianjing:{
-    			global:'shenpanxianjing2'
-    		},
-    		shenpanxianjing2:{
-    			trigger:{player:'phaseAfter'},
-    			forced:true,
-    			popup:false,
-    			filter:function(event,player){
-    				var nh=player.countCards('h');
-    				if(!nh) return false;
-    				for(var i=0;i<game.treasures.length;i++){
-    					if(game.treasures[i].name=='treasure_shenpanxianjing'){
-    						for(var j=0;j<game.players.length;j++){
-    							if(game.players[j].countCards('h')>nh) return false;
-    						}
-    						return true;
-    					}
-    				}
-    				return false;
-    			},
-    			content:function(){
-    				'step 0'
-    				var source=null;
-    				for(var i=0;i<game.treasures.length;i++){
-    					if(game.treasures[i].name=='treasure_shenpanxianjing'){
-    						source=game.treasures[i];break;
-    					}
-    				}
-    				if(source){
-    					source.chessFocus();
-    					source.playerfocus(1000);
-    					source.line(player,'thunder');
-    					if(lib.config.animation&&!lib.config.low_performance){
-    						setTimeout(function(){
-    							source.$epic2();
-    						},300);
-    					}
-    					game.delay(2);
-    				}
-    				else{
-    					event.finish();
-    				}
-    				'step 1'
-    				game.log('审判之刃发动');
-    				var hs=player.getCards('h');
-    				if(hs.length){
-    					player.discard(hs.randomGet());
-    				}
-    			}
-    		},
-    		shiyuansu:{
-    			global:'shiyuansu2'
-    		},
-    		shiyuansu2:{
-    			trigger:{player:'damageAfter'},
-    			forced:true,
-    			popup:false,
-    			filter:function(event,player){
-    				if(event.num<2) return false;
-    				for(var i=0;i<game.treasures.length;i++){
-    					if(game.treasures[i].name=='treasure_shiyuansu'){
-    						return true;
-    					}
-    				}
-    				return false;
-    			},
-    			content:function(){
-    				'step 0'
-    				game.delayx();
-    				'step 1'
-    				var source=null;
-    				for(var i=0;i<game.treasures.length;i++){
-    					if(game.treasures[i].name=='treasure_shiyuansu'){
-    						source=game.treasures[i];break;
-    					}
-    				}
-    				if(source){
-    					source.chessFocus();
-    					source.playerfocus(1000);
-    					source.line(player,'thunder');
-    					if(lib.config.animation&&!lib.config.low_performance){
-    						setTimeout(function(){
-    							source.$epic2();
-    						},300);
-    					}
-    					game.delay(2);
-    				}
-    				else{
-    					event.finish();
-    				}
-    				'step 2'
-    				game.log('石元素像发动');
-    				player.changeHujia();
-    			}
-    		},
     		shenmidiaoxiang:{
     			global:'shenmidiaoxiang2'
     		},
@@ -4854,7 +4731,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			usable:1,
     			unique:true,
     			filter:function(event,player){
-    				if(player.isTurnedOver()) return false;
     				var suits=[];
     				var hs=player.getCards('h');
     				for(var i=0;i<hs.length;i++){
@@ -4880,7 +4756,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			},
     			selectTarget:-1,
     			content:function(){
-    				target.goMad();
+    				target.addSkill('mad');
     				if(!player.isTurnedOver()){
     					player.turnOver();
     				}

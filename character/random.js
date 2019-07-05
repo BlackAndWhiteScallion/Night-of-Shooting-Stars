@@ -977,7 +977,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 0"
 					player.chooseTarget('弃置一名角色, 弃置其'+player.countCards('h')+'张牌',function(card,player,target){
 						return (player!=target);
-					}).set('ai')
+					}).set('ai',function(target){
+						if (target.countCards('hej') && target.countCards('hej') <= player.countCards('h')) return - (get.attitude(_status.event.player,target) + 10);
+                        return -get.attitude(_status.event.player,target);
+                    }); 
 					'step 1'
 					if (result.bool){
 						event.target = result.targets[0];
@@ -1677,7 +1680,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseTarget('选择一名角色成为'+get.translation(trigger.card)+'的唯一目标',function(card,player,target){
 						return player.canUse({name:trigger.card.name},target,false);
 					}).set('ai',function(target){
-						return get.effect(target,{name:trigger.card.name},_status.event.player);
+						return get.effect(target,{name:trigger.card.name},player, player);
 					});
 					"step 1"
 					if(result.bool){
