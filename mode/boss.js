@@ -1138,7 +1138,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				var players=game.filterPlayer();
     				for (var i = 0; i < players.length; i++){
-    					if (!player.canUse('sha',players[i])) players.remove(players[i]);
+    					if (!player.canUse('sha',players[i], false)) players.remove(players[i]);
     				}
 					players.remove(player);
 					player.loselili(); 
@@ -1648,7 +1648,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			serious_info:'锁定技，结束阶段，你摸X张牌，并将灵力和灵力上限补至X（X为游戏轮次数）。',
 			boss_saitama_die:'啊……就是这种感觉……',
 			boss_turncount:'存活挑战',
-			boss_turncount_info:'你在游戏失败前，能够撑多少轮呢？<br><br>注：建议在左上角[选项-开始-魔王]中将[单人控制]选项打开',
+			boss_turncount_info:'锁定技，回合外你不能使用/打出牌。<br>你在游戏失败前，能够撑多少轮呢？<br><br>注：建议在左上角[选项-开始-魔王]中将[单人控制]选项打开',
 		},
 		get:{
 			rawAttitude:function(from,to){

@@ -3802,7 +3802,7 @@
 					}
 				},
                 intro:{
-                    name:'将已通关的闯关模式的一些角色追加到其他模式中。',
+                    name:'将已通关的闯关模式的一些角色追加到其他模式中。<br><br>关卡与解锁角色：<br>红魔乡：魔导书塔，蕾米莉亚（神枪装备）<br>红魔乡EX：帕秋莉（皇家烈焰）',
                     clear:true,
                     nopointer:true,
                 },
@@ -3857,7 +3857,7 @@
                     }
                 },
                 intro:{
-                    name:'将击败的挑战模式BOSS追加到其他模式中。',
+                    name:'将一些挑战模式的魔王追加到其他模式中。<br> <br>魔王解锁条件：<br> 琪露诺：击败琪露诺 <br> 灵梦：击败灵梦 <br> 高达一号：击败高达一号 <br>年兽：一次游戏中对年兽造成至少50点伤害<br>斗篷光头：一次游戏中与斗篷光头对战至少5轮',
                     clear:true,
                     nopointer:true,
                 },
@@ -3871,7 +3871,7 @@
                     onclick:function(){
                         if(this.firstChild.innerHTML=='隐藏此扩展'){
                             this.firstChild.innerHTML='此扩展将在重启后隐藏';
-                            lib.config.hiddenPlayPack.add('boss2');
+                            lib.config.hiddenPlayPack.add('boss1');
                             if(!lib.config.prompt_hidepack){
                                 alert('隐藏的扩展包可通过选项-其它-重置隐藏内容恢复');
                                 game.saveConfig('prompt_hidepack',true);
@@ -3879,7 +3879,7 @@
                         }
                         else{
                             this.firstChild.innerHTML='隐藏此扩展';
-                            lib.config.hiddenPlayPack.remove('boss2');
+                            lib.config.hiddenPlayPack.remove('boss1');
                         }
                         game.saveConfig('hiddenPlayPack',lib.config.hiddenPlayPack);
                     }
@@ -6236,6 +6236,7 @@
                         if(e.keyCode==116||((e.ctrlKey||e.metaKey)&&e.keyCode==82)){
                             if(e.shiftKey){
                                 if(confirm('是否重置游戏？')){
+                                    /*
                                     var noname_inited=localStorage.getItem('noname_inited');
 									var onlineKey=localStorage.getItem(lib.configprefix+'key');
 									localStorage.clear();
@@ -6246,6 +6247,7 @@
 										localStorage.setItem(lib.configprefix+'key',onlineKey);
 									}
                                     if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
+                                    */
                                     game.reload();
                                     return;
                                 }
@@ -6295,6 +6297,7 @@
                         else if(e.keyCode==116||((e.ctrlKey||e.metaKey)&&e.keyCode==82)){
                             if(e.shiftKey){
                                 if(confirm('是否重置游戏？')){
+                                    /*
                                     var noname_inited=localStorage.getItem('noname_inited');
 									var onlineKey=localStorage.getItem(lib.configprefix+'key');
 									localStorage.clear();
@@ -6305,6 +6308,7 @@
 										localStorage.setItem(lib.configprefix+'key',onlineKey);
 									}
                                     if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
+                                    */
                                     game.reload();
                                     return;
                                 }
@@ -7212,6 +7216,7 @@
                                          window.location.reload();
                                      }
                                      else if(index==3){
+                                         /*
                                         var noname_inited=localStorage.getItem('noname_inited');
 										var onlineKey=localStorage.getItem(lib.configprefix+'key');
 										localStorage.clear();
@@ -7222,6 +7227,7 @@
 											localStorage.setItem(lib.configprefix+'key',onlineKey);
                                         }
                                         if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
+                                        */
                                         setTimeout(function(){
                                             window.location.reload();
                                         },200);
@@ -7233,19 +7239,21 @@
                         }
                         else{
                             if(confirm('游戏似乎未正常载入，是否重置游戏？')){
-                                localStorage.removeItem('noname_inited');
+                                //localStorage.removeItem('noname_inited');
                                 window.location.reload();
                             }
                         }
                     }
                     else{
                         if(confirm('游戏似乎未正常载入，是否重置游戏？')){
-							var onlineKey=localStorage.getItem(lib.configprefix+'key');
+							/*
+                            var onlineKey=localStorage.getItem(lib.configprefix+'key');
 							localStorage.clear();
 							if(onlineKey){
 								localStorage.setItem(lib.configprefix+'key',onlineKey);
 							}
                             if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
+                            */
                             setTimeout(function(){
                                 window.location.reload();
                             },200);
@@ -13964,7 +13972,7 @@
                         return;
                     } */
                     if(lib.config.background_audio){
-                        game.playAudio('effect',get.subtype(card));
+                        game.playAudio('effect', get.subtype(card) == 'equip1' ? 'equip1':'equip2');
                     }
                     game.broadcast(function(type){
                         if(lib.config.background_audio){

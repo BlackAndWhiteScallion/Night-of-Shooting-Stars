@@ -362,25 +362,28 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 				check:function (event,player){
-				if (player.countCards('h') < 3 || player.lili < 3) return false;
+					if (player.countCards('h') < 3 || player.lili < 3) return false;
 					return true;
 				},
 				content:function (event,player){
 					'step 0'
-					player.loselili(2)
+					player.loselili(2);
 					'step 1'
-					player.addTempSkill('cshx0');
+					player.chooseCard('请使用一张基本牌或法术牌','h',function(card){
+						return get.type(card) == 'basic' || get.type(card) == 'trick' && lib.filter.cardEnabled({name:card.name},player,_status.event);
+					}).set('ai',function(card){
+						return 1;
+					});
 					'step 2'
-					player.chooseToUse(function(card){
-						if(!lib.filter.cardEnabled(card,_status.event.player,_status.event)){
-							return false;
+					if(result.bool&&result.cards.length){
+						var players=game.filterPlayer();
+						var list = [];
+						for (var i = 0; i < players.length; i++){
+							if (lib.filter.targetEnabled2(result.cards[0],player,players[i])) list.push(players[i]);
 						}
-						var type=get.type(card,'trick');
-						return type=='basic'||type=='trick';
-					},'请使用一张基本牌或法术牌',true).set('logSkill','chenshihuanxiang');
-					'step 3'
-					player.removeSkill('cshx0');
-					event.finish();
+						players.remove(player);
+						player.useCard(result.cards[0],list,false);
+					}
 				},
 			},
 			yuyi0:{
@@ -406,50 +409,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(get.type(card)=='trick') return false;
 					},
 				},
-			},
-			cshx0:{
-				audio:2,
-				forced:true,
-				direct:true,
-				group:["cshx1"],
-				trigger:{
-					player:"useCard",
-				},
-				check:function (event,player){
-					var type=get.type(event.card);
-					return type=='basic'||type=='trick';
-				},
-				content:function(){
-					'step 0'
-					if(_status.currentPhase==player&&trigger.card.name=='sha') {
-						if(player.stat[player.stat.length-1].card.sha>0){
-							player.stat[player.stat.length-1].card.sha--;
-						}
-					}
-					'step 1'
-					var trigger=_status.event.getTrigger();
-					var player=_status.event.player
-					var info=get.info(trigger.card);
-					if(trigger.targets&&!info.multitarget){
-						var players=game.filterPlayer();
-						var list = [];
-						for(var i=0;i<players.length;i++){
-							if(lib.filter.targetEnabled2(trigger.card,player,players[i])&&players[i]!=player&&!trigger.targets.contains(players[i])){
-								list.push(players[i]);
-							}
-						}
-						return trigger.targets.addArray(list);
-						event.finish();
-					}
-				},
-				/*
-				cshx1:{
-					mod:{
-						targetInRange:function(){
-							return true;
-						}
-					}
-				},*/
 			},
 			"ye’sbian":{
 				audio:2,

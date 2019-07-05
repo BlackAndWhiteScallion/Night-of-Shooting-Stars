@@ -8,13 +8,19 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				lib.characterPack.mode_extension_boss1={
 				};
 				if (lib.config.gameRecord.boss.data['boss_reimu2']){
-					lib.characterPack.mode_extension_boss1.boss_reimu = ['female','0',4,['lingji','mengxiangtiansheng'],[]];
+					lib.characterPack.mode_extension_boss1.boss_reimu = ['female','5',4,['lingji','mengxiangtiansheng'], [], 'shu'];
+				}
+				if (lib.config.gameRecord.boss.data['boss_cirno2']){
+					lib.characterPack.mode_extension_boss1.boss_cirno = ['female', '9', 4, ['jiqiang','zuanshi','jubing'], [], 'wei', '9'];
 				} 
 				if (lib.config.gameRecord.boss.data['boss_zhaoyun']){
-					lib.characterPack.mode_extension_boss1.boss_zhaoyun = ['male','0',1,['boss_juejing','longhun'],[]];
+					lib.characterPack.mode_extension_boss1.boss_zhaoyun = ['male','0',1,['boss_juejing','longhun'],[], 'shen'];
 				}
-				if (lib.config.gameRecord.boss.data['boss_nianshou']){
-					lib.characterPack.mode_extension_boss1.boss_nianshou = ['female','0',4,['boss_qixiang','boss_nianrui'],[]];
+				if (lib.config.gameRecord.boss.data['boss_nianshou'] && lib.config.gameRecord.boss.data['boss_nianshou'][0] >= 50){
+					lib.characterPack.mode_extension_boss1.boss_nianshou = ['female','0',10000,['boss_qixiang','boss_nianrui'],[],'shu','10000'];
+				}
+				if (lib.config.gameRecord.boss.data['boss_saitama'] && lib.config.gameRecord.boss.data['boss_saitama'][0] >= 5){
+					lib.characterPack.mode_extension_boss1.boss_saitama = ['male','0',Infinity,['punch','serious'],[],'shen','1'];
 				}
 				for(var i in lib.characterPack.mode_extension_boss1){
 					lib.characterPack.mode_extension_boss1[i][4].push('mode:boss');
@@ -24,7 +30,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					}
 				}
 				var list={
-					mode_extension_boss1_character_config:'挑战',
+					mode_extension_boss1_character_config:'大魔王！',
 				};
 				if(get.mode()!='boss'){
 					for(var i in list){
