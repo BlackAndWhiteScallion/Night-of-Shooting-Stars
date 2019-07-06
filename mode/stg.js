@@ -2941,6 +2941,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			royal_die:{
 				trigger:{player:'dieBefore'},
+				fixed:true,
 				direct:true,
 				filter:function(){
 					return get.mode() == 'stg';

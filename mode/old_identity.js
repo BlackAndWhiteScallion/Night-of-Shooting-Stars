@@ -1189,7 +1189,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.update();
 					}
 					if (!lib.config.new_tutorial){
+						game.saveConfig('show_splash','always');
 						event.list = ['koakuma','lilywhite','cirno','keine','chen','yuuka','hetate','wriggle'];
+						event.list.remove(game.zhu.name);
 						event.list.randomSort();
 						event.list[0] = 'zigui';
 					} else {
