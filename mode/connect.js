@@ -5,7 +5,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		start:function(){
 			var directstartmode=lib.config.directstartmode;
 			ui.create.menu(true);
-			event.textnode=ui.create.div('','输入联机地址<br><br><br><br><br><br><br><a href = "https://mp.weixin.qq.com/s/bI0lvGguFfJbuFUnlonbFQ">联机教程点这里</a><br>联机QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">487238907</a>');
+			var str = '输入联机地址<br><br><br><br><br><br><br><a href = "https://mp.weixin.qq.com/s/bI0lvGguFfJbuFUnlonbFQ">联机教程点这里</a>';
+			str += '<br>联机QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">487238907</a>';
+			event.textnode=ui.create.div('',str);
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 				uiintro.add('<div class="text left">什么时候能有自己的服务器就好了……</div>');
