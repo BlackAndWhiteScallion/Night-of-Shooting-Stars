@@ -1913,7 +1913,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						l.push('明置一张手牌');
 					}
 					if (l.length == 0) event.finish();
-					player.chooseControl(l,function(event,player){
+					player.chooseControl(l, function(event,player){
 						if (l.contains('明置一张手牌')) return '明置一张手牌';
 						return '暗置一张手牌';
 					});

@@ -441,6 +441,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					uiintro.add('<div class="text chat">四号位换牌：'+(lib.configOL.replace_handcard?'开启':'关闭'));
 				}
 				uiintro.add('<div class="text chat">出牌时限：'+lib.configOL.choose_timeout+'秒');
+				/*
 				if(lib.configOL.banned.length){
 					last=uiintro.add('<div class="text chat">禁用武将：'+get.translation(lib.configOL.banned));
 				}
@@ -448,6 +449,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					last=uiintro.add('<div class="text chat">禁用卡牌：'+get.translation(lib.configOL.bannedcards));
 				}
 				last.style.paddingBottom='8px';
+				*/
 			},
 			getVideoName:function(){
 				var str=get.translation(game.me.name);
