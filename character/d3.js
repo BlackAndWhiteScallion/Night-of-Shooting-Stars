@@ -2,7 +2,7 @@
 game.import('character',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'d3',
-		connect:false,
+		connect:true,
 		character:{
 			//zigui:['female','5',5,["shijianliushi","always_win","xinjianfuka1"]],
 			zigui:['female','5',5,["shijianliushi"]],

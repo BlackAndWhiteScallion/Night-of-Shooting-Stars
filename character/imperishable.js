@@ -1953,7 +1953,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         'step 1'
                         if (result.bool){
                             player.loselili();
-                            event.goto(0);
+                            if (player.lili > 0) event.goto(0);
                         }
                         'step 2'
                         if (player.hp < 1){

@@ -545,7 +545,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
-						dialog.addText('如果你觉得文字太枯燥的话，图文介绍可以在<a href="game/guide.pdf">幻想乡最速体系介绍</a>读到。<br>如果你觉得文字和图片都不够提起兴趣的话，你可以去[场景-对战练习]找子规老师探讨探讨！<br>请选择你想要了解的系统，'+lib.config.connect_nickname+'，我会尽力解答的！');
+						dialog.addText('');
+						dialog.addText('');
+						dialog.addText('如果你觉得文字太枯燥的话，图文介绍可以在<a href = "d">基础游戏介绍</a>和<a href="https://mp.weixin.qq.com/s/AO1BbLYLaNFn88ZqtKxsrw">新系统介绍</a>读到。');
+						dialog.addText('去[场景-对战练习]找子规老师探讨探讨也是个不错的办法。');
+						dialog.addText('请选择你想要了解的系统，'+lib.config.connect_nickname+'，我会尽力解答的！');
 						dialog.classList.add('fixed');
 	        			dialog.noopen=true;
 	        			this.appendChild(dialog);
@@ -631,6 +635,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        			this.appendChild(dialog);
 	        			var incident=ui.create.node('button','异变模式',line2,function(){
 	        				var i = ['<u><b>异变模式：</u></b> 游戏人数：4~8人，推荐人数为7人',
+								'<a href = "https://mp.weixin.qq.com/s/ZBT62CCpPWzqiLMFDQOSsg" target="_blank">详细介绍点这里</a>',
 				        		'黑幕与异变身份为一方；自机身份为一方，且与黑幕为对立阵营；每个路人身份玩家为单独一方',
 				        		'游戏开始时，每名玩家的身份暗置，随机玩家执行第一个回合',
 				        		'每名玩家可以在出牌阶段明置自己的身份；身份明置时，根据身份执行效果：',
@@ -920,12 +925,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	intro:[
 	        		'你玩流星夜觉得开心吗？觉得不开心吗？觉得制作组是傻逼吗？自己也想要做吗？那么…………',
 	                '欢迎大家光临雾雨魔法店！',
-					'官方微信公众号：<a href="game/wechat.png">东方流星夜 大葱专线</a>',
+					'官方微信公众号：<a href="game/wechat.png" target="_blank">东方流星夜 大葱专线</a>',
 	                //'官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜 总会</a>',
-	                '实卡淘宝链接：<a href = "https://item.taobao.com/item.htm?spm=a2126o.11854294.0.0.19cf4831lNX5xr&id=586815026235">游家桌游店</a>',
-	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA">雾雨家的魔法店吧</a>',
-	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com">雾雨魔法店的仓库</a>',
-	                '无论是聊天，<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q">看漫画，</a>反映问题，还是想提出建议，都可以到以上任意一个地方去发表意见，我们会看到并尊重你的每一个意见。',
+	                '实卡淘宝链接：<a href = "https://item.taobao.com/item.htm?spm=a2126o.11854294.0.0.19cf4831lNX5xr&id=586815026235" target="_blank">游家桌游店</a>',
+	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA" target="_blank">雾雨家的魔法店吧</a>',
+	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com" target="_blank">雾雨魔法店的仓库</a>',
+	                '无论是聊天，<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">看漫画，</a>反映问题，还是想提出建议，都可以到以上任意一个地方去发表意见，我们会看到并尊重你的每一个意见。',
 	            ],
 	        	showcase:function(init){
 					var node=this;

@@ -53,6 +53,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 					uiintro.add('<div class="text left">选好了按下面那个大红按钮就行了</div>');
+					uiintro.add('<div class="text left"><a href = "https://mp.weixin.qq.com/s/-pgrxrf61nyWU6bkwTbZTA" target="_blank">场景模式详细介绍</a></div>');
 					uiintro.add(ui.create.div('.placeholder.slim'))
 				return uiintro;
 			},400);
@@ -400,6 +401,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	init:function(){
 					lib.config.mode_config['old_identity']['player_number'] = '2';
 					lib.config.mode_config['old_identity']['free_choose'] = true;
+					lib.config.mode_config['old_identity']['change_identity'] = true;
 					lib.config.mode_config['old_identity']['continue_game'] = true;
 				},
 	        	content:{
@@ -769,7 +771,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            mode:'identity',
 	            intro:[
 	            	'高达一号凭依了幻想乡里的所有人！',
-	                '所有角色在失去一张牌后摸一张牌！',
+	                '所有角色在失去牌后摸一张牌！',
 	                '顺便，牌堆牌数翻倍了。',
 	            ],
 	            showcase:function(init){
@@ -1089,7 +1091,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 	        pubg:{
 	        	name:'吃鸡模式',
-	        	mode:'old_identity',
+	        	mode:'identity',
 	        	intro:[
 	        		'游戏开始时，所有角色获得一张【皆杀】异变牌。',
 	        		'简单来说，所有角色的胜利条件仅为击坠所有其他角色，且所有角色击坠角色后，摸3张牌，获得1点灵力，摸一张技能牌。',

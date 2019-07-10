@@ -19,6 +19,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			niuzhanshi:['female','2',4,['ng_wenhao','ng_wenhao2']],
 			mordred:['female','2',4,['niguang','ClarentBloodArthur'],["unseen","forbidai"]],
 			twob:['female', '3', 4, ['qiyue','yueding']],
+			kuro:['female', '1', 3, ['touying','wenmo','heyi']],
+			
 		},
 		characterIntro:{
 			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
@@ -36,6 +38,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			niuzhanshi:'还能是谁呢这。<br>出自：Fate/Apocrypha <b>画师：イセ川</b>',
 			mordred:'圆桌骑士之一，亚瑟王的儿子——同时也是终结父王的叛逆骑士。<br>出自：Fate/Apocrypha <b>画师：Shigure</b><br><br>（注：莫德雷德由？发动【？】变身而成，不能正常选出使用）',
 			twob:'——机器人会梦见电子绵羊吗？<br>——不，机器人会梦见和小男朋友一起去商城买T恤衫————<br>出自：NieR:Automata <b>设计：雪樱   画师：saberii</b>',
+			kuro:'小腹上的那个不是○纹，不要问了！<b>出自：魔法少女伊莉雅 画师：トミフミ</b>',
 		},	   
 		perfectPair:{
 		},
@@ -2633,7 +2636,184 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if(card.name=='sha') return num+1;
                   }
                 },
-              },
+            },
+			touying:{
+				audio:2,
+				usable:1,
+				enable:'phaseUse',
+				group:'touying_recast',
+				trigger:{target:'useCardtoBefore'},
+				filter:function(event,player){
+					console.log(event.name);
+                    return player.countCards('h') > player.countCards('h', {type:'equip'}) && player.lili > 0;
+                },
+                chooseButton:{
+                    dialog:function(){
+                        var list = [];
+                        for (var i in lib.card){
+                            if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+                            if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if(lib.card[i].type == 'equip'){
+                                list.add(i);
+                            }
+                        }
+                        for(var i=0;i<list.length;i++){
+                            list[i]=[get.type(list[i]),'',list[i]];
+                        }
+                        return ui.create.dialog([list,'vcard']);
+                    },
+					/*
+                    filter:function(button,player){
+                    	return _status.event.getParent().filterCard({name:button.link[2]},player);
+                        //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
+                    },
+					*/
+                    check:function(button){
+                        var player=_status.event.player;
+                        return get.value({name:button.link[2]}) - 5;
+                    },
+                    backup:function(links,player){
+                        return {
+                            filterCard:function(card,player){
+                                return get.type(card) != 'equip';
+                            },
+                            audio:2,
+                            position:'h',
+                            selectCard:1,
+                            audio:2,
+                            popname:true,
+                            viewAs:{name:links[0][2]},
+                            onuse:function(result,player){
+                            	player.loselili();
+                            },
+                        }
+                    },
+                    prompt:function(links,player){
+                        return '将一张非装备牌当作'+get.translation(links[0][2])+'使用';
+                    },
+                },
+                ai:{
+                    order:4,
+                    result:{
+                        player:function(player){
+                            return 1;
+                        }
+                    },
+                    threaten:1,	
+                }
+			},
+			touying_recast:{
+				trigger:{global:'phaseEnd'},
+				direct:true,
+				filter:function(event,player){
+					return player.countCards('e');
+				},
+				content:function(){
+					var cards = player.getCards('e');
+					var list = [];
+					for (var i = 0; i < cards.length; i ++){
+						if(cards[i] && cards[i].dataset.cardType != 'equip'){
+							list.push(cards[i]);
+						}
+					}
+					player.recast(list);
+				},
+			},
+			wenmo:{
+				audio:2,
+				usable:1,
+				enable:'phaseUse',
+				filter:function(event,player){
+					if(player.countCards('hej')==0) return false;
+					return game.hasPlayer(function(current){
+						return current.countCards('hej');
+					});
+				},
+				filterTarget:function(card,player,target){
+					return target.countCards('hej') && target != player;
+				},
+				content:function(){
+					"step 0"
+					if(player.countCards('h')==0){
+						event.finish();
+						return;
+					}
+					player.chooseCard('吻魔：选择一张牌展示给'+get.translation(target),true).ai=function(card){
+						if(_status.event.getRand()<0.5) return Math.random();
+						return get.value(card);
+					};
+					"step 1"
+					player.showCards(result.cards);
+					event.card2=result.cards[0];
+					game.log(player,'展示了',event.card2);
+					if(target.countCards('h')==0){
+						event.finish();
+						return;
+					}
+					target.chooseCard('吻魔：选择一张牌与'+get.translation(player)+'的'+get.translation(event.card2)+
+					'交换<br>相同颜色的话，'+get.translation(player)+'获得1点灵力',true).ai=function(card){
+						return get.color(card) == get.color(event.card2);
+					};
+					"step 2"
+					if (result.bool){
+						target.showCards(result.cards);
+						target.gain(event.card2,player);
+                		player.$give(event.card2, target);
+						player.gain(result.cards, target);
+						target.$give(result.cards, player);
+						if (get.color(result.cards[0]) == get.color(event.card2)){
+							player.gainlili();
+						};
+					}
+				},
+				ai:{
+					result:{
+						target:1,
+						player:1,
+					},
+					order:7,
+				},
+			},
+			heyi:{
+				audio:2,
+				cost:0,
+				spell:['heyi_skill'],
+				trigger:{player:'phaseBegin'},
+				filter:function(event,player){
+					return player.lili > lib.skill.heyi.cost;
+				},
+				content:function(){
+					player.loselili(lib.skill.heyi.cost);
+					player.turnOver();
+				},
+				check:function(event,player){
+					return player.lili > 3 || player.countCards('e') > 1;
+				},
+			},
+			heyi_skill:{
+				audio:2,
+				trigger:{player:'shaBegin'},
+				init:function(player){
+					lib.skill.touying.usable = 3;
+				},
+				onremove:function(player){
+					lib.skill.touying.usable = 1;
+				},
+				filter:function(event,player){
+					return player.countCards('e');
+				},
+				content:function(){
+					'step 0'
+					player.chooseCard('e',[1,Infinity],'重铸任意张装备牌，弃置'+get.translation(trigger.target)+'等量张牌').set('ai',function(card){
+                        return get.value(card);
+                    });
+					'step 1'
+					if (result.bool){
+						player.recast(result.cards);
+						player.discardPlayerCard(trigger.target,'hej',result.cards.length);
+					}
+				},
+			},
 		},
 		translate:{
 			kanade:'奏',
@@ -2815,6 +2995,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yueding2:'白之约定（转化）',
 			yueding1:'白之约定',
 			yueding_info:'符卡技（2）一回合一次，你可以将一张牌当作【轰！】使用；你使用【轰】的次数上限+1；你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有装备牌，你摸一张牌。',
+			kuro:'克洛伊',
+			touying:'投影',
+			touying_recast:'投影（重铸）',
+			touying_info:'一回合一次，出牌阶段，或你成为攻击牌的目标后，你可以消耗1点灵力，将一张非装备牌当作一种装备牌置于装备区内；一名角色的结束阶段，你重铸装备区内以此法置入的牌。',
+			wenmo:'吻魔',
+			wenmo_info:'一回合一次，出牌阶段，你可以与一名其他角色依次展示一张牌，交换这两张牌；若颜色相同，你获得1点灵力。',
+			heyi:'鹤翼三连',
+			heyi_skill:'鹤翼三连',
+			heyi_info:'符卡技（0）【投影】中的“一次”视为“三次”；你使用【轰！】指定目标后，可以重铸装备区内的任意张牌，然后弃置目标等量牌。',
 		},
 	};
 });

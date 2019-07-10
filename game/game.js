@@ -4585,7 +4585,7 @@
                     },
                     player_number:{
                         name:'游戏人数',
-                        init:'8',
+                        init:'2',
                         item:{
                             '2':'两人',
                             '3':'三人',
@@ -9099,6 +9099,7 @@
             mad_bg:'乱',
             draw_card:'摸牌',
             discard_card:'弃牌',
+            discard:'弃牌',
             take_damage:'受伤害',
             reset_character:'复原角色牌',
             recover_hp:'回复体力',
@@ -16053,7 +16054,6 @@
                             var event=_status.event.getParent();
                             var to=(player==event.player?event.target:event.player);
                             var addi=(get.value(card)>=8&&get.type(card)!='equip')?-10:0;
-                            if(card.name=='du') addi+=5;
                             if(player==event.player){
                                 if(get.attitude(player,to)>0&&event.small){
                                     return -get.number(card)-get.value(card)/2+addi;
@@ -20461,6 +20461,12 @@
                     game.broadcast(function(player,card){
                         player.$equip(card);
                     },this,card);
+                    // 如果是用牌转化装备的话（限制一张）
+                    if (!card.style){
+                        var name = card.name;
+                        card = card.cards[0];
+                        card.name = name;
+                    }
                     card.fix();
                     card.style.transform='';
                     card.classList.remove('drawinghidden');
@@ -21119,7 +21125,7 @@
                     this.classList.remove('fullborder');
 					this.dataset.cardName=card[2];
 					this.dataset.cardType=info.type||'';
-					this.dataset.cardSubype=info.subtype||'';
+					this.dataset.cardSubtype=info.subtype||'';
 					this.dataset.cardMultitarget=info.multitarget?'1':'0';
 					this.node.name.dataset.nature='';
 					this.node.info.classList.remove('red');
@@ -21496,7 +21502,7 @@
                         dx=player.offsetLeft+player.offsetWidth/2-52-this.offsetLeft;
                         dy=player.offsetTop+player.offsetHeight/2-52-this.offsetTop;
                     }
-			if(get.is.mobileMe(player)){
+			        if(get.is.mobileMe(player)){
 						dx+=get.cardOffset();
 						if(ui.arena.classList.contains('oblongcard')){
 							dy-=16;
@@ -28103,7 +28109,7 @@ smoothAvatar:function(player,vice){
                 }
                 var step3=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">不过不用急，先慢慢来。<br>感觉不熟的话，多玩几把身份局<br>也没什么大不了的。<br>游戏人数可以在左上角设置哟。');
+                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">不过不用急，先慢慢来。<br>游戏的卡牌，模式介绍，都能在<br>【图鉴】模式里找到。<br>记得代我向阿求老师问个好。');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('好的老师！',step4);
                 }
@@ -28115,7 +28121,7 @@ smoothAvatar:function(player,vice){
                 }
                 var step5=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">祝你在幻想乡玩的愉快！');
+                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">祝你在幻想乡游玩愉快！');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     setTimeout(function(){
                         clear();
@@ -28128,6 +28134,7 @@ smoothAvatar:function(player,vice){
                 game.pause();
                 step1();
 				game.saveConfig('show_splash','always');
+                game.saveConfig('player_number','5','old_identity');
             } else {
                 var i,j,k,num,table,tr,td,dialog;
                 _status.over=true;
@@ -40273,7 +40280,8 @@ smoothAvatar:function(player,vice){
                 }, 200);
                 if (lib.config.mode != 'identity') ui.incidents.style.display = 'none';
                 
-                ui.rules = ui.create.system('规则',null,true);
+                ui.rules = ui.create.system('帮助',null,true);
+                ui.rules.style.backgroundImage = 'linear-gradient(rgba(0, 133, 255, 0.8), rgba(0, 133, 255, 0.8))';
 
                 if(!lib.config.show_playerids||!game.showIdentity){
                     ui.playerids.style.display='none';

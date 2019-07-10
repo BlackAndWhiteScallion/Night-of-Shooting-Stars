@@ -145,7 +145,7 @@ window.config={
 	mode:'old_identity',
 	mode_config:{
 		global:{
-			player_number:5,
+			player_number:2,
 			auto_identity:'off',
 			double_character:false,
 			save_progress:true,

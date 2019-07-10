@@ -246,6 +246,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 					uiintro.add('<div class="text left">1. 黑幕/异变胜利：击坠所有自机<br>2. 自机胜利：击坠黑幕<br>3. 异变牌胜利：达成异变牌上的胜利条件<br>4. 出牌阶段可以明置身份。明置身份效果：<br><span>黑幕：拿异变牌（明置）；<br>路人：拿异变牌（暗置）；<br>自机：令一名角色选择：被你弃一张，或明置身份；<br>异变：令一名角色摸一张牌。</span><br>5. 击坠角色奖励：一张技能牌和1点灵力。</div>');
+					uiintro.add('<div class="text left"><a href = "https://mp.weixin.qq.com/s/ZBT62CCpPWzqiLMFDQOSsg" target="_blank">异变模式详细介绍</a></div>');
 					uiintro.add(ui.create.div('.placeholder.slim'))
 				return uiintro;
 			},400);

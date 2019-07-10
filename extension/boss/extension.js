@@ -10,7 +10,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				lib.characterPack.mode_extension_stg_scarlet['stg_remilia']=['female','5',4,['mingyun','gungirs'],[]],
 				lib.characterPack.mode_extension_stg_scarlet['stg_bookshelf']=['female','3',5,['juguang'],[]],
 				lib.characterIntro['stg_remilia']='众所周知，什么神枪魔枪都是有好多把，可以随便召唤跟回手，而且还可以变成各种奇怪的形状的。<br>画师：ふゆき(七原冬雪)';
-				lib.characterIntro['stg_bookshelf']='链接: <a href = "https://pan.baidu.com/s/1MkevcTpTKWDl_IFqHGvXew">https://pan.baidu.com/s/1MkevcTpTKWDl_IFqHGvXew</a> 提取码: 2333';
+				lib.characterIntro['stg_bookshelf']='链接: <a href = "https://pan.baidu.com/s/1MkevcTpTKWDl_IFqHGvXew" target="_blank">https://pan.baidu.com/s/1MkevcTpTKWDl_IFqHGvXew</a> 提取码: 2333';
 			}
 			if (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 0){
 				lib.characterPack.mode_extension_stg_scarlet['stg_patchouli']=['female','2',3,['qiyao','riyin','royal'],[]],
