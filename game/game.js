@@ -28238,6 +28238,7 @@ smoothAvatar:function(player,vice){
                     }
                 if(result==undefined) result='战斗结束';
                 dialog=ui.create.dialog(result);
+                dialog.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4))';
                 dialog.forcebutton=true;
                 if(game.addOverDialog){
                     game.addOverDialog(dialog,result);
@@ -38275,6 +38276,7 @@ smoothAvatar:function(player,vice){
                                         case '三':num=3;break;
                                         case '四':num=4;break;
                                         case '五':num=5;break;
+                                        case '五十':num=50;break;
                                     }
                                 }
                                 var targets=[];
@@ -38380,7 +38382,8 @@ smoothAvatar:function(player,vice){
                         var nodex3=ui.create.div('.menubutton','三',row2,clickrow2);
                         var nodex4=ui.create.div('.menubutton','四',row2,clickrow2);
                         var nodex5=ui.create.div('.menubutton','五',row2,clickrow2);
-
+                        var nodex50=ui.create.div('.menubutton','五十',row2,clickrow2);
+                        
                         var row3=ui.create.div('.menu-buttons.leftbutton.commandbutton',page);
                         row3.style.marginTop='3px';
                         var clickrow3=function(){

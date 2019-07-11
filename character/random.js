@@ -20,7 +20,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mordred:['female','2',4,['niguang','ClarentBloodArthur'],["unseen","forbidai"]],
 			twob:['female', '3', 4, ['qiyue','yueding']],
 			kuro:['female', '1', 3, ['touying','wenmo','heyi']],
-			
+			daria:['female', '3', 3, ['zhuanhuan', 'moli', 'chaoyue']],
+			rylai:['female', '3', 3, ['tanxue', 'bingfeng', 'aoshu']],
+			//jack:['female', '3', 3, ['wulin', 'yejiang', 'maria']],
 		},
 		characterIntro:{
 			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
@@ -39,6 +41,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mordred:'圆桌骑士之一，亚瑟王的儿子——同时也是终结父王的叛逆骑士。<br>出自：Fate/Apocrypha <b>画师：Shigure</b><br><br>（注：莫德雷德由？发动【？】变身而成，不能正常选出使用）',
 			twob:'——机器人会梦见电子绵羊吗？<br>——不，机器人会梦见和小男朋友一起去商城买T恤衫————<br>出自：NieR:Automata <b>设计：雪樱   画师：saberii</b>',
 			kuro:'小腹上的那个不是○纹，不要问了！<b>出自：魔法少女伊莉雅 画师：トミフミ</b>',
+			daria:'先手，5费，巨像突击，守护者巨像，命运的指引，智慧之光，剑仙，使徒，魔法剑，魔法剑，奇美拉，多萝西，引导，啊，这3个大眼下不去了，到你了吧<b>出自：影之诗 设计：雪樱  画师：アカトネ</b>',
+			rylai:'<b>出自：dota2 设计：路人orz  画师：forest</b>',
+			jack:'同时是杀人狂和暴露狂的幼女？快收住你奇怪的想法……<b>出自：Fate/Apocrypha 画师：オウカ</b>',
 		},	   
 		perfectPair:{
 		},
@@ -2640,11 +2645,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			touying:{
 				audio:2,
 				usable:1,
-				enable:'phaseUse',
-				group:'touying_recast',
-				trigger:{target:'useCardtoBefore'},
+				enable:'chooseToUse',
+				group:['touying_recast','touying_target'],
 				filter:function(event,player){
-					console.log(event.name);
+					if (!_status.event.getParent('phaseUse') && !_status.event.getParent('touying_target')) return false;
                     return player.countCards('h') > player.countCards('h', {type:'equip'}) && player.lili > 0;
                 },
                 chooseButton:{
@@ -2685,6 +2689,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             viewAs:{name:links[0][2]},
                             onuse:function(result,player){
                             	player.loselili();
+								if(!player.storage.counttrigger['touying_target']){
+									player.storage.counttrigger['touying_target']=1;
+								}
+								else{
+									player.storage.counttrigger['touying_target']++;
+								}
                             },
                         }
                     },
@@ -2692,15 +2702,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         return '将一张非装备牌当作'+get.translation(links[0][2])+'使用';
                     },
                 },
-                ai:{
+				ai:{
                     order:4,
                     result:{
                         player:function(player){
-                            return 1;
+                            if (player.lili > 2 ) return 0.5;
+							return -1;
                         }
                     },
                     threaten:1,	
                 }
+			},
+			touying_target:{
+				audio:'touying',
+				trigger:{target:'useCardToBefore'},
+				usable:1,
+				filter:function(event,player){
+					if (get.subtype(event.card) != 'attack') return false;
+                    return player.countCards('h') > player.countCards('h', {type:'equip'}) && player.lili > 0;
+                },
+				content:function(){
+					'step 0'
+					 player.chooseToUse(function(card){
+						return false;
+					},'使用【投影】将非装备牌当作装备牌使用').set('logSkill','touying');
+				},
+				check:function(){
+					return true;
+				},
 			},
 			touying_recast:{
 				trigger:{global:'phaseEnd'},
@@ -2795,9 +2824,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'shaBegin'},
 				init:function(player){
 					lib.skill.touying.usable = 3;
+					lib.skill.touying_target.usable = 3;
 				},
 				onremove:function(player){
 					lib.skill.touying.usable = 1;
+					lib.skill.touying_target.usable = 1;
 				},
 				filter:function(event,player){
 					return player.countCards('e');
@@ -2813,6 +2844,283 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.discardPlayerCard(trigger.target,'hej',result.cards.length);
 					}
 				},
+				check:function(){
+					return true;
+				},
+			},
+			zhuanhuan:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				content:function(){
+					player.discard(player.getCards('h'));
+					player.draw(player.lili);
+				},
+				ai:{
+					result:{
+						player:function(player, target){
+							return player.lili - player.countCards('h');
+						}
+					},
+				}
+			},
+			moli:{
+				audio:2,
+				usable:1,
+				enable:'phaseUse',
+				selectTarget:[1, 3],
+				selectCard:1,
+				filterTarget:function(card, player, target){
+					return target.countCards('hej');
+				},
+				filterCard:true,
+				content:function(){
+					player.discardPlayerCard('hej', target);
+				},
+				contentAfter:function(){
+					'step 0'
+					var cards=[];
+                    for (var i = targets.length; i > 0; i--){
+                        if (ui.cardPile.childNodes.length < i){
+                            var card = get.cards(i);
+                            //ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
+                        }
+                        cards.push(ui.cardPile.childNodes[ui.cardPile.childNodes.length-i]);
+                    }
+                    event.cards = cards;
+					event.num = 0;
+					'step 1'
+					player.chooseCardButton('将一张牌分给'+get.translation(targets[event.num]),true,event.cards,1).set('ai',function(button){
+						if(ui.selected.buttons.length==0) return 1;
+						return 0;
+					});
+					'step 2'
+					if (result.bool){
+						for(var i=0;i<result.links.length;i++){
+							event.cards.remove(result.links[i]);
+						}
+						targets[event.num].gain(result.links,'draw');
+						player.line(targets[event.num],'green');
+						game.log(targets[event.num],'获得了'+get.cnNumber(result.links.length)+'张牌');
+					}
+					if (event.cards.length == 0 || event.num >= targets.length) event.finish();
+					else {
+						event.num ++;
+						event.goto(1);
+					}
+				},
+				ai:{
+					result:{
+						player:-1,
+						target:0.5,
+					},
+				}
+			},
+			chaoyue:{
+				audio:2,
+				cost:7,
+				spell:['chaoyue_skill'],
+				group:'chaoyue_reduce',
+				trigger:{player:'phaseBegin'},
+				init:function(player){
+					player.storage.chaoyue = 0;
+				},
+				intro:{
+					content:function(storage,player){
+						return '符卡消耗-'+player.storage.chaoyue;
+					},
+				},
+				filter:function(event,player){
+					return player.lili > (lib.skill.chaoyue.cost - player.storage.chaoyue);
+				},
+				content:function(){
+					player.loselili(lib.skill.chaoyue.cost - player.storage.chaoyue);
+					player.turnOver();
+					player.storage.chaoyue = 0;
+					player.unmarkSkill('chaoyue');
+				},
+				check:function(event,player){
+					return true;
+				},	
+			},
+			chaoyue_skill:{
+				trigger:{player:'phaseAfter'},
+				direct:true,
+				content:function(){
+					player.insertPhase();
+				}
+			},
+			chaoyue_reduce:{
+				direct:true,
+				trigger:{player:'useCard'},
+				frequent:true,
+				filter:function(event){
+					return (get.type(event.card)=='trick'&&event.cards[0]&&event.cards[0]==event.card);
+				},
+				content:function(){
+					if (!player.storage.chaoyue) player.storage.chaoyue = 0;
+					player.storage.chaoyue ++;
+					player.markSkill('chaoyue');
+				},
+			},
+			tanxue:{
+				trigger:{target:'shaBefore'},
+				audio:2,
+				filter:function(event,player){
+					return player.lili > event.player.lili;
+				},
+				content:function(){
+					player.addTempSkill('tanxue_damage');
+				},
+				check:function(){
+					return true;
+				},
+			},
+			tanxue_damage:{
+				direct:true,
+				trigger:{player:'damageBefore'},
+				filter:function(event, player){
+					return event.card && event.card.name == 'sha' && event.nature != 'thunder';
+				},
+				content:function(){
+					trigger.source.damage(player, 'thunder', trigger.num);
+					trigger.cancel();
+				},
+			},
+			bingfeng:{
+				audio:2,
+				trigger:{global:'useCard'},
+				filter:function(event, player){
+					return !event.player.storage._enhance && player.countCards('hej') && get.type(event.card) == 'trick';
+				},
+				content:function(){
+					'step 0'
+					player.chooseToDiscard('hej', 1);
+					'step 1'
+					if (result.bool){
+						trigger.player.addTempSkill('bingfeng_enhance',{player:'useCardAfter'});
+						lib.skill.bingfeng_enhance.trigger = {player: trigger.card.name};
+						console.log(lib.skill.bingfeng_enhance.trigger); 
+						trigger.player.storage._enhance = 1;
+					}
+				},
+				check:function(event, player){
+					return player.countCards('hej') > 3 && get.attitude(player, event.player) > 0;
+				},
+			},
+			bingfeng_enhance:{
+				direct:true,
+				trigger:{player:'useCardToBegin'},
+				filter:function(event, player){
+					return player.storage._enhance && event.target;
+				},
+				content:function(){
+					for (var i = 0; i < player.storage._enhance; i ++){
+						trigger.target.damage('thunder');
+					}
+				},
+			},
+			aoshu:{
+				audio:2,
+				usable:1,
+				enable:'phaseUse',
+				filter:function(event, player){
+					return player.lili > 0;
+				},
+				content:function(){
+					'step 0'
+					event.num = player.lili;
+					player.loselili(player.lili);
+					'step 1'
+					if (event.num > 0){
+						player.chooseTarget('令一名角色获得1点灵力<br>还剩'+event.num+'点灵力可分配', true).set('ai',function(target){
+							return target.lili < target.maxlili && get.attitude(player, target) > 0;
+						});
+					}
+					'step 2'
+					if (result.bool){
+						result.targets[0].gainlili();
+						event.num --;
+						if (event.num > 0) event.goto(1);
+					}
+					'step 3'
+					player.addTempSkill('aoshu_lili',{player:'phaseBegin'});
+				},
+				ai:{
+					result:{
+						player:1,
+					},
+				},
+			},
+			aoshu_lili:{
+				audio:2,
+				forced:true,
+				trigger:{global:'useSkillAfter'},
+				filter:function(event,player){
+					return event.skill.spell;
+				},
+				content:function(){
+					player.gainlili();
+				},
+			},
+			wulin:{
+				audio:2,
+				trigger:{global:'phaseBegin'},
+				limited:true,
+				filter:function(event,player){
+					return (player.countCards('hej')>0);
+				},
+				check:function(event, player){
+					var bad_att = false;
+					var players = game.filterPlayer();
+					for(var i=0;i<players.length;i++){
+						if (-get.attitude(player, players[i]) && players[i].countCards('h') > 3) bad_att = true;
+					}
+					return bad_att;
+				},
+				content:function(){
+					"step 0"
+					player.chooseTarget('雾临：洗混一名角色手牌，且其本回合可以被轰两次',function(card, player, target){
+							return get.distance(player, target,'attack')<=1;
+						}).ai=function(target){
+							return -get.attitude(player, target);
+						};
+					"step 1"
+ 					if (result.bool){
+                        player.logSkill(event.name,result.targets);
+                        result.targets[0].addTempSkill('shiming_2');
+                        result.targets[0].addTempSkill('shiming_3');
+						result.targets[0].addTempSkill('wulin_skill');
+                    }
+				},
+			},
+			wulin_skill:{
+				direct:true,
+				usable:1,
+				trigger:{target:'shaBefore'},
+				content:function(){
+					trigger.player.getStat().card.sha--;
+				},
+			},
+			yejiang:{
+				limited:true,
+	
+			},
+			maria:{
+				audio:2,
+				cost:2,
+				spell:['maria_skill'],
+				trigger:{player:'phaseBegin'},
+				filter:function(event,player){
+					return player.lili > lib.skill.maria.cost;
+				},
+				content:function(){
+					player.loselili(lib.skill.maria.cost);
+					player.turnOver();
+				},
+				check:function(event,player){
+					return true;
+				},	
 			},
 		},
 		translate:{
@@ -2997,6 +3305,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yueding_info:'符卡技（2）一回合一次，你可以将一张牌当作【轰！】使用；你使用【轰】的次数上限+1；你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有装备牌，你摸一张牌。',
 			kuro:'克洛伊',
 			touying:'投影',
+			touying_target:'投影',
 			touying_recast:'投影（重铸）',
 			touying_info:'一回合一次，出牌阶段，或你成为攻击牌的目标后，你可以消耗1点灵力，将一张非装备牌当作一种装备牌置于装备区内；一名角色的结束阶段，你重铸装备区内以此法置入的牌。',
 			wenmo:'吻魔',
@@ -3004,6 +3313,28 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			heyi:'鹤翼三连',
 			heyi_skill:'鹤翼三连',
 			heyi_info:'符卡技（0）【投影】中的“一次”视为“三次”；你使用【轰！】指定目标后，可以重铸装备区内的任意张牌，然后弃置目标等量牌。',
+			daria:'多萝西',
+			zhuanhuan:'次元转换',
+			zhuanhuan_info:'一回合一次，出牌阶段，你可以弃置所有手牌，然后摸X张牌（X为灵力值）。',
+			moli:'次元魔力',
+			moli_info:'一回合一次，出牌阶段，你可以弃置一张牌，并弃置至多三名角色各一张牌；然后，你观看牌堆底等量的牌，依次交给这些角色各一张。',
+			chaoyue:'次元超越',
+			chaoyue_info:'符卡技（7）<u>你使用法术牌时，令此符卡的消耗-1；</u>符卡发动时，重置此符卡的消耗；当前回合结束后，你进行一个额外回合。',
+			rylai:'莉莱',
+			tanxue:'坍雪寒裘',
+			tanxue_info:'一名角色使用【轰！】指定你为目标后，若其灵力小于你，你可以令该【轰！】造成的伤害改为灵击伤害。',
+			bingfeng:'冰封禁制',
+			bingfeng_info:'一名角色使用法术牌时，若该牌未强化，你可以弃置一张牌，为该牌追加描述“强化（-1）：对目标造成１点灵击伤害”，然后强化之。',
+			aoshu:'奥术光环',
+			aoshu_lili:'奥术光环（获得灵力）',
+			aoshu_info:'一回合一次，出牌阶段，你可将灵力消耗到0，并为任意名角色分配等量灵力；然后，直到你的准备阶段，一名角色发动符卡时，你获得1点灵力。',
+			jack:'开膛手杰克',
+			wulin:'雾临',
+			wulin_info:'限定技，一名角色的回合开始时，你可以令你攻击范围内的一名角色获得以下效果，直到回合结束：其不能以此技能以外的方式使用牌；其需要使用牌时，可以洗混其手牌；其不能查看其中暗置牌；其展示其中一张：若可以使用，本次结算中其可以使用该牌；否则，其弃置之，并可以重复此流程；其首次成为【轰！】的目标后，令之不计次数。',
+			yejiang:'夜降',
+			yejiang_info:'限定技，一名角色的回合开始时，你可以令你攻击范围内的一名角色获得以下效果，直到回合结束：其攻击范围视为0，不能获得灵力，且装备效果无效。',
+			maria:'解体圣母',
+			maria_info:'符卡技（2）符卡发动时，你指定一名其他角色：你与该角色距离视为1；你使用【轰！】造成伤害后，弃置受伤角色所有手牌；符卡结束时，重置【夜降】和【雾临】。',
 		},
 	};
 });
