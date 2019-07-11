@@ -151,6 +151,10 @@ window.noname_asset_list=[
     'image/character/niuzhanshi.jpg',
     'image/character/mordred.jpg',
     'image/character/twob.jpg',
+    'image/character/daria.jpg',
+    'image/character/kuro.jpg',
+    'image/character/rylai.jpg',
+    'image/character/jack.jpg',
     'image/mode/boss/character/boss_reimu.jpg',
     'image/mode/boss/character/boss_reimu2.jpg',
     'image/mode/boss/character/boss_cirno.jpg',
@@ -361,4 +365,7 @@ window.noname_skin_list={
     boss_reimu:1,
     zigui:1,
     renko:1,
+    twob:1,
+    nero:1,
+    shigure:1,
 };
