@@ -760,7 +760,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aidoulu_3:{
 				trigger:{source:'damageBegin'},
 				filter:function(event){
-					return event.card&&event.card.name=='sha'&&event.notLink();
+					return event.card&&event.card.name=='sha';
 				},
 				forced:true,
 				content:function(){

@@ -524,9 +524,6 @@ table {
 .player:not(.treasure).playerfocus {
 	transform: scale(1.1);
 }
-.player.linked:not(.treasure).playerfocus {
-	transform: scale(1.1) rotate(-90deg);
-}
 .player.connect>div:not(.avatar):not(.name):not(.nameol):not(.hp.room):not(.gaming) {
 	display: none !important;
 }
@@ -1942,11 +1939,6 @@ div:not(.handcards)>.card>.info>span,
 	top: 13px;
 }
 
-#arena .player.linked.minskin>.name,
-#arena.slim_player .player.linked.minskin>.name {
-	transform: rotate(90deg) translate(81px,-66px);
-}
-
 .button.character>.name {
 	font-family: 'xinwei'
 }
@@ -2158,12 +2150,7 @@ div:not(.handcards)>.card>.info>span,
 	background-size: 75% 75%;
 	background-image: '';
 }
-.player.linked>.damage {
-	transform: scale(0.7) rotate(90deg);
-}
-.player.linked>.damage.damageadded {
-	transform: scale(1) rotate(90deg);
-}
+
 
 .player>.framebg{
 	width: 100%;
@@ -2507,18 +2494,7 @@ div:not(.handcards)>.card>.info>span,
 .player:not([data-position='0']).unseen.unseen2>.name_seat {
 	opacity: 1 !important;
 }
-.linked>.avatar,.linked>.avatar2 {
-	transform: rotate(-90deg);
-}
-.linked>.avatar2 {
-	top: 5px;
-}
-.linked>.identity {
-	top: 88px;
-}
-.linked>.count {
-	right: 154px;
-}
+
 .acted>.identity {
 	transform: rotate(180deg);
 }

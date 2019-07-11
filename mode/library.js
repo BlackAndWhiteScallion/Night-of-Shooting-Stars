@@ -547,7 +547,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.height = "100%";
 						dialog.addText('');
 						dialog.addText('');
-						dialog.addText('如果你觉得文字太枯燥的话，图文介绍可以在<a href = "d">基础游戏介绍</a>和<a href="https://mp.weixin.qq.com/s/AO1BbLYLaNFn88ZqtKxsrw">新系统介绍</a>读到。');
+						dialog.addText('如果你觉得文字太枯燥的话，图文介绍可以在<a href = "https://mp.weixin.qq.com/s/uBonlYfZg69V03FhebUwCQ">基础游戏介绍</a>和<a href="https://mp.weixin.qq.com/s/AO1BbLYLaNFn88ZqtKxsrw">新系统介绍</a>读到。');
 						dialog.addText('去[场景-对战练习]找子规老师探讨探讨也是个不错的办法。');
 						dialog.addText('请选择你想要了解的系统，'+lib.config.connect_nickname+'，我会尽力解答的！');
 						dialog.classList.add('fixed');

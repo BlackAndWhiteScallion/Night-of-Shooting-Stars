@@ -682,47 +682,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					this.chessFocus();
     				}
 
-    				if(get.mode()=='tafang'&&!_status.video){
-    					if(_status.tafangend.contains(this.dataset.position)){
-    						if(_status.enemies.contains(this)){
-    							game.over(false);
-    						}
-    						else{
-    							this.delete();
-    							delete lib.posmap[this];
-    							game.players.remove(this);
-    							_status.friends.remove(this);
-    							this.classList.add('dead');
-    							if(_status.roundStart==this){
-    								_status.roundStart=player.next||player.getNext()||game.players[0];
-    							}
-    							if(this==game.me){
-    								if(ui.confirm){
-    									ui.confirm.close();
-    								}
-    								if(_status.friends.length==0){
-    									ui.fakeme.hide();
-    									this.node.handcards1.delete();
-    									this.node.handcards2.delete();
-    									game.me=ui.create.player();
-    									game.me.side=false;
-    									game.addVideo('removeTafangPlayer');
-    								}
-    								else{
-    									game.modeSwapPlayer(_status.friends[0]);
-    								}
-    							}
-    							for(var i=0;i<ui.phasequeue.length;i++){
-    								if(ui.phasequeue[i].link==this){
-    									ui.phasequeue[i].remove();
-    									ui.phasequeue.splice(i,1);
-    									break;
-    								}
-    							}
-    							game.addVideo('deleteChessPlayer',this);
-    						}
-    					}
-    				}
     				return this;
     			},
     			canMoveTowards:function(target){
@@ -1205,21 +1164,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				node.style.top=top;
     				return node;
     			},
-    			$phaseJudge:function(card){
-    				game.addVideo('phaseJudge',this,get.cardInfo(card));
-    				var clone=card.copy('thrown',this.parentNode).animate('judgestart');
-    				var player=this;
-    				clone.style.opacity=0.6;
-    				clone.style.left=(Math.random()*100-50+ui.chessContainer.scrollLeft+ui.chessContainer.offsetWidth/2-52)+'px';
-    				clone.style.top=(Math.random()*80-40+ui.chessContainer.scrollTop+ui.chessContainer.offsetHeight/2-52-ui.chessContainer.offsetTop)+'px';
-    				game.delay();
-    				game.linexy([
-    					clone.offsetLeft+clone.offsetWidth/2,
-    					clone.offsetTop+clone.offsetHeight/2,
-    					player.offsetLeft+player.offsetWidth/2,
-    					player.offsetTop+player.offsetHeight/2
-    				],{opacity:0.5,dashed:true},true);
-    			},
     			$randomMove:function(node,length,rand){
     				if(!this.node.chessthrown){
     					this.node.chessthrown=[];
@@ -1392,64 +1336,40 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					}
     					var dontMove=null;
     					for(var iwhile=0;iwhile<num;iwhile++){
-    						if(get.mode()=='tafang'&&_status.enemies.contains(player)){
-    							var targets2=[];
-    							for(var i=0;i<ui.chesswidth;i++){
-    								var tafangdes=ui.chesswidth*(ui.chessheight-1)+i;
-    								if(!lib.posmap[tafangdes]){
-    									targets2.push(tafangdes);
-    								}
-    							}
-    							targets2.sort(function(a,b){
-    								return Math.abs(a%ui.chesswidth-player.getXY()[0])-Math.abs(b%ui.chesswidth-player.getXY()[0]);
-    							});
-    							var tafangmoved=false;
-    							for(var i=0;i<targets2.length;i++){
-    								if(player.moveTowards(targets2[i].toString())){
-    									tafangmoved=true;
-    									break;
-    								}
-    							}
-    							if(tafangmoved){
-    								event.moved=true;
-    							}
-    						}
-    						else{
-    							var targets=game.filterPlayer(function(current){
-    								return current.side!=player.side&&current.isIn();
-    							});
-    							targets.sort(function(a,b){
-    								return get.distance(player,a)-get.distance(player,b);
-    							});
-    							while(targets.length){
-    								var target=targets.shift();
-    								var moveTowards=player.moveTowards(target,[dontMove]);
-    								if(moveTowards){
-    									dontMove=getMove(moveTowards);
-    									randomMove.remove(dontMove);
-    									event.moved=true;break;
-    								}
-    								if(targets.length==0){
-    									if(randomMove.length){
-    										var list=randomMove.slice(0);
-    										while(true){
-    											var thismove=list.randomRemove();
-    											if(player[thismove]()){
-    												event.moved=true;
-    												dontMove=getMove(thismove);
-    												randomMove.remove(dontMove);
-    												break;
-    											}
-    											if(list.length==0) return;
-    										}
-    									}
-    									else{
-    										return;
-    									}
-    								}
-    							}
-    							if(lib.skill._chessmove.ai.result.player(player)<=0) break;
-    						}
+							var targets=game.filterPlayer(function(current){
+								return current.side!=player.side&&current.isIn();
+							});
+							targets.sort(function(a,b){
+								return get.distance(player,a)-get.distance(player,b);
+							});
+							while(targets.length){
+								var target=targets.shift();
+								var moveTowards=player.moveTowards(target,[dontMove]);
+								if(moveTowards){
+									dontMove=getMove(moveTowards);
+									randomMove.remove(dontMove);
+									event.moved=true;break;
+								}
+								if(targets.length==0){
+									if(randomMove.length){
+										var list=randomMove.slice(0);
+										while(true){
+											var thismove=list.randomRemove();
+											if(player[thismove]()){
+												event.moved=true;
+												dontMove=getMove(thismove);
+												randomMove.remove(dontMove);
+												break;
+											}
+											if(list.length==0) return;
+										}
+									}
+									else{
+										return;
+									}
+								}
+							}
+							if(lib.skill._chessmove.ai.result.player(player)<=0) break;
     					}
     				};
     				if(event.isMine()){
@@ -1549,22 +1469,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			else{
     				player.animate('start');
     				if(enemy){
-    					if(get.mode()=='tafang'){
-    						player.side=true;
-    					}
-    					else{
-    						player.side=!game.me.side;
-    					}
+    					player.side=!game.me.side;
     					player.setIdentity('enemy');
     					player.identity='enemy';
     				}
     				else{
-    					if(get.mode()=='tafang'){
-    						player.side=false;
-    					}
-    					else{
-    						player.side=game.me.side;
-    					}
+    					player.side=game.me.side;
     					player.setIdentity('friend');
     					player.identity='friend';
     				}
@@ -5172,9 +5082,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				order:5,
     				result:{
     					playerx:function(player){
-    						if(get.mode()=='tafang'&&_status.enemies.contains(player)){
-    							return 1;
-    						}
     						var nh=player.countCards('h');
     						if(!player.countCards('h','sha')&&
     						!player.countCards('h','shunshou')&&
@@ -5607,10 +5514,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     		create:{
     			playergrid:function(player,x,y){
     				var pos=player.getDataPos(x,y);
-    				if(get.mode()=='tafang'){
-    					if(pos<ui.chesswidth) return false;
-    					if(pos/ui.chesswidth>=ui.chessheight-1) return false;
-    				}
     				var node=ui.create.div('.player.minskin.playergrid',player.parentNode);
     				node.link=player;
     				node.dataset.position=pos;

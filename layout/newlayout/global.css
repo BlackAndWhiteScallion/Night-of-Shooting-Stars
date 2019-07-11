@@ -302,35 +302,7 @@
 .player.minskin .identity{
 	left:102px;
 }
-.player.linked{
-	transform:rotate(-90deg);
-}
-.player.linked>.judges,
-.player.linked>.marks{
-	transform:rotate(90deg) translateX(10px);
-}
-#arena[data-target_shake='shake'] .linked.target{transform: rotate(-93deg);}
-#arena[data-target_shake='shake'] .linked.target2{transform: rotate(-87deg);}
 
-#arena[data-target_shake='zoom'] .linked.target,
-#arena[data-target_shake='zoom'] .linked.target2{transform: scale(1.03) rotate(-90deg);}
-
-
-.player.acted.linked .identity{
-	transform:rotate(270deg);
-}
-.linked>.avatar,.linked>.avatar2{transform:rotate(0deg);}
-.linked>.avatar2{top:73px;}
-.linked>.identity{top: -5px;}
-.linked>.count{right: auto;}
-
-.player.linked>.name{
-	transform-origin: top center;
-	transform: rotate(90deg) translate(132px,-96px);
-}
-.player.linked>.name.name2{
-	transform: rotate(90deg) translate(110px,-31px);
-}
 /*--------位置(n人)------*/
 
 /*--------位置(8人)------*/

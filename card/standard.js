@@ -2271,7 +2271,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		bingyu2:{
 			global:['bingyu1','bingyu3'],
-			trigger:{player:'phaseBegin'},
+			trigger:{player:['phaseBegin', 'dieBegin']},
 			forced:true,
 			init:function(player){
 				var players = game.filterPlayer();
@@ -2303,20 +2303,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		_wuxie:{
-			trigger:{player:['useCardToBefore','phaseJudge']},
+			trigger:{player:['useCardToBefore']},
 			priority:5,
 			popup:false,
 			forced:true,
 			filter:function(event,player){
-					if(event.name!='phaseJudge'){
-						var info=get.info(event.card);
-						if(!event.target){
-							if(info.wuxieable) return true;
-							return false;
-						}
-						if(event.player.hasSkillTag('playernowuxie',false,event.card)) return false;
-						if(get.type(event.card)!='trick'&&!info.wuxieable) return false;
+					var info=get.info(event.card);
+					if(!event.target){
+						if(info.wuxieable) return true;
+						return false;
 					}
+					if(event.player.hasSkillTag('playernowuxie',false,event.card)) return false;
+					if(get.type(event.card)!='trick'&&!info.wuxieable) return false;
 					return true;
 				},
 			content:function(){
@@ -2325,9 +2323,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					event.targets=trigger.targets;
 				}
 				event.target=trigger.target;
-				if(event.triggername=='phaseJudge'){
-					event.target=trigger.player;
-				}
 				event.sourcex=event.targets||event.target;
 				if(!event.targets&&trigger.targets&&trigger.targets.length==1){
 					event.sourcex2=trigger.player;
@@ -2461,12 +2456,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					event.finish();
 					if(!event.state){
 						trigger.untrigger();
-						if(event.triggername=='phaseJudge'){
-							trigger.cancelled=true;
-						}
-						else{
-							trigger.finish();
-						}
+						trigger.finish();
 					}
 				}
 				else if(_status.connectMode&&(event.list[0].isOnline()||event.list[0]==game.me)){
@@ -2474,8 +2464,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				else{
 					event.current=event.list.shift();
-					event.send(event.current,event.state,event.triggername=='phaseJudge',
-					event.card,event.source,event.target,event.targets,event.id,trigger.parent.id,event.tempnowuxie);
 				}
 				'step 3'
 				if(result.bool){
@@ -2517,14 +2505,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if(list[i].isOnline()){
 						withol=true;
 						list[i].wait(sendback);
-						list[i].send(event.send,list[i],event.state,event.triggername=='phaseJudge',
-						event.card,event.source,event.target,event.targets,event.id,trigger.parent.id,event.tempnowuxie,get.skillState(list[i]));
 						list.splice(i--,1);
 					}
 					else if(list[i]==game.me){
 						withme=true;
-						event.send(list[i],event.state,event.triggername=='phaseJudge',
-						event.card,event.source,event.target,event.targets,event.id,trigger.parent.id,event.tempnowuxie);
 						list.splice(i--,1);
 					}
 				}
@@ -2570,12 +2554,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				else{
 					if(!event.state){
 						trigger.untrigger();
-						if(event.triggername=='phaseJudge'){
-							trigger.cancelled=true;
-						}
-						else{
-							trigger.finish();
-						}
+						trigger.finish();
 					}
 				}
 				delete event.resultOL;
@@ -2801,7 +2780,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		// 准备阶段扔掉
 		lingbi2:{
 			global:'lingbi1',
-			trigger:{player:'phaseBegin'},
+			trigger:{player:['phaseBegin', 'dieBegin']},
 			intro:{
 				content:'cards'
 			},

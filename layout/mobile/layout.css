@@ -147,12 +147,6 @@
     height: 140px;
 }
 
-#arena:not(.chess) .player[data-position='0'].linked>.damage{
-	transform:scale(0.7) rotate(0);
-}
-#arena:not(.chess) .player[data-position='0'].linked>.damage.damageadded{
-	transform:scale(1) rotate(0);
-}
 #arena:not(.chess) .player[data-position='0']:not(.selected):not(.selectedx):not(.selectable):not(.glow){
     box-shadow: none !important;
 }
@@ -190,18 +184,10 @@
 #arena:not(.chess) .player[data-position='0']>.equips>.equip4{bottom: 10px;right: 10px;}
 
 #arena:not(.chess) .player[data-position='0']>.name,
-#arena:not(.chess) .player[data-position='0'].linked>.name{
-    left:4px;
-    top:10px;
-    transform: none;
-}
 #arena:not(.chess) .player[data-position='0']>.nameol{
     display: none;
 }
 #arena:not(.chess) .player[data-position='0']>.name.name2,
-#arena:not(.chess) .player[data-position='0'].linked>.name.name2{
-    left:69px;
-}
 #arena:not(.chess) .player[data-position='0']>.identity{
     left: 106px;
     top: -8px;
@@ -262,13 +248,6 @@
     transform: none;
 }
 
-#arena:not(.chess) .player[data-position='0'].linked{
-    transform: none;
-}
-#arena:not(.chess) .player[data-position='0'].linked .avatar,
-#arena:not(.chess) .player[data-position='0'].linked .avatar2{
-    transform: rotate(-90deg);
-}
 #arena:not(.chess) .player[data-position='0'].fullskin2 .avatar{
     transform-origin: right center;
 }

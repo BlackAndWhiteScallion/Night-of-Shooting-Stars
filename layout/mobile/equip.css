@@ -17,9 +17,6 @@
 	left:5px;
 	bottom: 17px;
 }
-#arena.chess.lslim_player.slim_player .player.minskin.linked .equips{
-	transform: rotate(90deg) translate(-98px,-5px) scale(0.73)
-}
 #arena.uslim_player .player:not([data-position='0']) .equips,
 #arena.chess.uslim_player .player .equips{
 	left:3px;
@@ -169,36 +166,6 @@
 }
 
 
-#arena:not(.textequip):not(.chess).textequip .player[data-position='0'].linked .equips,
-.player:not([data-position='0']).linked .equips,
-#arena.chess .player.linked .equips{
-	transform:rotate(90deg) translate(-152px,-6px);
-	transform-origin:bottom left;
-}
-#arena.slim_player .player:not([data-position='0']).linked .equips,
-#arena.chess.slim_player .player.linked .equips{
-	transform:rotate(90deg) translate(-155px,-6px);
-}
-#arena.uslim_player .player:not([data-position='0']).linked .equips,
-#arena.chess.uslim_player .player.linked .equips{
-	transform:rotate(90deg) translate(-159px,-6px);
-}
-.player:not([data-position='0']).minskin.linked .equips,
-#arena.chess .player.minskin.linked .equips{
-	transform:rotate(90deg) translate(-92px,-6px) scale(0.73);
-}
-#arena.slim_player .player:not([data-position='0']).minskin.linked .equips,
-#arena.chess.slim_player .player.minskin.linked .equips{
-	transform:rotate(90deg) translate(-95px,-6px) scale(0.73);
-}
-#arena.uslim_player .player:not([data-position='0']).minskin.linked .equips,
-#arena.chess.uslim_player .player.minskin.linked .equips{
-	transform:rotate(90deg) translate(-99px,-6px) scale(0.73);
-}
-.player:not([data-position='0']).linked .identity,
-#arena.chess .player.linked .identity{
-	transform:rotate(90deg);
-}
 
 #arena:not(.chess).textequip .player[data-position='0'] .equips>.card{
 	border-radius: 0px !important;

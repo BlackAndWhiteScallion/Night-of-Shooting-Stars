@@ -521,7 +521,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            trigger:{source:'damageBegin'},
 	                            forced:true,
 	                            filter:function(event){
-	                                return event.card&&event.card.name=='sha'&&event.notLink();
+	                                return event.card&&event.card.name=='sha';
 	                            },
 	                            content:function(){
 	                                trigger.num++;
