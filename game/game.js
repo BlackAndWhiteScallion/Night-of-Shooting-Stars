@@ -4997,19 +4997,14 @@
                             map.enable_all_three.hide();
                             map.enable_all_cards.hide();
                         }
-                        if(config.versus_mode=='jiange'||config.versus_mode=='two'||config.versus_mode=='endless'||
+                        if(config.versus_mode=='two'||config.versus_mode=='endless'||
                             config.versus_mode=='three'||config.versus_mode=='one'||config.versus_mode=='siguo'){
                             map.free_choose.show();
                         }
                         else{
                             map.free_choose.hide();
                         }
-                        if(config.versus_mode=='jiange'){
-                            map.double_character_jiange.show();
-                        }
-                        else{
-                            map.double_character_jiange.hide();
-                        }
+                        map.double_character_jiange.hide();
                         if(config.versus_mode=='two'){
                             map.replace_handcard_two.show();
                             map.replace_character_two.show();
@@ -21231,9 +21226,6 @@
                     else if(lib.configOL.double_character&&(lib.configOL.mode=='identity')){
                         double_character=true;
                     }
-                    else if(lib.configOL.double_character_jiange&&(lib.configOL.mode=='versus'&&_status.mode=='jiange')){
-                        double_character=true;
-                    }
                     if(double_character&&lib.config.forbiddouble.contains(i)){
                         return true;
                     }
@@ -21255,9 +21247,6 @@
                         double_character=true;
                     }
                     else if(get.config('double_character')&&(lib.config.mode=='identity')){
-                        double_character=true;
-                    }
-                    else if(get.config('double_character_jiange')&&(lib.config.mode=='versus'&&_status.mode=='jiange')){
                         double_character=true;
                     }
                     if(double_character&&lib.config.forbiddouble.contains(i)){
