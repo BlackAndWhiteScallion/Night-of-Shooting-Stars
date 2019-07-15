@@ -280,6 +280,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var uiintro=ui.create.dialog('hidden');
 
 					uiintro.add('重整');
+					uiintro.add('');
 					var table=ui.create.div('.bosschongzheng');
 
 					var tr,td,added=false;
@@ -354,8 +355,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				} else {
 					uiintro.add('<div class="text left">回合顺序：魔王→勇者→勇者→勇者→魔王</div>');
 				}
-				if (game.bossinfo.chongzheng){
+				if (game.bossinfo.chongzheng !== false){
 					uiintro.add('<div class="text left">勇者坠机后进入重整状态<br>重整需要'+game.bossinfo.chongzheng+'个回合');
+				} else {
+					uiintro.add('<div class="text left">这个魔王不可以重整！');
 				}
 				uiintro.add(ui.create.div('.placeholder.slim'))
 				return uiintro;
@@ -585,7 +588,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					"step 0"
 					if (result.bool) result.bool = false;
 					// 如果player重整，退出重整
-					// 这个重整似乎只有下面的looptype，如果是三连顺序的话会改成true，应该是用来强行减慢重整一轮的
+					// 这个重整的只有下面用，简单来说，轮到boss的回合了，boss头上的chongzheng是false
+					// 1->1的情况下，一名角色重整流程后，会把boss头上的chongzheng变成true
+					// 换句话来说，使用这个chongzheng可以检测本轮是否重整过了。
 					if(player.chongzheng){
 						player.chongzheng=false;
 					}
@@ -611,7 +616,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							player.update();
 							if(player.storage.boss_chongzheng>=game.bossinfo.chongzheng){
 								player.revive(player.hp);
-							}				
+							}
 						}
 						// 如果是1→1，重整为true
 						if(game.bossinfo.loopType==2){
@@ -962,7 +967,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.damageCount=ui.create.system('伤害: 0',null,true);
 					lib.setPopped(ui.rules,function(){
 						var uiintro=ui.create.dialog('hidden');
-							uiintro.add('<div class="text left">[选项→游戏]里可以提高游戏速度<br>关掉[回合顺序自选]和[单人控制]也可以显著提升游戏速度<br>不要想了，快点打上去！</div>');
+							uiintro.add('<div class="text left">[选项→游戏]里可以提高游戏速度<br>关掉[回合顺序自选]和[单人控制]也可以显著提升游戏速度<br>不要想了，快点打上去！<br>勇者坠机后进入重整状态<br>重整需要0个回合</div>');
 							uiintro.add(ui.create.div('.placeholder.slim'))
 						return uiintro;
 					},400);
@@ -1022,7 +1027,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.config.background_music = '';
 					lib.setPopped(ui.rules,function(){
 						var uiintro=ui.create.dialog('hidden');
-							uiintro.add('<div class="text left">[选项→魔王]里可以打开单人控制<br>光头在回合外不会使用牌<br>不要放弃治疗啊！</div>');
+							uiintro.add('<div class="text left">[选项→魔王]里可以打开单人控制<br>光头在回合外不会使用牌<br>不要放弃治疗啊！<br>这个魔王不可以重整</div>');
 							uiintro.add(ui.create.div('.placeholder.slim'))
 						return uiintro;
 					},400);

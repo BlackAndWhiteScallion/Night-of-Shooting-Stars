@@ -861,7 +861,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 			},
 		},
-		// 幻想之门
+		// 幻想之扉
 		huanxiang:{
 			audio:true,
 			fullskin:true,
@@ -872,7 +872,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return true;
 			},
 			contentBefore:function(){
-				player.$skill('幻想之门',null,null,true);
+				player.$skill('幻想之扉',null,null,true);
 			},
 			content:function(){
 				target.draw();
@@ -2886,7 +2886,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return player.countCards('h',{name:'huanxiang'}) > 0;
 			},
 			content:function(){
-				game.log('幻想之门：游戏开始时，令所有角色摸一张牌');
+				game.log('幻想之扉：游戏开始时，令所有角色摸一张牌');
 				player.showCards(player.getCards('h',{name:'huanxiang'}));
 				for (var i = 0; i < game.filterPlayer().length; i ++){
 					game.filterPlayer()[i].draw();
@@ -2898,7 +2898,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					else return 2;
 				}) > 0;
 			},
-			prompt:'是否发动【幻想之门】：游戏开始时，可以令所有角色摸一张牌',
+			prompt:'是否发动【幻想之扉】：游戏开始时，可以令所有角色摸一张牌',
 		},
 		danmaku_skill:{
 			mod:{
@@ -3041,8 +3041,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		simen:'死境之门',
 		_simen:'死境之门',
 		simen_info:'出牌阶段，对所有其他角色使用：目标各弃置一张牌；全弃置完后，交换牌堆和弃牌堆。</br> <u>追加效果：此牌因弃置进入弃牌堆后，所有角色失去1点体力。</u>',
-		huanxiang:'幻想之门',
-		_huanxiang:'幻想之门',
+		huanxiang:'幻想之扉',
+		_huanxiang:'幻想之扉',
 		huanxiang_info:'出牌阶段，对所有角色使用：目标各摸一张牌，一张技能牌，获得1点灵力。</br> <u>追加效果：游戏开始时，你可以展示此牌，所有角色摸一张牌。</u>',
 		tianguo:'天国之阶',
 		_tianguo2:'天国之阶',

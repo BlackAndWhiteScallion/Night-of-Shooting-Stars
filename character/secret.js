@@ -268,7 +268,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	forced:true,
             	content:function(){
             		'step 0'
-            		player.chooseTarget('选择跨入幻想之门的两名角色',[2,2], true,function(card,player,target){
+            		player.chooseTarget('选择跨入幻想之扉的两名角色',[2,2], true,function(card,player,target){
 						return player.canUse({name:'huanxiang'},target);
 					}).set('ai',function(target){
                         if (player.name == 'renko' && target.name == 'meribel') return 99999;
@@ -291,7 +291,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
         	xingdu_audio1:'嗯……好像是这个方向？',
         	xingdu_audio2:'哎哎哎，为什么是这两张？',
         	sihuan:'似幻',
-        	sihuan_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之门】；出牌阶段，你可以弃置一张牌并选择一项，一回合每项限一次： 1. 获得5点灵力上限和5点灵力，直到回合结束；2. 弃置一名有异变牌的角色一张牌；3. 摸一张技能牌和一张【灵涌】；4. 将之交给一名符卡发动中的角色。',
+        	sihuan_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之扉】；出牌阶段，你可以弃置一张牌并选择一项，一回合每项限一次： 1. 获得5点灵力上限和5点灵力，直到回合结束；2. 弃置一名有异变牌的角色一张牌；3. 摸一张技能牌和一张【灵涌】；4. 将之交给一名符卡发动中的角色。',
         	sihuan_audio1:'啊，我来试试这个！',
         	sihuan_audio2:'这又是什么神奇的操作！',
         	renko_die:'这地方还蛮好玩的嘛，梅莉？',
@@ -303,9 +303,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
         	xijian_audio3:'啊，谢谢你梅莉！',
         	rumeng:'如梦',
         	rumeng_2:'如梦（梦境与现实的诅咒）',
-            rumeng_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之门】；你以此技能以外的效果获得灵力时，增加1点灵力上限并获得1点灵力（上限至多为5）；你可以扣减4点灵力上限，然后无视消耗发动【梦境与现实的诅咒】；符卡结束时，失去此技能。',
+            rumeng_info:'你的第一个准备阶段，须视为使用一张目标数为2的【幻想之扉】；你以此技能以外的效果获得灵力时，增加1点灵力上限并获得1点灵力（上限至多为5）；你可以扣减4点灵力上限，然后无视消耗发动【梦境与现实的诅咒】；符卡结束时，失去此技能。',
         	meribel_die:'嗯……？这是哪里？莲子？',
-            dshift:'幻想之门',
+            dshift:'幻想之扉',
         	dshift_audio1:'撒，该是时候进入幻想了！',
         },
       };

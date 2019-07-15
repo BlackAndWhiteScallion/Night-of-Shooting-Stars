@@ -512,11 +512,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(game.bossinfo.checkResult&&game.bossinfo.checkResult(this)===false){
 						return;
 					}
-					if(this==game.boss || !game.boss.isAlive() ||!game.hasPlayer(function(current){
+					if(this==game.boss ||!game.hasPlayer(function(current){
 						return !current.side;
 					})){
-						if (game.bossinfo.checkResult) game.bossinfo.checkResult(this);
-						else game.checkResult();
+						game.checkResult();
 					}
 				},
 			}
@@ -2054,13 +2053,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				init:function(player){
 					var list = game.filterPlayer();
 					for (var i = 0; i < list.length; i ++){
-						if (list[i].name == 'flandre' && !list[i].hasSkill('zhihou')){
+						if (list[i] == game.boss){
 							list[i].classList.remove('turnedover');
 							list[i].removeSkill('starbow');
 							list[i].removeSkill('starbow1');
 							list[i].addSkill('zhihou');
 							list[i].useSkill('zhihou');
-							list[i].removeSkill('death_win');
 						}
 					}
 				},

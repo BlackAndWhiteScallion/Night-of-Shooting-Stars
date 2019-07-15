@@ -894,6 +894,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						'找不到回家的路了吗？出门右转有垃圾桶哦',
 						'我认得你，你就是《如何与傻逼相处》的封面！',
 						'你打牌菜的像子规！',
+						'你妈生个叉烧也好过生你！',
 					];
 	                this.showcaseinterval=setInterval(function(){
 						if (list.length != 0){
@@ -906,7 +907,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:{
 					gameStart:function(){
 	                	var players = game.filterPlayer();
-	                	for (var i = 0; i < players.length; i ++){
+	                	lib.translate['zhu'] = '地主';
+						lib.translate['zhu2'] = '地主';
+						lib.translate['fan'] = '农民';
+						lib.translate['fan2'] = '农民';
+						lib.translate['nei'] = '农民';
+						lib.translate['nei2'] = '农民';
+						for (var i = 0; i < players.length; i ++){
 							if (players[i].identity == 'nei') players[i].identity = 'fan';
 							if (players[i].identity == 'zhu') players[i].addSkill('landlord');
 							players[i].identityShown = true;
