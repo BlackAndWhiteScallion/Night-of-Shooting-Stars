@@ -141,6 +141,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				var uiintro=ui.create.dialog('hidden');
 
 					uiintro.add('<div class="text left">选择一个大关，然后选择你喜欢的自机来挑战 </div>');
+					uiintro.add('<div class="text left"><a href = "https://mp.weixin.qq.com/s/eEbCgLswPGXEhzl702FZzQ" target="_blank">了解更多闯关技巧</a></div>');
 					uiintro.add(ui.create.div('.placeholder.slim'))
 
 				return uiintro;
@@ -423,6 +424,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				var uiintro=ui.create.dialog('hidden');
 
 					uiintro.add('<div class="text left">1. 击坠敌人后，来源摸一张牌，获得1点灵力 <br> 2. 准备阶段，场上敌人数小于2，会刷出下一个敌人 <br> 3. 通关时，摸一张技能牌，回复1点体力，并重置牌堆 <br> 4.手牌上限+X（X为已通关卡数量） </div>');
+					uiintro.add('<div class="text left"><a href = "https://mp.weixin.qq.com/s/eEbCgLswPGXEhzl702FZzQ" target="_blank">了解更多闯关技巧</a></div>');
 					uiintro.add(ui.create.div('.placeholder.slim'))
 
 				return uiintro;

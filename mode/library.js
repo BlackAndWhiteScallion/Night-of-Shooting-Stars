@@ -696,9 +696,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
-	                    var boss=ui.create.node('button','挑战模式',line2,function(){
-	        				var i = ['<u><b>挑战模式：</u></b>',
-	        						'挑战模式下，三名玩家组队成为盟军挑战一名大魔王BOSS玩家！',
+	                    var boss=ui.create.node('button','魔王模式',line2,function(){
+	        				var i = ['<u><b>魔王模式：</u></b>',
+									'<a href = "https://mp.weixin.qq.com/s/eEbCgLswPGXEhzl702FZzQ" target="_blank">详细介绍点这里</a>',
+	        						'魔王模式下，三名玩家组队成为盟军挑战一名大魔王BOSS玩家！',
 	        						'大魔王的胜利条件为所有盟军坠机。 盟军的胜利条件为大魔王坠机。',
 	        						'',
 	        						'<u>回合顺序</u>',
@@ -725,6 +726,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    },{marginLeft:'6px'});
 	                    var stg=ui.create.node('button','闯关模式',line2,function(){
 	        				var i = ['<u><b>闯关模式：</u></b>',
+									'<a href = "https://mp.weixin.qq.com/s/eEbCgLswPGXEhzl702FZzQ" target="_blank">详细介绍点这里</a>',
 	        						'选择出你的自机角色，欺负小怪，连续打关，找出最后的黑幕并击破她吧！',
 	        						'',
 	        						'玩家的胜利条件为击坠最后一个BOSS，通过最后一个小关。 失败条件为自己坠机。',

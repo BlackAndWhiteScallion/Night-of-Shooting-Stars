@@ -56,7 +56,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					var clear=function(){
-						ui.dialog.close();
+						if (ui.dialog) ui.dialog.close();
 						while(ui.controls.length) ui.controls[0].close();
 					};
 					var clear2=function(){

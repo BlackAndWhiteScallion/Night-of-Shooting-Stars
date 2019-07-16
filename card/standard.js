@@ -2303,20 +2303,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		_wuxie:{
-			trigger:{player:['useCardToBefore']},
+			trigger:{player:'useCardToBefore'},
 			priority:5,
 			popup:false,
 			forced:true,
 			filter:function(event,player){
-					var info=get.info(event.card);
-					if(!event.target){
-						if(info.wuxieable) return true;
-						return false;
-					}
-					if(event.player.hasSkillTag('playernowuxie',false,event.card)) return false;
-					if(get.type(event.card)!='trick'&&!info.wuxieable) return false;
-					return true;
-				},
+				var info=get.info(event.card);
+				if(!event.target){
+					if(info.wuxieable) return true;
+					return false;
+				}
+				if(event.player.hasSkillTag('playernowuxie',false,event.card)) return false;
+				if(get.type(event.card)!='trick'&&!info.wuxieable) return false;
+				return true;
+			},
 			content:function(){
 				'step 0'
 				if(trigger.multitarget){
@@ -2344,16 +2344,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 					state=state?1:-1;
 					var str='';
-					if(isJudge){
-						str+=get.translation(source)+'的';
-					}
-					if(isJudge){
-						str+=get.translation(card,'viewAs');
-					}
-					else{
-						str+=get.translation(card);
-					}
-					if((targets||target)&&!isJudge){
+					str+=get.translation(card);
+
+					if(targets||target){
 						str+='对'+get.translation(targets||target);
 					}
 					str+='将'+(state>0?'生效':'失效')+'，是否让她住口？';
@@ -2378,53 +2371,26 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						state:state,
 						_global_waiting:true,
 						ai1:function(){
-							if(isJudge){
-								var name=card.viewAs||card.name;
-								var info=lib.card[name];
-								if(info&&info.ai&&info.ai.wuxie){
-									var aiii=info.ai.wuxie(source,card,source,_status.event.player,state);
-									if(typeof aiii=='number') return aiii;
-								}
-								if(Math.abs(ai.get.attitude(_status.event.player,source))<3) return 0;
-								if(source.hasSkill('guanxing')) return 0;
-								if(name!='lebu'&&name!='bingliang'){
-									if(source!=_status.event.player){
-										return 0;
-									}
-								}
-								var card2;
-								if(name!=card.name){
-									card2={name:name};
-								}
-								else{
-									card2=card;
-								}
-								var eff=ai.get.effect(source,card2,source,source);
-								if(eff>=0) return 0;
-								return state*ai.get.attitude(_status.event.player,source);
+							var triggerevent=_status.event.getTrigger();
+							if(triggerevent&&triggerevent.parent&&
+								triggerevent.parent.postAi&&
+								triggerevent.player.isUnknown(_status.event.player)){
+								return 0;
 							}
-							else{
-								var triggerevent=_status.event.getTrigger();
-								if(triggerevent&&triggerevent.parent&&
-									triggerevent.parent.postAi&&
-									triggerevent.player.isUnknown(_status.event.player)){
-									return 0;
-								}
-								var info=get.info(card);
-								if(info.ai&&info.ai.wuxie){
-									var aiii=info.ai.wuxie(target,card,source,_status.event.player,state);
-									if(typeof aiii=='number') return aiii;
-								}
-								if(info.multitarget&&targets){
-									var eff=0;
-									for(var i=0;i<targets.length;i++){
-										eff+=ai.get.effect(targets[i],card,source,_status.event.player)
-									}
-									return -eff*state;
-								}
-								if(Math.abs(ai.get.attitude(_status.event.player,target))<3) return 0;
-								return -ai.get.effect(target,card,source,_status.event.player)*state;
+							var info=get.info(card);
+							if(info.ai&&info.ai.wuxie){
+								var aiii=info.ai.wuxie(target,card,source,_status.event.player,state);
+								if(typeof aiii=='number') return aiii;
 							}
+							if(info.multitarget&&targets){
+								var eff=0;
+								for(var i=0;i<targets.length;i++){
+									eff+=ai.get.effect(targets[i],card,source,_status.event.player)
+								}
+								return -eff*state;
+							}
+							if(Math.abs(ai.get.attitude(_status.event.player,target))<3) return 0;
+							return -ai.get.effect(target,card,source,_status.event.player)*state;
 						},
 						source:target,
 						source2:targets,
@@ -2464,6 +2430,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				else{
 					event.current=event.list.shift();
+					event.send(event.current,event.state,event.triggername=='phaseJudge',
+					event.card,event.source,event.target,event.targets,event.id,trigger.parent.id,event.tempnowuxie);
 				}
 				'step 3'
 				if(result.bool){
@@ -2505,10 +2473,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if(list[i].isOnline()){
 						withol=true;
 						list[i].wait(sendback);
+						list[i].send(event.send,list[i],event.state,event.triggername=='phaseJudge',
+						event.card,event.source,event.target,event.targets,event.id,trigger.parent.id,event.tempnowuxie,get.skillState(list[i]));
 						list.splice(i--,1);
 					}
 					else if(list[i]==game.me){
 						withme=true;
+						event.send(list[i],event.state,event.triggername=='phaseJudge',
+						event.card,event.source,event.target,event.targets,event.id,trigger.parent.id,event.tempnowuxie);
 						list.splice(i--,1);
 					}
 				}

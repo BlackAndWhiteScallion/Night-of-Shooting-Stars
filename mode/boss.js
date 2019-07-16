@@ -44,6 +44,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 					uiintro.add('<div class="text left">选3个角色，挑战大魔王！<br>也可以作为大魔王揍3个角色。<br>最右边两个是另类挑战，建议尝试。</div>');
+					uiintro.add('<div class="text left"><a href = "https://mp.weixin.qq.com/s/eEbCgLswPGXEhzl702FZzQ" target="_blank">了解更多的魔王</a></div>');
 					uiintro.add(ui.create.div('.placeholder.slim'))
 				return uiintro;
 			},400);
@@ -397,7 +398,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				game.addRecentCharacter(game.me.name);
 			}
 			event.trigger('gameStart');
-			game.gameDraw(game.boss,game.bossinfo.gameDraw||4);
+			game.gameDraw(game.boss,game.bossinfo.gameDraw||8);
 			game.bossPhaseLoop();
 			setTimeout(function(){
 				ui.updatehl();
@@ -596,26 +597,29 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					// 如果玩家不是重整（而是死亡）
 					// player.storage.boss_chongzheng就是重整回合的计数了
-					else if(player.isDead()){
+					else if(game.dead.length && !game.boss.chongzheng){
 						// 计数+1，血量补到0，如果血上限大于0，且这个BOSS让重整的话，开始重整
-						if(player.hp<0) player.hp=0;
-						player.storage.boss_chongzheng++;
-						if(player.maxHp>0&&game.bossinfo.chongzheng){
-							// 重整顺序：回血，摸牌
-							if(player.hp<player.maxHp){
-								player.hp++;
-							}
-							else if(player.countCards('h')<4){
-								var card=get.cards()[0];
-								var sort=lib.config.sort_card(card);
-								var position=sort>0?player.node.handcards1:player.node.handcards2;
-								card.fix();
-								card.animate('start');
-								position.insertBefore(card,position.firstChild);
-							}
-							player.update();
-							if(player.storage.boss_chongzheng>=game.bossinfo.chongzheng){
-								player.revive(player.hp);
+						var players = game.dead;
+						for (var i = 0; i < players.length; i ++){
+							if(players[i].hp<0) players[i].hp=0;
+							players[i].storage.boss_chongzheng++;
+							if(players[i].maxHp>0&&game.bossinfo.chongzheng){
+								// 重整顺序：回血，摸牌
+								if(players[i].hp<players[i].maxHp){
+									players[i].hp++;
+								}
+								else if(players[i].countCards('h')<4){
+									var card=get.cards()[0];
+									var sort=lib.config.sort_card(card);
+									var position=sort>0?players[i].node.handcards1:players[i].node.handcards2;
+									card.fix();
+									card.animate('start');
+									position.insertBefore(card,position.firstChild);
+								}
+								players[i].update();
+								if(players[i].storage.boss_chongzheng>=game.bossinfo.chongzheng){
+									players[i].revive(players[i].hp);
+								}
 							}
 						}
 						// 如果是1→1，重整为true
@@ -631,7 +635,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						// 不在重整状态的玩家进行一个回合
 						// 在这里加入让玩家选顺序应该就可以
-						if (get.config('free_turn') && player != game.boss && game.me != game.boss && game.bossinfo.loopType==2){
+						if (get.config('free_turn') && player != game.boss && game.me != game.boss && player.isAlive() && game.bossinfo.loopType==2){
 							game.me.chooseTarget('选择下一名进行回合的我方角色',function(card,player,target){
                               return target.identity == 'cai';
                               }).set('ai',function(target){
@@ -977,7 +981,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_patchy1:{
 				loopType:2,
 				gameDraw:function(player){
-					return player==game.boss?7:4;
+					return player==game.boss?8:4;
 				},
 				init:function(){
 					game.loadModeAsync('stg',function(mode){
@@ -1033,7 +1037,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},400);
 				},
 				gameDraw:function(player){
-					return player==game.boss?12:4;
+					return player==game.boss?8:4;
 				},
 			},
 			global:{

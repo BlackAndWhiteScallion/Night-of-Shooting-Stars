@@ -1381,11 +1381,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             return get.effect(target,trigger.card,player,player)+1;
                         });
                     }
-
                     "step 2"
                     if(result.bool){
-                        game.log(event.target,'成为了',trigger.card,'的额外目标');
-                        trigger.targets.push(event.target);
+                        game.log(result.targets[0],'成为了',trigger.card,'的额外目标');
+                        trigger.targets.push(result.targets[0]);
                     }
                     else{
                         event.finish();
