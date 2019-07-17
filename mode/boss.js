@@ -424,7 +424,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		characterPack:{
 			mode_boss:{
 				boss_cirno:['female', '0', 9, ['jidong', 'bianshen_cirno'], ['boss'], 'wei','9'],
-				boss_cirno2:['female', '0', 4, ['jiqiang','zuanshi','jubing'], ['hiddenboss'], 'wei'],
+				boss_cirno2:['female', '0', 4, ['jiqiang','zuanshi','jubing'], ['hiddenboss'], 'wei', '9'],
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss'], 'shu'],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
 				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'shen'],
@@ -866,7 +866,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(!ui.cheat2&&get.config('free_choose'))
 					ui.create.cheat2();
 
-					event.asboss=ui.create.control('当BOSS',function(){
+					event.asboss=ui.create.control('我要当魔王！',function(){
 						event.boss=true;
 						event.enemy=[];
 						for(var i=0;i<ui.selected.buttons.length;i++){
@@ -1252,7 +1252,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				trigger:{player:'gainBegin'},
 				filter:function(event,player){
-					return _status.event.getParent('zuanshi');
+					console.log(event.getParent('zuanshi'));
+					if (!event.getParent('zuanshi')) return false;
+					return true;
 				},
 				content:function(){
 					player.showCards(trigger.cards);
@@ -1266,29 +1268,26 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				mod:{
 					cardEnabled:function(card,player){
 						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
-							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name) && card.name != 'sha';
 						})) return false;
 					},
 					cardUsable:function(card,player){
 						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
-							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name) && card.name != 'sha';
 						})) return false;
 					},
 					cardRespondable:function(card,player){
 						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
-							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name) && card.name != 'sha';
 						})) return false;
 					},
 					cardSavable:function(card,player){
 						if(_status.event.skill==undefined&&game.hasPlayer(function(current){
-							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
+							return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name) && card.name != 'sha';
 						})) return false;
 					},
 				},
 				enable:["chooseToUse",'chooseToRespond'],
-				filter:function(){
-					return true;
-				},
 				filterCard:function(card){
 					return game.hasPlayer(function(current){
 						return current.hasSkill('zuanshi') && current.storage.zuanshi.contains(card.name);
@@ -1296,7 +1295,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				viewAs:{name:"sha"},
 				prompt:"将【钻石风暴】指定的牌名当【轰！】使用",
-				sub:true,
 			},
 			jubing:{
 				trigger:{player:'phaseBegin'},
@@ -1510,7 +1508,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				enable:['chooseToUse','chooseToRespond'],
 				prompt:function(){
-					return '将'+get.cnNumber(Math.max(1,_status.event.player.hp))+'张黑桃牌当作无懈可击使用';
+					return '将'+get.cnNumber(Math.max(1,_status.event.player.hp))+'张黑桃牌当作【请你住口！】使用';
 				},
 				position:'he',
 				check:function(card,event){

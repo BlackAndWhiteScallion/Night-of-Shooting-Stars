@@ -1254,7 +1254,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.gainlili(result.cards.length);
 					}
 					var list = [];
-					for (var i = 0; i < player.hp; i ++){
+					for (var i = 0; i <= player.hp; i ++){
 						list.push(i);
 					}
 					player.chooseControl(list, function(){

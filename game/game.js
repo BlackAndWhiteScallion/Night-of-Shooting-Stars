@@ -153,7 +153,7 @@
                         name:'不住口自己',
                         init:true,
                         unfrequent:true,
-                        intro:'自己使用的单目标普通锦囊即将生效时，不询问无懈',
+                        intro:'不对自己使用的单目标普通法术询问“请你住口！”',
                     },
                     tao_enemy:{
                         name:'不对敌方出葱',
@@ -3277,22 +3277,6 @@
                             }
                         }
                     },
-                    show_handcardbutton:{
-                        name:'显示手牌按钮',
-                        init:true,
-                        unfrequent:true,
-                        onclick:function(bool){
-                            game.saveConfig('show_handcardbutton',bool);
-                        }
-                    },
-                    show_giveup:{
-                        name:'显示投降按钮',
-                        init:true,
-                        unfrequent:true,
-                        onclick:function(bool){
-                            game.saveConfig('show_giveup',bool);
-                        }
-                    },
                     show_wuxie:{
                         name:'显示住口按钮',
                         intro:'在右上角显示不询问住口',
@@ -3312,6 +3296,22 @@
                         name:'住口按钮靠左',
                         init:true,
                         unfrequent:true,
+                    },
+                    show_handcardbutton:{
+                        name:'显示手牌按钮',
+                        init:true,
+                        unfrequent:true,
+                        onclick:function(bool){
+                            game.saveConfig('show_handcardbutton',bool);
+                        }
+                    },
+                    show_giveup:{
+                        name:'显示投降按钮',
+                        init:true,
+                        unfrequent:true,
+                        onclick:function(bool){
+                            game.saveConfig('show_giveup',bool);
+                        }
                     },
                     hide_card_image:{
                         name:'隐藏卡牌图片',
@@ -14169,7 +14169,7 @@
                     }
                     else if(get.is.newLayout()&&
                     (
-                        this.maxlili>9||
+                        this.maxlili>8||
                         (this.maxlili>5&&this.classList.contains('minskin'))||
                         ((game.layout=='mobile'||game.layout=='long')&&this.dataset.position==0&&this.maxlili>7)
                     )){
@@ -14219,7 +14219,7 @@
                     }
                     else if(get.is.newLayout()&&
                     (
-                        this.maxHp>9||
+                        this.maxHp>8||
                         (this.maxHp>5&&this.classList.contains('minskin'))||
                         ((game.layout=='mobile'||game.layout=='long')&&this.dataset.position==0&&this.maxHp>7)
                     )){
@@ -20544,7 +20544,7 @@
 						parent=this.parent;
 					}
 					var toreturn={};
-					if(typeof level=='string'&&forced==true){
+					if(typeof level=='string'){
 						toreturn=null;
 					}
 					if(!parent) return toreturn;
@@ -21913,18 +21913,26 @@
                             */
                             if (get.bonus(card) < 0){
                                 if (player.lili == 0) return [1, 1];
+                                if (player.isTurnedOver()){
+                                    if (player.storage.spell){
+                                        var info = lib.skill[player.storage.spell];
+                                        if (info.spell){
+                                            if (!info.infinite) return [1,-3];
+                                            else return [1,-100000000000];
+                                        }
+                                    }
+                                };
                                 if (player.countCards('h') <= player.getHandcardLimit()){
                                     return [1,-2];
                                 }
                                 if (player.lili < 3 && !player.countCards('he'),function(card){
                                     return get.bonus(card) > 0;
                                 }) return [1,-1];
-                                if (player.isTurnedOver()) return [1,-1];
                             } 
                             if (get.bonus(card) > 0){
                                 if (player.lili >= player.maxlili && player.countCards('he',function(card){
                                     return get.bonus(card) < 0 || lib.card[card.name].enhance;	
-                                })) return [1,-1];
+                                })) return [1,-2];
                                 if (player.isTurnedOver()) return [0,0];
                             }
                           return [1,0]; 
@@ -38857,7 +38865,7 @@
                 ui.cardPileButton=ui.create.system('牌堆',null,true);
                 ui.cardPileButton.style.display='none';
                 lib.setPopped(ui.cardPileButton,ui.click.cardPileButton,220);
-                ui.wuxie=ui.create.system('不询问无懈',ui.click.wuxie,true);
+                ui.wuxie=ui.create.system('不询问住口！',ui.click.wuxie,true);
                 if(!lib.config.touchscreen){
                     lib.setPopped(ui.config2,ui.click.pauseconfig,170);
                 }
