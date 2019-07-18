@@ -26820,7 +26820,7 @@
                         clear2();
                         game.resume();
                         game.over(result);
-                        game.open('https://mp.weixin.qq.com/s/PC6a3Y8Y8bslqgsVWqcTqw');
+                        window.open('https://mp.weixin.qq.com/s/PC6a3Y8Y8bslqgsVWqcTqw', '_blank');
                         return ;
                     },2000);
                 };
