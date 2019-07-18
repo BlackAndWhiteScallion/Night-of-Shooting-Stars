@@ -14962,7 +14962,12 @@
                         if ((this.identity == 'zhu' && lib.config.musicchange != 'off') 
                             || (this.identity == 'nei' && lib.config.musicchange == 'luren')){
                             lib.backgroundmusicURL = lib.config.background_music;
-                            ui.backgroundMusic.src = lib.assetURL+'audio/background/'+card.name+'.mp3';
+
+                            var url = lib.assetURL;
+                            if (location.hostname && location.hostname.includes('coding')){
+                                url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
+                            }
+                            ui.backgroundMusic.src = url+'audio/background/'+card.name+'.mp3';
                             lib.config.background_music = card.name;
                         }
                         if ((this.identity == 'zhu' && lib.config.backgroundchange != 'off') 
@@ -23880,8 +23885,8 @@
             }
             else{
                 var url = lib.assetURL;
-                if (location.hostname && location.hostname.contains('coding')){
-                    url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/blob/master/';
+                if (location.hostname && location.hostname.includes('coding')){
+                    url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
                 }
                 var music=lib.config.background_music;
                 if(music=='music_random'){

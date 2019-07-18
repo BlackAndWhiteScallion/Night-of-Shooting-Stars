@@ -27,7 +27,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			// 已通关红魔乡的话会解锁EX关卡
 			if ((lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 0)
-			 || lib.config.connect_nickname == '路人'){
+			 || lib.config.connect_nickname == '路人Orz'){
 				lib.characterPack.mode_stg['stg_scarlet_ex'] = ['female','0',0,['boss_chiyan_ex'],['boss'],'zhu'];
 			}
 			// 这里是加载角色的地方
