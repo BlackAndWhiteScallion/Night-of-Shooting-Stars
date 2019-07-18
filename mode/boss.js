@@ -1205,7 +1205,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					trigger.player.damage('thunder');
 					player.draw();
-					player.chooseToUse(trigger.player, -1,'冰柱机枪：你可以对',trigger.player,'使用一张牌');
+					player.chooseToUse(trigger.player, -1,'冰柱机枪：你可以对'+get.translation(trigger.player)+'使用一张牌');
 				}
 			},
 			jiqiang1:{
@@ -1308,6 +1308,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					player.awakenSkill('jubing');
 					var list = game.filterPlayer();
+					list.remove(player);
 					for (var i = 0; i < list.length; i ++){
 						list[i].damage(9, 'thunder');
 					};
@@ -1623,7 +1624,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			zuanshi_info:'锁定技，出牌阶段开始时，你摸X张牌并展示（X为你手牌中【轰！】的数量）：直到你的回合开始，与这些牌同名的牌均视为【轰！】，且你的手牌上限+X。',
 			zuanshi2:'钻石风暴（转化【轰！】）',
 			jubing:'巨冰破碎',
-			jubing_info:'限定技，锁定技，准备阶段，若你的体力为1，你对所有角色造成9点灵击伤害，然后视为使用了一张【冰域之宴】。',
+			jubing_info:'限定技，锁定技，准备阶段，若你的体力为1，你对所有其他角色造成9点灵击伤害，然后视为使用了一张【冰域之宴】。',
 			boss_nianshou:'年兽',
 			boss_nianrui:'年瑞',
 			boss_nianrui_info:'锁定技，摸牌阶段，你额外摸两张牌。',

@@ -231,7 +231,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				if (Math.random()<0.2){
-					target.say('这个不是用来插在后面的吗？');
+					target.say('这个直接吃没问题吗？');
 				}
 				target.recover();
 			},

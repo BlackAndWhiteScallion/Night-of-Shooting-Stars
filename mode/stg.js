@@ -692,7 +692,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			reserveDead:true,
 			addBossFellow:function(position,name,cards){
 				var fellow=game.addFellow(position,name,'zoominanim');
-				fellow.draw(cards);
+				fellow.directgain(get.cards(cards));
 				fellow.side=true;
 				fellow.identity='zhong';
 				fellow.setIdentity('zhong');
@@ -1337,6 +1337,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								} else {
 									var player = ui.create.div('.avatar',dialog).setBackground(name,'character');
 									dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.dialog[i][a[j]]+'</div></div>');
+									player.style.float = 'left';
+									dialog.style.height = '150px';
+									//dialog.style.overflow = 'auto';
 									a[j] ++;
 								}
 							}

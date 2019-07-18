@@ -3626,7 +3626,7 @@
                         onclick:function(){
                             var data;
                             var export_data=function(data){
-                                game.export(lib.init.encode(JSON.stringify(data)),'流星夜 - 数据 - '+(new Date()).toLocaleString());
+                                game.export(lib.init.encode(JSON.stringify(data)),'流星夜 '+ lib.config.connect_nickname + '- 数据 - '+(new Date()).toLocaleString());
                             }
                             if(!lib.db){
                                 data={};
@@ -21921,13 +21921,13 @@
                                             else return [1,-100000000000];
                                         }
                                     }
-                                };
+                                }
                                 if (player.countCards('h') <= player.getHandcardLimit()){
                                     return [1,-2];
                                 }
-                                if (player.lili < 3 && !player.countCards('he'),function(card){
+                                if (player.lili < 3 && !player.countCards('he',function(card){
                                     return get.bonus(card) > 0;
-                                }) return [1,-1];
+                                })) return [1,-1];
                             } 
                             if (get.bonus(card) > 0){
                                 if (player.lili >= player.maxlili && player.countCards('he',function(card){
@@ -23879,6 +23879,10 @@
                 ui.backgroundMusic.src='';
             }
             else{
+                var url = lib.assetURL;
+                if (location.hostname && location.hostname.contains('coding')){
+                    url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/blob/master/';
+                }
                 var music=lib.config.background_music;
                 if(music=='music_random'){
                     music=lib.config.all.background_music.randomGet('music_off','music_random',_status.currentMusic);
@@ -23890,11 +23894,11 @@
                     }
                 }
                 if (music == 'music_default'){
-                    ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
+                    ui.backgroundMusic.src=url+'audio/background/'+music+'.mp3';
                     ui.backgroundMusic.currentTime = [137, 693, 1338, 1970, 2715, 3463, 3982].randomGet();
                 }
                 else{
-                    ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
+                    ui.backgroundMusic.src=url+'audio/background/'+music+'.mp3';
                 }
             }
         },
@@ -25641,7 +25645,7 @@
                 }
             }
             else{
-                window.open(url);
+                window.open(url, '_blank');
             }
         },
         reloadCurrent:function(){
@@ -26816,6 +26820,7 @@
                         clear2();
                         game.resume();
                         game.over(result);
+                        game.open('https://mp.weixin.qq.com/s/PC6a3Y8Y8bslqgsVWqcTqw');
                         return ;
                     },2000);
                 };
@@ -42788,8 +42793,8 @@
                     ui.arena.classList.add('auto');
 
                     if(_status.imchoosing&&_status.paused){
-                        if(ui.confirm) ui.confirm.close();
-                        ui.control.hide();
+                        //if(ui.confirm) ui.confirm.close();
+                        //ui.control.hide();
                         if(_status.event.switchToAuto){
                             _status.event.switchToAuto();
                         }

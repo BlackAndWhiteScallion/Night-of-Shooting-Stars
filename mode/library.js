@@ -253,6 +253,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                sceneNode=createNode(i);
 	            }
 	            else{
+					if (i == 'updatelog' && location.hostname && !lib.device) continue;
+					if (i == 'downloadlog' && (!location.hostname || lib.device)) continue;
 	                createNode(i);
 	            }
 	        }
@@ -433,24 +435,24 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        			dialog.noopen=true;
 						node.appendChild(dialog);
 						var i = ['欢迎来到东方流星夜,'+lib.config.connect_nickname+'!',
-	    				'东方流星夜是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏。',
-	    				'而流星夜的程序化，也就是你现在所在的游戏，是基于无名杀1.9.51版的大型魔改。',
-	    				'对游戏的不解，在我这里有规则，模式介绍，卡牌查询。 如果还有不懂的，在[场景-对战练习]下找子规去练习吧，实战可是最快的学习方式哟。',
-	    				'祝你游玩愉快！',
+							'东方流星夜是一套以三国杀为原型，东方project为主题的二次创作非商业化桌游游戏。',
+							'而流星夜的程序化，也就是你现在所在的游戏，是基于无名杀1.9.51版的大型魔改。',
+							'对游戏的不解，在我这里有规则，模式介绍，卡牌查询。 如果还有不懂的，在[场景-对战练习]下找子规去练习吧，实战可是最快的学习方式哟。',
+							'祝你游玩愉快！',
 	    				];
-	    				var j = [
-	    				'<u>程序使用须知：</u>',
-	    				'1. 使用刷新键（f5）可以重置游戏。',
-	    				'2.左上的[选项]可以更改很多游戏相关的设置，包括并不限于：',
-	    				'<t>游戏模式的人数和身份分配（[选项-开始-异变]）',
-	    				'牌局的布局，卡牌的样式 ([选项-选项-外观-布局]和[选项-选项-外观-卡牌样式/卡背样式])，',
-	    				'和游戏录像。([选项-其他-录像])',
-	    				'记得多多探索一下，没准有奇怪的东西！',
-	    				'3. 在牌局中双击角色可以查看角色简介，也可以换皮肤和听配音（如果有配音的话）。',
-	    				'3.1 在左上的[选项-角色]里双击角色牌也可以看到简介。',
-	    				'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
-	    				'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
-	    				'<b>6. 其实，点击我是可以跟我说话的啦。就上方那个。</b>',
+							var j = [
+							'<u>程序使用须知：</u>',
+							'1. 使用刷新键（f5）可以重置游戏。',
+							'2.左上的[选项]可以更改很多游戏相关的设置，包括并不限于：',
+							'<t>游戏模式的人数和身份分配（[选项-开始-异变]）',
+							'牌局的布局，卡牌的样式 ([选项-选项-外观-布局]和[选项-选项-外观-卡牌样式/卡背样式])，',
+							'和游戏录像。([选项-其他-录像])',
+							'记得多多探索一下，没准有奇怪的东西！',
+							'3. 在牌局中双击角色可以查看角色简介，也可以换皮肤和听配音（如果有配音的话）。',
+							'3.1 在左上的[选项-角色]里双击角色牌也可以看到简介。',
+							'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
+							'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
+							'<b>6. 其实，点击我是可以跟我说话的啦。就上方那个。</b>',
 	    				]; 
 						if (!game.layout=='nova'){
 							dialog.addText('<div><div style="display:block;left:180px;text-align:left;font-size:16px">'+i.join('<br>'));
@@ -471,6 +473,55 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    		},
 	    	},
 	    	*/
+			downloadlog:{
+				name:'下载事宜',
+				mode:'',
+				intro:['网络版再方便，玩起来还是不如下载下来方便的。'],
+				showcase:function(init){
+	        		if (init){
+	        			var style2={position:'relative',display:'block',left:10,top:0,marginBottom:'6px',padding:0,width:'100%'};
+	        			var line2=ui.create.div(style2,this);
+	        			line2.style.lineHeight='50px';
+	        			var dialog=ui.create.dialog('hidden',line2);
+						dialog.style.left = "0px";
+						dialog.style.top = "0px";
+						dialog.style.width = "100%";
+						dialog.style.height = "100%";
+						dialog.addText('喏'+lib.config.connect_nickname+'，<a href = "https://mp.weixin.qq.com/s/2dvbkhEezGQn7pUjETRlpQ" target = " _blank">这里也有教程哟。</a>');
+						dialog.classList.add('fixed');
+	        			dialog.noopen=true;
+	        			this.appendChild(dialog);
+	        			var incident=ui.create.node('button','电脑端下载',line2,function(){
+	        			var i = ['下载链接：',
+								'国外镜像：https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip',
+								'国内镜像：https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master',
+								'',
+								'国内镜像因神奇腾讯有可能炸了，还请大家注意。',
+	    					];
+	        			dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var identity=ui.create.node('button','手机端下载',line2,function(){
+	        				var i = [
+								'手机端目前只支持安卓系统。为您带来的不便表达万分歉意。',
+								'',
+								'百度网盘链接：https://pan.baidu.com/s/1oZRuEzNt2TYx2-8aDVs58Q',
+								'直接下载链接：https://dev.tencent.com/api/share/download/6df3f820-1f20-4d27-9fd8-a6649eea99ac',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	                    var versus=ui.create.node('button','我的存档啊！',line2,function(){
+	        				var i = [
+								'要保存你的数据的话，首先，从[选项-选项-文件-导出游戏设置]，把当前的游戏设置保存下来。',
+								'然后，打开下载的流星夜，从[选项-选项-文件-导入游戏设置]，把刚存下来的游戏设置导入。',
+								'',
+								'这个操作也可以同样用于把本地的数据导入网页版。',
+								'但是注意的是，像自己加的皮肤，自己加的音乐与配音这些本地素材，是无法导入网页版的。',
+				        		];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
+	        		}
+	        	},
+			},
 	    	updatelog:{
 	    		name:'更新事宜',
 	    		mode:'',
@@ -893,7 +944,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	},
 	        },
 	        record:{
-	        	name:'你的战绩',
+	        	name:'我的战绩',
 	        	intro:[],
 	        	fullshow:true,
 	        	showcase:function(init){
@@ -922,13 +973,67 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                  	}
 	        	},
 	        },
+			diy:{
+				name:'我要DIY！',
+				mode:'',
+				intro:['有好点子？想要更多萌妹？想要萌妹们穿上泳装？来把你的幻想变成现实吧！'],
+				showcase:function(init){
+	        		if (init){
+	        			var style2={position:'relative',display:'block',left:10,top:0,marginBottom:'6px',padding:0,width:'100%'};
+	        			var line2=ui.create.div(style2,this);
+	        			line2.style.lineHeight='50px';
+	        			var dialog=ui.create.dialog('hidden',line2);
+						dialog.style.left = "0px";
+						dialog.style.top = "0px";
+						dialog.style.width = "100%";
+						dialog.style.height = "100%";
+						if (location.hostname){
+							dialog.addText('很抱歉，'+lib.config.connect_nickname+'，网页版不能进行DIY操作。把游戏下载下来才可以的。');
+						} else {
+							dialog.addText('想要了解哪些DIY手段呢，'+lib.config.connect_nickname+'？');
+							dialog.classList.add('fixed');
+							dialog.noopen=true;
+							this.appendChild(dialog);
+							var incident=ui.create.node('button','添加皮肤',line2,function(){
+								var i = [
+									'添加皮肤，按照以下步骤来，很简单的：',
+									'1. 打开流星夜所在的文件夹（这个文件夹里有一堆文件夹，一个html，和一个txt）',
+									'2. 打开image文件夹。',
+									'3. 你知道想要加皮肤的角色的内部名吗？知道的话，进入下一步。不知道的话，打开character文件夹，找到你想要改的角色的插图，文件名就是她的内部名（不包括后缀的.jpg）',
+									'4. 打开image下的skin文件夹。',
+									'5. 有她的名字的文件夹吗？如果有，打开它。如果没有，创建一个，然后打开它。',
+									'6. 把图片（.jpg格式）放进文件夹里。命名为1.jpg。已经有了就+1，2.jpg。以此类推。',
+									'就这样，皮肤就可以在游戏内切换啦！',
+								];
+								dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+							},{marginLeft:'6px'});
+
+							var versus=ui.create.node('button','添加背景',line2,function(){
+								var i = [
+									'右上，选项，选项，外观，游戏背景（随机背景打开的话，这个按键会被隐藏），添加背景',
+									'点编辑背景可以删除已有的背景。',
+									'顺带一提，随机背景可以随机到由你加入的背景。',
+								];
+								dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+							},{marginLeft:'6px'});
+
+							var brawl=ui.create.node('button','制作角色',line2,function(){
+								var i = [
+									'教程撰写中，敬请期待……',
+								];
+								dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+							},{marginLeft:'6px'});
+						}
+					}
+	        	},
+			},
 	        download:{
 	        	name:'联系我们',
 	        	intro:[
 	        		'你玩流星夜觉得开心吗？觉得不开心吗？觉得制作组是傻逼吗？自己也想要做吗？那么…………',
 	                '欢迎大家光临雾雨魔法店！',
-					'官方微信公众号：<a href="game/wechat.png" target="_blank">东方流星夜 大葱专线</a>',
-	                //'官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG">东方流星夜 总会</a>',
+					'官方微信公众号：<a href="https://mp.weixin.qq.com/s/PC6a3Y8Y8bslqgsVWqcTqw" target="_blank">东方流星夜 大葱专线</a>',
+	                '官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG target="_blank">东方流星夜 总会</a>',
 	                '实卡淘宝链接：<a href = "https://item.taobao.com/item.htm?spm=a2126o.11854294.0.0.19cf4831lNX5xr&id=586815026235" target="_blank">游家桌游店</a>',
 	                '官方百度贴吧：<a href="https://tieba.baidu.com/f?kw=%CE%ED%D3%EA%BC%D2%B5%C4%C4%A7%B7%A8%B5%EA" target="_blank">雾雨家的魔法店吧</a>',
 	                '官方资源库兼论坛：<a href="http://liuxingye.666forum.com" target="_blank">雾雨魔法店的仓库</a>',
