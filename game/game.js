@@ -23879,6 +23879,7 @@
             ui.window.appendChild(audio);
         },
         playBackgroundMusic:function(){
+            console.log('hello');
             if (!lib.config.background_music) lib.config.backgroundmusic = 'music_default';
             if(lib.config.background_music=='music_off'){
                 ui.backgroundMusic.src='';
@@ -23892,6 +23893,7 @@
                 }
                 console.log(url);
                 var music=lib.config.background_music;
+                console.log('update');
                 if(music=='music_random'){
                     music=lib.config.all.background_music.randomGet('music_off','music_random',_status.currentMusic);
                 }

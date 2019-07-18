@@ -2989,7 +2989,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return event.card && event.card.name == 'sha' && event.nature != 'thunder';
 				},
 				content:function(){
-					trigger.source.damage(player, 'thunder', trigger.num);
+					player.damage(trigger.source, 'thunder', trigger.num);
 					trigger.cancel();
 				},
 			},
