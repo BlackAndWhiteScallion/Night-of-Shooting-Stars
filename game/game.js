@@ -23885,9 +23885,12 @@
             }
             else{
                 var url = lib.assetURL;
+                console.log(location.hostname);
+                console.log(location.hostname.includes('coding'));
                 if (location.hostname && location.hostname.includes('coding')){
                     url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
                 }
+                console.log(url);
                 var music=lib.config.background_music;
                 if(music=='music_random'){
                     music=lib.config.all.background_music.randomGet('music_off','music_random',_status.currentMusic);

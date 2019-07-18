@@ -984,24 +984,30 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					"step 0"
 					player.chooseTarget('弃置一名角色, 弃置其'+player.countCards('h')+'张牌',function(card,player,target){
-						return (player!=target);
+						return player!=target;
 					}).set('ai',function(target){
-						if (target.countCards('hej') && target.countCards('hej') <= player.countCards('h')) return - (get.attitude(_status.event.player,target) + 10);
-                        return -get.attitude(_status.event.player,target);
+						if (target.countCards('hej') && target.countCards('hej') <= player.countCards('h')) return - (get.attitude(player,target) - 10);
+                        return -get.attitude(player,target);
                     }); 
 					'step 1'
 					if (result.bool){
+						event.bool = true;
 						event.target = result.targets[0];
 						event.target.addTempSkill('sliver_arrow_3');
 						player.discardPlayerCard(event.target,'hej',Math.min(event.target.countCards('hej'),player.countCards('h')),true);
 					}
 					"step 2"
-					event.target.removeSkill('sliver_arrow_3');
+					if (event.bool){
+						event.target.removeSkill('sliver_arrow_3');
 					//player.skip('phaseUse');
-					player.skip('phaseDiscard');
-					trigger.cancel();
+						player.skip('phaseDiscard');
+						trigger.cancel();
+					}
 				},
-				prompt:'是否发动【白银之箭】跳过出牌阶段？',
+				prompt:'是否发动【白银之箭】跳过出牌阶段？',				
+				check:function(){
+					return true;	
+				}
 			},
 			sliver_arrow_3:{
 				trigger:{player:'loseEnd'},
