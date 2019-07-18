@@ -23880,6 +23880,7 @@
         },
         playBackgroundMusic:function(){
             console.log('hello');
+            /*
             if (!lib.config.background_music) lib.config.backgroundmusic = 'music_default';
             if(lib.config.background_music=='music_off'){
                 ui.backgroundMusic.src='';
@@ -23911,6 +23912,7 @@
                     ui.backgroundMusic.src=url+'audio/background/'+music+'.mp3';
                 }
             }
+            */
         },
         import:function(type,content){
             if(type=='extension'){
