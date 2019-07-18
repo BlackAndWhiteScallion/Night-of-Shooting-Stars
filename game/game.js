@@ -23879,20 +23879,14 @@
             ui.window.appendChild(audio);
         },
         playBackgroundMusic:function(){
+            console.log('better work this time');
+            /*
             if (!lib.config.background_music) lib.config.backgroundmusic = 'music_default';
             if(lib.config.background_music=='music_off'){
                 ui.backgroundMusic.src='';
             }
             else{
-                var url = lib.assetURL;
-                console.log(location.hostname);
-                console.log(location.hostname.includes('coding'));
-                if (location.hostname && location.hostname.includes('coding')){
-                    url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
-                }
-                console.log(url);
                 var music=lib.config.background_music;
-                console.log('update')
                 if(music=='music_random'){
                     music=lib.config.all.background_music.randomGet('music_off','music_random',_status.currentMusic);
                 }
@@ -23903,13 +23897,14 @@
                     }
                 }
                 if (music == 'music_default'){
-                    ui.backgroundMusic.src=url+'audio/background/'+music+'.mp3';
+                    ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
                     ui.backgroundMusic.currentTime = [137, 693, 1338, 1970, 2715, 3463, 3982].randomGet();
                 }
                 else{
-                    ui.backgroundMusic.src=url+'audio/background/'+music+'.mp3';
+                    ui.backgroundMusic.src=lib.assetURL+'audio/background/'+music+'.mp3';
                 }
             }
+            */
         },
         import:function(type,content){
             if(type=='extension'){
@@ -38672,9 +38667,7 @@
                 ui.arena.dataset.target_shake=lib.config.target_shake||'off';
                 ui.backgroundMusic=document.createElement('audio');
                 ui.backgroundMusic.volume=lib.config.volumn_background/8;
-                console.log('is this running');
-                //game.playBackgroundMusic();
-                console.log('it should be');
+                game.playBackgroundMusic();
                 ui.backgroundMusic.autoplay=true;
                 ui.backgroundMusic.addEventListener('ended',game.playBackgroundMusic);
                 ui.window.appendChild(ui.backgroundMusic);
