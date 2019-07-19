@@ -1014,8 +1014,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				loopType:1,
 				init:function(){
 					//lib.backgroundmusicURL = ui.backgroundMusic.src;
-                    ui.backgroundMusic.src = lib.assetURL+'audio/background/boss.mp3';
-                    lib.config.background_music = 'boss';
+					game.playBackgroundMusic('boss');
 				},
 			},
 			boss_saitama:{
@@ -1123,12 +1122,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.resetSkills();
-					if (lib.config.background_music != 'marisa'){
 						setTimeout(function(){
-						ui.backgroundMusic.src = lib.assetURL+'audio/background/reimu.mp3'
-                    	lib.config.background_music = 'reimu';
+							game.playBackgroundMusic('reimu');
                     	},500);
-                	}
 					_status.paused=false;
 					_status.event.player=player;
 					_status.event.step=0;
@@ -1180,12 +1176,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.resetSkills();
-					if (lib.config.background_music != 'marisa'){
-						setTimeout(function(){
-						ui.backgroundMusic.src = lib.assetURL+'audio/background/cirno.mp3'
-                    	lib.config.background_music = 'cirno';
-                    	},500);
-                	}
+					setTimeout(function(){
+						game.playBackgroundMusic('cirno');
+					},500);
 					_status.paused=false;
 					_status.event.player=player;
 					_status.event.step=0;

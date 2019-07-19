@@ -321,6 +321,18 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}	
 				}
     		},
+			sb1:{
+				intro:{
+					marktext:'文',
+					content:function(storage,player){
+						var str = '';
+						for (var i = 0; i < player.storage.sb.length; i ++){
+							str += get.translation(player.storage.sb[i]) + ',';
+						}
+						return str;
+					}
+				},
+			},
     		sb_normal:{
 				enable:'phaseUse',
 				usable:1,
@@ -340,18 +352,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
     		},	
     		sb_win:{
-    			trigger:{global:'useSkillAfter'},
-    			skillAnimation:true,
-    			forced:true,
-    			filter:function(event,player){
-    				return event.skill.spell;
-    			},
+				direct:true,
+    			trigger:{global:'turnOverAfter'},
+				filter:function(event,player){
+					return event.player.isTurnedOver();
+				},
     			content:function(){
-    				trigger.player.storage.sb = 1;
+					if (!player.storage.sb1) player.storage.sb1 = [];
+					if (!player.storage.sb1.contains(trigger.player.name)) player.storage.sb1.push(trigger.player.name);
+					player.syncStorage('sb1');
+					player.markSkill('sb1');
     				var players = game.filterPlayer();
     				var win = true;
     				for (var i = 0; i < players.length; i++){
-    					if (!players[i].storage.sb) win = false; 
+    					if (!player.storage.sb1.contains(players[i].name)) win = false; 
     				}
     				if (win == true){
     					player.$skill('文花胜利',null,null,true);
@@ -414,9 +428,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		},
     		death_win:{
     			skillAnimation:true,
-    			trigger:{global:'dieAfter'},
+    			trigger:{global:'dieBegin'},
+				direct:true,
     			filter:function(event,player){
-    				return game.filterPlayer().length == 1;
+					var players = game.filterPlayer().remove(event.player);
+    				return players.length == 1;
     			},
     			content:function(){
     				game.incidentover(player,'death');
@@ -454,6 +470,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			immaterial_win:'【萃梦】计数',
 			immaterial_win_bg:'萃',
 			sb:'文花',
+			sb1:'发动过符卡的角色',
 			sb_info:'<u>胜利条件：</u>所有存活角色均在此牌明置期间发动过符卡技。<br/><u>异变效果：</u>一回合一次，你可以将一张牌当作【突击采访】使用 。',
 			sb_normal:'【文花】异变效果',
 			sb_normal_info:'<u>一回合一次，你可以将一张牌当作【突击采访】使用 。</u>',

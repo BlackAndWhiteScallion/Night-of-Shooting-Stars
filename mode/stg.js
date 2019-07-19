@@ -787,8 +787,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				if (game.me.storage.musicchange){
 					ui.backgroundMusic.pause();
 					setTimeout(function(){
-						lib.config.background_music = game.me.storage.musicchange[0];
-						ui.backgroundMusic.src = lib.assetURL+'audio/background/'+game.me.storage.musicchange[0]+'.mp3';
+						game.playBackgroundMusic(game.me.storage.musicchange[0], false, true);
 						ui.backgroundMusic.currentTime=game.me.storage.musicchange[1];
 						ui.backgroundMusic.play();
 					}, 2000);
@@ -1033,8 +1032,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return 500;
 					}
 					ui.background.setBackgroundImage('image/background/yongyuan.jpg');
-					lib.config.background_music = 'music_default';
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/music_default.mp3';
+					game.playBackgroundMusic('music_default');
 					ui.backgroundMusic.currentTime=137;
 					ui.backgroundMusic.play();
 					game.me.storage.reinforce = ['stg_yousei','stg_yousei','rumia'];
@@ -1077,8 +1075,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return 500;
 					}
 					ui.background.setBackgroundImage('image/background/stg_basement.jpg');
-					lib.config.background_music = 'magicalgirl';
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/magicalgirl.mp3';
+					game.playBackgroundMusic('magicalgirl');
 					ui.backgroundMusic.play();
 					game.me.storage.reinforce = ['stg_yousei','stg_yousei','patchouli','stg_maid','stg_maid','stg_maid','flandre'];
 					//game.me.storage.reinforce = ['flandre'];
@@ -1393,8 +1390,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					lib.config.background_music = 'music_default';
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/music_default.mp3';
+					game.playBackgroundMusic('music_default');
 					ui.backgroundMusic.pause();
 					game.boss.hide();
 					game.addVideo('hidePlayer',game.boss);
@@ -1499,8 +1495,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					lib.config.background_music = 'music_default';
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/music_default.mp3';
+					game.playBackgroundMusic('music_default');
 					ui.backgroundMusic.pause();
 					game.boss.hide();
 					game.addVideo('hidePlayer',game.boss);
@@ -1604,8 +1599,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					lib.config.background_music = 'music_default';
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/music_default.mp3';
+					game.playBackgroundMusic('music_default');
 					ui.backgroundMusic.pause();
 					game.boss.hide();
 					game.addVideo('hidePlayer',game.boss);
@@ -1714,8 +1708,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					lib.config.background_music = 'music_default';
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/music_default.mp3';
+					game.playBackgroundMusic('music_default');
 					ui.backgroundMusic.pause();
 					game.boss.hide();
 					game.addVideo('hidePlayer',game.boss);
@@ -1828,8 +1821,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					lib.config.background_music = 'music_default';
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/music_default.mp3';
+					game.playBackgroundMusic('music_default');
 					ui.backgroundMusic.pause();
 					game.boss.hide();
 					game.addVideo('hidePlayer',game.boss);
@@ -2660,10 +2652,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.loselili(lib.skill.masterspark.cost);
-                    ui.backgroundMusic.src = lib.assetURL+'audio/background/marisa.mp3'
-                            lib.config.background_music = 'marisa';
-                            //lib.config.volumn_background = 100;
-                            lib.config.musicchange = 'off';
+					game.playBackgroundMusic('marisa');
+                    lib.config.musicchange = 'off';
                     player.turnOver();
                   },
                 check:function(event,player){

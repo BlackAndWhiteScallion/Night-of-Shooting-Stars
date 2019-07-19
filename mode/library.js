@@ -279,14 +279,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            clickStart(directStage);
 	        }
 	        if(lib.config.background_music!='music_off'){
-	        	lib.config.background_music = 'library';
-                ui.backgroundMusic.src=lib.assetURL+'audio/background/library.mp3';
+				game.playBackgroundMusic('library');
                 ui.backgroundMusic.currentTime = 0;
             }
             var today = new Date();
             if(today.getMonth() == 3){
-            	lib.config.background_music = 'signature';
-            	ui.backgroundMusic.src=lib.assetURL+'audio/background/signature.mp3';
+				game.playBackgroundMusic('signature');
 	        }
 	        lib.init.onfree();
 	    },

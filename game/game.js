@@ -14962,13 +14962,7 @@
                         if ((this.identity == 'zhu' && lib.config.musicchange != 'off') 
                             || (this.identity == 'nei' && lib.config.musicchange == 'luren')){
                             lib.backgroundmusicURL = lib.config.background_music;
-
-                            var url = lib.assetURL;
-                            if (location.hostname && location.hostname.includes('coding')){
-                                url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
-                            }
-                            ui.backgroundMusic.src = url+'audio/background/'+card.name+'.mp3';
-                            lib.config.background_music = card.name;
+                            game.playBackgroundMusic(card.name, false, true);
                         }
                         if ((this.identity == 'zhu' && lib.config.backgroundchange != 'off') 
                             || (this.identity == 'nei' && lib.config.backgroundchange == 'luren')){
@@ -23878,8 +23872,9 @@
             };
             ui.window.appendChild(audio);
         },
-        playBackgroundMusic:function(){
-            if (!lib.config.background_music) lib.config.backgroundmusic = 'music_default';
+        playBackgroundMusic:function(music, temp, marisa){
+            if (!marisa && lib.config.background_music == 'marisa') return ;
+            if (!lib.config.background_music) lib.config.background_music = 'music_default';
             if(lib.config.background_music=='music_off'){
                 ui.backgroundMusic.src='';
             }
@@ -23888,16 +23883,21 @@
                 if (location.hostname && location.hostname.includes('coding')){
                     url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
                 }
-                var music=lib.config.background_music;
+                if (!music) music = lib.config.background_music;
+                if (music != lib.config.background_music) lib.config.background_music = music;
+
                 if(music=='music_random'){
                     music=lib.config.all.background_music.randomGet('music_off','music_random',_status.currentMusic);
                 }
+
                 _status.currentMusic=music;
+
                 if(music=='music_custom'){
                     if(lib.config.background_music_src){
                         ui.backgroundMusic.src=lib.config.background_music_src;
                     }
                 }
+
                 if (music == 'music_default'){
                     ui.backgroundMusic.src=url+'audio/background/'+music+'.mp3';
                     ui.backgroundMusic.currentTime = [137, 693, 1338, 1970, 2715, 3463, 3982].randomGet();

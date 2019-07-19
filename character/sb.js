@@ -233,7 +233,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
          kuanglan:{
             trigger:{global:'phaseEnd'},
             audio:2,
-            group:['kuanglan_1','kuanglan_2','kuanglan_3','kuanglan_4'],
+            group:['kuanglan_1','kuanglan_2','kuanglan_3','kuanglan_4','kuanglan_5'],
             filter:function(event,player){
                var players = game.filterPlayer();
                for (var i = 0; i < players.length; i ++){
@@ -266,8 +266,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             direct:true,
             filter:function(event,player){
                if (!event.player) return false;
-               return (event.skill == '_tanpai' && event.player.identity == 'zhu') ||
-                        (event.skill == '_tanyibian') || (get.info(event.skill).spell);
+               return ((event.skill == '_tanpai' && event.player.identity == 'zhu') ||
+                        event.skill == '_tanyibian');
             },
             content:function(){
                trigger.player.storage.kuanglan = true; 
@@ -309,6 +309,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                for (var i = 0; i < players.length; i ++){
                   if (players[i].storage.kuanglan) delete players[i].storage.kuanglan;
                }
+            },
+         },
+         kuanglan_5:{
+            direct:true,
+            trigger:{global:'turnOverAfter'},
+				filter:function(event,player){
+					return event.player.isTurnedOver();
+				},
+            content:function(){
+               trigger.player.storage.kuanglan = true;
             },
          },
          fengmi:{

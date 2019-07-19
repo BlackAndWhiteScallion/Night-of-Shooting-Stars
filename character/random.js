@@ -1415,7 +1415,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 chooseButton:{
                     dialog:function(){
                         var list = [];
-						console.log(lib.config.mode);
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
@@ -1423,7 +1422,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                 list.add(i);
                             }
                         }
-						console.log(list);
                         for(var i=0;i<list.length;i++){
                             list[i]=[get.type(list[i]),'',list[i]];
                         }
@@ -1511,13 +1509,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					game.pause();
 					player.storage.ADA = [lib.config.background_music, ui.background.style.backgroundImage];
                     setTimeout(function(){
-                    	if (lib.config.background_music != 'marisa') ui.backgroundMusic.src = '';
+                    	ui.backgroundMusic.src = '';
                     	player.say('目睹余之才华！耳闻万雷之喝彩！心怀掌权者的荣耀！');
                     	setTimeout(function(){
-                    		if (lib.config.background_music != 'marisa'){
-                    			ui.backgroundMusic.src = lib.assetURL+'audio/background/nero.mp3';
-                    			lib.config.background_music = 'nero';
-                    		}
+							game.playBackgroundMusic('nero');
                     		player.say('如花般怒放……开幕吧！黄金的剧场！！');
                     		setTimeout(function(){
                     			player.say('以这一轮为供奉吧……飞舞散落为华，斩开切裂为星！这才是至高的美……');
@@ -1535,8 +1530,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return player.countCards('h')>0;
                 },
                 onremove:function(player){
-					ui.backgroundMusic.src = lib.assetURL+'audio/background/'+player.storage.ADA[0]+'.mp3';
-					lib.config.background_music = player.storage.ADA[0];
+					game.playBackgroundMusic(player.storage.ADA[0]);
 					ui.background.style.backgroundImage = player.storage.ADA[1];
                 },
                 chooseButton:{
@@ -3050,7 +3044,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if (event.num > 0) event.goto(1);
 					}
 					'step 3'
-					player.addTempSkill('aoshu_lili',{player:'phaseBegin'});
+					player.addSkill('aoshu_lili');
 				},
 				ai:{
 					result:{
@@ -3061,9 +3055,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aoshu_lili:{
 				audio:2,
 				forced:true,
+				/*
 				trigger:{global:'useSkillAfter'},
 				filter:function(event,player){
-					return event.skill.spell;
+					return lib.skill[event.skill].spell;
+				},
+				*/
+				trigger:{global:'turnOverAfter'},
+				filter:function(event, player){
+					return event.player.isTurnedOver();
 				},
 				content:function(){
 					player.gainlili();
