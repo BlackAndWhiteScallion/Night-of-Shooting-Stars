@@ -381,7 +381,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								var f = get.rand(4);
 		                    	p.onclick = function(){
 		                    		if (counter > 6) return;
-		                    		var h = [['其实流星夜有个四格漫画系列，可以在贴吧和群里找到哟。',
+		                    		var h = [['其实流星夜有个四格漫画系列，可以在贴吧，公众号上和群里找到哟。',
 		                    					'主人没事做的时候，不仅会做漫画，也会做表情呢。所以，有有趣的情况请说给他听吧。',
 		                    					'别看主人那个样子，该忙的时候他还是会忙的啦。',
 		                    					'除了忙以外，灵感缺失也是一大问题呢。',

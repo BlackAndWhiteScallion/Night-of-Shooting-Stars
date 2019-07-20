@@ -8044,7 +8044,7 @@
                                 '对哪里有问题的话，右键点一下就行啦。这个界面的模式也好，游戏里，点一下自己手牌，点一下自己身份也行。很多可以点的地方啦。',
                                 ];
                     if (!lib.config.gameRecord.stg){
-                        list.add('');
+                        list.add('都来幻想乡了，还不挑战一下红魔乡算个什么事嘛。走走走，去闯关模式！我可是在那里大放光彩的哟⭐');
                     }
                     if (!lib.config.gameRecord.boss){
                         list.add('据说啊，幻想乡里有一些强大到不敢想象的强者。有的还是从外界来的！是不是有点跃跃欲试了？走，去魔王模式吧！');
@@ -8064,6 +8064,9 @@
                         list.push('早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………');
                     }
                     setDialog(list.randomRemove());
+                    list.add('【轰！】，【疾风骤雨】，【顺手牵羊】都是可以对自己使用的哟，所以，嘿嘿，咱们来想些很奇怪的操作吧？');
+                    list.add('<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">你有看这期的“流星画园”吗？超级好玩的啦。在微信公众号上就可以找到哟。</a>');
+                    list.add('闲的没事的话，来支持东方project的正作吧！弹幕战和格斗作都是精品游戏，还有大量的很好看的周边哟！');
                     dialog.onclick = function(){
                         if (list.length == 0){
                         } else {
@@ -13577,7 +13580,6 @@
                         }
                     }
                     this.node.avatar.show();
-                    this.node.avatar.style.zIndex = -1;
                     this.node.count.show();
                     this.node.equips.show();
                     this.name=character;
@@ -26892,31 +26894,31 @@
                 };
                 var step1=function(){
                     ui.auto.hide();
-                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">恭喜你打完你的第一局游戏！感觉怎么样？');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">恭喜你打完你的第一局游戏！感觉怎么样？');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('还挺不错的',step2);
                 }
                 var step2=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">流星夜还有很多好玩的模式！全新的异变模式，3人组队打BOSS的挑战模式，1人连续无双的闯关模式，2v2 3v3 和4v4的对决模式，还有好几个小场景。');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">流星夜还有很多好玩的模式！全新的异变模式，3人组队打BOSS的挑战模式，1人连续无双的闯关模式，2v2 3v3 和4v4的对决模式，还有好几个小场景。');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('东西可真多',step3);
                 }
                 var step3=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;margin-left:120pxt;font-size:18px">不过不用急，先慢慢来。游戏的卡牌，模式介绍，都能在【图鉴】模式里找到。记得代我向阿求老师问个好。');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120pxt;font-size:18px">不过不用急，先慢慢来。游戏的卡牌，模式介绍，都能在【图鉴】模式里找到。记得代我向阿求老师问个好。');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('好的老师！',step4);
                 }
                 var step4=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">如果还不太懂，或者想练习角色，欢迎来【场景】→【对战练习】！如果哪个模式不熟的话，可以在那模式用自由选将召唤我！');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">如果还不太懂，或者想练习角色，欢迎来【场景】→【对战练习】！如果哪个模式不熟的话，可以在那模式用自由选将召唤我！');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('谢谢，再见！',step5);
                 }
                 var step5=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">祝你在幻想乡游玩愉快！');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">祝你在幻想乡游玩愉快！');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     setTimeout(function(){
                         clear();

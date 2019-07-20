@@ -622,9 +622,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								}
 							}
 						}
+						game.boss.chongzheng=true;
 						// 如果是1→1，重整为true
 						if(game.bossinfo.loopType==2){
-							game.boss.chongzheng=true;
+							game.boss.chongzheng=false;
 						}
 					}
 					else{
