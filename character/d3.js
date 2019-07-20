@@ -65,11 +65,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					};
 					var step1=function(){
 						if (lib.config.connect_nickname=='黑白葱'){
-							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你好啊——哎？？主人大人？？？</div>');
+							ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">你好啊——哎？？主人大人？？？</div>');
 							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						}
 						else {
-							ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你是'+lib.config.connect_nickname+'吧？<br>欢迎来到东方流星夜！<br>我是新手导师子规！');
+							ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">你是'+lib.config.connect_nickname+'吧？欢迎来到东方流星夜！我是新手导师子规！');
 							ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						}
 						ui.create.control('老师好！',step2);
@@ -84,25 +84,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						} else {
 							dialog = '你好啊，'+lib.config.connect_nickname+'!';
 						}
-						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+dialog+'</div>');
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">'+dialog+'</div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						ui.create.control('老师好',step2);
 					}
 					var step2=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">你现在所在的是'+lib.translate[get.mode()]+'模式！</div></div>');
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">你现在所在的是'+lib.translate[get.mode()]+'模式！</div></div>');
 						if (get.mode() == 'versus'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">对决模式中，两队玩家互相对抗并暴揍。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">对决模式中，两队玩家互相对抗并暴揍。</div></div>');
 						} else if (get.mode() == 'identity'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">异变模式中，玩家们一方试图造成异变，另一方试图停止她们。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">异变模式中，玩家们一方试图造成异变，另一方试图停止她们。</div></div>');
 						} else if (get.mode() == 'old_identity'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">身份模式是三国杀同名模式复刻。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">身份模式是三国杀同名模式复刻。</div></div>');
 						} else if (get.mode() == 'stg'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你为什么选我闯关啊！<br>闯关模式中，玩家单人连续击坠多名角色来试图突破关卡。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你为什么选我闯关啊！闯关模式中，玩家单人连续击坠多名角色来试图突破关卡。</div></div>');
 						} else if (get.mode() == 'boss'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">挑战模式中，三名玩家合作挑战一名BOSS角色。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">挑战模式中，三名玩家合作挑战一名BOSS角色。</div></div>');
 						} else if (get.mode() == 'chess'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">其实……我也不知道战棋模式是什么……</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">其实……我也不知道战棋模式是什么……</div></div>');
 						}
 						ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						ui.create.control('这模式要怎么玩？',step3);
@@ -112,48 +112,48 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						ui.create.dialog('');
 						ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						if (get.mode() == 'versus'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">很简单啊，<br>只要把敌对方揍趴就行了！。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">很简单啊，只要把敌对方揍趴就行了！。</div></div>');
 						} else if (get.mode() == 'identity'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你的身份是'+lib.translate[game.me.identity+'2']+'。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你的身份是'+lib.translate[game.me.identity+'2']+'。</div></div>');
 							if (game.me.identity == 'fan'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要找出黑幕来，然后<br><b>把她锤爆！</b></div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你需要找出黑幕来，然后<b>把她锤爆！</b></div></div>');
 							} else if (game.me.identity == 'zhu'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你要么反杀所有自机，<br>要么完成你的异变！</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你要么反杀所有自机，要么完成你的异变！</div></div>');
 							} else if (game.me.identity == 'zhong'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你要守住黑幕，<br>并反杀所有自机！</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你要守住黑幕，并反杀所有自机！</div></div>');
 							} else if (game.me.identity == 'nei'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要在游戏结束前<br>想办法完成异变！</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你需要在游戏结束前想办法完成异变！</div></div>');
 							}
 						} else if (get.mode() == 'old_identity'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你的身份是'+lib.translate[game.me.identity+'2']+'。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你的身份是'+lib.translate[game.me.identity+'2']+'。</div></div>');
 							if (game.me.identity == 'fan'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要打爆黑幕！</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你需要打爆黑幕！</div></div>');
 							} else if (game.me.identity == 'zhu'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要不被自机打爆！</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你需要不被自机打爆！</div></div>');
 							} else if (game.me.identity == 'zhong'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要祈祷黑幕不被打爆！</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你需要祈祷黑幕不被打爆！</div></div>');
 							} else if (game.me.identity == 'nei'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要打爆其他所有人！</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你需要打爆其他所有人！</div></div>');
 							}
 						} else if (get.mode() == 'stg'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">来一个打爆一个就行了！</div></div>');
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你有三次复活机会（右上角可以查看）</div></div>');
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">还有一些特殊规则也在右上角查看</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">来一个打爆一个就行了！</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你有三次复活机会（右上角可以查看）</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">还有一些特殊规则也在右上角查看</div></div>');
 						} else if (get.mode() == 'boss'){
 							if (game.me.identity == 'zhu'){
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你需要把所有盟军角色<br>打进重整状态。</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你需要把所有盟军角色打进重整状态。</div></div>');
 							} else {
-								ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">你们需要合作打爆boss。</div></div>');
+								ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你们需要合作打爆boss。</div></div>');
 							}
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">盟军角色坠机后会重整：<br>重整完毕后满血复活<br>重整时间在右上可以查看。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">盟军角色坠机后会重整：重整完毕后满血复活重整时间在右上可以查看。</div></div>');
 						} else if (get.mode() == 'chess'){
-							ui.dialog.add('<div><div style="width:100%;text-align:right;font-size:18px">额……你自己探索吧！加油！</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">额……你自己探索吧！加油！</div></div>');
 						}
 						ui.create.control('知道了',step4);
 					};
 					var step4=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">有问题的话，<br>可以在你的出牌阶段问我问题！');
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">有问题的话，可以在你的出牌阶段问我问题！');
 						ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						ui.create.control('嗯嗯',step5);
 					};
@@ -183,29 +183,29 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.chooseControlList(event.list,'想问老师什么问题？');
 					'step 1'
 					if (result.index == 0){
-						game.me.storage.jieshuo = ['牌和技能的描述可以在<br>卡牌/角色身上右键单击<br>或悬空1秒查看<br>双击角色还可以看到<br>角色简介，能换皮肤！','牌在需要用的时候，点一下，<br>如果有目标就选目标，<br>然后点确定就行了。',
-						'技能也类似：<br>需要使用的时候是会跳选择的。','出牌阶段使用的技能，<br>会出现一个触发用按钮<br>就像这个问答的按钮！'];
+						game.me.storage.jieshuo = ['牌和技能的描述可以在卡牌/角色身上右键单击或悬空1秒查看双击角色还可以看到角色简介，能换皮肤！','牌在需要用的时候，点一下，如果有目标就选目标，然后点确定就行了。',
+						'技能也类似：需要使用的时候是会跳选择的。','出牌阶段使用的技能，会出现一个触发用按钮就像这个问答的按钮！'];
 					} else if (result.index == 1){
-						game.me.storage.jieshuo = ['每个人身上的绿色的星星<br>就是<b>灵力值</b>啦！','灵力值是流星夜的核心体系！<br> 就是每个人身上那条绿色的星星。','灵力值的作用很多：<br>你的攻击范围等于你的灵力<br>强化牌时需要消耗灵力<br>发动符卡时需要消耗灵力',
-						'加灵力的方式也不少：<br>牌堆里所有在下方有<br>“灵力：+1”的牌都是会加灵力的','如果你的灵力降到0的话<br>你不能造成任何伤害！','但是没关系<br>如果你准备和结束阶段都没灵力<br>回合结束后，你会获得1点！<br>(这个设置可以关闭)'];
+						game.me.storage.jieshuo = ['每个人身上的绿色的星星就是<b>灵力值</b>啦！','灵力值是流星夜的核心体系！ 就是每个人身上那条绿色的星星。','灵力值的作用很多：你的攻击范围等于你的灵力强化牌时需要消耗灵力发动符卡时需要消耗灵力',
+						'加灵力的方式也不少：牌堆里所有在下方有“灵力：+1”的牌都是会加灵力的','如果你的灵力降到0的话你不能造成任何伤害！','但是没关系如果你准备和结束阶段都没灵力回合结束后，你会获得1点！(这个设置可以关闭)'];
 					} else if (result.index == 2){
-						game.me.storage.jieshuo = ['符卡技！<br>在准备阶段消耗标注量的灵力，<br>然后获得描述里的技能<br>直到回合结束！','要发动符卡必须要灵力<b>大于</b>描述<br>中的点数。<br>（3）就要4点灵力才能发动。',
-						'符卡技发动还有一些注意事项：<br>符卡发动中，防止角色获得灵力。<br>角色灵力变成0时，符卡结束。','符卡技中的标签也是有效果的：<br>永续：到自己回合开始才结束<br>瞬发：可以在要用的时候再发动<br>限定：一局游戏只能发动一次<br>终语：可以在决死状态使用<br>极意：无限时间，但是一旦结束就立即坠机'];
+						game.me.storage.jieshuo = ['符卡技！在准备阶段消耗标注量的灵力，然后获得描述里的技能直到回合结束！','要发动符卡必须要灵力<b>大于</b>描述中的点数。（3）就要4点灵力才能发动。',
+						'符卡技发动还有一些注意事项：符卡发动中，防止角色获得灵力。角色灵力变成0时，符卡结束。','符卡技中的标签也是有效果的：永续：到自己回合开始才结束瞬发：可以在要用的时候再发动限定：一局游戏只能发动一次终语：可以在决死状态使用极意：无限时间，但是一旦结束就立即坠机'];
 					} else if (result.index == 3){
-						game.me.storage.jieshuo = ['异变牌，就是代表有异变发动了！','异变牌上有<b>胜利条件</b>和<b>异变效果</b>。','胜利条件，只要达成了<br>你就游戏胜利了。<br>异变效果是，像技能一样，<br>赋予你的角色的效果。',
-						'注意，<br>异变牌上的胜利条件和效果在<br><b>异变牌暗置</b>时是不生效的。<br>比如路人身份获得后。','异变模式中，可以随时在右上角<br>查看场上有哪些明置异变牌。'];
+						game.me.storage.jieshuo = ['异变牌，就是代表有异变发动了！','异变牌上有<b>胜利条件</b>和<b>异变效果</b>。','胜利条件，只要达成了你就游戏胜利了。异变效果是，像技能一样，赋予你的角色的效果。',
+						'注意，异变牌上的胜利条件和效果在<b>异变牌暗置</b>时是不生效的。比如路人身份获得后。','异变模式中，可以随时在右上角查看场上有哪些明置异变牌。'];
 					} else if (result.index == 4){
-						game.me.storage.jieshuo = ['异变模式中，所有角色的身份都是暗的！<br>所以，出牌阶段，你可以明置身份牌！','每个身份牌的明置有不同效果：<br>黑幕：获得一张明置异变牌<br>异变：令一名角色摸一张牌<br>自机：令一名角色选择，弃一张或明置身份<br>路人：获得一张暗置异变牌。',
-						'没事，路人的暗置异变牌<br>可以在出牌阶段内明置的。','顺便，计算阵营时，没有明置身份的角色是没有阵营的。'];
+						game.me.storage.jieshuo = ['异变模式中，所有角色的身份都是暗的！所以，出牌阶段，你可以明置身份牌！','每个身份牌的明置有不同效果：黑幕：获得一张明置异变牌异变：令一名角色摸一张牌自机：令一名角色选择，弃一张或明置身份路人：获得一张暗置异变牌。',
+						'没事，路人的暗置异变牌可以在出牌阶段内明置的。','顺便，计算阵营时，没有明置身份的角色是没有阵营的。'];
 					} else if (result.index == 5){
-						game.me.storage.jieshuo = ['幻想乡里是没有判定牌的，<br>这些东西是技能牌！<br>技能牌是一种特殊牌！<br>技能牌有自己的牌堆，<br>并且没有花色点数种类属性。','技能牌获得后，进入技能牌区内。<br>像装备牌一样，持有技能牌的玩家，<br>可以任意使用技能牌上的技能。',
-						'技能牌最多只能带3张<br>多了的话需要弃到3张。','技能牌可以被弃置，获得，<br>或者重铸。'];
+						game.me.storage.jieshuo = ['幻想乡里是没有判定牌的，这些东西是技能牌！技能牌是一种特殊牌！技能牌有自己的牌堆，并且没有花色点数种类属性。','技能牌获得后，进入技能牌区内。像装备牌一样，持有技能牌的玩家，可以任意使用技能牌上的技能。',
+						'技能牌最多只能带3张多了的话需要弃到3张。','技能牌可以被弃置，获得，或者重铸。'];
 					} else if (result.index == 6){
-						game.me.storage.jieshuo = ['流星夜里有不少与三国杀不同，<br>但是也不足以专门划出来介绍呢……','拼点完了之后，<br>拼点双方各摸一张牌！<br>毕竟突然没牌了是坏文明？',
-						'装备区里什么东西都可以装<br>就是最多装三张。','异变模式中，<br>击坠角色奖励是：<br>获得1点灵力，摸一张技能牌<br>无视双方身份和阵营哟。','强化：使用时，消耗灵力，<br>牌获得额外效果!','属性：牌上的新标签。<br>包括攻击，防御，支援，控场<br>并没有实际效果。','追加效果：游戏牌上的额外效果，<br>不计入牌的使用<br>也不消耗这张牌。',
-						'明置牌：就是对所有玩家可见的牌<br>包括场上装备，技能牌，<br>和明置的手牌。','<b>禁忌牌：<br>牌堆里每种只有一张的，<br>效果独一无二，还带追加效果的<br>无比丧心病狂的卡牌！</b>'];
+						game.me.storage.jieshuo = ['流星夜里有不少与三国杀不同，但是也不足以专门划出来介绍呢……','拼点完了之后，拼点双方各摸一张牌！毕竟突然没牌了是坏文明？',
+						'装备区里什么东西都可以装就是最多装三张。','异变模式中，击坠角色奖励是：获得1点灵力，摸一张技能牌无视双方身份和阵营哟。','强化：使用时，消耗灵力，牌获得额外效果!','属性：牌上的新标签。包括攻击，防御，支援，控场并没有实际效果。','追加效果：游戏牌上的额外效果，不计入牌的使用也不消耗这张牌。',
+						'明置牌：就是对所有玩家可见的牌包括场上装备，技能牌，和明置的手牌。','<b>禁忌牌：牌堆里每种只有一张的，效果独一无二，还带追加效果的无比丧心病狂的卡牌！</b>'];
 					} else if (result.index == 7){
-						game.me.storage.jieshuo = ['QwQ？哎哎哎？','额……','那个那个……<br>如果你真的喜欢我的话!<br>就，就给我500万！<br>///w///'];
+						game.me.storage.jieshuo = ['QwQ？哎哎哎？','额……','那个那个……如果你真的喜欢我的话!就，就给我500万！///w///'];
 					}
 					'step 2'
 					var clear=function(){
@@ -219,7 +219,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					var step1=function(){
 						if (!game.me.storage.jieshuo) game.me.storage.jieshuo = ['没事，不急，慢慢来！'];
 						//ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]);
-						ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">'+game.me.storage.jieshuo[0]+'</div></div>');
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">'+game.me.storage.jieshuo[0]+'</div></div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						ui.dialog.open();
 						ui.create.control('继续',function(){

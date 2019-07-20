@@ -240,8 +240,9 @@
 	bottom:30px;
 	left:-3px;
 	padding:2px;
+	height:20px;
 	line-height:20px;
-	width:8px;
+	width:12px;
 	text-align:left;
 	border-radius:2px;
 	/*z-index:1;*/
@@ -267,7 +268,8 @@
 	text-align: center;
 }
 #arena.slim_player .player .count{
-	left: -6px;
+	left: -10px;
+	font-size: 17px;
 }
 .player .count.action{
 	bottom:60px;

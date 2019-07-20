@@ -493,18 +493,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				result:{
 					target:function(player,target){
-						if(get.is.versus()){
-							if(target==player) return 1.5;
-							return 1;
-						}
-						if(player.hasUnknown(2)){
-							return 0;
-						}
-						return 2;
+						return 1;
 					}
 				},
 				tag:{
-					draw:1,
 					multitarget:1
 				}
 			}

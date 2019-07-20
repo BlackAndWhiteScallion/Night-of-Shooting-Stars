@@ -7945,7 +7945,9 @@
                             }
                         }
                         splash.delete(1000);
+                        dialog.delete();
                         delete window.inSplash;
+                        delete ui.dialog;
                         window.resetGameTimeout=setTimeout(lib.init.reset,5000);
 
                         this.listenTransition(function(){
@@ -7954,9 +7956,35 @@
                     }
                     var downNode=function(){
                         this.classList.add('glow');
+                        var mode = this.childNodes[1].style.backgroundImage.slice(18,-6); 
+                        if (mode == 'library'){
+                            setDialog('啊，这里是阿求的家。阿求家里有很多的藏书，讲述着幻想乡的：幻想乡如何运作啊，现有角色啊，现有卡牌啊，这些看几次都有受益的资料。');
+                        } else if (mode == 'old_identity'){
+                            setDialog('啊，都已经10年了吗？这无比熟悉的，令人智熄的超级无聊感……');
+                        } else if (mode == 'identity'){
+                            setDialog('幻想乡几乎每个月都有大大小小的异变，异变模式就是讲述我们去解决这些异变的故事啦~');
+                        } else if (mode == 'versus'){
+                            setDialog('如果只是想轻松的打把牌，对决模式最方便啦。这里支持2v2，3v3，4v4，还有看你喜好自由设定。这些在模式内，通过右上角[选项-对决-游戏模式]就可以设置了。');
+                        } else if (mode == 'connect'){
+                            setDialog('你朋友欠你钱了？快把他叫来跟你1v1，把钱从他身上打出来！…………什么，这样做不行吗？');
+                        } else if (mode == 'boss'){
+                            setDialog('这里就是传说中的，必须3个人打1个才打的过的超绝极强大魔王！<br>我想跟她们单挑。');
+                        } else if (mode == 'stg'){
+                            setDialog('这才是幻想乡的正确战斗方式！以一人之力，在杂鱼群里割草，然后与boss们展开华丽酷炫的弹幕战……啊啊啊，我手痒啦！走走走，闯关去！');
+                        } else if (mode == 'chess'){
+                            setDialog('据说这个战棋模式里面有些很神奇的东西，你可以陪我一起去吗？');
+                        } else if (mode == 'brawl'){
+                            setDialog('打牌打累了，就搞点好玩的小场景休闲一下吧，打子规可是最最最减压的事情啦！而且，还可以自己创建场景玩哟。我就做了一个呢，是不是很棒⭐。');
+                        }
                     }
                     var upNode=function(){
                         this.classList.remove('glow');
+                    }
+                    var setDialog=function(text){
+                        var date = new Date();
+                        if (date.getHours() > 1 && date.getHours() < 8) text = 'Zzzzzz……';
+                        dialog.innerHTML = '<div><div style="width:450px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;writing-mode:horizontal-tb">'+text+'</div>';
+                        ui.create.div('.avatar',dialog).setBackground('marisa','character');
                     }
                     // 这里是开始界面
                     var splash=ui.create.div('#splash',document.body);
@@ -7986,6 +8014,7 @@
                             }
                         }
                         if(!lib.config.touchscreen){
+                            node.addEventListener('mouseenter', downNode);
                             node.addEventListener('mousedown',downNode);
                             node.addEventListener('mouseup',upNode);
                             node.addEventListener('mouseleave',upNode);
@@ -7999,6 +8028,47 @@
                                 node.show();
                             }
                         }(node)),i*100);
+                    }
+                    var dialog = ui.create.div('.avatar', document.body);
+                    dialog.style.height = '120px';
+                    dialog.style.width = '600px';
+                    dialog.style.left = 'calc(25%)';
+                    dialog.style.top = 'calc(75%)';
+                    dialog.style.position = 'absolute';
+                    dialog.style.cursor = 'pointer';
+                    var list = ['欢迎回来！你是先陪我打牌呢，还是先陪我打牌呢，还是先陪我打牌呢？',
+                                '今天我们玩什么呢,'+lib.config.connect_nickname+'? 要不，去灵梦家蹭饭怎么样？',
+                                '这个背景也有点看腻了，等下换个背景换换口味怎么样？',
+                                '最近从外界来了好多人啊。机器人啊，妖精啊，高中生啊，还有好几个外界来的魔法师呢。真想去找她们好好的交流一下~',
+                                '哟，你来了啊⭐ 今天过的开心吗？有没有碰上什么好事~？快告诉我！',
+                                '对哪里有问题的话，右键点一下就行啦。这个界面的模式也好，游戏里，点一下自己手牌，点一下自己身份也行。很多可以点的地方啦。',
+                                ];
+                    if (!lib.config.gameRecord.stg){
+                        list.add('');
+                    }
+                    if (!lib.config.gameRecord.boss){
+                        list.add('据说啊，幻想乡里有一些强大到不敢想象的强者。有的还是从外界来的！是不是有点跃跃欲试了？走，去魔王模式吧！');
+                    }
+                    if (!lib.config.gameRecord.incident) {
+                        list.add('有异变就去解决，才是我们正义的伙伴的做法，对吧？走，去异变模式！');
+                    }
+                    if (lib.config.gameRecord.incident && !lib.config.gameRecord.general.data['akyuu']) {
+                        list.add('啊，阿求怎么还没有准备好啊！咱们去图鉴模式催催她怎么样？');
+                    } else {
+                        list.add('阿求又邀请我们去玩了。场景下的稗田教室里。我们一起去陪陪她吧？');
+                    }
+                    var date = new Date();
+					if (date.getHours() > 22){
+                        list.push('你知道吗，人类最具工作力和灵感的时候，就是三更大半夜！……至少我是这样。让我们来好好的享受这个夜晚吧！');
+                    } else if (date.getHours() > 7 && date.getHours() < 10){
+                        list.push('早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………');
+                    }
+                    setDialog(list.randomRemove());
+                    dialog.onclick = function(){
+                        if (list.length == 0){
+                        } else {
+                            setDialog(list.randomRemove());
+                        }
                     }
                     if(lib.config.mousewheel){
                         splash.onmousewheel=ui.click.mousewheel;
@@ -13506,8 +13576,8 @@
                             this.classList.remove('minskin');
                         }
                     }
-
                     this.node.avatar.show();
+                    this.node.avatar.style.zIndex = -1;
                     this.node.count.show();
                     this.node.equips.show();
                     this.name=character;
@@ -13625,6 +13695,11 @@
 							this._inits[i](this);
 						}
 					}
+                    lib.setIntro(this.node.count);
+                    lib.setIntro(this.node.hp);
+                    lib.setIntro(this.node.lili);
+                    lib.setIntro(this.node.equips);
+                    lib.setIntro(this.node.judges);
                     this.update();
                     return this;
                 },
@@ -14902,6 +14977,7 @@
                     else{
                         this.node.identity.firstChild.innerHTML=get.translation(identity);
                     }
+                    lib.setIntro(this.node.identity);
                     this.node.identity.dataset.color=identity;
                     return this;
                 },
@@ -19370,6 +19446,8 @@
                     card.classList.remove('drawinghidden');
                     delete card._transform;
                     var player=this;
+                    
+                    /*
                     var equipNum=get.equipNum(card);
                     var equipped=false;
                     for(var i=0;i<player.node.equips.childNodes.length;i++){
@@ -19379,11 +19457,31 @@
                             break;
                         }
                     }
-                    if(!equipped){
-                        player.node.equips.appendChild(card);
-						if(_status.discarded){
-							_status.discarded.remove(card);
-						}
+                    */
+                    if (lib.config.textequip == 'image'){
+                        card.classList.remove('equip1');
+                        card.classList.remove('equip2');
+                        card.classList.remove('equip3');
+                        card.classList.remove('equip4');
+                        card.classList.remove('equip5');
+                        var list = ['equip1', 'equip2', 'equip3', 'equip4', 'equip5'];
+                        for(var i=0;i<player.node.equips.childNodes.length;i++){
+                            for (var j = 0; j < list.length; j ++){
+                                if (player.node.equips.childNodes[i].classList.contains(list[j])){
+                                    list.remove(list[j]);
+                                    break;
+                                }
+                            }
+                        }
+                        if (list.length){
+                            card.classList.add(list[0]);
+                        } else {
+                            card.classList.add('equip'+(player.node.equips.childNodes.length+1) +'')
+                        }
+                    }
+                    player.node.equips.appendChild(card);
+                    if(_status.discarded){
+                        _status.discarded.remove(card);
                     }
                     /*
                     var info=get.info(card);
@@ -26794,31 +26892,31 @@
                 };
                 var step1=function(){
                     ui.auto.hide();
-                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">恭喜你打完你的第一局游戏！<br>感觉怎么样？');
+                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">恭喜你打完你的第一局游戏！感觉怎么样？');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('还挺不错的',step2);
                 }
                 var step2=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">流星夜还有很多好玩的模式！<br>全新的异变模式，<br>3人组队打BOSS的挑战模式，<br>1人连续无双的闯关模式，<br>2v2 3v3 和4v4的对决模式，<br>还有好几个小场景。');
+                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">流星夜还有很多好玩的模式！全新的异变模式，3人组队打BOSS的挑战模式，1人连续无双的闯关模式，2v2 3v3 和4v4的对决模式，还有好几个小场景。');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('东西可真多',step3);
                 }
                 var step3=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">不过不用急，先慢慢来。<br>游戏的卡牌，模式介绍，都能在<br>【图鉴】模式里找到。<br>记得代我向阿求老师问个好。');
+                    ui.create.dialog('<div><div style="width:100%;margin-left:120pxt;font-size:18px">不过不用急，先慢慢来。游戏的卡牌，模式介绍，都能在【图鉴】模式里找到。记得代我向阿求老师问个好。');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('好的老师！',step4);
                 }
                 var step4=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">如果还不太懂，或者想练习角色，<br>欢迎来【场景】→【对战练习】！<br>如果哪个模式不熟的话，<br>可以在那模式用自由选将召唤我！');
+                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">如果还不太懂，或者想练习角色，欢迎来【场景】→【对战练习】！如果哪个模式不熟的话，可以在那模式用自由选将召唤我！');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('谢谢，再见！',step5);
                 }
                 var step5=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:100%;text-align:right;font-size:18px">祝你在幻想乡游玩愉快！');
+                    ui.create.dialog('<div><div style="width:100%;margin-left:120px;font-size:18px">祝你在幻想乡游玩愉快！');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     setTimeout(function(){
                         clear();
@@ -39627,7 +39725,6 @@
                 ui.handcards2Container.ontouchmove = ui.click.touchScroll;
                 ui.handcards1Container.style.WebkitOverflowScrolling='touch';
                 ui.handcards2Container.style.WebkitOverflowScrolling='touch';
-
                 if(hasme&&game.me){
                     ui.handcards1=game.me.node.handcards1;
                     ui.handcards2=game.me.node.handcards2;
@@ -39643,6 +39740,7 @@
                     ui.handcards2Container.appendChild(ui.handcards2);
                     // ui.updatehl();
                 }
+                lib.setIntro(ui.handcards1Container);
             },
             card:function(position,info,noclick){
                 var node=ui.create.div('.card',position);
@@ -44747,12 +44845,6 @@
                 if(obj.classList.contains('dialog')) return 'dialog';
             }
         },
-        equipNum:function(card){
-            if(get.type(card)=='equip'){
-                return parseInt(get.subtype(card)[5]);
-            }
-            return 0;
-        },
         objtype:function(obj){
             if(Object.prototype.toString.call(obj) === '[object Array]') return 'array';
             if(Object.prototype.toString.call(obj) === '[object Object]') return 'object';
@@ -45676,6 +45768,7 @@
         },
         // 描述框的显示
         nodeintro:function(node,simple,evt){
+            console.log(node);
             var uiintro=ui.create.dialog('hidden','notouchscroll');
             if(node.classList.contains('player')&&!node.name){
                 return uiintro;
@@ -45697,6 +45790,23 @@
                 uiintro.add(caption);
                 uiintro.add('<div class="text center" style="padding-bottom:5px">'+content+'</div>');
             }
+            else if (node.classList.contains('actcount')){
+                uiintro.addText('灵力值：' + node.parentNode.lili +'/' + node.parentNode.maxlili);
+                uiintro.addText('攻击范围：' + node.parentNode.getAttackRange());
+                if (node.parentNode.lili == 0) uiintro.addText('因灵力为0，不能造成伤害。');
+            }
+            else if (node.classList.contains('count')){
+                uiintro.addText('手牌数：' + node.innerHTML);
+                uiintro.addText('手牌上限：' + node.parentNode.getHandcardLimit());
+            }
+            else if (node.id == 'handcards1'){
+                uiintro.addText('手牌区');
+                uiintro.addText('手牌数：' + game.me.countCards('h'));
+                uiintro.addText('手牌上限：' + game.me.getHandcardLimit());
+            }
+            else if (node.classList.contains('hp')){
+                uiintro.addText('体力值：' + node.parentNode.hp +' / ' + node.parentNode.maxHp);
+            }
             else if(node.classList.contains('player')||node.linkplayer){
                 if(node.linkplayer){
                     node=node.link;
@@ -45710,7 +45820,7 @@
                 */
                 uiintro.add(capt);
 
-			if(lib.characterTitle[node.name]){
+			    if(lib.characterTitle[node.name]){
 					uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
 				}
                 if(node.isUnderControl()){
@@ -45834,7 +45944,7 @@
                     td.innerHTML='距离';
                     tr.appendChild(td);
                     td=document.createElement('td');
-                    td.innerHTML='手牌';
+                    td.innerHTML='手牌/上限';
                     tr.appendChild(td);
                     td=document.createElement('td');
                     td.innerHTML='行动';
@@ -45861,7 +45971,7 @@
                     }
                     tr.appendChild(td);
                     td=document.createElement('td');
-                    td.innerHTML=node.countCards('h');
+                    td.innerHTML=node.countCards('h') + '/' + node.getHandcardLimit();
                     tr.appendChild(td);
                     td=document.createElement('td');
                     td.innerHTML=node.stat.length-1;
@@ -46502,7 +46612,13 @@
                     }
                 }
             }
-	        else if(node.classList.contains('equips')&&ui.arena.classList.contains('selecting')){
+            else if (node.classList.contains('identity')){
+                uiintro.addText(get.translation(node.parentNode.identity + '2') + '身份');
+                uiintro.addText(get.translation(node.parentNode.identity + '_win'));
+                uiintro.addText(get.translation(node.parentNode.identity + '_lose'));
+                if (get.mode() == 'identity') uiintro.addText(get.translation(node.parentNode.identity + '_flip'));
+            }
+	        else if(node.classList.contains('equips')&&ui.arena.classList.contains('selecting') && lib.config.popequip && get.is.phoneLayout()){
 				(function(){
 					uiintro.add('选择装备');
 					uiintro.addSmall(Array.from(node.childNodes),true);
@@ -46554,20 +46670,15 @@
 					},300);
 				}());
 			}
-            else if(node.classList.contains('identity')&&node.dataset.career){
-                var career=node.dataset.career;
-                uiintro.add(get.translation(career));
-                uiintro.add('<div class="text center" style="padding-bottom:5px">'+lib.translate['_'+career+'_skill_info']+'</div>');
+            else if (node.classList.contains('equips')){
+                uiintro.addText('装备区');
+                uiintro.addText('放装备牌的地方。任何装备都可以装。');
+                uiintro.addText('装备牌上限：'+node.parentNode.maxequip+'张');
             }
-            else if(node.classList.contains('skillbar')){
-                if(node==ui.friendBar){
-                    uiintro.add('友方怒气值');
-                    uiintro.add('<div class="text center" style="padding-bottom:5px">'+_status.friendRage+'/100</div>');
-                }
-                else if(node==ui.enemyBar){
-                    uiintro.add('敌方怒气值');
-                    uiintro.add('<div class="text center" style="padding-bottom:5px">'+_status.enemyRage+'/100</div>');
-                }
+            else if (node.classList.contains('judges')){
+                uiintro.addText('技能牌区');
+                uiintro.addText('放技能牌的地方。');
+                uiintro.addText('技能牌上限：'+node.parentNode.maxjudge+'张');
             }
             else if(node.parentNode==ui.historybar){
                 if(node.dead){

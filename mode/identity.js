@@ -1653,6 +1653,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			mingzhong2:"明忠",
 			nei2:"路人",
 			fan2:"自机",
+			zhu_win:'<u>胜利条件：</u>所有自机坠机',
+			zhu_lose:'<u>失败条件：</u>黑幕坠机',
+			zhu_flip:'<u>摊牌效果：</u>获得一张异变牌，并明置之。',
+			zhong_win:'<u>胜利条件：</u>黑幕胜利',
+			zhong_lose:'<u>失败条件：</u>黑幕坠机',
+			zhong_flip:'<u>摊牌效果：</u>令一名角色摸一张牌。',
+			fan_win:'<u>胜利条件：</u>黑幕坠机',
+			fan_lose:'<u>失败条件：</u>所有自机坠机',
+			fan_flip:'<u>摊牌效果：</u>令一名角色选择一项：明置身份牌，或你弃置其一张牌。',
+			nei_win:'<u>胜利条件：</u>无',
+			nei_lose:'<u>失败条件：</u>你坠机',
+			nei_flip:'<u>摊牌效果：</u>获得一张异变牌，并暗置。',
 			random2:"随机",
 			identity_junshi_bg:'师',
 			identity_dajiang_bg:'将',
@@ -2355,6 +2367,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								game.resume();
 							}, 2500);
 						}, 2500);
+					}
+					if (lib.config.gameRecord.general.data['cong'] > 0){
+						player.hp = Infinity;
+						player.maxHp = Infinity;
 					}
 				},
 				content:function(){

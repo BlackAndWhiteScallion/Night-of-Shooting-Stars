@@ -1223,7 +1223,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						var str = '视为【轰！】的牌：';
 						if (storage){
 							for (var i = 0; i < storage.length; i ++){
-								str += get.translation(storage[i]) + ',';
+								if (!str.includes(get.translation(storage[i]))) str += get.translation(storage[i]) + ',';
 							}
 						}
 						return str; 
@@ -1245,14 +1245,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				trigger:{player:'gainBegin'},
 				filter:function(event,player){
-					console.log(event.getParent('zuanshi'));
 					if (!event.getParent('zuanshi')) return false;
 					return true;
 				},
 				content:function(){
 					player.showCards(trigger.cards);
 					for(var i=0;i<trigger.cards.length;i++){
-						player.storage.zuanshi.add(trigger.cards[i].name);
+						player.storage.zuanshi.push(trigger.cards[i].name);
 					}
 					player.markSkill('zuanshi');
 				},

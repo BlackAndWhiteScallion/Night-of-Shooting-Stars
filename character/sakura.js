@@ -1435,7 +1435,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     return game.countPlayer(function(current){
                         if (current != player && current.hp == nmax){
-                            if (get.attitude(player, current) > 0) return -2;
+                            if (get.attitude(player, current)) return -3;
                             else if (current.hp == 1) return 3;
                             else return 2;
                         }
