@@ -5809,7 +5809,7 @@
         saveVideo:function(){
             if(_status.videoToSave){
                 game.export(lib.init.encode(JSON.stringify(_status.videoToSave)),
-                '无名杀 - 录像 - '+_status.videoToSave.name[0]+' - '+_status.videoToSave.name[1]);
+                '流星夜 - 录像 - '+_status.videoToSave.name[0]+' - '+_status.videoToSave.name[1]);
             }
         },
         init:{
@@ -8019,6 +8019,10 @@
                             node.addEventListener('mouseup',upNode);
                             node.addEventListener('mouseleave',upNode);
                         }
+                        else {
+                            node.addEventListener('touchstart', downNode);
+                            node.addEventListener('touchend', upNode);
+                        }
                         if (lib.config.all.mode[i] == 'identity' && lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] > 2){
                             node.style.boxShadow='rgba(125, 90, 178, 0.4) 0 0 3px 5px, rgba(125, 90, 178, 0.4) 0 3px 10px';
                             node.style.background='rgba(125, 90, 178, 0.4)';
@@ -8060,8 +8064,10 @@
                     var date = new Date();
 					if (date.getHours() > 22){
                         list.push('你知道吗，人类最具工作力和灵感的时候，就是三更大半夜！……至少我是这样。让我们来好好的享受这个夜晚吧！');
-                    } else if (date.getHours() > 7 && date.getHours() < 10){
+                    } else if (date.getHours() > 7 && date.getHours() <= 10){
                         list.push('早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………');
+                    } else if (date.getHours() > 10 && date.getHours() <= 12){
+                        list.push('到吃午饭的时间了呢。我今天的午餐是蘑菇汤，你呢？');
                     }
                     setDialog(list.randomRemove());
                     list.add('【轰！】，【疾风骤雨】，【顺手牵羊】都是可以对自己使用的哟，所以，嘿嘿，咱们来想些很奇怪的操作吧？');
@@ -8069,6 +8075,7 @@
                     list.add('闲的没事的话，来支持东方project的正作吧！弹幕战和格斗作都是精品游戏，还有大量的很好看的周边哟！');
                     dialog.onclick = function(){
                         if (list.length == 0){
+                            setDialog('就我一个人说话很累的！你倒是回句话啊？不回你就快点打牌去！');
                         } else {
                             setDialog(list.randomRemove());
                         }
@@ -40140,15 +40147,15 @@
 
                         for(var i=0;i<button.info.length;i++){
                             var node=ui.create.div('.menubutton.videonode.pointerdiv',uiintro.content);
-                            ui.create.div('.menubutton.videoavatar',node).setBackground(button.info[i][1]||'caocao','character');
+                            ui.create.div('.menubutton.videoavatar',node).setBackground(button.info[i][1]||'reimu','character');
                             if(button.info[i][4]==game.wsid){
-                                ui.create.div('.name','<span class="thundertext thunderauto">'+(button.info[i][0]||'无名玩家'),node);node.isme=true;
+                                ui.create.div('.name','<span class="thundertext thunderauto">'+(button.info[i][0]||'黑白葱fans'),node);node.isme=true;
                             }
                             else if(button.info[i][2]){
-                                ui.create.div('.name',(button.info[i][0]||'无名玩家'),node);
+                                ui.create.div('.name',(button.info[i][0]||'黑白葱fans'),node);
                             }
                             else{
-                                ui.create.div('.name','<span style="opacity:0.6">'+(button.info[i][0]||'无名玩家'),node);
+                                ui.create.div('.name','<span style="opacity:0.6">'+(button.info[i][0]||'黑白葱fans'),node);
                             }
                             if(button.info[i][3]){
                             	ui.create.div('.videostatus',node,button.info[i][3].slice(0,80));

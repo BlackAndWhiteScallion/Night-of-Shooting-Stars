@@ -129,6 +129,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            showcase.style.padding='0px';
 	            showcase.style.width='100%';
 	            showcase.style.display='block'
+				showcase.style.overflow='scroll';
 	            showcase.action=info.showcase;
 	            showcase.link=name;
 	            if(info.fullshow){
