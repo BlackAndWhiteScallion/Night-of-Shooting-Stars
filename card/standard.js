@@ -1735,7 +1735,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					var evt=_status.event.getParent();
 					if(evt.target)
 					if(ai.get.damageEffect(evt.target,evt.player,evt.player,'thunder')>0){
-						return 7-ai.get.value(card,evt.player);
+						return ai.get.value(card,evt.player) < 6;
 					}
 					return -1;
 				}).prompt=false;
@@ -1752,34 +1752,34 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				game.broadcast('closeDialog',event.videoId);
 			},
 			ai:{
-					basic:{
-						order:10,
-						value:[3,1],
-						useful:1,
+				basic:{
+					order:10,
+					value:[3,1],
+					useful:1,
+				},
+				result:{
+					player:function(player){
+						return 3;
 					},
-					result:{
-						player:function(player){
-							return 3;
-						},
-						target:function(player,target){
-							if(target.countCards('h')==0) return 0;
-							if(target.lili == 0) return -0.5;
-							if(target.lili == 1) return -2;
-							if(player.countCards('h')<=1) return 0;
-							if(target==player){
-									return -1.5;
-								if(_status.event.skill){
-									var viewAs=get.info(_status.event.skill).viewAs;
-								}
-								return 0;
+					target:function(player,target){
+						if(target.countCards('h')==0) return 0;
+						if(target.lili == 0) return -0.5;
+						if(target.lili == 1) return -2;
+						if(player.countCards('h')<=1) return 0;
+						if(target==player){
+								return -1.5;
+							if(_status.event.skill){
+								var viewAs=get.info(_status.event.skill).viewAs;
 							}
-							return -1.5;
+							return 0;
 						}
-					},
-					tag:{
-						thunderDamage:1,
+						return -1.5;
 					}
+				},
+				tag:{
+					thunderDamage:1,
 				}
+			}
 		},
 		book_skill:{
 			audio:2,
@@ -2106,39 +2106,19 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				},
     				*/
     				check:function(button){
-    					var player=_status.event.player;
-    					var recover=0,lose=1,players=game.filterPlayer();
-    					for(var i=0;i<players.length;i++){
-    						if(!players[i].isOut()){
-    							if(players[i].hp<players[i].maxHp){
-    								if(get.attitude(player,players[i])>0){
-    									if(players[i].hp<2){
-    										lose--;
-    										recover+=0.5;
-    									}
-    									lose--;
-    									recover++;
-    								}
-    								else if(get.attitude(player,players[i])<0){
-    									if(players[i].hp<2){
-    										lose++;
-    										recover-=0.5;
-    									}
-    									lose++;
-    									recover--;
-    								}
-    							}
-    							else{
-    								if(get.attitude(player,players[i])>0){
-    									lose--;
-    								}
-    								else if(get.attitude(player,players[i])<0){
-    									lose++;
-    								}
-    							}
-    						}
-    					}
-    					return (button.link[2]=='wuzhong')?1:-1;
+ 						var player=_status.event.player;
+                        var recover=0,lose=1,players=game.filterPlayer();
+                        for(var i=0;i<players.length;i++){
+                            if(!players[i].isOut()){
+                                if (get.attitude(player, players[i]) >= 0) recover ++;
+                                if (get.attitude(player, players[i]) < 0 ){
+                                    if (players[i].hp == 1 && get.effect(players[i],{name:'juedou'},player,player)) return (button.link[2] == 'juedou')?2:-1;
+                                    lose ++;
+                                }
+                            }
+                        }
+                        if (recover - 2 >= lose) return (button.link[2] == 'reidaisai')?2:-1;
+                        return (button.link[2]=='wuzhong')?1:-1;
     				},
     				backup:function(links,player){
     					return {

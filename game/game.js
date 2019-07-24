@@ -7956,24 +7956,24 @@
                     }
                     var downNode=function(){
                         this.classList.add('glow');
-                        var mode = this.childNodes[1].style.backgroundImage.slice(18,-6); 
-                        if (mode == 'library'){
+                        var mode = this.childNodes[1].style.backgroundImage; 
+                        if (mode.includes('library')){
                             setDialog('啊，这里是阿求的家。阿求家里有很多的藏书，讲述着幻想乡的：幻想乡如何运作啊，现有角色啊，现有卡牌啊，这些看几次都有受益的资料。');
-                        } else if (mode == 'old_identity'){
+                        } else if (mode.includes('old_identity')){
                             setDialog('啊，都已经10年了吗？这无比熟悉的，令人智熄的超级无聊感……');
-                        } else if (mode == 'identity'){
+                        } else if (mode.includes('identity')){
                             setDialog('幻想乡几乎每个月都有大大小小的异变，异变模式就是讲述我们去解决这些异变的故事啦~');
-                        } else if (mode == 'versus'){
+                        } else if (mode.includes('versus')){
                             setDialog('如果只是想轻松的打把牌，对决模式最方便啦。这里支持2v2，3v3，4v4，还有看你喜好自由设定。这些在模式内，通过右上角[选项-对决-游戏模式]就可以设置了。');
-                        } else if (mode == 'connect'){
+                        } else if (mode.includes('connect')){
                             setDialog('你朋友欠你钱了？快把他叫来跟你1v1，把钱从他身上打出来！…………什么，这样做不行吗？');
-                        } else if (mode == 'boss'){
+                        } else if (mode.includes('boss')){
                             setDialog('这里就是传说中的，必须3个人打1个才打的过的超绝极强大魔王！<br>我想跟她们单挑。');
-                        } else if (mode == 'stg'){
+                        } else if (mode.includes('stg')){
                             setDialog('这才是幻想乡的正确战斗方式！以一人之力，在杂鱼群里割草，然后与boss们展开华丽酷炫的弹幕战……啊啊啊，我手痒啦！走走走，闯关去！');
-                        } else if (mode == 'chess'){
+                        } else if (mode.includes('chess')){
                             setDialog('据说这个战棋模式里面有些很神奇的东西，你可以陪我一起去吗？');
-                        } else if (mode == 'brawl'){
+                        } else if (mode.includes('brawl')){
                             setDialog('打牌打累了，就搞点好玩的小场景休闲一下吧，打子规可是最最最减压的事情啦！而且，还可以自己创建场景玩哟。我就做了一个呢，是不是很棒⭐。');
                         }
                     }
@@ -46888,6 +46888,7 @@
 			var aii=get.info(card).ai;
             if(aii&&aii.value) value=aii.value;
             else if(aii&&aii.basic) value=aii.basic.value;
+            if (get.bonus(card) > 0) value += 2;
             if(value==undefined) return 0;
             if(player==undefined||get.itemtype(player)!='player') player=_status.event.player;
             // geti返还的是角色手里这张卡的数量/和位置
@@ -47184,11 +47185,12 @@
             // 来源不能打出伤害
             if (player.hasSkillTag('nodamagesource')) return 0;
             // 对无限体力的角色攻击没有意义
-            if (target.hp == Infinity) return 0; 
+            if (target.hp == Infinity && nature != 'thunder') return -10; 
             // 对0灵力的角色打出灵击伤害没有意义
-            if (target.lili == 0 && nature == 'thunder') return 0; 
+            if (target.lili == 0 && nature == 'thunder') return 0;
+            // 打灵力太高的角色也没有意义了 （其实这里应该检测符卡技消耗的，但是我懒） 
+            if (target.lili > 3 && nature == 'thunder') return 0;
             var eff=get.effect(target,{name:name},player,viewer);
-            // 护甲究竟是什么鬼呢……
             return eff;
         },
         recoverEffect:function(target,player,viewer){

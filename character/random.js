@@ -20,7 +20,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			mordred:['female','2',4,['niguang','ClarentBloodArthur'],["unseen","forbidai"]],
 			twob:['female', '3', 4, ['qiyue','yueding']],
 			kuro:['female', '1', 3, ['touying','wenmo','heyi']],
-			daria:['female', '3', 3, ['zhuanhuan', 'moli', 'chaoyue']],
+			daria:['female', '1', 3, ['zhuanhuan', 'moli', 'chaoyue']],
 			rylai:['female', '3', 3, ['tanxue', 'bingfeng', 'aoshu']],
 			//jack:['female', '3', 3, ['wulin', 'yejiang', 'maria']],
 		},
@@ -1433,7 +1433,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     check:function(button){
                         var player=_status.event.player;
-                        return get.value({name:button.link[2]}) - 5 && player.countCards('he') > 2;
+                        return get.value({name:button.link[2]}) >= 6 && player.countCards('he') >= 3 && !player.countCards('he', {name:button.link[2]});
                     },
                     backup:function(links,player){
                         return {
@@ -1449,6 +1449,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             onuse:function(result,player){
                             	if (get.type(result.card.name) == 'trick') player.storage.muqi.push(result.card.name);
                             },
+							check:function(card){
+								return get.value(card) < 6;
+							},
                         }
                     },
                     prompt:function(links,player){
@@ -1460,7 +1463,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 ai:{
                 	save:true,
-                    order:4,
+                    order:2,
                     result:{
                         player:function(player){
                             return 1;
@@ -1553,7 +1556,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     check:function(button){
                         var player=_status.event.player;
-                        return get.value({name:button.link[2]}) - 4;
+                        return get.value({name:button.link[2]}) > 4;
                     },
                     backup:function(links,player){
                         return {
@@ -1564,6 +1567,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             selectCard:1,
                             audio:2,
                             popname:true,
+							check:function(card){
+								return get.value(card) < 6 && player.countCards('j') < 3;
+							},
   							content:function(event,player){
   								for(var i=0;i<ui.skillPile.childNodes.length;i++){
 		                          if (ui.skillPile.childNodes[i].name == event.getParent().getParent()._result.links[0][2]){
@@ -1635,7 +1641,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     filter:function(button,player){
                     	return _status.event.getParent().filterCard({name:button.link[2]},player) && !player.storage.kedan.contains(button.link[2]);
-                        //return lib.filter.filterCard({name:button.link[2]},player,_status.event.getParent()) && !player.storage.muqi.contains(button.link[2]);
                     },
                     check:function(button){
                         var player=_status.event.player;
@@ -2689,6 +2694,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             viewAs:{name:links[0][2]},
                             onuse:function(result,player){
                             	player.loselili();
+								if (!player.storage.counttrigger){
+									player.addSkill('counttrigger');
+									player.storage.counttrigger={};
+								}
 								if(!player.storage.counttrigger['touying_target']){
 									player.storage.counttrigger['touying_target']=1;
 								}
@@ -2767,7 +2776,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.finish();
 						return;
 					}
-					player.chooseCard('吻魔：选择一张牌展示给'+get.translation(target),true).ai=function(card){
+					player.chooseCard('吻魔：选择一张牌展示给'+get.translation(target),true,'hej').ai=function(card){
 						if(_status.event.getRand()<0.5) return Math.random();
 						return get.value(card);
 					};
@@ -2874,6 +2883,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return target.countCards('hej');
 				},
 				filterCard:true,
+				position:'hej',
 				content:function(){
 					player.discardPlayerCard('hej', target);
 				},

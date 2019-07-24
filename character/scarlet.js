@@ -9,7 +9,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             koakuma:['female','4',3,['qishu','anye']],
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
             sakuya:['female','2',3,['huanzang','shijing','world']],
-            remilia:['female','5',4,['mingyun','feise','feise_start']],
+            remilia:['female','5',4,['mingyun','feise']],
             flandre:['female','1',4,['kuangyan','zhihou']],
 		},
 		characterIntro:{
@@ -1372,7 +1372,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mingyun_audio3:'…………喂，等下，这什么牌啊！',
             feise:'绯色幻想乡',
             feise2:'绯色幻想乡',
-            feise_info:'符卡技（4）<永续><u>你的第一回合开始时，若灵力足够：须发动此符卡；</u>你和与你同阵营的角色攻击范围+3；其他角色的结束阶段，若其对其以外的角色使用过牌，你可以：对其造成1点弹幕伤害。',
+            feise_info:'符卡技（4）<永续>你和与你同阵营的角色攻击范围+3；其他角色的结束阶段，若其对其以外的角色使用过牌，你可以：对其造成1点弹幕伤害。',
             feise_audio1:'「紅色の幻想郷」！',
             feise_audio2:'在如此鲜红的月亮下，我真的会杀掉你哦？',
             remilia_die:'唔唔唔……',
