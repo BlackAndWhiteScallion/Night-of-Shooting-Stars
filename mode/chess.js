@@ -3500,16 +3500,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				var i;
     				var list=[];
     				var bosslist=[];
-    				var jiangelist=[];
     				event.list=list;
     				for(i in lib.character){
     					if(lib.character[i][4].contains('chessboss')){
     						bosslist.push(i);continue;
-    					}
-    					else if(lib.character[i][4].contains('jiangeboss')){
-    						// if(get.config('chess_jiange')) jiangelist.push(i);
-    						continue;
-    					}
+    					
     					if(i.indexOf('treasure_')==0) continue;
     					if(lib.character[i][4].contains('minskin')) continue;
     					if(lib.config.forbidchess.contains(i)) continue;
@@ -3525,9 +3520,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					_status.event.dialog.content.childNodes[1].innerHTML=
     					ui.selected.buttons.length+'/'+_status.event.selectButton();
     				};
-    				var jiange=ui.create.div('.buttons');
-    				event.jiange=jiange;
-    				var jiangebuttons=ui.create.buttons(jiangelist,'character',jiange);
 
     				var clickedBoss=false;
     				var clickBoss=function(){
@@ -3568,28 +3560,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					addToButton();
     				};
 
-    				var clickedJiange=false;
-    				var clickJiange=function(){
-    					clickedJiange=true;
-    					if(this.classList.contains('glow2')){
-    						this.classList.remove('glow2');
-    					}
-    					else{
-    						this.classList.add('glow2');
-    					}
-    					addToButton();
-    				};
-
-
-    				for(var i=0;i<bossbuttons.length;i++){
-    					bossbuttons[i].classList.add('noclick');
-    					bossbuttons[i].listen(clickBoss);
-    				}
-    				for(var i=0;i<jiangebuttons.length;i++){
-    					jiangebuttons[i].classList.add('noclick');
-    					jiangebuttons[i].listen(clickJiange);
-    				}
-
     				if(get.config('reward')==undefined) game.saveConfig('reward',1,true);
     				if(get.config('punish')==undefined) game.saveConfig('punish','无',true);
     				if(get.config('battle_number')==undefined) game.saveConfig('battle_number',3,true);
@@ -3606,10 +3576,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				if(bossbuttons.length){
     					dialog.add('挑战魔王');
     					dialog.add(bosses);
-    				}
-    				if(jiangebuttons.length){
-    					dialog.add('守卫剑阁');
-    					dialog.add(jiange);
     				}
     				event.addConfig=function(dialog){
     					dialog.add('选项');
@@ -3654,9 +3620,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				for(var i=0;i<bosses.childNodes.length;i++){
     					bosses.childNodes[i].classList.add('squarebutton');
     				}
-    				for(var i=0;i<jiange.childNodes.length;i++){
-    					jiange.childNodes[i].classList.add('squarebutton');
-    				}
     				ui.control.style.transition='all 0s';
 
     				if(get.is.phoneLayout()){
@@ -3695,15 +3658,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     						if(event.asboss){
     							event.asboss.close();
     							delete event.asboss;
-    						}
-    					}
-    					if(clickedJiange){
-    						clickedJiange=false;
-    					}
-    					else{
-    						for(var i=0;i<jiange.childElementCount;i++){
-    							jiange.childNodes[i].classList.remove('forbidden');
-    							jiange.childNodes[i].classList.remove('glow2');
     						}
     					}
     					var dialog=_status.event.dialog;
@@ -3770,10 +3724,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					// if(bossbuttons.length){
     					// 	dialog.add('挑战魔王');
     					// 	dialog.add(bosses);
-    					// }
-    					// if(jiangebuttons.length){
-    					// 	dialog.add('守卫剑阁');
-    					// 	dialog.add(jiange);
     					// }
     					// event.addConfig(dialog);
     					// dialog.open();
@@ -3861,8 +3811,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				ui.control.style.transition='';
 
     				var glows=event.bosses.querySelectorAll('.glow');
-    				var glows2=event.jiange.querySelectorAll('.glow2');
-    				if(!glows.length&&!glows2.length){
+    				if(!glows.length){
     					if(!get.config('single_control')){
     						var addnum;
     						if(get.config('additional_player')){

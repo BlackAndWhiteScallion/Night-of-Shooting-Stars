@@ -4970,8 +4970,6 @@
                                 map.ladder_monthly.hide();
                                 map.ladder_reset.hide();
                             }
-                            map.enable_all.show();
-                            map.enable_all_cards_four.show();
                             map.four_assign.show();
                             map.four_phaseswap.show();
                             map.expand_dialog.show();
@@ -4989,22 +4987,13 @@
                             map.expand_dialog.hide();
                             map.fouralign.hide();
                         }
-                        if(config.versus_mode=='three'||config.versus_mode=='one'){
-                            map.enable_all_three.show();
-                            map.enable_all_cards.show();
-                        }
-                        else{
-                            map.enable_all_three.hide();
-                            map.enable_all_cards.hide();
-                        }
                         if(config.versus_mode=='two'||config.versus_mode=='endless'||
-                            config.versus_mode=='three'||config.versus_mode=='one'||config.versus_mode=='siguo'){
+                            config.versus_mode=='three'||config.versus_mode=='one'){
                             map.free_choose.show();
                         }
                         else{
                             map.free_choose.hide();
                         }
-                        map.double_character_jiange.hide();
                         if(config.versus_mode=='two'){
                             map.replace_handcard_two.show();
                             map.replace_character_two.show();
@@ -5017,7 +5006,7 @@
                             map.two_assign.hide();
                             map.two_phaseswap.hide();
                         }
-                        if(config.versus_mode=='two'||config.versus_mode=='siguo'||config.versus_mode=='four'){
+                        if(config.versus_mode=='two'||config.versus_mode=='four'){
                             if(config.versus_mode=='four'&&(config.four_assign||config.four_phaseswap)){
                                 map.change_identity.hide();
                             }
@@ -5028,20 +5017,12 @@
                         else{
                             map.change_identity.hide();
                         }
-                        if(config.versus_mode=='siguo'){
-                            map.siguo_character.show();
-                        }
-                        else{
-                            map.siguo_character.hide();
-                        }
                     },
                     versus_mode:{
                         name:'游戏模式',
                         init:'two',
                         item:{
                             standard:'自由设定',
-                            //jiange:'剑阁',
-                            //siguo:'四国',
                             //one:'<span style="display:inline-block;width:100%;text-align:center">1v1</span>',
                             two:'<span style="display:inline-block;width:100%;text-align:center">2v2</span>',
                             three:'3v3统率',
@@ -5173,11 +5154,6 @@
                         },
                         frequent:true,
                     },
-                    double_character_jiange:{
-                        name:'双将模式',
-                        init:false,
-                        frequent:true,
-                    },
                     replace_handcard_two:{
                         name:'末位可换牌',
                         init:true,
@@ -5194,16 +5170,6 @@
                         name:'默认展开选将框',
                         intro:'选将框打开时直接显示全部角色（可能使游戏在开始时卡顿）',
                         init:false,
-                    },
-                    siguo_character:{
-                        name:'专属角色出场率',
-                        init:'increase',
-                        item:{
-                            increase:'大概率',
-                            normal:'默认概率',
-                            off:'不出现',
-                        },
-                        frequent:true
                     },
                     /*
                     ban_weak:{
@@ -7946,6 +7912,7 @@
                         }
                         splash.delete(1000);
                         dialog.delete();
+                        text.delete();
                         delete window.inSplash;
                         delete ui.dialog;
                         window.resetGameTimeout=setTimeout(lib.init.reset,5000);
@@ -7968,7 +7935,7 @@
                         } else if (mode.includes('connect')){
                             setDialog('你朋友欠你钱了？快把他叫来跟你1v1，把钱从他身上打出来！…………什么，这样做不行吗？');
                         } else if (mode.includes('boss')){
-                            setDialog('这里就是传说中的，必须3个人打1个才打的过的超绝极强大魔王！<br>我想跟她们单挑。');
+                            setDialog('这里就是传说中的，必须3个人打1个才打的过的超绝超强超无敌的究极绝望大魔王！<br><br>……我想跟她们单挑。');
                         } else if (mode.includes('stg')){
                             setDialog('这才是幻想乡的正确战斗方式！以一人之力，在杂鱼群里割草，然后与boss们展开华丽酷炫的弹幕战……啊啊啊，我手痒啦！走走走，闯关去！');
                         } else if (mode.includes('chess')){
@@ -7983,7 +7950,7 @@
                     var setDialog=function(text){
                         var date = new Date();
                         if (date.getHours() > 1 && date.getHours() < 8) text = 'Zzzzzz……';
-                        dialog.innerHTML = '<div><div style="width:450px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;writing-mode:horizontal-tb">'+text+'</div>';
+                        dialog.innerHTML = '<div><div style="width:500px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;overflow:scroll;display:block;">'+text+'</div>';
                         ui.create.div('.avatar',dialog).setBackground('marisa','character');
                     }
                     // 这里是开始界面
@@ -8035,7 +8002,7 @@
                     }
                     var dialog = ui.create.div('.avatar', document.body);
                     dialog.style.height = '120px';
-                    dialog.style.width = '600px';
+                    dialog.style.width = '650px';
                     dialog.style.left = 'calc(25%)';
                     dialog.style.top = 'calc(75%)';
                     dialog.style.position = 'absolute';
@@ -8047,6 +8014,9 @@
                                 '哟，你来了啊⭐ 今天过的开心吗？有没有碰上什么好事~？快告诉我！',
                                 '对哪里有问题的话，右键点一下就行啦。这个界面的模式也好，游戏里，点一下自己手牌，点一下自己身份也行。很多可以点的地方啦。',
                                 ];
+                    var text = ui.create.div('', '点击继续', document.body);
+                    text.style.top = 'calc(75% + 120px)';
+                    text.style.left = 'calc(25% + 560px)';
                     if (!lib.config.gameRecord.stg){
                         list.add('都来幻想乡了，还不挑战一下红魔乡算个什么事嘛。走走走，去闯关模式！我可是在那里大放光彩的哟⭐');
                     }
@@ -8062,24 +8032,37 @@
                         list.add('阿求又邀请我们去玩了。场景下的稗田教室里。我们一起去陪陪她吧？');
                     }
                     var date = new Date();
-					if (date.getHours() > 22){
-                        list.push('你知道吗，人类最具工作力和灵感的时候，就是三更大半夜！……至少我是这样。让我们来好好的享受这个夜晚吧！');
-                    } else if (date.getHours() > 7 && date.getHours() <= 10){
-                        list.push('早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………');
-                    } else if (date.getHours() > 10 && date.getHours() <= 12){
-                        list.push('到吃午饭的时间了呢。我今天的午餐是蘑菇汤，你呢？');
+                    if (date.getMonth() == 11){
+                        setDialog('圣诞节快乐！那个红白色的家伙，今年也是买不起礼物送给我们呢。作为补偿，一会儿陪我一起去调戏她玩，怎么样？');
+                    } else if (date.getMonth() == 1 && date.getDate() == 14){
+                        setDialog('情人节快乐！<br>给，这是义理巧克力！……别这么沮丧的看着我啊，我的本命巧克力如果不是已经给别人了，就会给你了呢。');
+                    } else if (date.getMonth() == 5 && date.getDate() == 1){
+                        setDialog('儿童节快乐！我准备了气球，蛋糕，和……你说你已经不是儿童了？你有1000岁吗？没有？那你就是个儿童啦，来一起庆祝吧！');
+                    } else if (date.getMonth() == 3 && date.getDate() == 1){    
+                        setDialog('愚人节快乐！我和另外两位老师一起，给你准备了个 大·惊·喜 哟⭐');
+                    } else if (date.getHours() > 22){
+                        setDialog('你知道吗，人类最具工作力和灵感的时候，就是三更大半夜！……至少我是这样。让我们来好好的享受这个夜晚吧！');
+                    } else if (date.getHours() >= 7 && date.getHours() <= 8){
+                        setDialog('早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………');
+                    } else if (date.getHours() >= 11 && date.getHours() <= 12){
+                        setDialog('到吃午饭的时间了呢。我今天的午餐是蘑菇汤，你呢？');
+                    } else if (location.hostname){
+                        setDialog('网页版根据你的网速，可能会有图片或是音乐加载的比较慢。建议先去图鉴打开[角色一览]和[卡牌一览]预先加载下。');
+                    } else {
+                        setDialog(list.randomRemove());
                     }
-                    setDialog(list.randomRemove());
                     list.add('【轰！】，【疾风骤雨】，【顺手牵羊】都是可以对自己使用的哟，所以，嘿嘿，咱们来想些很奇怪的操作吧？');
-                    list.add('<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">你有看这期的“流星画园”吗？超级好玩的啦。在微信公众号上就可以找到哟。</a>');
+                    list.add('你有看这期的“流星画园”吗？超级好玩的啦。<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">在微信公众号上就可以找到哟。</a>');
                     list.add('闲的没事的话，来支持东方project的正作吧！弹幕战和格斗作都是精品游戏，还有大量的很好看的周边哟！');
                     dialog.onclick = function(){
                         if (list.length == 0){
                             setDialog('就我一个人说话很累的！你倒是回句话啊？不回你就快点打牌去！');
+                            text.delete();
                         } else {
                             setDialog(list.randomRemove());
                         }
                     }
+                    text.onclick = dialog.onclick;
                     if(lib.config.mousewheel){
                         splash.onmousewheel=ui.click.mousewheel;
                     }

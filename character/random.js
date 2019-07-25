@@ -2789,8 +2789,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return;
 					}
 					target.chooseCard('吻魔：选择一张牌与'+get.translation(player)+'的'+get.translation(event.card2)+
-					'交换<br>相同颜色的话，'+get.translation(player)+'获得1点灵力',true).ai=function(card){
-						return get.color(card) == get.color(event.card2);
+					'交换<br>相同颜色的话，'+get.translation(player)+'获得1点灵力',true, 'hej').ai=function(card){
+						if (get.attitude(target, player) >= 0) return get.color(card) == get.color(event.card2);
+						else return get.color(card) != get.color(event.card2);
 					};
 					"step 2"
 					if (result.bool){
