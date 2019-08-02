@@ -3504,7 +3504,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				for(i in lib.character){
     					if(lib.character[i][4].contains('chessboss')){
     						bosslist.push(i);continue;
-    					
+						}
     					if(i.indexOf('treasure_')==0) continue;
     					if(lib.character[i][4].contains('minskin')) continue;
     					if(lib.config.forbidchess.contains(i)) continue;
@@ -3559,6 +3559,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					}
     					addToButton();
     				};
+
+					for(var i=0;i<bossbuttons.length;i++){
+    					bossbuttons[i].classList.add('noclick');
+    					bossbuttons[i].listen(clickBoss);
+    				}
 
     				if(get.config('reward')==undefined) game.saveConfig('reward',1,true);
     				if(get.config('punish')==undefined) game.saveConfig('punish','无',true);
@@ -3712,21 +3717,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					_status.event.dialog.content.insertBefore(buttons,node);
     					buttons.animate('start');
     					node.remove();
-
-    					// _status.event.dialog.close();
-    					// var dialog=ui.create.dialog('选择出场角色','hidden');
-    					// _status.event.dialog=dialog;
-    					// dialog.classList.add('fullwidth');
-    					// dialog.classList.add('fullheight');
-    					// dialog.classList.add('fixed');
-    					// dialog.add('0/'+_status.event.selectButton());
-    					// dialog.add([list.slice(0,parseInt(get.config('battle_number'))*4+parseInt(get.config('replace_number'))+5),'character']);
-    					// if(bossbuttons.length){
-    					// 	dialog.add('挑战魔王');
-    					// 	dialog.add(bosses);
-    					// }
-    					// event.addConfig(dialog);
-    					// dialog.open();
     					game.uncheck();
     					game.check();
     				};

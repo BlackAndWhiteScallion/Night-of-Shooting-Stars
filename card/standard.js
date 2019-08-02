@@ -340,16 +340,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				result:{
 					target:function(player,target){
-						var es=target.get('e');
-						var nh=target.num('h');
-						/*
-						var noe=(es.length==0||target.hasSkillTag('noe'));
-						var noe2=(es.length==1&&es[0].name=='baiyin'&&target.hp<target.maxHp);
-						var noh=(nh==0||target.hasSkillTag('noh'));
-						if(noh&&noe) return 0;
-						if(noh&&noe2) return 0.01;
-						*/
-						if(ai.get.attitude(player,target)<=0) return (target.num('he'))?-1.5:1.5;
+						if(ai.get.attitude(player,target)<=0) return (target.num('hej'))?-1.5:1;
 						return -1.5;
 					},
 				},
@@ -549,9 +540,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			type:'trick',
 			subtype:'attack',
 			enable:true,
-			filterTarget:function(card,player,target){
-				return target!=player;
-			},
 			content:function(){
 				"step 0"
 				if(event.turn==undefined) event.turn=target;
@@ -616,8 +604,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						if(ai.get.damageEffect(target,player,target)>0&&ai.get.attitude(player,target)>0&&ai.get.attitude(target,player)>0){
 							return 0;
 						}
-						var hs1=target.get('h','sha');
-						var hs2=player.get('h','sha');
+						var hs1=target.countCards('h', {name:'sha'});
+						var hs2=player.countCards('h',{name:'sha'});
 						if(hs1.length>hs2.length+1){
 							return -2;
 						}
@@ -1744,9 +1732,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(result.bool){
 					target.damage('thunder');
 				}
-				else{
-					target.addTempSkill('huogong2','phaseBegin');
-				}
 				event.dialog.close();
 				game.addVideo('cardDialog',null,event.videoId);
 				game.broadcast('closeDialog',event.videoId);
@@ -1778,6 +1763,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 				tag:{
 					thunderDamage:1,
+					order:7,
 				}
 			}
 		},
@@ -2263,6 +2249,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				var players = game.filterPlayer();
 				for (var i = 0; i < players.length; i++){
 					players[i].removeSkill('bingyu1');
+					players[i].node.framebg.dataset.auto=players[i].storage.bingyu;
+					delete players[i].storage.bingyu;
 				}
 				player.removeSkill('bingyu2');
 			},
@@ -2589,9 +2577,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						player:function(player,target){
 							return game.countPlayer(function(current){
 								if (current.hp == current.maxHp) return 0;
-								if (ai.get.attitude(player,current)< 0) return -2;
-								if (ai.get.attitude(player,current) >= 0) return 2;
-								return 1;
+								if (ai.get.attitude(player,current) <= 0) return -2;
+								if (ai.get.attitude(player,current) > 0) return 2;
+								return 0;
 							});
 						}
 					},
@@ -2623,7 +2611,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                             player.gain(ui.skillPile.childNodes[i]);
                             break;
                           } else if (i == ui.skillPile.childNodes.length -1){
-                              result.targets[0].say('没找到【潜行】');                      
+                            player.say('没找到【潜行】');                      
                           }
                         }
 					player.logSkill('_jingxia');
@@ -2751,6 +2739,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				var players=game.filterPlayer();
 				for(var i=0;i<players.length;i++){
 					players[i].removeSkill('lingbi1');
+					players[i].node.framebg.dataset.auto=players[i].storage.lingbi;
+					delete players[i].storage.lingbi;
 				}
 				player.removeSkill('lingbi2');
 				player.storage.lingbi2 = [];
@@ -2881,7 +2871,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		wuzhong_bg:'生',
 		wuzhong_info:'出牌阶段，对你使用：目标摸两张牌。</br><u>强化(-1)：再摸一张技能牌。</u>',
 		juedou:'决斗',
-		juedou_info:'出牌阶段，对一名其他角色使用。由其开始，其与你轮流打出一张【轰！】，直到其中一方未打出【轰！】为止。未打出【轰！】的一方受到另一方对其造成的1点弹幕伤害。',
+		juedou_info:'出牌阶段，对一名角色使用。由其开始，其与你轮流打出一张【轰！】，直到其中一方未打出【轰！】为止。未打出【轰！】的一方受到另一方对其造成的1点弹幕伤害。',
 		juedou_bg:'斗',
 		shunshou:'顺手牵羊',
 		shunshou_info:'出牌阶段，对攻击范围内的一名角色使用：获得其区域内的一张牌，然后若你本回合没有对其使用过牌，你消耗1点灵力。',

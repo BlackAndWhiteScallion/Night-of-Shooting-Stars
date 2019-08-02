@@ -1912,6 +1912,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			geying:{
 				audio:2,
 				group:['geying1','geying2'],
+				usable:3,
 				trigger:{player:'loseAfter'},
 				filter:function(event,player){
 					return player.countCards('h') > 0;
@@ -3258,7 +3259,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			geying:'歌莺',
 			geying1:'歌莺（重铸明置牌）',
 			geying2:'歌莺（重铸暗置牌）',
-			geying_info:'你失去牌后，可以明置或暗置一张手牌；准备阶段，你可以重铸所有明置牌；结束阶段，你可以重铸所有暗置手牌。',
+			geying_info:'一回合三次，你失去牌后，可以明置或暗置一张手牌；准备阶段，你可以重铸所有明置牌；结束阶段，你可以重铸所有暗置手牌。',
 			wuyan:'舞燕',
 			wuyan_info:'所有角色根据你明置牌中数量最多的花色获得以下效果：<br>黑桃：准备阶段，获得1点灵力；<br>梅花：摸牌阶段，额外摸一张牌；<br>红桃：一回合一次，出牌阶段，可以将一张牌当作【葱】使用；<br>方片：弃牌阶段开始时，可以交给你一张牌。',
 			wuyan1_bg:'♣',

@@ -21992,14 +21992,6 @@
                 ai:{
                     effect:{
                         player:function(card,player,target,current){
-                            //console.log(card);
-                            /*
-                            console.log(card);
-                            console.log(get.bonus(card));
-                            console.log(player);
-                            console.log(target);
-                            console.log(current);
-                            */
                             if (get.bonus(card) < 0){
                                 if (player.lili == 0) return [1, 1];
                                 if (player.isTurnedOver()){
@@ -38947,7 +38939,7 @@
                 ui.system1=ui.create.div('#system1',ui.system);
                 ui.system2=ui.create.div('#system2',ui.system);
 
-                ui.replay=ui.create.system('重来',game.reload,true);
+                ui.replay=ui.create.system('菜单',game.reload,true);
                 ui.replay.id='restartbutton';
                 ui.config2=ui.create.system('选项',ui.click.config);
                 ui.config2.style.backgroundImage = 'linear-gradient(rgba(0, 133, 255, 0.8), rgba(0, 133, 255, 0.8))';
@@ -39150,7 +39142,7 @@
                 ui.shortcut=ui.create.div('#shortcut.hidden',ui.window);
                 ui.shortcut.listen(ui.click.shortcut);
                 ui.create.div(ui.shortcut,function(e){e.stopPropagation()});
-                ui.create.div('.menubutton.round','<span>重来</span>',ui.shortcut,game.reload).dataset.position=1;
+                ui.create.div('.menubutton.round','<span>菜单</span>',ui.shortcut,game.reload).dataset.position=1;
                 ui.create.div('.menubutton.round','<span>退出</span>',ui.shortcut,game.exit).dataset.position=3;
                 ui.create.div('.menubutton.round','<span>记录</span>',ui.shortcut,ui.click.pause).dataset.position=4;
                 ui.shortcut.autobutton=ui.create.div('.menubutton.round','<span>托管</span>',ui.shortcut,ui.click.auto);
@@ -44860,6 +44852,7 @@
 			if(typeof obj=='string') obj={name:obj};
 			if(typeof obj!='object') return;
 			if(!lib.card[obj.name]) return;
+            if(!lib.card[obj.name].subtype) return null;
 			return lib.card[obj.name].subtype;
 		},
 		equiptype:function(card){
@@ -45171,6 +45164,7 @@
              replace(/觉醒技/g,'<span style="color:#800080">觉醒技</span>').
              replace(/一回合一次/g,'<span class="greentext">一回合一次</span>').
              replace(/一回合两次/g,'<span class="greentext">一回合两次</span>').
+             replace(/一回合三次/g,'<span class="greentext">一回合三次</span>').
              //replace(/符卡技/g,'<span class="firetext">符卡技</span>').
              replace(/符卡技（X）/g,'<span class="firetext">符卡技（X）</span>').
              replace(/符卡技（0）/g,'<span class="firetext">符卡技（0）</span>').
@@ -45787,15 +45781,6 @@
                 uiintro.addText('攻击范围：' + node.parentNode.getAttackRange());
                 if (node.parentNode.lili == 0) uiintro.addText('因灵力为0，不能造成伤害。');
             }
-            else if (node.classList.contains('count')){
-                uiintro.addText('手牌数：' + node.innerHTML);
-                uiintro.addText('手牌上限：' + node.parentNode.getHandcardLimit());
-            }
-            else if (node.id == 'handcards1'){
-                uiintro.addText('手牌区');
-                uiintro.addText('手牌数：' + game.me.countCards('h'));
-                uiintro.addText('手牌上限：' + game.me.getHandcardLimit());
-            }
             else if (node.classList.contains('hp')){
                 uiintro.addText('体力值：' + node.parentNode.hp +' / ' + node.parentNode.maxHp);
             }
@@ -46386,6 +46371,15 @@
                     }
                     uiintro.add(ui.create.div('.placeholder.slim'));
                 }
+            }
+            else if (node.classList.contains('count')){
+                uiintro.addText('手牌数：' + node.innerHTML);
+                uiintro.addText('手牌上限：' + node.parentNode.getHandcardLimit());
+            }
+            else if (node.id == 'handcards1'){
+                uiintro.addText('手牌区');
+                uiintro.addText('手牌数：' + game.me.countCards('h'));
+                uiintro.addText('手牌上限：' + game.me.getHandcardLimit());
             }
             else if(node.classList.contains('character')){
                 var character=node.link;
