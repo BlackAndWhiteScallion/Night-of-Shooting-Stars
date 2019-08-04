@@ -540,6 +540,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			type:'trick',
 			subtype:'attack',
 			enable:true,
+                        selectTarget:1,
 			content:function(){
 				"step 0"
 				if(event.turn==undefined) event.turn=target;
