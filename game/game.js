@@ -39724,7 +39724,7 @@
                     ui.handcards2Container.appendChild(ui.handcards2);
                     // ui.updatehl();
                 }
-                lib.setIntro(ui.handcards1Container);
+                if (!lib.device) lib.setIntro(ui.handcards1Container);
             },
             card:function(position,info,noclick){
                 var node=ui.create.div('.card',position);
@@ -46376,7 +46376,7 @@
                 uiintro.addText('手牌数：' + node.innerHTML);
                 uiintro.addText('手牌上限：' + node.parentNode.getHandcardLimit());
             }
-            else if (node.id == 'handcards1' && lib.config.layout!='mobile'){
+            else if (node.id == 'handcards1'){
                 uiintro.addText('手牌区');
                 uiintro.addText('手牌数：' + game.me.countCards('h'));
                 uiintro.addText('手牌上限：' + game.me.getHandcardLimit());
