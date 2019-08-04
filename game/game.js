@@ -46376,7 +46376,7 @@
                 uiintro.addText('手牌数：' + node.innerHTML);
                 uiintro.addText('手牌上限：' + node.parentNode.getHandcardLimit());
             }
-            else if (node.id == 'handcards1'){
+            else if (node.id == 'handcards1' && lib.config.layout!='mobile'){
                 uiintro.addText('手牌区');
                 uiintro.addText('手牌数：' + game.me.countCards('h'));
                 uiintro.addText('手牌上限：' + game.me.getHandcardLimit());
