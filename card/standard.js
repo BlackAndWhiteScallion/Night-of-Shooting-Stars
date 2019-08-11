@@ -540,8 +540,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			type:'trick',
 			subtype:'attack',
 			enable:true,
+<<<<<<< HEAD
 			selectTarget:1,
 			filterTarget:function(){
+=======
+                        selectTarget:1,
+                        filterTarget:function(card,player,target){
+>>>>>>> 9ceeb4cba91b33ec1846b296a6c687ca054a457d
 				return true;
 			},
 			content:function(){
