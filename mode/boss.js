@@ -398,7 +398,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				game.addRecentCharacter(game.me.name);
 			}
 			event.trigger('gameStart');
-			game.gameDraw(game.boss,game.bossinfo.gameDraw||8);
+			game.gameDraw(game.boss,game.bossinfo.gameDraw||4);
 			game.bossPhaseLoop();
 			setTimeout(function(){
 				ui.updatehl();
@@ -429,7 +429,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
 				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'shen'],
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','skipfirst','boss_damagecount'],['boss'],'shu','10000'],
-				boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
+				//boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
+				boss_saitama:['male','0',Infinity,['punch','skipfirst','boss_turncount'],['boss'],'shen'],
 			},
 		},
 		characterIntro:{
@@ -1019,7 +1020,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			boss_saitama:{
-				loopType:1,
+				loopType:2,
 				chongzheng:false,
 				init:function(){
                     if (ui.cardPileNumber.style.display=='none'){
@@ -1037,7 +1038,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},400);
 				},
 				gameDraw:function(player){
-					return player==game.boss?8:4;
+					return player==game.boss?4:4;
 				},
 			},
 			global:{
