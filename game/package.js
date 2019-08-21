@@ -34,7 +34,6 @@ window.noname_package={
         brawl:'场景',
     },
     background:{
-        shengshi_bg:'夜空',
         tianjie:'天界',
         shenshe:'神社',
         tiangou:'山水',

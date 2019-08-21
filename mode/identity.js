@@ -254,6 +254,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			// 这个是设置布局的好像
 			// 不太对吧，那联机模式就不选将了？？
 			"step 4"
+			if (lib.config.auto_auto && !_status.auto){
+				ui.click.auto();
+			}
 			if(_status.connectMode){
 				// 是这里的问题吗？
 				_status.mode=lib.configOL.identity_mode;

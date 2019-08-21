@@ -540,8 +540,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			type:'trick',
 			subtype:'attack',
 			enable:true,
-                        selectTarget:1,
-                        filterTarget:function(card,player,target){
+            selectTarget:1,
+            filterTarget:function(card,player,target){
 				return true;
 			},
 			content:function(){
@@ -680,7 +680,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				result:{
 					target:function(player,target){
 						if (!target.identityShown) return -1;
-						if(ai.get.attitude(player,target)<=0) return (target.num('h'))?-1.5:-0.5;
+						if(ai.get.attitude(player,target)<=0) return (target.num('h'))?-1.5:0;
 						return -get.attitude(player,target);
 					}
 				},
@@ -966,6 +966,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			fullskin:true,
 			type:'jinji',
 			enable:true,
+			selectTarget:1,
 			filterTarget:function(card,player,target){
 				return target!=player;
 			},	
@@ -1502,7 +1503,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(!player.num('he',{color:'red'})) return false;
 			},
 			position:'he',
-			prompt:'将一张红色牌当没中使用或打出',
+			prompt:'将一张红色牌当躲～使用或打出',
 			check:function(card){return 6-ai.get.value(card)},
 			ai:{
 				respondShan:true,
@@ -1556,7 +1557,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		windfan_skill:{
 			audio:true,
 			usable:1,
-			enable:['chooseToUse'],
+			enable:'chooseToUse',
 			filterCard:function(card){
 				return get.color(card)=='red';
 			},
@@ -2048,7 +2049,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{target:'useCardToBegin'},
 			filter:function(event,player){
 				return get.subtype(event.card) == 'attack' && player.countCards('e', {name:'hourai'});
-				//return event.card.name == 'sha';
 			},
 			content:function(){
 				var cards = player.getCards('e');
@@ -2205,7 +2205,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		forced:true,
     		priority:15,
     		intro:{
-    			content:'防止所有角色造成的所有伤害<br>所有角色跳过弃牌阶段',
+    			content:'防止所有角色造成的所有伤害',
     		},
     		content:function(){
     			trigger.untrigger();
@@ -2232,7 +2232,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		}
 		},
 		bingyu2:{
-			global:['bingyu1','bingyu3'],
+			global:['bingyu1'],
 			trigger:{player:['phaseBegin', 'dieBegin']},
 			forced:true,
 			init:function(player){
@@ -2258,13 +2258,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				player.removeSkill('bingyu2');
 			},
-		},
-		bingyu3:{
-			trigger:{player:'phaseDiscardBefore'},
-			forced:true,
-			content:function(){
-				trigger.cancel();
-			}
 		},
 		_wuxie:{
 			trigger:{player:'useCardToBefore'},
@@ -2631,18 +2624,19 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		// 如果明置就有急冻
 		_bingyu:{
-			forced:true,
-			popup:false,
-			trigger:{player:'phaseBegin'},
+			direct:true,
+			trigger:{player:'phaseDiscardBegin'},
 			filter:function(event,player){
-				if (!player.storage.mingzhi) return false;
-				for (var i = 0; i < player.storage.mingzhi.length; i ++){
-					if (player.storage.mingzhi[i].name == 'bingyu') return true;
-				}
-				return false;
+				return player.countCards('h', {name:'bingyu'});
 			},
 			content:function(){
-				player.useSkill('jidong');
+				'step 0'
+				player.chooseToDiscard(1,{name:'bingyu'},'h','你可以弃置【冰域之宴】，跳过弃牌阶段');
+				'step 1'
+				if (result.bool){
+					player.skip('phaseDiscard');
+					trigger.cancel();
+				}
 			},
 		},
 		_zuiye:{
@@ -2850,6 +2844,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			direct:true,
 			trigger:{player:'phaseBegin'},
 			filter:function(event,player){
+				if (get.mode() == 'boss') return false;
 				if (player.hasSkill('kedan')) return true;
 				return player.countCards('h',{name:'bingyu'}) > 0|| player.countCards('h',{name:'lingbi'}) > 0;
 			},
@@ -2863,7 +2858,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 	translate:{
 		sha:'轰！',
 		sha_info:'出牌阶段，对攻击范围内的一名角色使用；对目标造成1点弹幕伤害。',
-		shan:'没中',
+		shan:'躲～',
 		shan_info:'你成为【轰！】的目标后，对那张牌使用；该牌对你无效。',
 		tao:'葱',
 		tao_info:'出牌阶段，对你使用；或角色处于决死状态时，对其使用；目标回复1点体力。',
@@ -2919,9 +2914,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		saiqianxiang_info:'一回合一次，其他角色的出牌阶段，其可以交给你一张牌;一回合一次，你可以将一张手牌当作【例大祭】使用。',
 		yinyangyu:'阴阳玉',
 		yinyangyu_skill:'阴阳玉',
-		yinyangyu_skill_1:'阴阳玉（没中）',
+		yinyangyu_skill_1:'阴阳玉（躲～）',
 		yinyangyu_skill_2:'阴阳玉（轰！）',
-		yinyangyu_info:'你可以将一张红色牌当做【没中】使用/打出; 你可以将一张黑色牌当做【轰！】使用/打出',
+		yinyangyu_info:'你可以将一张红色牌当做【躲～】使用/打出; 你可以将一张黑色牌当做【轰！】使用/打出',
 		zhiyuu:'净颇梨之镜',
 		zhiyuu_skill:'亮胖次！',
 		zhiyuu_info:'一回合一次，出牌阶段，你可以令一名角色展示一张手牌；然后你可以弃置一张与展示的牌相同花色的手牌，对其造成1点灵击伤害。',
@@ -3010,7 +3005,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		bingyu1:'冰域之宴',
 		bingyu3:'冰域之宴',
 		bingyu1_bg:'冰',
-		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，跳过弃牌阶段，直到你的回合开始，或你坠机时。</br> <u>追加效果：若此牌在你区域内明置，你视为持有【急冻】。</u>',
+		bingyu_info:'准备阶段，对所有角色使用：目标不能造成伤害，直到你的回合开始，或你坠机时。</br> <u>追加效果：你可以弃置此牌，跳过你的弃牌阶段。</u>',
 		jingxia:'惊吓派对',
 		_jingxia:'惊吓派对（→潜行）',
 		jingxia_bg:'潜',

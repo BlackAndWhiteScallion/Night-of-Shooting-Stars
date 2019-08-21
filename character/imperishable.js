@@ -301,8 +301,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       usable:1,
                       audio:2,
                       filter:function(event,player){
-                        console.log(event.card);
-                        console.log(event);
                         var i = event;
                         var use = false;
                         while (i.name != 'phaseLoop'){

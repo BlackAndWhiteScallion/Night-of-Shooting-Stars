@@ -9,7 +9,6 @@ window.noname_asset_list=[
     'image/background/sakura.jpg',
     'image/background/scarlet.jpg',
     'image/background/sb.jpg',
-    'image/background/shengshi_bg.jpg',
     'image/background/shenshe.jpg',
     'image/background/yongyuan.jpg',
     'image/background/tianjie.jpg',

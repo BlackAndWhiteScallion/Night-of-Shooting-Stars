@@ -2736,7 +2736,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return current.isFriendsOf(player) && current.hasSkill('stg_waterbook_skill');
 					});
 				},
-				prompt:'将一张黑色手牌当【没中】使用/打出',
+				prompt:'将一张黑色手牌当【躲～】使用/打出',
 				check:function(){return 1},
 				ai:{
 					respondShan:true,
@@ -3163,7 +3163,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_firebook_info:'锁定技，与你阵营相同的角色使用【轰！】的次数上限+1。',
 			stg_waterbook:'水魔导书',
 			waterbook1:'水魔导书',
-			stg_waterbook_info:'与你阵营相同的角色可以将一张黑色手牌当做【没中】使用/打出。',
+			stg_waterbook_info:'与你阵营相同的角色可以将一张黑色手牌当做【躲～】使用/打出。',
 			stg_woodbook:'木魔导书',
 			stg_woodbook_info:'锁定技，与你阵营相同的角色的手牌上限+2。',
 			stg_dirtbook:'土魔导书',

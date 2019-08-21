@@ -2216,7 +2216,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             huanfa_audio2:'嗯？已经等不及了么？',
             mocai:'魔彩',
             mocai_audio1:'上海，该开始表演啦。',
-            mocai_audio2:'哎，蓬莱把【没中】拿哪儿去了？',
+            mocai_audio2:'哎，蓬莱把【躲～】拿哪儿去了？',
             mocai_info:'你攻击范围内的一名角色成为攻击牌的目标后，你可以选择一项：将一张“手办”置于其区域内；或弃置一张“手办”，观看技能牌堆顶的三张牌，并将其中一张交给目标。',
             hanghourai:'上吊的蓬莱人形',
             hanghourai_audio1:'诅咒「上吊的蓬莱人偶」!',

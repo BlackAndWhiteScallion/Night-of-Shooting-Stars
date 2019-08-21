@@ -315,11 +315,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         spell:['xiaofeng1','xiaofeng2'],
                         trigger:{player:['phaseBegin']},
                         filter:function(event,player){
-                          if (player.hp == 1) return player.lili > (lib.skill.xiaofeng.cost - 2)
+                          if (player.hp <= 2) return player.lili > (lib.skill.xiaofeng.cost - 2)
                           return player.lili > lib.skill.xiaofeng.cost;
                         },
                         content:function(){
-                          if (player.hp == 1) player.loselili(lib.skill.xiaofeng.cost - 2);
+                          if (player.hp <= 2) player.loselili(lib.skill.xiaofeng.cost - 2);
                           else player.loselili(lib.skill.xiaofeng.cost);
                           player.turnOver();
                           player.useCard({name:'huazhi'},player);
@@ -704,7 +704,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	   xiaofeng:'啸风弄月',
                   xiaofeng_audio1:'幻想「花鸟风月，啸风弄月」。',
                   xiaofeng_audio2:'那么，你死后的灵魂会长出什么花来呢？',
-            	   xiaofeng_info:'符卡技（4）<u>若你的体力为1，符卡消耗-2。</u>准备阶段，你视为使用一张【花之祝福】；你的攻击范围无限；你造成伤害时，令该伤害+1；你的牌点数均视为Q。',
+            	   xiaofeng_info:'符卡技（4）<u>若你的体力不大于2，符卡消耗-2。</u>准备阶段，你视为使用一张【花之祝福】；你的攻击范围无限；你造成伤害时，令该伤害+1；你的牌点数均视为Q。',
             	     yuuka_die:'嗯，我承认你还是挺强的呢。',
                   komachi:'小町',
                   guihang:'归航',

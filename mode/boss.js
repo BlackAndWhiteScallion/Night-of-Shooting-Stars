@@ -188,6 +188,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				game.save('current',event.current.name);
 			}
 			"step 2"
+			// 换掉牌堆里的冰域和令避
+			var list=['bingyu', 'lingbi'];
+			var map={
+				bingyu:'shenlin',
+				lingbi:'dianche',
+			};
+			for(var i=0;i<list.length;i++){
+				if (!lib.card[list[i]].forbid) lib.card[list[i]].forbid = ['boss'];
+				else lib.card[list[i]].forbid.push('boss');
+				game.removeCard(list[i], map[list[i]]);
+			}
+			//
 			game.bossinfo=lib.boss.global;
 			for(var i in lib.boss[event.current.name]){
 				game.bossinfo[i]=lib.boss[event.current.name][i];
@@ -409,6 +421,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				dieAfter:function(){
 					if(this!=game.boss){
 						this.storage.boss_chongzheng=0;
+						if(!this.node.dieidentity && game.bossinfo.chongzheng){
+							this.storage.boss_chongzheng = game.bossinfo.chongzheng;
+							var node=ui.create.div('.damage.dieidentity',this.storage.boss_chongzheng.toString(),this);
+							ui.refresh(node);
+							node.style.opacity=1;
+							this.node.dieidentity=node;
+							var trans=this.style.transform;
+							if(trans){
+								if(trans.indexOf('rotateY')!=-1){
+									this.node.dieidentity.style.transform='rotateY(180deg)';
+								}
+								else if(trans.indexOf('rotateX')!=-1){
+									this.node.dieidentity.style.transform='rotateX(180deg)';
+								}
+								else{
+									this.node.dieidentity.style.transform='';
+								}
+							}
+							else{
+								this.node.dieidentity.style.transform='';
+							}
+						}
 					}
 					if(game.bossinfo.checkResult&&game.bossinfo.checkResult(this)===false){
 						return;
@@ -420,6 +454,104 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			}
+		},
+		card:{
+			dianche:{
+				audio:true,
+				fullskin:true,
+				type:'jinji',
+				enable:true,
+				modeimage:'boss',
+				selectTarget:1,
+				filterTarget:function(card,player,target){
+					return player != target;
+				},	
+				contentBefore:function(){
+					player.$skill('废线电车',null,null,true);
+				},
+				content:function(){
+					'step 0'
+					target.chooseControl(['弃置三张牌','你与'+get.translation(player)+'以外角色各弃置两张牌'],function(event,player){
+							if (target.identity == 'zhu') return '你与'+get.translation(player)+'以外角色各弃置两张牌';
+							else{
+								if (player.countCards('hej') < 3) return '弃置三张牌';
+								else return '你与'+get.translation(player)+'以外角色各弃置两张牌';
+							}
+							return '弃置三张牌';
+						});
+					'step 1'
+					if(result.control){
+						if(result.control=='弃置三张牌'){
+							target.chooseToDiscard(3, true);
+						} else {
+							var players = game.filterPlayer();
+							for (var i = 0; i < players.length; i ++){
+								if (players[i] == player || players[i] == target) continue;
+								players[i].chooseToDiscard(2, true);
+							}
+						}
+					}
+				},
+				ai:{
+					basic:{
+						order:5,
+						useful:5,
+						value:5,
+					},
+					result:{
+						target:function(player,target){
+							if (game.countPlayer(function(current){
+								if (get.attitude(target, current) >= 0 && target != current) return 1;
+								return 0;
+							})) return -3;
+							return 2;
+						},
+					},
+					tag:{
+						loseCard:1.5,
+					}
+				}
+			},
+			shenlin:{
+				audio:true,
+				fullskin:true,
+				type:'jinji',
+				enable:true,
+				modeimage:'boss',
+				selectTarget:1,
+				filterTarget:function(card,player,target){
+					return game.dead.contains(target);
+				},	
+				contentBefore:function(){
+					player.$skill('神灵复苏',null,null,true);
+					targets[0].lili = 1;
+					targets[0].revive(1);
+				},
+				content:function(){
+					'step 0'
+					targets[0].draw();
+				},
+				ai:{
+					die:true,
+					basic:{
+						order:5,
+						useful:5,
+						value:5,
+					},
+					result:{
+						target:function(player,target){
+							if (game.countPlayer(function(current){
+								if (get.attitude(target, current) >= 0 && target != current) return 1;
+								return 0;
+							})) return -3;
+							return 2;
+						},
+					},
+					tag:{
+						loseCard:1.5,
+					}
+				}
+			},	
 		},
 		characterPack:{
 			mode_boss:{
@@ -443,6 +575,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_saitama:'买菜时因走错路偶然路过幻想乡的光头<br>………等等，什么？<br>画师：',
 		},
 		cardPack:{
+			mode_boss:['dianche', 'shenlin'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_boss){
@@ -598,18 +731,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					// 如果玩家不是重整（而是死亡）
 					// player.storage.boss_chongzheng就是重整回合的计数了
-					else if(game.dead.length && !game.boss.chongzheng){
+					else if(game.dead.length && player == game.boss){
 						// 计数+1，血量补到0，如果血上限大于0，且这个BOSS让重整的话，开始重整
 						var players = game.dead;
 						for (var i = 0; i < players.length; i ++){
 							if(players[i].hp<0) players[i].hp=0;
-							players[i].storage.boss_chongzheng++;
 							if(players[i].maxHp>0&&game.bossinfo.chongzheng){
 								// 重整顺序：回血，摸牌
+								players[i].storage.boss_chongzheng--;
+								game.log(players[i],'还有'+players[i].storage.boss_chongzheng+'回合回归');
+								players[i].node.dieidentity.innerHTML=players[i].storage.boss_chongzheng.toString();
 								if(players[i].hp<players[i].maxHp){
 									players[i].hp++;
 								}
-								else if(players[i].countCards('h')<4){
+								else{
 									var card=get.cards()[0];
 									var sort=lib.config.sort_card(card);
 									var position=sort>0?players[i].node.handcards1:players[i].node.handcards2;
@@ -617,16 +752,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									card.animate('start');
 									position.insertBefore(card,position.firstChild);
 								}
+								players[i].node.hp.show();
+								players[i].node.count.show();
 								players[i].update();
-								if(players[i].storage.boss_chongzheng>=game.bossinfo.chongzheng){
+								if(players[i].storage.boss_chongzheng<=0){
 									players[i].revive(players[i].hp);
 								}
 							}
-						}
-						game.boss.chongzheng=true;
-						// 如果是1→1，重整为true
-						if(game.bossinfo.loopType==2){
-							game.boss.chongzheng=false;
 						}
 					}
 					else{
@@ -646,7 +778,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					"step 1"
-					
 					//console.log(player);
 					if (result.bool){
 						//console.log(result.targets[0]);
@@ -1047,6 +1178,88 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
+			_dianche:{
+				enable:'phaseUse',
+				filter:function(event,player){
+					return player.countCards('h', {name:'dianche'}) && player.countCards('hej') > 1;  
+				},
+				selectCard:2,
+				discard:false,
+				line:true,
+				position:'hej',
+				selectTarget:1,
+				prepare:function(cards,player,targets){
+					player.$give(cards.length,targets[0]);
+				},
+				filterTarget:function(card,player,target){
+					return target != player;
+				},
+				filterCard:function(card,player){
+					if(ui.selected.cards.length){
+						if (ui.selected.cards[0].name == 'dianche') return true;
+						return card.name == 'dianche';
+					} else{
+						return true;
+					}
+					return false;
+				},
+				content:function(){
+					target.gain(cards);
+				},
+				complexCard:true,
+				prompt:'你可以将废线电车和一张牌交给一名其他角色。',
+				ai:{
+					expose:0.3,
+					order:1,
+					result:{
+						target:function(player,target){
+							if (target.countCards('h') <= target.getHandcardLimit()) return 1;
+							else return 0.5;
+						},
+						player:function(player,target){
+							if (player.countCards('h') > player.getHandcardLimit()) return 0;
+							else return -0.5;
+						}
+					}
+				}
+			},
+			_shenlin_use:{
+				onChooseToUse:function(event){
+					console.log(event);
+					if (!game.dead || game.dead.length == 0) return ;
+					if (event.player.countCards('h', {name:'shenlin'}) || event.player.hasSkill('kedan') && game.players.length < 4){
+						game.players.addArray(game.dead);
+					} else if (game.countPlayer(function(current){
+						return game.dead.contains(current);
+					})){
+						game.players.remove(game.dead);
+					}
+				},
+			},
+			_shenlin:{
+				trigger:{player:'damageAfter'},
+				filter:function(event,player){
+					return player.countCards('h', {name:'shenlin'});
+				},
+				content:function(){
+					var cards = player.getCards('h');
+					for (var i = 0; i <= cards.length; i ++){
+						if(cards[i]&&cards[i].name == 'shenlin'){
+							player.discard(cards[i]);
+							break;
+						}
+					}
+					player.addTempSkill('shenlin_buff');		
+				},
+			},
+			shenlin_buff:{
+				forced:true,
+				trigger:{player:'damageBefore'},
+				content:function(){
+					trigger.untrigger();
+    				trigger.finish();
+				}
+			},
 			lingji:{
     			audio:2,
     			trigger:{player:'damageAfter',source:'damageAfter'},
@@ -1073,7 +1286,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				trigger:{global:'useCard'},
 				filter:function(event, player){
-					return event.player != player && event.card.name == 'saiqian';
+					return event.player != player && event.card.name == 'saiqianxiang';
 				},
 				content:function(){
 					player.say('我的赛钱箱！你要是敢对它做什么奇怪的事情……');
@@ -1083,8 +1296,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				trigger:{global:'loseEnd'},
 				filter:function(event,player){
+					if (event.player == player) return false;
 					for (var i = 0; i < event.cards.length; i ++){
-						if (event.cards[i].name == 'saiqian') return true;
+						if (event.cards[i].name == 'saiqianxiang' && get.position(event.cards[i])=='d') return true;
 					}
 					return false;
 				},
@@ -1094,9 +1308,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					setTimeout(function(){
 						player.say('你，我要把你变成十八层地狱底层的锅底废油！');
 						setTimeout(function(){
+							game.resume();
 							player.maxlili = 10;
 							player.gainlili(2000);
-							game.resume();
 						}, 2500);
 					}, 2500);
 				},
@@ -1110,7 +1324,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.lili = 0;
 				},
     			filter:function(event,player){
-    				return (player.lili == 5) || (player.hp <= 4);
+    				return (player.lili >= 5) || (player.hp <= 4);
     			},
     			content:function(){
 					var lili=player.lili;
@@ -1124,9 +1338,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.resetSkills();
-						setTimeout(function(){
-							game.playBackgroundMusic('reimu');
-                    	},500);
+					setTimeout(function(){
+						game.playBackgroundMusic('reimu');
+					},500);
 					_status.paused=false;
 					_status.event.player=player;
 					_status.event.step=0;
@@ -1306,7 +1520,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for (var i = 0; i < list.length; i ++){
 						list[i].damage(9, 'thunder');
 					};
-					player.useCard({name:'bingyu'},list,false);
 				},
 			},
     		boss_damagecount:{
@@ -1597,9 +1810,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		translate:{
+			mode_boss_card_config:'魔王模式',
 			zhu:'魔王',
 			cai:'勇者',
 			zhong:'从',
+			dianche:'废线电车',
+			_dianche:'废线电车（给牌）',
+			dianche_info:'出牌阶段，对一名其他角色使用；其选择一项：弃置三张牌，或你与其以外的角色各弃置两张牌。<br><u>追加效果：出牌阶段，你可以将此牌和一张牌交给一名其他角色。</u>',
+			shenlin:'神灵复苏',
+			_shenlin:'神灵复苏（护盾）',
+			shenlin_buff:'神灵复苏（护盾）',
+			shenlin_info:'出牌阶段，对一名坠机/重整中的角色使用；该角色以1体力/1灵力/1手牌重新加入游戏。<br><u>追加效果：你受到伤害后，可以弃置此牌：防止你受到的伤害，直到回合结束。</u>',
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',
 			lingji:'灵击',
@@ -1638,7 +1859,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			longhun2:'龙魂♦︎',
 			longhun3:'龙魂♠︎',
 			longhun4:'龙魂♣︎',
-			longhun_info:'你可以将同花色的X张牌按下列规则使用或打出：红桃当【葱】，方块当具火焰伤害的【轰！】，梅花当【没中】，黑桃当【请你住口！】（X为你的体力且至少为1）',
+			longhun_info:'你可以将同花色的X张牌按下列规则使用或打出：红桃当【葱】，方块当具火焰伤害的【轰！】，梅花当【躲～】，黑桃当【请你住口！】（X为你的体力且至少为1）',
 			boss_saitama:'斗篷光头',
 			punch:'普通的技能',
 			punch_audio1:'啊，用力过猛了。',

@@ -231,6 +231,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			}
 			"step 4"
+			if (lib.config.auto_auto && !_status.auto){
+				ui.click.auto();
+			}
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 					uiintro.add('<div class="text left">1. 黑幕/异变胜利：击坠所有自机和路人<br>2. 自机胜利：击坠黑幕 <br>3. 路人胜利：击坠所有其他角色<br>4. 击坠自机后，摸3张牌<br>5. 黑幕击坠异变后，弃置所有牌。</div>');

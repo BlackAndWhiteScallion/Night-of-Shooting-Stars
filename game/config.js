@@ -79,7 +79,7 @@ window.config={
 	lili_style:'official',
 
 	image_character:'default',
-	image_background:'shengshi_bg',
+	image_background:'ol_bg',
 
 	asset_image:true,
 	asset_full:true,

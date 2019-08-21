@@ -84,6 +84,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			// game.delay();
 			"step 2"
+			if (lib.config.auto_auto && !_status.auto){
+				ui.click.auto();
+			}
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 				if (get.config('versus_mode') == 'two'){
@@ -2225,12 +2228,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				var next=game.createEvent('chooseCharacterOL',false);
 				next.setContent(function(){
 					'step 0'
-					game.removeCard('shengdong');
 					game.additionaldead=[];
 					var list=get.charactersOL();
 					list=list.randomGets(parseInt(lib.configOL.choice_num));
-					list.remove('huatuo');
-					list.remove('sunquan');
 					event.videoId=lib.status.videoId++;
 					if(Math.random()<0.5){
 						event.choosing=game.players[0];

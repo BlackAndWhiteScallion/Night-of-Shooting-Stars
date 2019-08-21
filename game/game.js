@@ -120,6 +120,19 @@
                         unfrequent:true,
                         intro:'离开游戏前弹出确认对话框',
                     },
+                    auto_restart:{
+                        name:'自动重新开始',
+                        init:false,
+                        intro:'一局游戏结束后，自动重新开始游戏',
+                        onclick:function(bool){
+                            game.saveConfig('show_splash', bool?'off':'always');
+                        }
+                    },
+                    auto_auto:{
+                        name:'自动托管',
+                        init:false,
+                        intro:'一局游戏开始时，玩家自动托管',
+                    },
                     keep_awake:{
                         name:'屏幕常亮',
                         init:false,
@@ -935,7 +948,7 @@
                     },
                     image_background:{
                         name:'游戏背景',
-                        init:'shengshi_bg',
+                        init:'ol_bg',
                         item:{},
                         visualBar:function(node,item,create){
                             if(node.created){
@@ -3511,30 +3524,6 @@
             others:{
                 name:'文件',
                 config:{
-                    // reset_database:{
-                    //  name:'重置游戏',
-                    //  onclick:function(){
-                    //      var node=this;
-                    //      if(node._clearing){
-                    //          if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
-                    //          game.reload();
-                    //          return;
-                    //      }
-                    //      node._clearing=true;
-                    //      node.innerHTML='单击以确认 (3)';
-                    //      setTimeout(function(){
-                    //          node.innerHTML='单击以确认 (2)';
-                    //          setTimeout(function(){
-                    //              node.innerHTML='单击以确认 (1)';
-                    //              setTimeout(function(){
-                    //                  node.innerHTML='重置游戏录像';
-                    //                  delete node._clearing;
-                    //              },1000);
-                    //          },1000);
-                    //      },1000);
-                    //  },
-                    //  clear:true
-                    // },
                     reset_game:{
                         name:'重置游戏设置',
                         onclick:function(){
@@ -3698,6 +3687,21 @@
                         },
                         unfrequent:true,
                     },
+                    movie:{
+                        name:'电影模式',
+                        intro:'随机背景，随机音乐，游戏速度较慢，自动托管，游戏结束后自动重新开始',
+                        init:false,
+                        onclick:function(bool){
+                            game.saveConfig('movie',bool);
+                            game.saveConfig('auto_auto', bool);
+                            game.saveConfig('auto_restart', bool);
+                            game.saveConfig('show_splash', bool?'off':'always');
+                            game.saveConfig('game_speed', 'mid');
+                            game.saveConfig('image_background_random', bool);
+                            game.saveConfig('background_music', 'music_random');                            
+                        },
+                        unfrequent:true,
+                    },
                     update:function(config,map){
                         if(lib.device||lib.node){
                             map.redownload_game.show();
@@ -3706,58 +3710,6 @@
                             map.redownload_game.hide();
                         }
                     }
-                    // trim_game:{
-                    //  name:'隐藏非官方扩展包',
-                    //  onclick:function(){
-                    //      if(this.innerHTML!='已隐藏'){
-                    //          this.innerHTML='已隐藏';
-                    //             var pack=lib.config.all.cards.slice(0);
-                    //             if(Array.isArray(lib.config.hiddenCardPack)){
-                    //                 for(var i=0;i<lib.config.hiddenCardPack.length;i++){
-                    //                     pack.add(lib.config.hiddenCardPack[i]);
-                    //                 }
-                    //             }
-                    //             for(var i=0;i<pack.length;i++){
-                    //                 if(lib.config.all.sgscards.contains(pack[i])){
-                    //                     pack.splice(i--,1);
-                    //                 }
-                    //             }
-                    //          game.saveConfig('hiddenCardPack',pack);
-                    //
-                    //             var pack=lib.config.all.characters.slice(0);
-                    //             if(Array.isArray(lib.config.hiddenCharacterPack)){
-                    //                 for(var i=0;i<lib.config.hiddenCharacterPack.length;i++){
-                    //                     pack.add(lib.config.hiddenCharacterPack[i]);
-                    //                 }
-                    //             }
-                    //             for(var i=0;i<pack.length;i++){
-                    //                 if(lib.config.all.sgscharacters.contains(pack[i])){
-                    //                     pack.splice(i--,1);
-                    //                 }
-                    //             }
-                    //          game.saveConfig('hiddenCharacterPack',pack);
-                    //
-                    //             var pack=lib.config.all.mode.slice(0);
-                    //             if(Array.isArray(lib.config.hiddenModePack)){
-                    //                 for(var i=0;i<lib.config.hiddenModePack.length;i++){
-                    //                     pack.add(lib.config.hiddenModePack[i]);
-                    //                 }
-                    //             }
-                    //             for(var i=0;i<pack.length;i++){
-                    //                 if(lib.config.all.sgsmodes.contains(pack[i])){
-                    //                     pack.splice(i--,1);
-                    //                 }
-                    //             }
-                    //          game.saveConfig('hiddenModePack',pack);
-                    //
-                    //          var that=this;
-                    //          setTimeout(function(){
-                    //              that.innerHTML='隐藏非官方扩展包';
-                    //          },500);
-                    //      }
-                    //  },
-                    //  clear:true
-                    // }
                 }
             }
         },
@@ -4001,16 +3953,7 @@
                     },
                     connect_free_choose:{
                         name:'自由选将',
-                        init:true,
-                        onclick:function(bool){
-                            game.saveConfig('free_choose',bool,this._link.config.mode);
-                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
-                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
-                            else if(ui.cheat2&&!get.config('free_choose')){
-                                ui.cheat2.close();
-                                delete ui.cheat2;
-                            }
-                        }
+                        init:false,
                     },
                     /*
                     connect_ban_weak:{
@@ -4469,16 +4412,7 @@
                     },
                     connect_free_choose:{
                         name:'自由选将',
-                        init:true,
-                        onclick:function(bool){
-                            game.saveConfig('free_choose',bool,this._link.config.mode);
-                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
-                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
-                            else if(ui.cheat2&&!get.config('free_choose')){
-                                ui.cheat2.close();
-                                delete ui.cheat2;
-                            }
-                        }
+                        init:false,
                     },
                     connect_special_identity:{
                         name:'特殊身份',
@@ -4934,16 +4868,7 @@
                     },
                     connect_free_choose:{
                         name:'2v2自由选将',
-                        init:true,
-                        onclick:function(bool){
-                            game.saveConfig('free_choose',bool,this._link.config.mode);
-                            if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
-                            if(!ui.cheat2&&get.config('free_choose')) ui.create.cheat2();
-                            else if(ui.cheat2&&!get.config('free_choose')){
-                                ui.cheat2.close();
-                                delete ui.cheat2;
-                            }
-                        }
+                        init:false,
                     },
                     /*
                     connect_ban_weak:{
@@ -12443,7 +12368,7 @@
 							else{
 								cards.splice(i--,1);
 							}
-						}
+						} else if (cards[i].name != cards[i].dataset.cardName) cards[i].name = cards[i].dataset.cardName;
 					}
                     if(cards.length==0){
                         event.finish();
@@ -12601,6 +12526,7 @@
                         cards[i].classList.remove('glow');
                         cards[i].classList.remove('unequip');
                         cards[i].recheck();
+                        if (cards[i].name != cards[i].dataset.cardName) cards[i].name = cards[i].dataset.cardName;
                         var info=lib.card[cards[i].name];
                         if(info.destroy||cards[i]._destroy){
 							cards[i].delete();
@@ -14712,6 +14638,8 @@
                     for(var i in this.tempSkills){
                         skills.add(i);
                     }
+                    // 这个是把全场技能也数进技能里去。针对魔王模式的神灵复苏加的。鉴于平常询问量大幅度增加，限制为魔王模式专用。
+                    if (get.mode() == 'boss') skills.addArray(lib.skill.global);
                     if(arg2) skills.addArray(this.hiddenSkills);
                     if(arg3!==false) skills.addArray(es);
                     for(var i in this.forbiddenSkills){
@@ -20780,6 +20708,9 @@
                             ui.cardPileButton.style.display='';
                         }
                         _status.gameStarted=true;
+                        if (lib.config.auto_auto && !_status.auto){
+                            ui.click.auto();
+                        }
                         game.showHistory();
                     }
                     if(!lib.hookmap[name]&&!lib.config.compatiblemode) return;
@@ -22141,8 +22072,8 @@
                     }
                     game.syncState();
                     game.addVideo('phaseChange',player);
-                    game.log();
                     game.log(player,'的回合结束');
+                    game.log('————————————————————');
                     player._noVibrate=true;
                 },
             },
@@ -23426,8 +23357,8 @@
                 next.setContent('replaceHandcards');
             }
         },
-        // 这是……删除卡牌？
-        removeCard:function(name){
+        // 这里是从游戏和牌堆中移除卡牌（按名字查找）。追加了replace（替换，这里输入牌名会改成把删除的牌换成这个牌）
+        removeCard:function(name, replace){
             for(var i=0;i<lib.card.list.length;i++){
                 if(lib.card.list[i][2]==name){
                     lib.card.list.splice(i--,1);
@@ -23436,7 +23367,11 @@
             var list=[];
             for(var i=0;i<ui.cardPile.childElementCount;i++){
                 if(ui.cardPile.childNodes[i].name==name){
-                    list.push(ui.cardPile.childNodes[i]);
+                    if (replace){
+                        ui.cardPile.replaceChild(game.createCard(replace, ui.cardPile.childNodes[i].suit, ui.cardPile.childNodes[i].number), ui.cardPile.childNodes[i]);
+                    } else {
+                        list.push(ui.cardPile.childNodes[i]);
+                    }
                 }
             }
             for(var i=0;i<list.length;i++){
@@ -23966,21 +23901,18 @@
                     url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
                 }
                 if (!music) music = lib.config.background_music;
-                if (music != lib.config.background_music) lib.config.background_music = music;
+                else lib.config.background_music = music;
 
                 if(music=='music_random'){
-                    music=lib.config.all.background_music.randomGet('music_off','music_random',_status.currentMusic);
+                    music=lib.config.all.background_music.randomGet(_status.currentMusic);
                 }
 
                 _status.currentMusic=music;
-
                 if(music=='music_custom'){
                     if(lib.config.background_music_src){
                         ui.backgroundMusic.src=lib.config.background_music_src;
                     }
-                }
-
-                if (music == 'music_default'){
+                } else if (music == 'music_default'){
                     ui.backgroundMusic.src=url+'audio/background/'+music+'.mp3';
                     ui.backgroundMusic.currentTime = [137, 693, 1338, 1970, 2715, 3463, 3982].randomGet();
                 }
@@ -26690,8 +26622,8 @@
                 nature=name.nature;
                 number=name.number;
                 suit=name.suit;
+                bonus=name.bonus;
                 name=name.name;
-                bonus=name.bouns;
             }
             if(typeof name!='string'){
                 name='sha';
@@ -26856,6 +26788,15 @@
                         if (p[i].storage._tanpai[j].name == 'death' && p.length > 1) return;
                     }
                 }*/
+                if (p[i].hasSkill('time') && p[i].storage.time){
+                    var player = p[i];
+                    var homura = [];
+					for (var j = 0; j < player.storage.time.length; j ++){
+						homura.push({name:player.storage.time[j].name, suit:player.storage.time[j].suit, number:player.storage.time[j].number, nature:player.storage.time[j].nature, bonus:player.storage.time[j].bonus});	
+					}
+					lib.config.gameRecord.homura = homura;
+					game.saveConfig('gameRecord',lib.config.gameRecord);
+                }
                 if (p[i].hasSkill('death_win') && p.length > 1){
                     return ;
                 }
@@ -26916,6 +26857,7 @@
 				game.saveConfig('show_splash','always');
                 game.saveConfig('player_number','5','old_identity');
             } else {
+                
                 var i,j,k,num,table,tr,td,dialog;
                 _status.over=true;
                 ui.control.show();
@@ -27466,7 +27408,9 @@
                     ui.giveup.remove();
                     delete ui.giveup;
                 }
-
+                if (lib.config.auto_restart){
+                    setTimeout(game.reload(), 10000);
+			    }
                 if(lib.config.test_game&&!_status.connectMode){
                     if(lib.config.test_game!='single'){
                         switch(lib.config.mode){
@@ -38752,7 +38696,8 @@
                 ui.backgroundMusic.volume=lib.config.volumn_background/8;
                 game.playBackgroundMusic();
                 ui.backgroundMusic.autoplay=true;
-                ui.backgroundMusic.addEventListener('ended',game.playBackgroundMusic);
+                ui.backgroundMusic.loop=true;
+                //ui.backgroundMusic.addEventListener('ended',game.playBackgroundMusic);
                 ui.window.appendChild(ui.backgroundMusic);
                 if(lib.config.cursor_style=='pointer'){
                     ui.window.classList.add('nopointer');
@@ -38977,7 +38922,7 @@
                     });
                 }
                 ui.auto.id='autobutton';
-                ui.autonode=ui.create.div('#autonode','<div>少女托管中...</div>',ui.arena);
+                ui.autonode=ui.create.div('#autonode','<div>少女代打中...</div>',ui.arena);
                 ui.autonode.listen(ui.click.auto);
                 if(lib.config.mode=='connect'){
                     ui.auto.hide();
