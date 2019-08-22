@@ -2495,21 +2495,6 @@
                             }
                         }
                     },
-					glass_ui:{
-						name:'玻璃主题',
-						intro:'为游戏主题打开玻璃效果（手机暂不支持）',
-						init:false,
-						unfrequent:true,
-						onclick:function(bool){
-							game.saveConfig('glass_ui',bool);
-							if(bool){
-								ui.window.classList.add('glass_ui');
-							}
-							else{
-								ui.window.classList.remove('glass_ui');
-							}
-						}
-					},
                     cardshape:{
                         name:'手牌显示',
                         intro:'将手牌设置为正方形或长方形',
@@ -2810,7 +2795,7 @@
                         }
                     },
                     show_splash:{
-                        name:'显示开始界面',
+                        name:'开始界面',
                         intro:'游戏开始前进入模式选择画面',
                         init:'off',
                         item:{
@@ -2839,14 +2824,14 @@
                         }
                     },
                     show_discardpile:{
-                        name:'暂停时显示弃牌堆',
+                        name:'暂停时弃牌堆',
                         init:true,
                         unfrequent:true,
                     },
                     show_history:{
                         name:'出牌记录栏',
                         init:'off',
-                        intro:'在屏幕左侧或右侧显示出牌记录',
+                        intro:'在屏幕左侧或右侧出牌记录',
                         unfrequent:true,
                         item:{
                             off:'关闭',
@@ -2879,7 +2864,7 @@
                     show_log:{
                         name:'历史记录栏',
                         init:'left',
-                        intro:'在屏幕中显示出牌文字记录',
+                        intro:'在屏幕中出牌文字记录',
                         unfrequent:true,
                         item:{
                             off:'关闭',
@@ -2909,11 +2894,11 @@
                         name:'历史记录高亮',
                         init:true,
                         unfrequent:true,
-                        intro:'开启后历史记录不同类别的信息将以不同颜色显示',
+                        intro:'开启后历史记录不同类别的信息将以不同颜色',
                     },
                     show_time:{
-                        name:'显示当前时间',
-                        intro:'在屏幕顶部显示当前时间',
+                        name:'当前时间',
+                        intro:'在屏幕顶部当前时间',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -2927,8 +2912,8 @@
                         }
                     },
                     show_time2:{
-                        name:'显示当前时间',
-                        intro:'在触屏按钮处显示当前时间',
+                        name:'当前时间',
+                        intro:'在触屏按钮处当前时间',
                         init:false,
                         unfrequent:true,
                         onclick:function(bool){
@@ -2955,12 +2940,12 @@
                         }
                     },
                     show_time3:{
-                        name:'显示游戏时间',
+                        name:'游戏时间',
                         init:false,
                         unfrequent:true
                     },
                     show_statusbar_android:{
-                        name:'显示手机状态栏',
+                        name:'手机状态栏',
                         init:false,
                         unfrequent:true,
                         content:function(bool){
@@ -2978,7 +2963,7 @@
                         }
                     },
                     show_statusbar_ios:{
-                        name:'显示手机状态栏',
+                        name:'手机状态栏',
                         init:'off',
                         unfrequent:true,
                         item:{
@@ -3011,7 +2996,7 @@
                     },
                     show_phaseuse_prompt:{
                         name:'出牌阶段提示',
-                        intro:'在你出牌时显示提示文字',
+                        intro:'在你出牌时提示文字',
                         init:true,
                         unfrequent:true,
                     },
@@ -3041,7 +3026,7 @@
                     },
                     remember_dialog:{
                         name:'记住对话框位置',
-                        intro:'移动对话框后新的对话框也将在移动后的位置显示',
+                        intro:'移动对话框后新的对话框也将在移动后的位置',
                         init:false,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3086,8 +3071,8 @@
                         unfrequent:true
                     },
                     character_dialog_tool:{
-                        name:'自由选将显示',
-                        intro:'点击自由选将时默认显示的条目',
+                        name:'自由选将',
+                        intro:'点击自由选将时默认的条目',
                         init:'最近',
                         item:{
                             '收藏':'收藏',
@@ -3109,7 +3094,7 @@
                         unfrequent:true,
                     },
                     show_round_menu:{
-                        name:'显示触屏按钮',
+                        name:'触屏按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3125,61 +3110,61 @@
                         }
                     },
                     show_card_prompt:{
-                        name:'显示出牌信息',
-                        intro:'出牌时在使用者上显示卡牌名称',
+                        name:'出牌信息',
+                        intro:'出牌时在使用者上卡牌名称',
                         init:true,
                         unfrequent:true,
                     },
                     hide_card_prompt_basic:{
                         name:'隐藏基本牌信息',
-                        intro:'不显示基本牌名称',
+                        intro:'不基本牌名称',
                         init:false,
                         unfrequent:true,
                     },
                     hide_card_prompt_equip:{
                         name:'隐藏装备牌信息',
-                        intro:'不显示装备牌名称',
+                        intro:'不装备牌名称',
                         init:false,
                         unfrequent:true,
                     },
                     show_phase_prompt:{
-                        name:'显示阶段信息',
-                        intro:'在当前回合不同阶段开始时显示阶段名称',
+                        name:'阶段信息',
+                        intro:'在当前回合不同阶段开始时阶段名称',
                         init:true,
                         unfrequent:true,
                     },
                     show_charactercard:{
-                        name:'显示角色资料',
+                        name:'角色资料',
                         intro:'在角色界面单击时弹出角色资料卡',
                         init:true,
                         unfrequent:true
                     },
                     show_favourite:{
-                        name:'显示添加收藏',
-                        intro:'在角色的右键菜单中显示添加收藏',
+                        name:'添加收藏',
+                        intro:'在角色的右键菜单中添加收藏',
                         init:true,
                         unfrequent:true
                     },
                     show_favourite_menu:{
-                        name:'显示收藏菜单',
-                        intro:'在选项-角色中显示收藏一栏',
+                        name:'收藏菜单',
+                        intro:'在选项-角色中收藏一栏',
                         init:true,
                         unfrequent:true
                     },
                     show_ban_menu:{
-                        name:'显示禁将菜单',
-                        intro:'在选项-角色中显示禁将一栏',
+                        name:'禁将菜单',
+                        intro:'在选项-角色中禁将一栏',
                         init:true,
                         unfrequent:true
                     },
                     right_range:{
-                        name:'显示距离信息',
-                        intro:'在角色的右键菜单中显示距离等信息',
+                        name:'距离信息',
+                        intro:'在角色的右键菜单中距离等信息',
                         init:true,
                         unfrequent:true
                     },
                     show_name:{
-                        name:'显示角色名称',
+                        name:'角色名称',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3193,7 +3178,7 @@
                         }
                     },
                     show_replay:{
-                        name:'显示重来按钮',
+                        name:'重来按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3207,7 +3192,7 @@
                         }
                     },
                     show_playerids:{
-                        name:'显示身份按钮',
+                        name:'身份按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3221,7 +3206,7 @@
                         }
                     },
                     show_pause:{
-                        name:'显示暂停按钮',
+                        name:'暂停按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3235,7 +3220,7 @@
                         }
                     },
                     show_auto:{
-                        name:'显示托管按钮',
+                        name:'托管按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3249,7 +3234,7 @@
                         }
                     },
                     show_volumn:{
-                        name:'显示音量按钮',
+                        name:'音量按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3263,7 +3248,7 @@
                         }
                     },
                     show_cardpile:{
-                        name:'显示牌堆按钮',
+                        name:'牌堆按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3277,7 +3262,7 @@
                         }
                     },
                     show_cardpile_number:{
-                        name:'显示剩余牌数',
+                        name:'剩余牌数',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3291,8 +3276,8 @@
                         }
                     },
                     show_wuxie:{
-                        name:'显示住口按钮',
-                        intro:'在右上角显示不询问住口',
+                        name:'住口按钮',
+                        intro:'在右上角不询问住口',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3311,7 +3296,7 @@
                         unfrequent:true,
                     },
                     show_handcardbutton:{
-                        name:'显示手牌按钮',
+                        name:'手牌按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3319,7 +3304,7 @@
                         }
                     },
                     show_giveup:{
-                        name:'显示投降按钮',
+                        name:'投降按钮',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3334,12 +3319,12 @@
                         restart:true,
                     },
                     show_extensionmaker:{
-                        name:'显示制作扩展',
+                        name:'制作扩展',
                         init:true,
                         unfrequent:true,
                     },
                     show_extensionshare:{
-                        name:'显示分享扩展',
+                        name:'分享扩展',
                         init:true,
                         unfrequent:true,
                     }
@@ -12714,10 +12699,7 @@
                         player.$damage(source);
                         game.broadcastAll(function(nature,player){
                             if(lib.config.animation&&!lib.config.low_performance){
-                                if(nature=='fire'){
-                                    player.$fire();
-                                }
-                                else if(nature=='thunder'){
+                                if(nature=='thunder'){
                                     player.$thunder();
                                 }
                             }
@@ -15899,7 +15881,6 @@
                         next.targets=[];
                     }
                     if(next.card){
-                        next.card=get.autoViewAs(next.card,false,next.player);
                         var info=get.info(next.card);
                         if(info.changeTarget){
                             info.changeTarget(next.player,next.targets);
@@ -16108,9 +16089,6 @@
                     else if(next.card==undefined){
                         if(next.cards){
                             next.card=next.cards[0];
-                            if(!next.skill){
-                                next.card=get.autoViewAs(next.card,null,next.player);
-                            }
                         }
                     }
                     next.setContent('respond');
@@ -17334,11 +17312,6 @@
                     }
                     return this;
                 },
-				addSkillLog:function(skill){
-					this.addSkill(skill);
-					this.popup(skill);
-					game.log(this,'获得了技能','【'+get.translation(skill)+'】');
-				},
                 addSkill:function(skill,checkConflict,nobroadcast){
                     if(Array.isArray(skill)){
                         for(var i=0;i<skill.length;i++){
@@ -17830,7 +17803,6 @@
                     if(typeof card=='string'){
                         card={name:card};
                     }
-                    card=get.autoViewAs(card,null,player);
                     var num=get.info(card).usable;
                     if(typeof num=='function') num=num(card,player);
                     num=game.checkMod(card,player,num,'cardUsable',player);
@@ -18192,12 +18164,6 @@
                     }
                     return false;
                 },
-                isOffline:function(){
-                    if(this.ws&&lib.node&&this.ws.closed){
-                        return true;
-                    }
-                    return false;
-                },
 				checkShow:function(skill,showonly){
 					var sourceSkill=get.info(skill);
 					var noshow=false;
@@ -18253,41 +18219,6 @@
 				hasSkill:function(skill,arg2,arg3,arg4){
 					return game.expandSkills(this.getSkills(arg2,arg3,arg4)).contains(skill);
 				},
-				hasStockSkill:function(skill,arg1,arg2,arg3){
-					return game.expandSkills(this.getStockSkills(arg1,arg2,arg3)).contains(skill);
-				},
-                hasZhuSkill:function(skill,player){
-                    if(!this.hasSkill(skill)) return false;
-                    var mode=get.mode();
-                    if(mode=='identity'||(mode=='versus'&&_status.mode=='four')){
-                        if(mode!='identity'){
-                            if(player&&this.side!=player.side) return false;
-                        }
-                        if(this.isZhu) return true;
-                        for(var i in this.storage){
-                            if(i.indexOf('zhuSkill_')==0&&this.storage[i].contains(skill)) return true;
-                        }
-                    }
-                    return false;
-                },
-                hasGlobalTag:function(tag,arg){
-                    var skills=lib.skill.global.slice(0);
-                    game.expandSkills(skills);
-                    for(var i=0;i<skills.length;i++){
-                        var info=lib.skill[skills[i]];
-                        if(info&&info.ai){
-                            if(info.ai.skillTagFilter&&info.ai[tag]&&
-                                info.ai.skillTagFilter(this,tag,arg)===false) continue;
-                            if(typeof info.ai[tag]=='string'){
-                                if(info.ai[tag]==arg) return true;
-                            }
-                            else if(info.ai[tag]){
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                },
                 hasSkillTag:function(tag,hidden,arg,globalskill){
                     var skills=this.getSkills(hidden);
                     if(globalskill){
@@ -18390,10 +18321,6 @@
                     if(this.hasSkillTag('respondShan',true,null,true)) return true;
                     return false;
                 },
-				mayHaveShan:function(){
-					return this.hasShan();
-					// modify: later
-				},
                 hasCard:function(name,position){
                     if(typeof name=='function'){
                         var hs=this.getCards(position);
@@ -18412,13 +18339,6 @@
                     }
                     return false;
                 },
-				canEquip:function(name,replace){
-					if(get.type(name)=='card'){
-						name=get.equiptype(name);
-					}
-					if(!replace&&this.getEquip(name)) return false;
-					return true;
-				},
                 getEquip:function(name){
                     var es=this.getCards('e');
                     if(typeof name=='object'&&get.info(name)){
@@ -18627,8 +18547,12 @@
                 $compareMultiple:function(card1,targets,cards){
                     game.broadcast(function(player,card1,targets,cards){
                         player.$compareMultiple(card1,targets,cards);
-                    },this,card1,targets,cards);
-                    game.addVideo('compareMultiple',this,[get.cardInfo(card1),get.targetsInfo(targets),get.cardsInfo(cards)]);
+                    },this,card1,targets,cards);                    
+                    var info=[];
+                    for(var i=0;i<targets.length;i++){
+                        info.push(targets[i].dataset.position);
+                    }
+                    game.addVideo('compareMultiple',this,[get.cardInfo(card1),info,get.cardsInfo(cards)]);
                     var player=this;
                     var node1=player.$throwxy2(card1,
                         'calc(50% - 52px)','calc(50% + 10px)','perspective(600px) rotateY(180deg)',true
@@ -19134,104 +19058,6 @@
                     lib.listenEnd(node);
                     return node;
                 },
-                throwDice:function(num){
-					if(typeof num!='number'){
-						num=get.rand(6)+1;
-						_status.event.num=num;
-					}
-					if(!game.online){
-						game.pause();
-					}
-					game.broadcastAll(function(num){
-						var diceContainer=ui.create.div('.fullsize.dice-container',ui.window);
-						ui.window.classList.add('dicepaused');
-						var dice=ui.create.div('.dice');
-						var side;
-
-						side=ui.create.div('.side.front',dice);
-						ui.create.div('.dot.center',side);
-						ui.create.div('.side.front.inner',dice);
-
-						side=ui.create.div('.side.top',dice);
-						ui.create.div('.dot.dtop.dleft',side);
-						ui.create.div('.dot.dbottom.dright',side);
-						ui.create.div('.side.top.inner',dice);
-
-						side=ui.create.div('.side.right',dice);
-						ui.create.div('.dot.dtop.dleft',side);
-						ui.create.div('.dot.center',side);
-						ui.create.div('.dot.dbottom.dright',side);
-						ui.create.div('.side.right.inner',dice);
-
-						side=ui.create.div('.side.left',dice);
-						ui.create.div('.dot.dtop.dleft',side);
-						ui.create.div('.dot.dtop.dright',side);
-						ui.create.div('.dot.dbottom.dleft',side);
-						ui.create.div('.dot.dbottom.dright',side);
-						ui.create.div('.side.left.inner',dice);
-
-						side=ui.create.div('.side.bottom',dice);
-						ui.create.div('.dot.center',side);
-						ui.create.div('.dot.dtop.dleft',side);
-						ui.create.div('.dot.dtop.dright',side);
-						ui.create.div('.dot.dbottom.dleft',side);
-						ui.create.div('.dot.dbottom.dright',side);
-						ui.create.div('.side.bottom.inner',dice);
-
-						side=ui.create.div('.side.back',dice);
-						ui.create.div('.dot.dtop.dleft',side);
-						ui.create.div('.dot.dtop.dright',side);
-						ui.create.div('.dot.dbottom.dleft',side);
-						ui.create.div('.dot.dbottom.dright',side);
-						ui.create.div('.dot.center dleft',side);
-						ui.create.div('.dot.center dright',side);
-						ui.create.div('.side.back.inner',dice);
-
-						ui.create.div('.side.cover.x',dice);
-						ui.create.div('.side.cover.y',dice);
-						ui.create.div('.side.cover.z',dice);
-
-						var map={
-							1:[75,0,45],
-							2:[-15,45,0],
-							3:[165,-45,90],
-							4:[345,-45,90],
-							5:[345,-45,180],
-							6:[255,0,135]
-						};
-						dice.roll=function(deg){
-							if(typeof deg=='number'){
-								dice.current[0]+=deg;
-								deg=dice.current;
-							}
-							deg=deg.slice(0);
-							dice.current=deg;
-							this.style.transform='rotateX('+deg[0]+'deg) rotateY('+deg[1]+'deg) rotateZ('+deg[2]+'deg)';
-						};
-						dice.roll(map[num]);
-						diceContainer.appendChild(dice);
-						ui.refresh(dice);
-						dice.roll(1025);
-
-						dice.addEventListener('webkitTransitionEnd',function(){
-							if(!dice.over){
-								dice.style.transition='transform 0.8s ease';
-								dice.roll(-20);
-								dice.over=true;
-							}
-							else if(!dice.resumed){
-								setTimeout(function(){
-									diceContainer.delete();
-									ui.window.classList.remove('dicepaused');
-								},300);
-								if(!game.online){
-									setTimeout(game.resume,800);
-								}
-								dice.resumed=true;
-							}
-						});
-					},num);
-				},
                 $giveAuto:function(card,player){
                     if(Array.isArray(card)&&card.length==0) return;
                     var args=Array.from(arguments);
@@ -19562,21 +19388,6 @@
 						},that,type,name,color,avatar);
                     },avatar?0:300);
                 },
-                $fire:function(){
-                    game.addVideo('flame',this,'fire');
-                    var left,top;
-                    if(game.chess){
-                        var rect=this.getBoundingClientRect();
-                        left=rect.left;
-                        top=rect.top;
-                    }
-                    else{
-                        left=this.offsetLeft;
-                        top=this.offsetTop;
-                    }
-                    game.animate.flame(left+this.offsetWidth/2,
-                        top+this.offsetHeight-20,700,'fire');
-                },
                 $thunder:function(){
                     game.addVideo('flame',this,'thunder');
                     var left,top;
@@ -19591,30 +19402,6 @@
                     }
                     game.animate.flame(left+this.offsetWidth/2,
                         top+this.offsetHeight-30,700,'thunder');
-                },
-                $rare2:function(){
-                    game.addVideo('flame',this,'rare2');
-                    var rect=this.getBoundingClientRect();
-                    var left=rect.left;
-                    var top=rect.top+15;
-                    game.animate.flame(left+this.offsetWidth/2,
-                        top+this.offsetHeight-30,700,'rare');
-                },
-                $epic2:function(){
-                    game.addVideo('flame',this,'epic2');
-                    var rect=this.getBoundingClientRect();
-                    var left=rect.left;
-                    var top=rect.top+15;
-                    game.animate.flame(left+this.offsetWidth/2,
-                        top+this.offsetHeight-30,700,'epic');
-                },
-                $legend2:function(){
-                    game.addVideo('flame',this,'legend2');
-                    var rect=this.getBoundingClientRect();
-                    var left=rect.left;
-                    var top=rect.top+15;
-                    game.animate.flame(left+this.offsetWidth/2,
-                        top+this.offsetHeight-30,700,'legend');
                 },
                 $rare:function(time){
                     time=time||700;
@@ -19634,24 +19421,6 @@
                     game.animate.flame(left+this.offsetWidth/2,
                         top+this.offsetHeight-30,time,'rare');
                 },
-                $epic:function(time){
-                    time=time||700;
-                    game.addVideo('flame',this,'epic');
-                    var left,top;
-                    if(game.chess){
-                        left=this.offsetLeft-ui.arena.offsetLeft;
-                        top=this.offsetTop-ui.arena.offsetTop;
-                    }
-                    else{
-                        left=this.offsetLeft;
-                        top=this.offsetTop;
-                    }
-                    if(this.classList.contains('minskin')){
-                        top+=15;
-                    }
-                    game.animate.flame(left+this.offsetWidth/2,
-                        top+this.offsetHeight-30,time,'epic');
-                },
                 $legend:function(time){
                     time=time||700;
                     game.addVideo('flame',this,'legend');
@@ -19669,38 +19438,6 @@
                     }
                     game.animate.flame(left+this.offsetWidth/2,
                         top+this.offsetHeight-30,time,'legend');
-                },
-                $coin:function(){
-                    game.broadcast(function(player){
-                        if(!lib.config.low_performance){
-                            player.$coin();
-                        }
-                    },this);
-                    game.addVideo('flame',this,'coin');
-                    var left=this.offsetLeft-ui.arena.offsetLeft;
-                    var top=this.offsetTop-ui.arena.offsetTop;
-                    if(this.classList.contains('minskin')){
-                        top+=15;
-                    }
-                    top-=25;
-                    game.animate.flame(left+this.offsetWidth/2,
-                        top+this.offsetHeight-30,700,'coin');
-                },
-                $dust:function(){
-                    game.broadcast(function(player){
-                        if(!lib.config.low_performance){
-                            player.$dust();
-                        }
-                    },this);
-                    game.addVideo('flame',this,'dust');
-                    var left=this.offsetLeft-ui.arena.offsetLeft;
-                    var top=this.offsetTop-ui.arena.offsetTop;
-                    if(this.classList.contains('minskin')){
-                        top+=15;
-                    }
-                    top-=25;
-                    game.animate.flame(left+this.offsetWidth/2,
-                        top+this.offsetHeight-30,700,'dust');
                 },
                 $recover:function(){
                     game.addVideo('flame',this,'recover');
@@ -21305,7 +21042,6 @@
 				return true;
 			},
             cardEnabled:function(card,player,event){
-                card=get.autoViewAs(card,null,player);
                 if(player==undefined) player=_status.event.player;
                 if(event==='forceEnable'){
                     var mod=game.checkMod(card,player,'unchanged','cardEnabled',player);
@@ -21336,7 +21072,6 @@
                 return true;
             },
             cardUsable:function(card,player,event){
-                card=get.autoViewAs(card,null,player);
                 if(player!=_status.event.player) return true;
                 event=event||_status.event;
                 if(event.getParent().name!='phaseUse') return true;
@@ -24978,8 +24713,12 @@
                 }
             },
             compareMultiple:function(player,info){
-                if(player&&info){
-                    player.$compareMultiple(get.infoCard(info[0]),get.infoTargets(info[1]),get.infoCards(info[2]));
+                if(player&&info){            
+                    var targets=[];
+                    for(var i=0;i<info.length;i++){
+                        targets.push(game.playerMap[info[i]]);
+                    }
+                    player.$compareMultiple(get.infoCard(info[0]),targets,get.infoCards(info[2]));
                 }
                 else{
                     console.log(player);
@@ -29321,18 +29060,6 @@
                 var card=lib.card[i];
                 if(card.filterTarget&&card.selectTarget==undefined){
                     card.selectTarget=1;
-                }
-                // autoviewas 好像是指自动当作别的卡处理？
-                if(card.autoViewAs){
-                    if(!card.ai){
-                        card.ai={};
-                    }
-                    if(!card.ai.order){
-                        card.ai.order=lib.card[card.autoViewAs].ai.order;
-                        if(!card.ai.order&&lib.card[card.autoViewAs].ai.basic){
-                            card.ai.order=lib.card[card.autoViewAs].ai.basic.order;
-                        }
-                    }
                 }
                 if(card.type=='equip'){
                     if(card.enable==undefined) card.enable=true;
@@ -38673,9 +38400,6 @@
                 if(lib.config.blur_ui){
                     ui.window.classList.add('blur_ui');
                 }
-				if(lib.config.glass_ui){
-					ui.window.classList.add('glass_ui');
-				}
                 if(lib.config.custom_button){
                     lib.configMenu.appearence.config.custom_button.onclick('skip');
                 }
@@ -39757,31 +39481,6 @@
             },
         },
         click:{
-         	identitycircle:function(){
-				var list=[];
-				this.classList.toggle('transparent');
-				for(var i=0;i<this.parentNode.childNodes.length;i++){
-					if(!this.parentNode.childNodes[i].classList.contains('transparent')){
-						list.add(this.parentNode.childNodes[i].link[2]);
-					}
-				}
-				var info=this.link;
-				if(list.length==1){
-					for(var i=0;i<this.parentNode.childNodes.length;i++){
-						if(!this.parentNode.childNodes[i].classList.contains('transparent')){
-							var info2=this.parentNode.childNodes[i].link;
-							info[0].firstChild.innerHTML=info2[1];
-							info[0].dataset.color=info2[2];
-						}
-					}
-				}
-				else{
-					info[0].firstChild.innerHTML='';
-					info[0].dataset.color='';
-					ui.create.identitycircle(list,info[0].firstChild);
-				}
-				this._source._guozhanguess=list;
-			},
 			connectEvents:function(){
 				if(this.info){
                     var button=this;
@@ -41247,7 +40946,9 @@
             windowmousemove:function(e){
                 if(window.inSplash) return;
                 if(_status.tempunpopup){
-                    if(get.evtDistance(_status.tempunpopup,e)>5){
+                    var dx=(_status.tempunpopup.clientX-e.clientX)/game.documentZoom;
+                    var dy=(_status.tempunpopup.clientY-e.clientY)/game.documentZoom;
+                    if(Math.sqrt(dx*dx+dy*dy)>5){
                         delete _status.tempunpopup;
                     }
                 }
@@ -43750,43 +43451,6 @@
                 }
             }
         },
-        autoViewAs:function(card,cards){
-            var info=get.info(card);
-            if(info.autoViewAs){
-                if(cards===false){
-                    return {
-                        name:info.autoViewAs
-                    };
-                }
-                else if(Array.isArray(cards)){
-                    return {
-                        name:info.autoViewAs,
-                        cards:cards.slice(0)
-                    };
-                }
-                else if(get.itemtype(card)=='card'){
-                    return {
-                        name:info.autoViewAs,
-                        cards:[card]
-                    };
-                }
-                else{
-                    return {
-                        name:info.autoViewAs,
-                        suit:card.suit,
-                        number:card.number,
-                        nature:card.nature
-                    };
-                }
-            }
-            else{
-                if(get.is.object(card)&&get.itemtype(cards)=='cards'&&!card.cards){
-                    card=get.copy(card);
-                    card.cards=cards.slice(0);
-                }
-                return card;
-            }
-        },
         max:function(list,func,type){
             list=list.slice(0);
             if(typeof func=='string'){
@@ -43988,48 +43652,6 @@
                 num=get.config('player_number');
             }
             return parseInt(num)||2;
-        },
-        benchmark:function(func1,func2,iteration,arg){
-            var tic,toc;
-            var key1,key2;
-            if(!arg) arg=[];
-            if(Array.isArray(func2)){
-                key1=func2[0];
-                key2=func2[1];
-            }
-            else if(typeof func2=='string'){
-                key1=func2;
-                func2=iteration||100;
-            }
-            else if(typeof func2=='number'){
-                arg=iteration||arg;
-                iteration=func2;
-            }
-            tic=get.utc();
-            for(var i=0;i<iteration;i++){
-                if(key1){
-                    func1[key1](arg.randomGet());
-                }
-                else{
-                    func1(arg.randomGet());
-                }
-            }
-            toc=get.utc();
-            if(typeof func2=='number'){
-                return toc-tic;
-            }
-            console.log('time1: '+(toc-tic));
-            tic=get.utc();
-            for(var i=0;i<iteration;i++){
-                if(key2){
-                    func1[key2](arg.randomGet());
-                }
-                else{
-                    func2(arg.randomGet());
-                }
-            }
-            toc=get.utc();
-            console.log('time2: '+(toc-tic));
         },
         stringify:function(obj,level){
             level=level||0;
@@ -44364,87 +43986,6 @@
             }
             return num?Math.round(9*(num-1)/8+1):'x';
         },
-       	skillRank:function(skill,type,grouped){
-			var info=lib.skill[skill];
-			var player=_status.event.skillRankPlayer||_status.event.player;
-			if(!info) return 0;
-			if(info.ai){
-				if(info.ai.halfneg) return 0;
-				if(typeof info.ai.combo=='string'&&player&&!player.hasSkill(info.ai.combo)){
-					return 0;
-				}
-				if(info.ai.neg) return -1;
-			}
-			var num=1;
-			var threaten=1;
-			if(info.ai&&info.ai.threaten){
-				if(typeof info.ai.threaten=='number'){
-					threaten=info.ai.threaten;
-				}
-				else if(typeof info.ai.threaten=='function'&&player){
-					threaten=info.ai.threaten(player,player);
-				}
-			}
-			if(type=='in'){
-				if(info.enable=='phaseUse') num+=0.5;
-				if(info.trigger&&['phaseBegin','phaseDrawBegin','phaseUseBegin','phaseEnd'].contains(info.trigger.player)){
-					num+=0.5;
-				}
-				if(info.trigger&&((typeof info.trigger.player=='string'&&info.trigger.player.indexOf('use')==0)||info.trigger.source)){
-					num+=0.3;
-				}
-				if(num>1&&threaten>1){
-					num+=Math.sqrt(threaten)-1;
-				}
-			}
-			else if(type=='out'){
-				if(threaten<1){
-					num=1/Math.sqrt(threaten);
-				}
-				if(info.trigger&&(info.trigger.global||info.trigger.target||(typeof info.trigger.player=='string'&&
-				(info.trigger.player.indexOf('damage')==0||info.trigger.player.indexOf('lose')==0)))) num+=0.1;
-				if(info.ai){
-					if(info.ai.maixie||info.ai.maixie_hp||info.ai.maixie_defend){
-						num+=0.5;
-					}
-					if(info.ai.nolose||info.ai.noh||info.ai.noe||info.ai.nodiscard){
-						num+=0.3;
-					}
-				}
-			}
-			if(!grouped){
-				var groups=game.expandSkills([skill]);
-				groups.remove(skill);
-				var ggt=[];
-				for(var i=0;i<groups.length;i++){
-					var gi=get.skillRank(groups[i],type,true);
-					if(gi<0){
-						num-=0.5;
-					}
-					else if(gi>1){
-						ggt.push(gi);
-					}
-				}
-				if(ggt.length){
-					num+=Math.max.apply(this,ggt)-1+ggt.length/20;
-				}
-			}
-			return num;
-        },
-        targetsInfo:function(targets){
-            var info=[];
-            for(var i=0;i<targets.length;i++){
-                info.push(targets[i].dataset.position);
-            }
-            return info;
-        },
-        infoTargets:function(info){
-            var targets=[];
-            for(var i=0;i<info.length;i++){
-                targets.push(game.playerMap[info[i]]);
-            }
-            return targets;
-        },
         cardInfo:function(card){
             return [card.suit,card.number,card.name,card.nature,card.bonus];
         },
@@ -44688,17 +44229,6 @@
 			}
 			return str2;
 		},
-		rawName2:function(str){
-			var str2=lib.translate[str];
-			if(!str2) return '';
-			if(str2.indexOf('sp')==0){
-				str2=str2.slice(2);
-			}
-			else if(str2.indexOf('界sp')==0){
-				str2=str2.slice(3);
-			}
-			return str2;
-		},
         slimName:function(str){
             var str2=lib.translate[str];
             if(!str2) return '';
@@ -44720,11 +44250,6 @@
         },
         utc:function(){
             return (new Date()).getTime();
-        },
-        evtDistance:function(e1,e2){
-            var dx=(e1.clientX-e2.clientX)/game.documentZoom;
-            var dy=(e1.clientY-e2.clientY)/game.documentZoom;
-            return Math.sqrt(dx*dx+dy*dy);
         },
         xyDistance:function(from,to){
             return Math.sqrt((from[0]-to[0])*(from[0]-to[0])+(from[1]-to[1])*(from[1]-to[1]));
@@ -44799,11 +44324,6 @@
 			if(!lib.card[obj.name]) return;
             if(!lib.card[obj.name].subtype) return null;
 			return lib.card[obj.name].subtype;
-		},
-		equiptype:function(card){
-			var subtype=get.subtype(card);
-			if(subtype.indexOf('equip')==0) return parseInt(subtype[5]);
-			return 0;
 		},
         suit:function(card){
             if(get.itemtype(card)=='cards'){
@@ -45019,7 +44539,7 @@
             if(_status.event.skill){
                 var card=get.info(_status.event.skill).viewAs;
                 if(card){
-                    return get.autoViewAs(card,ui.selected.cards,_status.event.player);
+                    return card
                 }
             }
             if(_status.event._get_card){
@@ -45027,9 +44547,6 @@
             }
             var card=ui.selected.cards[0];
             if(original) return card;
-            if(card){
-                card=get.autoViewAs(card,ui.selected.cards,_status.event.player);
-            }
             return card;
         },
         player:function(){

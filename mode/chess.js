@@ -620,6 +620,80 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			},
     		},
     		player:{
+                $dust:function(){
+                    game.broadcast(function(player){
+                        if(!lib.config.low_performance){
+                            player.$dust();
+                        }
+                    },this);
+                    game.addVideo('flame',this,'dust');
+                    var left=this.offsetLeft-ui.arena.offsetLeft;
+                    var top=this.offsetTop-ui.arena.offsetTop;
+                    if(this.classList.contains('minskin')){
+                        top+=15;
+                    }
+                    top-=25;
+                    game.animate.flame(left+this.offsetWidth/2,
+                        top+this.offsetHeight-30,700,'dust');
+                },
+                $coin:function(){
+                    game.broadcast(function(player){
+                        if(!lib.config.low_performance){
+                            player.$coin();
+                        }
+                    },this);
+                    game.addVideo('flame',this,'coin');
+                    var left=this.offsetLeft-ui.arena.offsetLeft;
+                    var top=this.offsetTop-ui.arena.offsetTop;
+                    if(this.classList.contains('minskin')){
+                        top+=15;
+                    }
+                    top-=25;
+                    game.animate.flame(left+this.offsetWidth/2,
+                        top+this.offsetHeight-30,700,'coin');
+                },
+                $epic:function(time){
+                    time=time||700;
+                    game.addVideo('flame',this,'epic');
+                    var left,top;
+                    if(game.chess){
+                        left=this.offsetLeft-ui.arena.offsetLeft;
+                        top=this.offsetTop-ui.arena.offsetTop;
+                    }
+                    else{
+                        left=this.offsetLeft;
+                        top=this.offsetTop;
+                    }
+                    if(this.classList.contains('minskin')){
+                        top+=15;
+                    }
+                    game.animate.flame(left+this.offsetWidth/2,
+                        top+this.offsetHeight-30,time,'epic');
+                },
+                $rare2:function(){
+                    game.addVideo('flame',this,'rare2');
+                    var rect=this.getBoundingClientRect();
+                    var left=rect.left;
+                    var top=rect.top+15;
+                    game.animate.flame(left+this.offsetWidth/2,
+                        top+this.offsetHeight-30,700,'rare');
+                },
+                $epic2:function(){
+                    game.addVideo('flame',this,'epic2');
+                    var rect=this.getBoundingClientRect();
+                    var left=rect.left;
+                    var top=rect.top+15;
+                    game.animate.flame(left+this.offsetWidth/2,
+                        top+this.offsetHeight-30,700,'epic');
+                },
+                $legend2:function(){
+                    game.addVideo('flame',this,'legend2');
+                    var rect=this.getBoundingClientRect();
+                    var left=rect.left;
+                    var top=rect.top+15;
+                    game.animate.flame(left+this.offsetWidth/2,
+                        top+this.offsetHeight-30,700,'legend');
+                },
     			createRangeShadow:function(num,move,glow){
     				num++;
     				var shadows=this.parentNode.getElementsByClassName('playergrid');

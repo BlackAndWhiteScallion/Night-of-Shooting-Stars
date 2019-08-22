@@ -655,31 +655,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						else{
 							player.init(choice);
 						}
-						// 如果增加血量，血量上限
-						/*
-						if(game.players.length>4){
-							player.hp++;
-							player.maxHp++;
-							player.update();
-						}
-						*/
 					}
-					/*
-					else if(player.identity=='zhong'&&Math.random()<0.5){
-						var choice=0;
-						for(var i=0;i<list.length;i++){
-							if(lib.character[list[i]][1]==game.zhu.group){
-								choice=i;break;
-							}
-						}
-						if(get.config('double_character')){
-							player.init(list[choice],list[choice==0?choice+1:choice-1]);
-						}
-						else{
-							player.init(list[choice]);
-						}
-					}
-					*/
 					else if (player.identity == 'nei' && (!_status.connectMode && ((lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu'] && lib.config.gameRecord.incident.data['akyuu'] >= 3) || lib.config.library && lib.config.library[3]))){
 						lib.character['akyuu'] = ['female','1',3,['luguo','mengji','boom','yixiang'],[]];
 						lib.characterIntro['akyuu']='全名稗田阿求，将毕生奉献于记载幻想乡的历史的稗田家的现任家主。持有过目不忘的记忆能力。<br><b>画师：渡瀬　玲<br></b><br>现因一些原因，被赋予了幻想乡的管理员权限。不过依然是和平常一样做着记录屋的工作。';
@@ -838,15 +814,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								_status.event=_status.event.parent;
 								_status.event.step=0;
 								_status.event.identity=link;
-								/*
-								if(link!=(event.zhongmode?'mingzhong':'zhu')){
-									seats.previousSibling.style.display='';
-									seats.style.display='';
-								}
-								else{
-									seats.previousSibling.style.display='none';
-									seats.style.display='none';
-								}*/
 								game.resume();
 							});
 						}
@@ -883,12 +850,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							});
 						}
 						dialog.content.appendChild(seats);
-						/*
-						if(game.me==game.zhu){
-							seats.previousSibling.style.display='none';
-							seats.style.display='none';
-						}
-						*/
 
 						dialog.add(ui.create.div('.placeholder.add-setting'));
 						dialog.add(ui.create.div('.placeholder.add-setting'));
@@ -1025,12 +986,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(!game.zhu) game.zhu=game.me;
 					// 否则，亮出主公的身份
 					else{
-						/*
-						game.zhu.setIdentity();
-						game.zhu.identityShown=true;
-						game.zhu.isZhu=(game.zhu.identity=='zhu');
-						game.zhu.node.identity.classList.remove('guessing');
-						*/
 						game.me.setIdentity();
 						game.me.node.identity.classList.remove('guessing');
 					}
@@ -1294,13 +1249,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addRecentCharacter(game.me.name,game.me.name2);
 					event.list.remove(game.me.name);
 					event.list.remove(game.me.name2);
-					/* 主公加血
-					if(game.me==game.zhu&&game.players.length>4){
-						game.me.hp++;
-						game.me.maxHp++;
-						game.me.update();
-					}
-					*/
+					/* 主公加血 */
 					event.list.randomSort();
 					if (!lib.config.new_tutorial) event.list[0] = 'zigui';
 					for(var i=0;i<game.players.length;i++){
@@ -1417,12 +1366,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						},game.zhu,map);
 						event.special_identity=map;
 					}
-					/*
-					game.zhu.setIdentity();
-					game.zhu.identityShown=true;
-					game.zhu.isZhu=(game.zhu.identity=='zhu');
-					game.zhu.node.identity.classList.remove('guessing');
-					*/
 					// 玩家可以看身份了
 					game.me.setIdentity();
 					game.me.node.identity.classList.remove('guessing');
@@ -1477,46 +1420,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					else{
 						list=list2.concat(list3.randomGets(3));
 					}
-					/*
-					var next=game.zhu.chooseButton(true);
-					next.set('selectButton',(lib.configOL.double_character?2:1));
-					next.set('createDialog',['选择角色',[list,'character']]);
-					next.set('callback',function(player,result){
-						player.init(result.links[0],result.links[1]);
-					});
-					next.set('ai',function(button){
-						return Math.random();
-					});
-					*/
 					"step 1"
-					/*
-					if(game.me!=game.zhu){
-						game.zhu.init(result.links[0],result.links[1])
-					}
-					
-					event.list.remove(game.zhu.name);
-					event.list.remove(game.zhu.name2);
-					event.list2.remove(game.zhu.name);
-					event.list2.remove(game.zhu.name2);
-
-					// 如果游戏人数>4，主公加上限
-					/*
-					if(game.players.length>4){
-						game.zhu.maxHp++;
-						game.zhu.hp++;
-						game.zhu.update();
-					}
-					game.broadcast(function(zhu,name,name2,addMaxHp){
-						if(game.zhu!=game.me){
-							zhu.init(name,name2);
-						}
-						if(addMaxHp){
-							zhu.maxHp++;
-							zhu.hp++;
-							zhu.update();
-						}
-					},game.zhu,game.zhu.name,game.zhu.name2,game.players.length>4);
-					*/
 					var list=[];
 					var selectButton=(lib.configOL.double_character?2:1);
 
@@ -1555,49 +1459,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.chooseButtonOL(list,function(player,result){
 						if(game.online||player==game.me) player.init(result.links[0],result.links[1]);
 					});
-					/*
-					ui.create.cheat2=function(){
-						ui.cheat2=ui.create.control('自由选将',function(){
-							if(this.dialog==_status.event.dialog){
-								if(game.changeCoin){
-									game.changeCoin(50);
-								}
-								this.dialog.close();
-								_status.event.dialog=this.backup;
-								this.backup.open();
-								delete this.backup;
-								game.uncheck();
-								game.check();
-								if(ui.cheat){
-									ui.cheat.animate('controlpressdownx',500);
-									ui.cheat.classList.remove('disabled');
-								}
-							}
-							else{
-								if(game.changeCoin){
-									game.changeCoin(-10);
-								}
-								this.backup=_status.event.dialog;
-								_status.event.dialog.close();
-								_status.event.dialog=_status.event.parent.dialogxx;
-								this.dialog=_status.event.dialog;
-								this.dialog.open();
-								game.uncheck();
-								game.check();
-								if(ui.cheat){
-									ui.cheat.classList.add('disabled');
-								}
-							}
-						});
-						if(lib.onfree){
-							ui.cheat2.classList.add('disabled');
-						}
-					}
-					if(!_status.brawl||!_status.brawl.chooseCharacterFixed){
-						if(!ui.cheat2&&lib.configOL.free_choose)
-						ui.create.cheat2();
-					}
-					*/
 					"step 2"
 					if(ui.cheat2){
 						ui.cheat2.close();
@@ -1763,59 +1624,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						},this,this.special_identity,this.identity);
 					}
 					game.checkResult();
-					// 如果只剩主和内/主和反，就身份全亮出来。
-					
-					/* if(game.zhu&&game.zhu.isZhu){
-						if(get.population('zhong')+get.population('nei')==0||
-						get.population('zhong')+get.population('fan')==0){
-							game.broadcastAll(game.showIdentity);
-						}
-					}
-					*/
-
-					// 这里是奖惩：反贼摸3，明忠摸3（主公全弃），主公打死忠臣全弃
-					// 如果只剩2个反就去掉强化主
-					/*
-					if(this.identity=='fan'&&source) source.draw(3);
-					else if(this.identity=='mingzhong'&&source){
-						if(source.identity=='zhu'){
-							source.discard(source.getCards('he'));
-						}
-						else{
-							source.draw(3);
-						}
-					}
-					else if(this.identity=='zhong'&&source&&source.identity=='zhu'&&source.isZhu){
-						source.discard(source.getCards('he'));
-					}
-					if(game.zhu&&game.zhu.storage.enhance_zhu&&get.population('fan')<3){
-						game.zhu.removeSkill(game.zhu.storage.enhance_zhu);
-						delete game.zhu.storage.enhance_zhu;
-					}
-					// 明忠死亡时亮出主公。
-					if(this==game.zhong){
-						game.broadcastAll(function(player){
-							game.zhu=player;
-							game.zhu.identityShown=true;
-							game.zhu.ai.shown=1;
-							game.zhu.setIdentity();
-							game.zhu.isZhu=true;
-							game.zhu.node.identity.classList.remove('guessing');
-							if(lib.config.animation&&!lib.config.low_performance) game.zhu.$legend();
-							delete game.zhong;
-							if(_status.clickingidentity&&_status.clickingidentity[0]==game.zhu){
-								for(var i=0;i<_status.clickingidentity[1].length;i++){
-									_status.clickingidentity[1][i].delete();
-									_status.clickingidentity[1][i].style.transform='';
-								}
-								delete _status.clickingidentity;
-							}
-						},game.zhu);
-						game.delay(2);
-						game.zhu.playerfocus(1000);
-						_status.event.trigger('zhuUpdate');
-					}
-					*/
 					// 奖惩：获得1灵力和1技能牌
 					if (source){
 						source.gainlili();
@@ -2065,48 +1873,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							case 'zhu': return 10;
 							case 'zhong':case 'mingzhong': return 6;
 							case 'nei': return 0;
-								/* 跳过一堆判定内奸的东西
-								if(game.players.length==2) return -10;
-								if(to.identity=='zhong') return 0;
-								if(get.population('fan')==0){
-									if(to.ai.identity_mark=='zhong'&&to.ai.shown<1) return 0;
-									return -0.5;
-								}
-								if(zhongmode&&to.ai.sizhong&&to.ai.shown<1) return 6;
-								if(get.population('fan')==1&&get.population('nei')==1&&game.players.length==3){
-									var fan;
-									for(var i=0;i<game.players.length;i++){
-										if(game.players[i].identity=='fan'){
-											fan=game.players[i];break;
-										}
-									}
-									if(fan){
-										if(to.hp>1&&to.hp>fan.hp&&to.countCards('he')>fan.countCards('he')){
-											return -3;
-										}
-									}
-									return 0;
-								}
-								if(situation>1) return 0;
-								return Math.min(3,get.population('fan'));
-								*/
 							case 'fan':
-								/* 假装没看到主内反局
-								if(get.population('fan')==1&&get.population('nei')==1&&game.players.length==3){
-									var nei;
-									for(var i=0;i<game.players.length;i++){
-										if(game.players[i].identity=='nei'){
-											nei=game.players[i];break;
-										}
-									}
-									if(nei){
-										if(nei.hp>1&&nei.hp>to.hp&&nei.countCards('he')>to.countCards('he')){
-											return 0;
-										}
-									}
-									return -3;
-								}
-								*/
 								return -4;
 						}
 						break;
@@ -2115,11 +1882,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							case 'zhu': return 10;
 							case 'zhong':case 'mingzhong': return 4;
 							case 'nei':
-								/*
-								if(get.population('fan')==0) return -2;
-								if(zhongmode&&to.ai.sizhong&&to.ai.shown<1) return 6;
-								return Math.min(3,-situation);
-								*/
 								return 0;
 							case 'fan': return -8;
 						}

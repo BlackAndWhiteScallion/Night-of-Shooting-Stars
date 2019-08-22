@@ -520,9 +520,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							cond='in';
 						}
 						skills.randomSort();
-						skills.sort(function(a,b){
-							return get.skillRank(b,cond)-get.skillRank(a,cond);
-						});
 						var choice=skills[0];
 						event.currentname=map[choice];
 						event.clickControl(choice,'ai');
