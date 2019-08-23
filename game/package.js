@@ -9,6 +9,7 @@ window.noname_package={
         baka:'笨蛋',
         secret:'秘封',
         random:'乱入',
+        randomOL:'乱入OL',
         d3:'三次元乱入',
     },
     card:{

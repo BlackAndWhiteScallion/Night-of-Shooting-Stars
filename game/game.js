@@ -823,25 +823,6 @@
                             }
                         }
                     },
-                    // fewplayer:{
-                    //     name:'启用人数',
-                    //  intro:'设置启用新版布局的最小人数（不足时切换至默认布局）',
-                    //     init:'3',
-                    //     // unfrequent:true,
-                    //     item:{
-                    //         '2':'两人',
-                    //         '3':'三人',
-                    //         '4':'四人',
-                    //         '5':'五人',
-                    //         '6':'六人',
-                    //         '7':'七人',
-                    //         '8':'八人',
-                    //     },
-                    //     onclick:function(item){
-                    //         game.saveConfig('fewplayer',item);
-                    //         if(ui.arena) ui.arena.setNumber(ui.arena.dataset.number);
-                    //     }
-                    // },
                     player_height:{
                         name:'角色高度',
                         init:'long',
@@ -880,42 +861,6 @@
 							// }
 						}
                     },
-                    // background_color_music:{
-                    //  name:'背景色',
-                    //  init:'black',
-                    //  item:{
-                    //      blue:'蓝色',
-                    //      black:'黑色',
-                    //  },
-                    //  onclick:function(color){
-                    //      game.saveConfig('background_color_music',color);
-                    //      document.body.dataset.background_color_music=color;
-                    //  }
-                    // },
-                    // background_color_wood:{
-                    //  name:'背景色',
-                    //  init:'blue',
-                    //  item:{
-                    //      blue:'蓝色',
-                    //      black:'黑色',
-                    //  },
-                    //  onclick:function(color){
-                    //      game.saveConfig('background_color_wood',color);
-                    //      document.body.dataset.background_color_wood=color;
-                    //  }
-                    // },
-                    // theme_color_music:{
-                    //  name:'主题色',
-                    //  init:'black',
-                    //  item:{
-                    //      blue:'蓝色',
-                    //      black:'黑色',
-                    //  },
-                    //  onclick:function(color){
-                    //      game.saveConfig('theme_color_music',color);
-                    //      document.body.dataset.theme_color_music=color;
-                    //  }
-                    // },
                     ui_zoom:{
                         name:'界面缩放',
                         unfrequent:true,
@@ -3439,7 +3384,7 @@
                         init:true,
                     },
                     background_speak:{
-                        name:'人物配音',
+                        name:'播放角色台词',
                         init:true,
                     },
                     volumn_audio:{
@@ -40515,47 +40460,6 @@
                     }
                 }
             },
-            dieswap:function(){
-                if(game.me.isDead()){
-                    _status.clicked=true;
-                    var i,translation,intro,str;
-                    if(ui.intro){
-                        ui.intro.close();
-                        if(ui.intro.source=='dieswap'){
-                            delete ui.intro;
-                            ui.control.show();
-                            game.resume2();
-                            return;
-                        }
-                    }
-                    game.pause2();
-                    ui.control.hide();
-                    ui.intro=ui.create.dialog();
-                    ui.intro.source='dieswap';
-
-                    var players=[];
-                    for(var i=0;i<game.players.length;i++){
-                        if(game.players[i].isAlive()){
-                            players.push(game.players[i]);
-                        }
-                    }
-                    ui.intro.add(players,true);
-                    var buttons=ui.intro.querySelectorAll('.button');
-                    for(var i=0;i<buttons.length;i++){
-                        buttons[i].addEventListener(lib.config.touchscreen?'touchend':'click',ui.click.dieswap2);
-                    }
-                }
-                else{
-                    if(ui.swap){
-                        ui.swap.close();
-                        delete ui.swap;
-                    }
-                }
-            },
-            dieswap2:function(){
-                if(_status.dragged) return;
-                game.swapPlayer(this.link);
-            },
             touchconfirm:function(){
                 _status.touchconfirmed=true;
                 document.removeEventListener('touchstart',ui.click.touchconfirm);
@@ -43276,13 +43180,6 @@
                 }
             }
         },
-        recycle:function(node,key){
-            if(!ui._recycle) ui._recycle={};
-            if(typeof node=='string'){
-                return ui._recycle[node]
-            }
-            ui._recycle[key]=node;
-        },
     };
     var get={
         is:{
@@ -45772,22 +45669,6 @@
                                 uiintro.add('<div class="text center">灵力：'+ get.bonus(node) +'</div>');
                             }
                             // 跳过整个武器部分。
-                            /*
-                            if(get.subtype(node)=='equip1'){
-                                var added=false;
-                                if(lib.card[node.name]&&lib.card[node.name].distance){
-                                    var dist=lib.card[node.name].distance;
-                                    if(dist.attackFrom){
-                                        added=true;
-                                        uiintro.add('<div class="text center">攻击范围：'+(-dist.attackFrom+1)+'</div>');
-                                    }
-                                }
-                                if(!added){
-                                    //uiintro.add('<div class="text center">攻击范围：1</div>');
-                                }
-                            }
-                            else
-                            */ 
                             if(get.subtype(node)){
                                 //uiintro.add('<div class="text center">'+get.translation(get.subtype(node))+'</div>');
                                 uiintro.add('<div class="text center">'+get.translation(get.type(node))+'/'+get.translation(get.subtype(node))+'</div>');
