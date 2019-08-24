@@ -844,7 +844,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            ],
 	            showcase:function(init){
 	            	if (init){
-		            	//var i;
 		            	var list=[];
 		            	for(var i in lib.character){
 		            		list.push(i);
