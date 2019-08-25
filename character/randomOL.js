@@ -40,8 +40,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					player.storage.time = [];
+					var sort ;
 					for (var i = 0; i < lib.config.gameRecord.homura.length; i ++){
-						player.storage.time.push(game.createCard(lib.config.gameRecord.homura[i]))
+						var card = game.createCard(lib.config.gameRecord.homura[i]);
+						sort=lib.config.sort_card(card);
+						if(sort>1) player.storage.time.splice(0, 0, card);
+						else player.storage.time.push(card);
 					}
 					player.syncStorage('time');
 					player.markSkill('time');

@@ -55,9 +55,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{global:'phaseEnd'},
 				group:["zhongzou_2","zhongzou_3",'zhongzou_5'],
-				/*init:function(player){
-					player.addSkill('zhongzou_4');
-				},*/
 				filter:function(event,player){
 					if (player.lili <= 0) return false;
 					return game.hasPlayer(function(current){
@@ -2849,7 +2846,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			xiangyi:{
 				group:['xiangyi_2','xiangyi_3'],
-				audio:3,
+				audio:1,
 				enable:['chooseToRespond','chooseToUse'],
 				filterCard:function(card,player){
 					if (!player.countCards('e', {subtype:'equip1', color:'black'})){
@@ -2875,7 +2872,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			xiangyi_2:{
-				audio:2,
+				audio:'xiangyi',
 				enable:['chooseToRespond','chooseToUse'],
 				filterCard:function(card, player){
 					if (!player.countCards('e', {subtype:'equip1', color:'black'})){
@@ -2886,6 +2883,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					return true;
 				},
+				position:'he',
 				viewAs:{name:'shan'},
 				viewAsFilter:function(player){
 					return player.countCards('e', {subtype:'equip1'});
@@ -2905,7 +2903,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			xiangyi_3:{
-				audio:2,
+				audio:3,
 				trigger:{player:'useCardAfter'},
 				filter:function(event, player){
 					return _status.currentPhase != player;
@@ -2916,6 +2914,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			chunse:{
 				forced:true,
+				audio:2,
 				group:['chunse_2'],
 				trigger:{global:'phaseAfter'},
 				filter:function(event, player){
@@ -2926,9 +2925,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			chunse_2:{
+				audio:2,
 				trigger:{source:'damageBefore'},
 				filter:function(event, player){
-					return event.nature == 'thunder';
+					return event.nature == 'thunder' && player.lili == player.maxlili;
 				},
 				content:function(){
 					trigger.untrigger();
@@ -3144,8 +3144,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			heike_info:'一回合一次，出牌阶段，你可以消耗1点灵力，观看一名角色的手牌并获得其中一张。',
 			tsubaki:'椿',
 			xiangyi:'翔翼',
+			xiangyi_audio1:'这是由你为我再一次展开的双翼',
 			xiangyi_2:'翔翼（→躲）',
 			xiangyi_3:'翔翼（灵击伤害）',
+			xiangyi_3_audio1:'这是我的领域',
+			xiangyi_3_audio2:'折翼陨落，涅槃苏生',
+			xiangyi_3_audio3:'毕竟，你就是我的翅膀啊',
 			xiangyi_info:'你可以将与装备区内武器牌颜色相同的牌当作【轰！】或【躲～】使用/打出；你于回合外使用牌后，可以对当前回合角色造成1点灵击伤害。',
 			chunse:'椿色恋歌',
 			chunse_2:'椿色恋歌（灵击→弹幕）',
