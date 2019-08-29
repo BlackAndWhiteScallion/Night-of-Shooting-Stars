@@ -17264,7 +17264,7 @@
                         }
                     }
                     else{
-                        //if(this.skills.contains(skill)) return;
+                        if(this.skills.contains(skill)) return;
                         var info=lib.skill[skill];
                         if(!info) return;
                         if(!nobroadcast){
@@ -29838,7 +29838,9 @@
             player.dataset.position=position||game.players.length+game.dead.length;
             player.getId();
             if(character) player.init(character);
-            game.players.push(player);game.arrangePlayers();
+            game.players.push(player);
+            game.arrangePlayers();
+            game.log(character, '进入了战场！');
             return player;
         },
 		triggerEnter:function(player){
@@ -45200,6 +45202,9 @@
                         }
                         else if(!skills2.contains(skills[i])){
                             uiintro.add('<div style="opacity:0.5"><div class="skill">【'+translation+'】</div><div>'+get.skillInfoTranslation(skills[i])+'</div></div>');
+                        }
+                        else if (skills[i][0] == '_'){
+
                         }
                         else if(lib.skill[skills[i]].temp||!node.skills.contains(skills[i])||lib.skill[skills[i]].thundertext){
                             uiintro.add('<div><div class="skill thundertext thunderauto">【'+translation+'】</div><div class="thundertext thunderauto">'+get.skillInfoTranslation(skills[i])+'</div></div>');

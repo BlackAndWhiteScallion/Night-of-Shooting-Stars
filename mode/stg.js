@@ -188,17 +188,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(lib.boss[target.name]&&lib.boss[target.name].controlid){
 							name=lib.boss[target.name].controlid;
 						}
-						/*
-						if(_status.bosschoice.link!=name){
-							lib.boss[_status.bosschoice.name].control('cancel',_status.bosschoice);
-							_status.bosschoice.classList.remove('disabled');
-							_status.bosschoice.close();
-							delete _status.bosschoice;
-						}
-						else{
-							return;
-						}
-						*/
 					}
 					if(lib.boss[target.name]&&lib.boss[target.name].control){
 						_status.createControl=ui.control.firstChild;
@@ -423,7 +412,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 
-					uiintro.add('<div class="text left">1. 击坠敌人后，来源摸一张牌，获得1点灵力 <br> 2. 准备阶段，场上敌人数小于2，会刷出下一个敌人 <br> 3. 通关时，摸一张技能牌，回复1点体力，并重置牌堆 <br> 4.手牌上限+X（X为已通关卡数量） </div>');
+					uiintro.add('<div class="text left">1. 击坠敌人后，来源摸一张牌，获得1点灵力 <br> 2. 准备阶段，场上敌人数小于2，会刷出下一个敌人 <br> 3. 通关时，获得一张【拔雾开天】，并重置牌堆 <br> 4.手牌上限+X（X为已通关卡数量） </div>');
 					uiintro.add('<div class="text left"><a href = "https://mp.weixin.qq.com/s/owQpDcBP0_OFPSlZMecPYQ" target="_blank">了解更多闯关技巧</a></div>');
 					uiintro.add(ui.create.div('.placeholder.slim'))
 
@@ -510,6 +499,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
             			ui.discardPile.innerHTML='';
 						ui.create.cardsAsync();
 						ui.boss.style.display = 'none';
+						game.me.levelOver();
 					}
 					if(game.bossinfo.checkResult&&game.bossinfo.checkResult(this)===false){
 						return;
@@ -518,6 +508,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return !current.side;
 					})){
 						game.checkResult();
+					}
+				},
+				levelOver:function(){
+					if (_status.bosschoice.name == 'stg_scarlet'){
+						this.gain(game.createCard('stg_bawu'));
+					}
+					var players = game.players;
+					for (var i = 0; i<game.players.length; i ++){
+						if (game.players[i].identity != 'cai'){
+							game.players[i].hide();
+							game.addVideo('hidePlayer',game.players[i]);
+							game.players[i].delete();
+							game.players.remove(game.players[i]);
+						}
 					}
 				},
 			}
@@ -661,6 +665,146 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				skills:['stg_woodbook_skill']
 			},
+			stg_mingyun:{
+				audio:true,
+				fullskin:true,
+				type:'jinji',
+				modeimage:'stg',
+				selectTarget:-1,
+				filterTarget:function(card,player,target){
+					return target==player;
+				},
+				modTarget:true,
+				content:function(){
+					'step 0'
+					player.$skill('命运之光',null,null,true);
+					var cards=[];
+					for(var i=0;i<ui.cardPile.childNodes.length;i++){
+						cards.push(ui.cardPile.childNodes[i]);
+					}
+					player.chooseCardButton('命运之光：获得牌堆中的一张牌',cards).set('filterButton',function(button){
+						return true;
+					});
+					'step 1'
+					if (result.bool){
+                        player.gain(result.links[0]);
+                        player.$gain2(result.links[0]);
+                    }
+				},
+				ai:{
+					basic:{
+						order:1,
+						useful:[4,2],
+						value:[4,2],
+					},
+					result:{
+						target:function(player,target){
+							return 2;
+						}
+					},
+					tag:{
+						draw:1
+					}
+				}
+			},
+			stg_bawu:{
+				audio:true,
+				fullskin:true,
+				type:'trick',
+				subtype:'support',
+				modeimage:'stg',
+				enable:true,
+				selectTarget:-1,
+				filterTarget:function(card,player,target){
+					return target==player && target.identity == 'cai';
+				},
+				modTarget:true,
+				contentBefore:function(){
+					player.$skill('拔雾开天');
+				},
+				content:function(){
+					'step 0'
+					if (target.name == 'remilia'){
+						target.say('等下，我为什么要解我自己的雾？');
+					} else {
+						target.chooseControl('回复1点体力，获得神佑','获得1点灵力，获得连击', true).set('ai',function(){
+							return '回复1点体力，获得神佑';
+						}).set('prompt','拔雾开天：选择一项：');
+					}
+					'step 1'
+					if (result.control == '回复1点体力，获得神佑'){
+						target.recover();
+						for(var i=0;i<ui.skillPile.childNodes.length;i++){
+							if (ui.skillPile.childNodes[i].name == 'shenyou'){
+								target.gain(ui.skillPile.childNodes[i]);
+								break;
+							} else if (i == ui.skillPile.childNodes.length -1){
+								target.say('没找到【神佑】');					  
+							}
+						}
+					} else if (result.control == '获得1点灵力，获得连击'){
+						target.gainlili();
+						for(var i=0;i<ui.skillPile.childNodes.length;i++){
+							if (ui.skillPile.childNodes[i].name == 'lianji'){
+								target.gain(ui.skillPile.childNodes[i]);
+								break;
+							} else if (i == ui.skillPile.childNodes.length -1){
+								target.say('没找到【连击】');					  
+							}
+						}
+					}
+				},
+				ai:{
+					basic:{
+						order:3,
+						useful:4,
+						value:9.2
+					},
+					result:{
+						target:3,
+					},
+					tag:{
+						recover:1,
+					}
+				}
+			},
+			stg_lingji:{
+				audio:true,
+				fullskin:true,
+				notarget:true,
+				type:'trick',
+				modeimage:'stg',
+				subtype:'defense',
+				enable:true,
+				selectTarget:-1,
+				filterTarget:function(card, player, target){
+					return target == player;
+				},
+				contentBefore:function(){
+					player.$skill('灵击');
+				},
+				content:function(){
+					var players = game.filterPlayer().remove(target);
+					for (var i = 0; i < players.length; i ++){
+						players[i].addTempSkill('lunadial2');
+					}
+					target.addTempSkill('mianyi');
+					console.log(event);
+					if (event.getParent('_stg_lingji')){
+						var trigger = event.getParent('damage');
+						trigger.cancel();
+						game.log('灵击：防止本回合所有伤害');
+					}
+				},
+				ai:{
+					basic:{
+						useful:[6,4],
+						value:[6,4],
+					},
+					result:{player:1},
+					expose:0.2
+				},
+			},
 		},
 		characterPack:{
 			mode_stg:{
@@ -676,7 +820,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		cardPack:{
 			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle','stg_deck','stg_watch',
-			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook'],
+			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook', 'stg_mingyun', 'stg_bawu', 'stg_lingji'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -1028,6 +1172,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				init:function(){
 					//lib.init.layout('newlayout');
+					var list=['reidaisai', 'saiqianxiang', 'caifang'];
+					var map={
+						reidaisai:'stg_lingji',
+						saiqianxiang:'stg_mingyun',
+						caifang:'stg_bawu',
+					};
+					for(var i=0;i<list.length;i++){
+						if (!lib.card[list[i]].forbid) lib.card[list[i]].forbid = ['stg'];
+						else lib.card[list[i]].forbid.push('stg');
+						game.removeCard(list[i], map[list[i]]);
+					}
+					game.addGlobalSkill('stg_mingyun');
+					game.addGlobalSkill('stg_mingyun2');
+					game.addGlobalSkill('stg_lingji');
 					_status.additionalReward=function(){
 						return 500;
 					}
@@ -1071,6 +1229,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_scarlet_ex:{
 				init:function(){
 					//lib.init.layout('newlayout');
+					var list=['reidaisai', 'saiqianxiang', 'caifang'];
+					var map={
+						reidaisai:'stg_lingji',
+						saiqianxiang:'stg_mingyun',
+						caifang:'stg_bawu',
+					};
+					for(var i=0;i<list.length;i++){
+						if (!lib.card[list[i]].forbid) lib.card[list[i]].forbid = ['stg'];
+						else lib.card[list[i]].forbid.push('stg');
+						game.removeCard(list[i], map[list[i]]);
+					}
 					_status.additionalReward=function(){
 						return 500;
 					}
@@ -1127,6 +1296,104 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		skill:{
+			stg_mingyun:{
+				direct:true,
+				trigger:{player:'drawAfter'},
+				filter:function(event,player){
+					if (!_status.event.getParent('phaseDraw')) return false;
+					if (event.result.length) {
+						for(var i=0;i<event.result.length;i++){
+							if(event.result[i].name == 'stg_mingyun'){
+								return true;
+							}
+						}
+					}
+					return false;
+				},
+				content:function(){
+					player.chooseToUse(function(card){
+						return card.name == 'stg_mingyun';
+					},'这……这就是命运的指示？');
+				},
+			},
+			stg_mingyun2:{
+				audio:2,
+				trigger:{global:'judge'},
+				filter:function(event,player){
+					return player.countCards('h',{name:'stg_mingyun'})>0;
+				},
+				direct:true,
+				content:function(){
+					"step 0"
+					player.chooseCard(get.translation(trigger.player)+'的'+(trigger.judgestr||'')+'判定为'+
+					get.translation(trigger.player.judging[0])+'，'+'是否打出命运之光替换之','h',function(card){
+						return card.name == 'stg_mingyun';
+					}).set('ai',function(card){
+						var trigger=_status.event.getTrigger();
+						var player=_status.event.player;
+						var judging=_status.event.judging;
+						var result=trigger.judge(card)-trigger.judge(judging);
+						var attitude=get.attitude(player,trigger.player);
+						if(attitude==0||result==0) return 0;
+						if(attitude>0){
+							return result;
+						}
+						else{
+							return -result;
+						}
+					}).set('judging',trigger.player.judging[0]);
+					"step 1"
+					if(result.bool){
+						player.respond(result.cards,'highlight');
+					}
+					else{
+						event.finish();
+					}
+					"step 2"
+					if(result.bool){
+						player.$skill('命运之光');
+						player.logSkill('_stg_mingyun2');
+						player.$gain2(trigger.player.judging[0]);
+						player.gain(trigger.player.judging[0]);
+						trigger.player.judging[0]=result.cards[0];
+						if(!get.owner(result.cards[0],'judge')){
+							trigger.position.appendChild(result.cards[0]);
+						}
+						game.log(trigger.player,'的判定牌改为',result.cards[0]);
+					}
+					"step 3"
+					game.delay(2);
+				},
+				ai:{
+					tag:{
+						rejudge:1
+					}
+				}
+			},
+			stg_lingji:{
+				trigger:{player:'damageBefore'},
+				direct:true,
+				filter:function(event,player){
+					return player.countCards('h', {name:'stg_lingji'});
+				},
+				content:function(){
+					'step 0'
+					var next = player.chooseToUse({
+						filterCard:function(card,player){
+							if(card.name!='stg_lingji') return false;
+							var mod=game.checkMod(card,player,'unchanged','cardEnabled',player.get('s'));
+							if(mod!='unchanged') return mod;
+							return true;
+						},
+						prompt:'是否使用【灵击】无效该伤害？',});
+					next.set('ai1',function(){
+						var target=_status.event.player;
+						var evt=_status.event.getParent();
+						var sks=target.get('s');
+						return 1;
+					});
+				},
+			},
 			// 拿复活币复活。game.me.storage.fuhuo 是复活币的数量。
 			revive:{
 				trigger:{player:'dieBefore'},
@@ -1413,19 +1680,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 2'
-					var players = game.players;
-					for (var i = 0; i<game.players.length; i ++){
-						if (game.players[i].identity != 'cai'){
-							game.players[i].hide();
-							game.addVideo('hidePlayer',game.players[i]);
-							game.players[i].delete();
-							game.players.remove(game.players[i]);
-							//game.dead.remove(game.players[i]);
-						}
-					}
-					'step 3'
-					game.me.gain(ui.skillPile.childNodes[0],'draw2');
-					game.me.recover();
 					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
 					dialog.open();
 	                game.pause();
@@ -1435,10 +1689,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    game.resume();
 	                });
 	                lib.init.onfree();
-	                'step 4'
+	                'step 3'
 					game.addBossFellow(3,'stg_yousei',1);
 					game.addBossFellow(5,'stg_maoyu',2);
-					'step 5'
+					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
@@ -1518,19 +1772,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 2'
-					for (var i = 0; i<game.players.length; i ++){
-						
-						if (game.players[i].identity != 'cai'){
-							game.players[i].hide();
-							game.addVideo('hidePlayer',game.players[i]);
-							game.players[i].delete();
-							game.players.remove(game.players[i]);
-							//game.dead.remove(game.players[i]);
-						}
-					}
-					game.me.gain(ui.skillPile.childNodes[0],'draw2');
-					game.me.recover();
-					'step 3'
 					var dialog=ui.create.dialog("第三关<br><br>红色之境");
 					dialog.open();
 	                game.pause();
@@ -1540,10 +1781,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    game.resume();
 	                });
 	                lib.init.onfree();
-	                'step 4'
+	                'step 3'
 					game.addBossFellow(5,'stg_maid',2);
 					game.addBossFellow(3,'stg_maoyu',2);
-					'step 5'
+					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
@@ -1622,18 +1863,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 2'
-					for (var i = 0; i<game.players.length; i ++){
-						if (game.players[i].identity != 'cai'){
-							game.players[i].hide();
-							game.addVideo('hidePlayer',game.players[i]);
-							game.players[i].delete();
-							game.players.remove(game.players[i]);
-							//game.dead.remove(game.players[i]);
-						}
-					}
-					game.me.gain(ui.skillPile.childNodes[0],'draw2');
-					game.me.recover();
-					'step 3'
 					var dialog=ui.create.dialog("第四关<br><br>漆黑之馆");
 					dialog.open();
 	                game.pause();
@@ -1643,12 +1872,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    game.resume();
 	                });
 	                lib.init.onfree();
-	                'step 4'
+	                'step 3'
 					game.addBossFellow(3,'stg_maid',2);
 					game.addBossFellow(5,'stg_bookshelf',0);
-					'step 5'
-
-					'step 6'
+					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
@@ -1733,19 +1960,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 					'step 2'
-					for (var i = 0; i<game.players.length; i ++){
-						
-						if (game.players[i].identity != 'cai'){
-							game.players[i].hide();
-							game.addVideo('hidePlayer',game.players[i]);
-							game.players[i].delete();
-							game.players.remove(game.players[i]);
-							//game.dead.remove(game.players[i]);
-						}
-					}
-					game.me.gain(ui.skillPile.childNodes[0],'draw2');
-					game.me.recover();
-					'step 3'
 					var dialog=ui.create.dialog("第五关<br><br>红月之下潇洒的从者");
 					dialog.open();
 	                game.pause();
@@ -1755,11 +1969,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    game.resume();
 	                });
 	                lib.init.onfree();
-	                'step 4'
+	                'step 3'
 					game.addBossFellow(3,'stg_maid',2);
 					game.addBossFellow(4,'stg_maid',2);
 					game.addBossFellow(5,'stg_maid',2);
-					'step 5'
+					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
@@ -1846,19 +2060,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 					'step 2'
-					for (var i = 0; i<game.players.length; i ++){
-						
-						if (game.players[i].identity != 'cai'){
-							game.players[i].hide();
-							game.addVideo('hidePlayer',game.players[i]);
-							game.players[i].delete();
-							game.players.remove(game.players[i]);
-							//game.dead.remove(game.players[i]);
-						}
-					}
-					game.me.gain(ui.skillPile.childNodes[0],'draw2');
-					game.me.recover();
-					'step 3'
 					var dialog=ui.create.dialog("最终关<br><br>在乐土上洒下血雨");
 					dialog.open();
 	                game.pause();
@@ -1868,12 +2069,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    game.resume();
 	                });
 	                lib.init.onfree();
-	                'step 4'
+	                'step 3'
 					game.addBossFellow(3,'stg_bat',1);
 					game.addBossFellow(4,'stg_bat',1);
 					game.addBossFellow(5,'stg_bat',1);
 					game.addBossFellow(6,'stg_bat',1);
-					'step 5'
+					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
@@ -3170,7 +3371,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_dirtbook_info:'锁定技，与你阵营不同的角色坠机后，获得其因坠机弃置的一张牌。',
 			stg_goldbook:'金魔导书',
 			stg_goldbook_info:'锁定技，与你阵营相同的角色摸牌阶段额外摸一张牌。',
-
+			stg_mingyun:'命运之光',
+			stg_mingyun_info:'你于摸牌阶段摸到此牌后，对你使用；目标观看牌堆，获得其中一张牌。<br><u>追加效果：一张判定牌生效前，你可以打出此牌替换之。</u>',
+			stg_lingji:'灵击',
+			stg_lingji_info:'出牌阶段，或你受到伤害时，对你使用；目标以外的角色不能使用/打出手牌，防止目标受到的伤害，直到回合结束。',
+			stg_bawu:'拔雾开天',
+			stg_bawu_info:'出牌阶段，对自机身份的你使用；目标选择一项：回复1点体力并摸一张【神佑】，或获得1点灵力并摸一张【连击】。',
 			mercury:'金＆水符「水银之毒」',
 			mercury_audio1:'金＆水符「水银之毒」。',
 			mercury_audio2:'对付你这种家伙，必须得用些特别的手段了！',

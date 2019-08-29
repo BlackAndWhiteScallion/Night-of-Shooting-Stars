@@ -2875,10 +2875,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:'xiangyi',
 				enable:['chooseToRespond','chooseToUse'],
 				filterCard:function(card, player){
-					if (!player.countCards('e', {subtype:'equip1', color:'black'})){
+					if (!player.countCards('e', {color:'black'})){
 						if (get.color(card) == 'black') return false;
 					}
-					if (!player.countCards('e', {subtype:'equip1', color:'red'})){
+					if (!player.countCards('e', {color:'red'})){
 						if (get.color(card) == 'red') return false;
 					}
 					return true;
@@ -3150,7 +3150,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			xiangyi_3_audio1:'这是我的领域',
 			xiangyi_3_audio2:'折翼陨落，涅槃苏生',
 			xiangyi_3_audio3:'毕竟，你就是我的翅膀啊',
-			xiangyi_info:'你可以将与装备区内武器牌颜色相同的牌当作【轰！】或【躲～】使用/打出；你于回合外使用牌后，可以对当前回合角色造成1点灵击伤害。',
+			xiangyi_info:'你可以将与装备区内牌颜色相同的牌当作【轰！】或【躲～】使用/打出；你于回合外使用牌后，可以对当前回合角色造成1点灵击伤害。',
 			chunse:'椿色恋歌',
 			chunse_2:'椿色恋歌（灵击→弹幕）',
 			chunse_info:'其他角色回合结束时，若其手牌数或体力值大于你，你获得1点灵力；你造成灵击伤害时，若你灵力等于上限，可以改为造成等量弹幕伤害。',
