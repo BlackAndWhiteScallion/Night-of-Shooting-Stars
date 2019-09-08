@@ -41,6 +41,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			}
+			if (_status.connectMode){
+				event.current = {};
+				event.current.name = lib.configOL.boss;
+				event.goto(2);
+			}
 			lib.setPopped(ui.rules,function(){
 				var uiintro=ui.create.dialog('hidden');
 					uiintro.add('<div class="text left">选3个角色，挑战大魔王！<br>也可以作为大魔王揍3个角色。<br>最右边两个是另类挑战，建议尝试。</div>');
@@ -61,17 +66,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				bosslist._scrollnum=10;
 				bosslist.onmousewheel=ui.click.mousewheel;
 			}
-			// var bosslistlinks={};
-			// var toggleBoss=function(bool){
-			// 	game.saveConfig(this._link.config._name,bool,true);
-			// 	var node=bosslistlinks[this._link.config._name];
-			// 	if(bool){
-			// 		node.style.display='';
-			// 	}
-			// 	else{
-			// 		node.style.display='none';
-			// 	}
-			// };
 			var onpause=function(){
 				ui.window.classList.add('bosspaused');
 			}
@@ -89,16 +83,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			for(var i in lib.character){
 				var info=lib.character[i];
 				if(info[4].contains('boss')){
-					// var cfg=i+'_bossconfig';
-					// if(get.config(cfg)==undefined){
-					// 	game.saveConfig(cfg,true,true);
-					// }
-					// lib.translate[cfg+'_config']=lib.translate[i];
-					// lib.mode.boss.config[cfg]={
-					// 	name:get.translation(i),
-					// 	onclick:toggleBoss,
-					// 	init:true,
-					// }
 					var player=ui.create.player(bosslist).init(i);
 					if(lib.characterPack.mode_boss[i]&&get.config(i+'_boss_config')==false){
 						player.style.display='none';
@@ -141,10 +125,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				event.current.classList.add('highlight');
 			}
 			ui.create.div(bosslist);
-			ui.create.cardsAsync();
-			game.finishCards();
-			game.addGlobalSkill('autoswap');
-			ui.arena.setNumber(8);
 			ui.control.style.transitionProperty='opacity';
 			ui.control.classList.add('bosslist');
 			setTimeout(function(){
@@ -189,17 +169,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			"step 2"
 			// 换掉牌堆里的冰域和令避
-			var list=['bingyu', 'lingbi'];
+			ui.create.cardsAsync();
+			game.finishCards();
+			game.addGlobalSkill('autoswap');
+			ui.arena.setNumber(8);
+			var list=['bingyu', 'lingbi', 'caifang', 'reidaisai'];
 			var map={
 				bingyu:'shenlin',
 				lingbi:'dianche',
+				caifang:'tancheng',
+				reidaisai:'reidaisai2',
 			};
 			for(var i=0;i<list.length;i++){
 				if (!lib.card[list[i]].forbid) lib.card[list[i]].forbid = ['boss'];
 				else lib.card[list[i]].forbid.push('boss');
 				game.removeCard(list[i], map[list[i]]);
 			}
-			//
+			lib.skill['saiqian_skill3'].viewAs = {name:'reidaisai2'};
 			game.bossinfo=lib.boss.global;
 			for(var i in lib.boss[event.current.name]){
 				game.bossinfo[i]=lib.boss[event.current.name][i];
@@ -214,7 +200,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			game.boss=boss;
 			boss.init(event.current.name);
 			boss.side=true;
-			if(!event.noslide){
+			if (status.connectMode){
+				event.current = boss;
+				ui.window.appendChild(boss);
+				ui.arena.appendChild(boss);
+			}
+			else if(!event.noslide){
 				var rect=event.current.getBoundingClientRect();
 				boss.animate('bossing');
 				boss.node.hp.animate('start');
@@ -231,6 +222,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				result=lib.config.continue_name_boss;
 				game.saveConfig('continue_name_boss');
 			}
+			//result.links = ['reimu', 'reimu', 'reimu'];
 			for(var i=0;i<result.links.length;i++){
 				var player=ui.create.player();
 				player.getId();
@@ -551,7 +543,173 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						loseCard:1.5,
 					}
 				}
-			},	
+			},
+			tancheng:{
+				audio:true,
+				fullskin:true,
+				type:'trick',
+				subtype:'disrupt',
+				enable:true,
+				modeimage:'boss',
+				selectTarget:-1,
+				filterTarget:function(card,player,target){
+					return target != player;
+				},
+				content:function(){
+					'step 0'
+					target.showCards(target.get('h'));
+					'step 1'
+					player.chooseCard('你可以用一张牌交换'+get.translation(target)+'一张不同类型的牌', 1, function(card){
+						return target.countCards('h') > target.countCards('h', {type: get.type(card)})
+					}).ai=function(card){
+						var val=get.value(card);
+						if(val<0) return 10;
+						return -val;
+					};
+					"step 2"
+					if(result.bool){
+						event.card = result.cards[0];
+						target.gain(result.cards);
+					}
+					else{
+						event.finish();
+					}
+					"step 3"
+					player.chooseCardButton(target.get('h'),'获得一张牌',1,true).set('filterButton',function(button){
+						return get.type(button.link) != get.type(event.card);
+					}).ai=function(button){
+						var val=get.value(button.link);
+						if(val<0) return -10;
+						return val;
+					}
+					if(player==game.me&&!event.isMine()){
+						game.delay(0.5);
+					}
+					"step 4"
+					player.gain(result.links);
+				},
+				ai:{
+					wuxie:function(target,card,player,viewer){
+						if (game.countPlayer(function(current){
+							return ai.get.attitude(viewer,current)<=0;
+						}) == 1){
+							return 0;
+						};
+						if (ai.get.attitude(viewer,target)<=0 && target.countCards('e',function(card){
+							return get.bonus(card) > 0;	
+						})){
+							if(Math.random()<0.5) return 0;
+							return 1;
+						}
+						return 0; 
+					},
+					basic:{
+						order:5,
+						useful:1,
+						value:1,
+					},
+					result:{
+						target:function(player,target){
+							return -0.5;
+						},
+						player:function(player, target){
+							return 1;
+						},
+					},
+					tag:{
+						multitarget:1
+					}
+				}
+			},
+			reidaisai2:{
+				audio:true,
+				fullskin:true,
+				type:'trick',
+				subtype:'support',
+				enable:true,
+				modeimage:'boss',
+				selectTarget:[1, Infinity],
+				filterTarget:function(card,player,target){
+					return target.identity != player.identity;
+				},
+				contentBefore:function(){
+					if (player.name == 'sanae'){
+						player.say('守矢神社例大祭开始啦！我们可比那个穷酸的神社好玩多了！');
+					}
+				},
+				content:function(){
+					'step 0'
+					target.draw();
+				},
+				contentAfter:function(){
+					'step 0'
+					player.draw(targets.length + 1);
+					'step 1'
+					player.chooseCardTarget({
+						selectCard:[1,Infinity],
+						position:'hej',
+						filterTarget:function(card,player,target){
+							return player != target;
+						},
+						ai1:function(card){
+							/*
+							var player=_status.event.player;
+							var check=_status.event.check;
+							if(check<1) return 0;
+							if(player.hp>1&&check<2) return 0;
+							*/
+							if (player.countCards('e',function(card){
+								return get.bonus(card) > 0;	
+							})){
+								return get.bonus(card) > 0;
+							}
+							return get.unuseful(card)+9;
+						},
+						ai2:function(target){
+							return ai.get.attitude(_status.event.player,target);
+						},
+						prompt:'你可以分出去任意张牌（点取消停止给牌）'
+					});
+					'step 2'
+					if(result.targets&&result.targets[0]){
+						result.targets[0].gain(result.cards);
+						player.$give(result.cards.length,result.targets[0]);
+						event.goto(1);
+					}
+				},
+				ai:{
+					wuxie:function(target,card,player,viewer){
+						if (game.countPlayer(function(current){
+							return ai.get.attitude(viewer,current)<=0;
+						}) == 1){
+							return 0;
+						};
+						if (ai.get.attitude(viewer,target)<=0 && target.countCards('e',function(card){
+							return get.bonus(card) > 0;	
+						})){
+							if(Math.random()<0.5) return 0;
+							return 1;
+						}
+						return 0; 
+					},
+					basic:{
+						order:5,
+						useful:1,
+						value:1,
+					},
+					result:{
+						target:function(player,target){
+							return 1;
+						},
+						player:function(player,target){
+							return 2;
+						},
+					},
+					tag:{
+						multitarget:1
+					}
+				}
+			},
 		},
 		characterPack:{
 			mode_boss:{
@@ -575,7 +733,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_saitama:'买菜时因走错路偶然路过幻想乡的光头<br>………等等，什么？<br>画师：',
 		},
 		cardPack:{
-			mode_boss:['dianche', 'shenlin'],
+			mode_boss:['dianche', 'shenlin', 'reidaisai2', 'tancheng'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_boss){
@@ -1225,7 +1383,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			_shenlin_use:{
 				onChooseToUse:function(event){
-					console.log(event);
 					if (!game.dead || game.dead.length == 0) return ;
 					if (event.player.countCards('h', {name:'shenlin'}) || event.player.hasSkill('kedan') && game.players.length < 4){
 						game.players.addArray(game.dead);
@@ -1249,16 +1406,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							break;
 						}
 					}
-					player.addTempSkill('shenlin_buff');		
+					player.addTempSkill('mianyi');		
 				},
-			},
-			shenlin_buff:{
-				forced:true,
-				trigger:{player:'damageBefore'},
-				content:function(){
-					trigger.untrigger();
-    				trigger.finish();
-				}
 			},
 			lingji:{
     			audio:2,
@@ -1311,6 +1460,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							game.resume();
 							player.maxlili = 10;
 							player.gainlili(2000);
+							plaer.update();
 						}, 2500);
 					}, 2500);
 				},
@@ -1819,8 +1969,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			dianche_info:'出牌阶段，对一名其他角色使用；其选择一项：弃置三张牌，或你与其以外的角色各弃置两张牌。<br><u>追加效果：出牌阶段，你可以将此牌和一张牌交给一名其他角色。</u>',
 			shenlin:'神灵复苏',
 			_shenlin:'神灵复苏（护盾）',
-			shenlin_buff:'神灵复苏（护盾）',
 			shenlin_info:'出牌阶段，对一名坠机/重整中的角色使用；该角色以1体力/1灵力/1手牌重新加入游戏。<br><u>追加效果：你受到伤害后，可以弃置此牌：防止你受到的伤害，直到回合结束。</u>',
+			reidaisai2:'例大祭',
+			reidaisai2_info:'出牌阶段，对任意名与你身份不同的角色使用；目标摸一张牌，你摸X张牌（X为目标数+1），然后你可以将任意张牌交给任意名其他角色。',
+			tancheng:'坦诚相待',
+			tancheng_info:'出牌阶段，对所有其他角色使用；目标展示所有手牌，然后你可以用一张牌交换其中一张与之不同类型的牌。',
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',
 			lingji:'灵击',
@@ -1839,7 +1992,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			zuanshi_info:'锁定技，出牌阶段开始时，你摸X张牌并展示（X为你手牌中【轰！】的数量）：直到你的回合开始，与这些牌同名的牌均视为【轰！】，且你的手牌上限+X。',
 			zuanshi2:'钻石风暴（转化【轰！】）',
 			jubing:'巨冰破碎',
-			jubing_info:'限定技，锁定技，准备阶段，若你的体力为1，你对所有其他角色造成9点灵击伤害，然后视为使用了一张【冰域之宴】。',
+			jubing_info:'限定技，锁定技，准备阶段，若你的体力为1，你对所有其他角色造成9点灵击伤害。',
 			boss_nianshou:'年兽',
 			boss_nianrui:'年瑞',
 			boss_nianrui_info:'锁定技，摸牌阶段，你额外摸两张牌。',

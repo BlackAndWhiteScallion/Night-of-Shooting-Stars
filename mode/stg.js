@@ -727,19 +727,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if (target.name == 'remilia'){
 						target.say('等下，我为什么要解我自己的雾？');
 					} else {
-						target.chooseControl('回复1点体力，获得神佑','获得1点灵力，获得连击', true).set('ai',function(){
-							return '回复1点体力，获得神佑';
+						target.chooseControl('回复1点体力，获得圣盾','获得1点灵力，获得连击', true).set('ai',function(){
+							return '回复1点体力，获得圣盾';
 						}).set('prompt','拔雾开天：选择一项：');
 					}
 					'step 1'
-					if (result.control == '回复1点体力，获得神佑'){
+					if (result.control == '回复1点体力，获得圣盾'){
 						target.recover();
 						for(var i=0;i<ui.skillPile.childNodes.length;i++){
-							if (ui.skillPile.childNodes[i].name == 'shenyou'){
+							if (ui.skillPile.childNodes[i].name == 'shengdun'){
 								target.gain(ui.skillPile.childNodes[i]);
 								break;
 							} else if (i == ui.skillPile.childNodes.length -1){
-								target.say('没找到【神佑】');					  
+								target.say('没找到【圣盾】');					  
 							}
 						}
 					} else if (result.control == '获得1点灵力，获得连击'){
@@ -805,6 +805,117 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					expose:0.2
 				},
 			},
+			stg_fengyin:{
+				modeimage:'stg',
+				audio:true,
+				fullskin:true,
+				type:'trick',
+				subtype:'support',
+				enable:true,
+				selectTarget:-1,
+				filterTarget:function(card,player,target){
+					return target==player;
+				},
+				modTarget:true,
+				content:function(){
+					'step 0'
+					var list = [];
+					for (var i in lib.card){
+						if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+						if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+						if(lib.card[i].type == 'jinji'){
+							list.add(i);
+						}
+					}
+					for(var i=0;i<list.length;i++){
+						list[i]=[get.type(list[i]),'',list[i]];
+					}
+					if(list.length){
+                        target.chooseButton(['创建并获得一张禁忌牌',[list,'vcard']]).set('ai',function(button){
+                            var player=_status.event.player;
+                            var recover=0,lose=1,players=game.filterPlayer();
+                            for(var i=0;i<players.length;i++){
+                                if(!players[i].isOut()){
+                                    if (get.attitude(player, players[i]) >= 0) recover ++;
+                                    if (get.attitude(player, players[i]) < 0 ){
+                                        if (players[i].hp == 1 && get.effect(players[i],{name:'juedou'},player,player)) return (button.link[2] == 'juedou')?2:-1;
+                                        lose ++;
+                                    }
+                                }
+                            }
+                            if (recover - 2 >= lose) return (button.link[2] == 'reidaisai')?2:-1;
+                            return get.value({name:button.link[2]});
+                        });
+                    }
+					'step 1'
+					if (result.links){
+						target.gain(game.createCard(result.links[0][2]));
+                    }
+				},
+				ai:{
+					basic:{
+						order:1,
+						useful:[4,2],
+						value:[4,2],
+					},
+					result:{
+						target:function(player,target){
+							if (!target.getStat('damage') && get.attitude(player, target) > 0) return -1;
+							return target.getStat('damage');
+						}
+					},
+					tag:{
+						draw:0.5
+					}
+				}
+			},
+			stg_pohuai:{
+				modeimage:'stg',
+				audio:true,
+				fullskin:true,
+				type:'jinji',
+				enable:true,
+				selectTarget:1,
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				content:function(){
+					player.$skill('破坏之果',null,null,true);
+					var num = 0;
+					for(var j=0;j<target.stat.length;j++){
+						if(target.stat[j].kill!=undefined) num+=target.stat[j].kill;
+					}
+					if (target.countCards('h') > num){
+						target.chooseToDiscard(target.countCards('h') - num, 'h', true);
+					} else {
+						target.draw(num - target.countCards('h'));
+					}
+					if (target.lili < num){
+						target.gainlili(num - target.lili);
+					} else {
+						target.loselili(target.lili - num);
+					}
+				},
+				ai:{
+					basic:{
+						order:2,
+						useful:[4,2],
+						value:[4,2],
+					},
+					result:{
+						target:function(player,target){
+							var num = 0;
+							for(var j=0;j<target.stat.length;j++){
+								if(target.stat[j].kill!=undefined) num+=target.stat[j].kill;
+							}
+							return num - target.countCards('h');
+						}
+					},
+					tag:{
+						draw:0.5
+					}
+				}
+			},
 		},
 		characterPack:{
 			mode_stg:{
@@ -820,7 +931,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		cardPack:{
 			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle','stg_deck','stg_watch',
-			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook', 'stg_mingyun', 'stg_bawu', 'stg_lingji'],
+			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook', 'stg_mingyun', 'stg_bawu', 'stg_lingji',
+			'stg_fengyin', 'stg_pohuai'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -1232,14 +1344,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var list=['reidaisai', 'saiqianxiang', 'caifang'];
 					var map={
 						reidaisai:'stg_lingji',
-						saiqianxiang:'stg_mingyun',
-						caifang:'stg_bawu',
+						saiqianxiang:'stg_pohuai',
+						caifang:'stg_fengyin',
 					};
 					for(var i=0;i<list.length;i++){
 						if (!lib.card[list[i]].forbid) lib.card[list[i]].forbid = ['stg'];
 						else lib.card[list[i]].forbid.push('stg');
 						game.removeCard(list[i], map[list[i]]);
 					}
+					game.addGlobalSkill('stg_lingji');
+					game.addGlobalSkill('stg_pohuai');
 					_status.additionalReward=function(){
 						return 500;
 					}
@@ -1393,6 +1507,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return 1;
 					});
 				},
+			},
+			stg_pohuai:{
+				enable:'chooseToUse',
+				filterCard:function(card){
+					return card.name=='stg_pohuai';
+				},
+				viewAsFilter:function(player){
+					return player.countCards('h',{name:'stg_pohuai'})>0;
+				},
+				viewAs:{name:'danmakucraze'},
+				prompt:'将【破坏之果】当【弹幕狂欢】使用',
+				check:function(card){return 5-get.value(card)},
 			},
 			// 拿复活币复活。game.me.storage.fuhuo 是复活币的数量。
 			revive:{
@@ -3337,7 +3463,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_yinyangyu:'鬼神阴阳玉',
 			stg_yinyangyu_skill:'鬼神阴阳玉',
 			stg_yinyangyu_info:'你可以将一张非基本牌（可以为此牌）当作一种基本牌使用；你将此牌当作的【轰！】造成弹幕伤害时，该伤害+1。',
-			//stg_yinyangyu_info:'你可以将一张非基本牌当作一种基本牌使用/打出。',
 			stg_missile:'魔法飞弹',
 			stg_missile_skill:'魔法飞弹',
 			stg_missile_info:'结束阶段，若你本回合使用过【轰！】，你可以视为使用一张【轰！】。',
@@ -3376,7 +3501,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_lingji:'灵击',
 			stg_lingji_info:'出牌阶段，或你受到伤害时，对你使用；目标以外的角色不能使用/打出手牌，防止目标受到的伤害，直到回合结束。',
 			stg_bawu:'拔雾开天',
-			stg_bawu_info:'出牌阶段，对自机身份的你使用；目标选择一项：回复1点体力并摸一张【神佑】，或获得1点灵力并摸一张【连击】。',
+			stg_bawu_info:'出牌阶段，对自机身份的你使用；目标选择一项：回复1点体力并摸一张【圣盾】，或获得1点灵力并摸一张【连击】。',
+			stg_pohuai:'破坏之果',
+			stg_pohuai_info:'出牌阶段，对一名角色使用；目标将手牌数和灵力值调整至X（X为目标本局游戏击坠的角色数）。<br><u>你可以将此牌当作【弹幕狂欢】使用。</u>',
+			stg_fengyin:'封印解除',
+			stg_fengyin_info:'出牌阶段，对自己使用；目标创建并获得一张禁忌牌。',
+
 			mercury:'金＆水符「水银之毒」',
 			mercury_audio1:'金＆水符「水银之毒」。',
 			mercury_audio2:'对付你这种家伙，必须得用些特别的手段了！',

@@ -5129,6 +5129,38 @@
             },
             boss:{
                 name:'魔王',
+                 connect:{
+                    update:function(config,map){
+                    },
+                    connect_boss:{
+                        name:'魔王角色',
+                        init:'boss_reimu',
+                        item:{
+                            'boss_reimu':'灵梦',
+                        },
+                    },
+                    connect_choice_num:{
+                        name:'侯选角色数',
+                        init:'20',
+                        frequent:true,
+                        item:{
+                            '12':'12人',
+                            '16':'16人',
+                            '20':'20人',
+                            '24':'24人',
+                            '40':'40人',
+                        }
+                    },
+                    connect_free_turn:{
+                        name:'回合顺序自选',
+                        init:true,
+                        frequent:true,
+                        intro:'在回合顺序1（盟军与魔王轮流进行回合）中，盟军的回合顺序由玩家决定',
+                        onclick:function(bool){
+                            game.saveConfig('free_turn',bool,this._link.config.mode);
+                        },
+                    },
+                },
                 config:{
                     free_choose:{
                         name:'自由选将',
@@ -5184,17 +5216,6 @@
                         },
                         intro:'只控制一名角色，其他角色由AI控制'
                     },
-                    /*
-                    ban_weak:{
-                        name:'屏蔽弱将',
-                        init:true,
-                        restart:true,
-                    },
-                    ban_strong:{
-                        name:'屏蔽强将',
-                        init:false,
-                        restart:true,
-                    },*/
                 }
             },
             stg:{
@@ -14566,7 +14587,8 @@
                         skills.add(i);
                     }
                     // 这个是把全场技能也数进技能里去。针对魔王模式的神灵复苏加的。鉴于平常询问量大幅度增加，限制为魔王模式专用。
-                    if (get.mode() == 'boss') skills.addArray(lib.skill.global);
+                    // if (get.mode() == 'boss') skills.addArray(lib.skill.global);
+                    if (get.mode() == 'boss') skills.push('_shenlin_use');
                     if(arg2) skills.addArray(this.hiddenSkills);
                     if(arg3!==false) skills.addArray(es);
                     for(var i in this.forbiddenSkills){
@@ -24882,19 +24904,6 @@
                 game.dead.push(player);
 
             },
-            tafangMe:function(player){
-                if(player){
-                    game.me=player;
-                    ui.me.lastChild.show();
-                    ui.create.fakeme();
-                    ui.handcards1=player.node.handcards1.animate('start').fix();
-                    ui.handcards2=player.node.handcards2.animate('start').fix();
-                    ui.handcards1Container.appendChild(ui.handcards1);
-                    ui.handcards2Container.appendChild(ui.handcards2);
-                    ui.updatehl();
-                    game.setChessInfo();
-                }
-            },
             deleteChessPlayer:function(player){
                 if(player){
                     player.delete();
@@ -25197,12 +25206,6 @@
                 for(var i=0;i<players.length;i++){
                     game.playerMap[players[i].dataset.position]=players[i];
                 }
-            },
-            removeTafangPlayer:function(){
-                ui.fakeme.hide();
-                ui.handcards1Container.innerHTML='';
-                ui.handcards2Container.innerHTML='';
-                game.me=ui.create.player();
             },
             swapControl:function(player,hs){
                 if(player&&player.node){

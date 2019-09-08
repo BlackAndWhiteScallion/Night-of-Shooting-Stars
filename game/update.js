@@ -31,7 +31,6 @@ window.noname_update={
         // 'mode/versus.js',
         // 'mode/connect.js',
         // 'mode/chess.js',
-        // 'mode/tafang.js',
         // 'mode/guozhan.js',
         // 'mode/stone.js',
         // 'theme/music/style.css',
