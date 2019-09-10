@@ -716,7 +716,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				enable:true,
 				selectTarget:-1,
 				filterTarget:function(card,player,target){
-					return target==player && target.identity == 'cai';
+					return target==player && (target.identity == 'cai' || target.identity == 'fan');
 				},
 				modTarget:true,
 				contentBefore:function(){

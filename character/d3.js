@@ -11,13 +11,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			bullygang:['male','1',3,["huanshu","zuanqu","aidoulu"]],
 			yukizakura:['female','3',3,["fenxue","ys_luoying"]],
 			hemerocalliscitrinabaroni:['female','3',3,["yinyangliuzhuan","daofaziran"]],
-			wingedtiger:['female','1',4,["wt_zongqing","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
+			wingedtiger:['female','1',4,["wt_zongqing","wt_sacrifice","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
 			pear:['female','3',4,['guaiqiao','aaaaa']],
-			icetea:['female', '0', 5, ['chouka', 'kejing', 'renli'],[],[],'10'],
+			icetea:['female', '0', 5, ['chouka', 'kejing', 'renli'],[],[],'11'],
 		},
 		characterIntro:{
 			zigui:'咕咕咕~',
-			zither:'<font color=\"#FF1116\"><b>天下疆域，风雨水土，终将归我所有，<br /><br />你便是成了灰，化了骨，也只能是<br /><br /><font size="4"><b>我的灰，我的骨。</b></font></b></font>',
+			zither:'<font color=\"#FF1116\"><b>天下疆域，风雨水土，终将归我所有，<br /><br />你便是成了灰，化了骨，也只能是<br/><br/><font size="4"><b>我的灰，我的骨。</b></font></b></font>',
 			bullygang:'白嫖到最后一无所有',
 			actress:'月が綺麗ですね<sub>……</sub>',
 			hemerocalliscitrinabaroni:'今天你平衡了么？<br />我可以帮你好好<font size="5"><b>平衡</b></font>（物理）一下',
@@ -357,15 +357,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{
 					player:"phaseUseBegin",
 				},
-				filter:function (event,player){
+				filter:function(event,player){
 					if (player.countCards('h') < 1 || player.lili < 2) return false;
 					return true;
 				},
-				check:function (event,player){
+				check:function(event,player){
 					if (player.countCards('h') < 3 || player.lili < 3) return false;
 					return true;
 				},
-				content:function (event,player){
+				content:function(event,player){
 					'step 0'
 					player.loselili(2);
 					'step 1'
@@ -377,11 +377,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					if(result.bool&&result.cards.length){
 						var players=game.filterPlayer();
+						players.remove(player);
 						var list = [];
 						for (var i = 0; i < players.length; i++){
 							if (lib.filter.targetEnabled2(result.cards[0],player,players[i])) list.push(players[i]);
 						}
-						players.remove(player);
 						player.useCard(result.cards[0],list,false);
 					}
 				},
@@ -837,6 +837,59 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.gainlili(player.maxHp - player.lili);
 					player.loseMaxHp();
 				},
+			},
+			wt_sacrifice:{
+				audio:2,
+				/*intro:{
+					content:'cards'
+				},*/
+				trigger:{global:'loseEnd'},
+				filter:function(event,player){
+					for(var i=0;i<event.cards.length;i++){
+						if(get.type(event.cards[i])=='jinji'&&get.position(event.cards[i])=='d') return true;
+					}
+					return false;
+				},
+				content:function(event,player){
+					player.draw();
+					_status.currentPhase.addTempSkill('wt_sha', 'phaseEnd');
+				},   
+			},
+			wt_sha:{
+				audio:2,
+				forced:true,
+				direct:true,
+				trigger:{
+					player:"useCard",
+				},
+				check:function (event,player){
+					return event.card.name=='sha';
+				},
+				content:function(){
+					'step 0'
+					if(_status.currentPhase==player&&trigger.card.name=='sha') {
+						player.addTempSkill('wt_sha2', 'useCardAfter');
+						if(player.stat[player.stat.length-1].card.sha>0){
+							player.stat[player.stat.length-1].card.sha--;
+						}
+						player.removeSkill('wt_sha');
+					}
+				},
+			},
+			wt_sha2:{
+				audio:0,
+				trigger:{source:'damageBegin'},
+				check:function(event,player){
+					return get.attitude(player,event.player)<=0;
+				},
+				forced:true,
+				filter:function(event,player){
+					return event.card&&event.card.name=='sha'&&event.parent.name!='_lianhuan'&&event.parent.name!='_lianhuan2';
+				},
+				content:function(){
+					trigger.num++;
+					player.removeSkill('wt_sha2');
+				}
 			},
 			wt_feihu:{
 				audio:0,
@@ -1425,15 +1478,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			huangxueyuye_audio2:'鸿渐于陆，其羽可用为仪，吉。',
 			daofaziran_audio1:'易有太极,始生两仪。两仪生四象,四象生八卦。',
 			daofaziran_audio2:'道生一，一生二，二生三，三生万物。',
-			wt_zongqing:"纵情",
-			wt_zongqing_info:"准备阶段，你可以将灵力补至体力上限的点数；若如此做，你减1点体力上限。",
-			wt_zongqing_audio1:'把妳的不开心说出来让我们高兴高兴',
-			wt_zongqing_audio2:'zZＺ',
-			wt_feihu:"设计不错但下一秒就是我的",
-			wt_feihu_info:"<font color=\"red\"><b>限定技，</b></font>出牌阶段开始时，你声明一名其他角色的符卡，比如“新建符卡1”；若如此做，你获得声明技能的拷贝。",
-			wt_feihu_audio1:'你们就只能拿出这么点东西来吗',
-			wt_feihu_audio2:'真好啊，真好呢（嘲讽意）',
-			wt_feihu_audio3:'我跟你讲，这个符卡超好用的',
 			guaiqiao:'乖巧',
 			guaiqiao2:'乖巧（给牌）',
 			guaiqiao_info:'一回合一次，其他角色的出牌阶段，其可以交给你所有手牌，然后你选择一项：令其：获得1点灵力，或摸一张牌。',
@@ -1460,6 +1504,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			renli_audio2:'流星夜，卸载！',
 			renli_audio3:'抽卡就能出货的世界不是很值得守护么',
 			icetea_die:'就算死我也要氪给你看',
+			wt_zongqing:"纵情",
+			wt_zongqing_info:"准备阶段，你可以将灵力补至体力上限的点数；若如此做，你减1点体力上限。",
+			wt_zongqing_audio1:'把妳的不开心说出来让我们高兴高兴',
+			wt_zongqing_audio2:'zZＺ',
+			wt_sacrifice:'歆飨',
+			wt_sacrifice_info:'当一张<font color=\"grey\"><b>禁忌牌</b></font>进入弃牌堆时，你可以摸一张牌，令当前回合角色下一张【轰！】不计入次数且造成的伤害+1',
+			wt_sacrifice_audio1:'《神曲》以祭献给您，尊贵的贝阿朵莉切大人',
+			wt_sacrifice_audio2:'虔诚地接受您的馈赠，伟大的哈斯塔尔',
+			wt_sha:'歆飨',
+			wt_sha_audio1:'吔！我！！大！！！屌！！！！',
+			wt_sha_audio2:'我感受到了力♂量',
+			wt_sha2:'歆飨',
+			wt_feihu:"设计不错但下一秒就是我的",
+			wt_feihu_info:"<font color=\"red\"><b>限定技，</b></font>出牌阶段开始时，你声明一名其他角色的符卡，比如“新建符卡1”；若如此做，你获得声明技能的拷贝。",
+			wt_feihu_audio1:'你们就只能拿出这么点东西来吗',
+			wt_feihu_audio2:'真好啊，真好呢（嘲讽意）',
+			wt_feihu_audio3:'我跟你讲，这个符卡超好用的',
 		},
 	};
 });
