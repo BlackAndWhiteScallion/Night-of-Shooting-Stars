@@ -521,6 +521,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
+					targets[0].discard(targets[0].getCards('h'));
 					targets[0].draw();
 				},
 				ai:{
@@ -981,7 +982,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			},
 			onSwapControl:function(){
-				if(game.me==game.boss) return;
+				//if(game.me==game.boss) return;
 				game.addVideo('onSwapControl');
 				var name=game.me.name;
 				if(ui.fakeme&&ui.fakeme.current!=name){
@@ -1943,6 +1944,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			// 无限血的家伙回合外没有理由出牌
 			boss_turncount:{
 				mode:['boss'],
+				/*
 				mod:{
 					cardEnabled:function(card,player){
 						if(player != _status.currentPhase) return false;
@@ -1957,6 +1959,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(player != _status.currentPhase) return false;
 					},
 				},
+				*/
 			},
 		},
 		translate:{

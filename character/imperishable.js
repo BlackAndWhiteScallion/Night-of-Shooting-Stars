@@ -1121,15 +1121,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   zhenshi_1:{
                     trigger:{global:'useCardToBefore'},
                     filter:function(event,player){
+                      if (!player.countCards('hej')) return false;
                       return get.subtype(event.card) == 'attack' && get.distance(player,event.target,'attack')<=1 && event.targets.length == 1;
                     },
                     check:function(event,player){
-                      //return player.countCards('hej') > 2 && get.attitude(player, event.target);
-                      return true;
+                      return player.countCards('hej') > 2 && get.attitude(player, event.target);
                     },
                     content:function(){
                       'step 0'
-                      var next=player.chooseToDiscard('hej','为使用月亮的力量而弃置一张牌吧');
+                      var next=player.chooseToDiscard('hej','真实之月：为使用月亮的力量而弃置一张牌吧');
                         next.ai=function(card){
                             return 7-get.value(card);
                         };

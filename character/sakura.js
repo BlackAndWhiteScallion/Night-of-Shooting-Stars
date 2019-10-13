@@ -623,10 +623,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.bool){
-                        if (!player.storage.mingzhi) player.storage.mingzhi = [result.cards[0]];
-                        else player.storage.mingzhi.push(result.cards[0]);
-                        player.markSkill('mingzhi');
-                        player.syncStorage('mingzhi');   
+                        player.mingzhiCard(result.cards[0]); 
                     }
                 },
                 ai:{
@@ -764,13 +761,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (result.links.length){
                             player.$gain(result.links);
                             player.gain(result.links[0],'log');
-                            if (!player.storage.mingzhi){
-                                player.storage.mingzhi = [result.links[0]];
-                                player.markSkill('mingzhi');
-                            } else {
-                                player.storage.mingzhi.push(result.links[0]);
-                                player.syncStorage('mingzhi');
-                            }
+                            player.mingzhiCard(result.links[0]);
                         }
                     }
                     if (result.bool && event.control == '将明置牌交给当前回合角色'){
@@ -952,10 +943,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.bool){
-                        if (!player.storage.mingzhi) player.storage.mingzhi = [result.cards[0]];
-                        else player.storage.mingzhi.push(result.cards[0]);
-                        player.markSkill('mingzhi');
-                        player.syncStorage('mingzhi');   
+                        player.mingzhiCard(result.bool[0]);
                     }
                 },
                 ai:{
@@ -1088,10 +1076,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.bool){
-                        if (!player.storage.mingzhi) player.storage.mingzhi = [result.cards[0]];
-                        else player.storage.mingzhi.push(result.cards[0]);
-                        player.markSkill('mingzhi');
-                        player.syncStorage('mingzhi');   
+                        player.mingzhiCard(result.cards[0]);
                     }
                 },
                 ai:{
@@ -1119,10 +1104,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     target.gain(cards,player);
-                    if (!target.storage.mingzhi) target.storage.mingzhi = [cards[0]];
-                    else target.storage.mingzhi.push(cards[0]);
-                    target.markSkill('mingzhi');
-                    target.syncStorage('mingzhi');
+                    target.mingzhiCard(cards[0]);
                     if (target.name == 'merlin'){
                         game.trySkillAudio('mingjian',player,true,4);
                     }
@@ -1899,7 +1881,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audioname:['reimu'],
                 audio:2,
                 filter:function(event,player){
-                    return player.countCards('hej');
+                    return player.countCards('hej') && !game.dead.contains(event.player);
                 },
                 check:function(event,player){
                     if(player.countCards('hej')<3) return false;

@@ -103,6 +103,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							sks.contains('lingbo')){
 							return 1;
 						}
+						if (target.hp > 10) return -1;
 						//if(ai.get.damageEffect(target,evt.player,target,evt.card.nature)>=0) return -1;
 						return 1;
 					});
@@ -2571,20 +2572,28 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			ai:{
 				result:{
-						player:function(player,target){
-							return game.countPlayer(function(current){
-								if (current.hp == current.maxHp) return 0;
-								if (ai.get.attitude(player,current) <= 0) return -2;
-								if (ai.get.attitude(player,current) > 0) return 2;
-								return 0;
-							});
-						}
-					},
-					tag:{
-						recover:0.5,
-						multitarget:1
+					player:function(player,target){
+						return game.countPlayer(function(current){
+							if (current.hp == current.maxHp) return 0;
+							if (ai.get.attitude(player,current) <= 0) return -2;
+							if (ai.get.attitude(player,current) > 0) return 2;
+							return 0;
+						});
 					}
 				},
+				tag:{
+					recover:0.5,
+					multitarget:1
+				}
+			},
+			check:function(event, player){
+				return game.countPlayer(function(current){
+					if (current.hp == current.maxHp) return 0;
+					if (ai.get.attitude(player,current) <= 0) return -2;
+					if (ai.get.attitude(player,current) > 0) return 2;
+					return 0;
+				}) > 0;
+			},
 			prompt:'是否发动【天国之阶】：摸到后，可以令所有角色回复1点体力？',
 		},
 		// 派对当潜行
@@ -2617,6 +2626,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			ai:{
 				result:{
 					player:function(player,target){
+						if (player.hp == 1) return 5;
 						return 0.7;
 					}
 				},
@@ -2634,7 +2644,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				player.chooseToDiscard(1,{name:'bingyu'},'h','你可以弃置【冰域之宴】，跳过弃牌阶段');
 				'step 1'
 				if (result.bool){
-					player.skip('phaseDiscard');
+					//player.skip('phaseDiscard');
 					trigger.cancel();
 				}
 			},

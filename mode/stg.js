@@ -3503,7 +3503,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_bawu:'拔雾开天',
 			stg_bawu_info:'出牌阶段，对自机身份的你使用；目标选择一项：回复1点体力并摸一张【圣盾】，或获得1点灵力并摸一张【连击】。',
 			stg_pohuai:'破坏之果',
-			stg_pohuai_info:'出牌阶段，对一名角色使用；目标将手牌数和灵力值调整至X（X为目标本局游戏击坠的角色数）。<br><u>你可以将此牌当作【弹幕狂欢】使用。</u>',
+			stg_pohuai_info:'出牌阶段，对一名角色使用；目标将手牌数和灵力值调整至X（X为目标本局游戏击坠的角色数）。<br><u>追加效果：你可以将此牌当作【弹幕狂欢】使用。</u>',
 			stg_fengyin:'封印解除',
 			stg_fengyin_info:'出牌阶段，对自己使用；目标创建并获得一张禁忌牌。',
 

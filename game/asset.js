@@ -166,6 +166,7 @@ window.noname_asset_list=[
     'image/character/homura.jpg',
     'image/character/tsubaki.jpg',
     'image/character/yuuko.jpg',
+    'image/character/diva.jpg',
     'image/mode/boss/character/boss_reimu.jpg',
     'image/mode/boss/character/boss_reimu2.jpg',
     'image/mode/boss/character/boss_cirno.jpg',

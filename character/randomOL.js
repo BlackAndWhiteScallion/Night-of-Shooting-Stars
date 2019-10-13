@@ -4,9 +4,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		character:{
 			homura:['female', '2', 3, ['time2', 'time', 'homuraworld']],
+			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']]
 		},
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
+			diva:'<br><b>出自：约会大作战 画师：干物A太</b>',
 		},	   
 		perfectPair:{
 		},
@@ -155,6 +157,168 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 prompt:'要不要使用The World的力量？',
             },
+			duzou:{
+				enable:'phaseUse',
+				usable:1,
+				filterTarget:function(card,player,target){
+					return target.countCards('h');
+				},
+				content:function(){
+					"step 0"
+					event.videoId=lib.status.videoId++;
+					var cards=target.getCards('h');
+					if(player.isOnline2()){
+						player.send(function(cards,id){
+							ui.create.dialog('独奏',cards).videoId=id;
+						},cards,event.videoId);
+					}
+					event.dialog=ui.create.dialog('独奏',cards);
+					event.dialog.videoId=event.videoId;
+					if(!event.isMine()){
+						event.dialog.style.display='none';
+					}
+					player.chooseButton(true).set('filterButton',function(button){
+						return !target.storage.mingzhi || !target.storage.mingzhi.contains(button.link);
+					}).set('dialog',event.videoId);
+					"step 1"
+					if(result.bool){
+						event.card=result.links[0];
+						target.mingzhiCard(event.card);
+					}
+					"step 2"
+					if (target.lili == 0){
+						game.log('回合结束后，',target,'执行一个由',player,'操作的出牌阶段');
+						target.addSkill('duzou_extra');
+					}
+					if(player.isOnline2()){
+						player.send('closeDialog',event.videoId);
+					}
+					event.dialog.close();
+					event.finish();
+				},
+				ai:{
+					threaten:1.5,
+					result:{
+						target:function(player,target){
+							return -target.countCards('h');
+						}
+					},
+					order:10,
+					expose:0.4,
+				},
+			},
+			duzou_extra:{
+				direct:true,
+				trigger:{global:'phaseAfter'},
+				content:function(){/*
+					if (trigger.player.name == 'diva'){
+						game.swapPlayer(player);
+						player.phaseUse();
+					} else {
+						game.swapPlayer();
+						player.
+					}
+					*/
+					'step 0'
+					if (get.mode() == 'boss' || get.mode() == 'chess'){
+						game.swapControl(player);
+						game.onSwapControl();
+					} else {
+						game.swapPlayer(player);
+					}
+					player.phaseUse();
+					'step 1'
+					game.log('————————————————————');
+					if (get.mode() == 'boss' || get.mode() == 'chess'){
+						game.swapControl(trigger.player);
+						game.onSwapControl();
+					} else {
+						game.swapPlayer(trigger.player);
+					}
+					player.removeSkill('duzou_extra'); 
+				},
+			},
+			lunwu:{
+				enable:'phaseUse',
+				usable:1,
+				filterCard:true,
+				selectCard:1,
+				discard:false,
+				prepare:'give',
+				filterTarget:function(card,player,target){
+					return player!=target;
+				},
+				check:function(card){
+					return 7-get.value(card);
+				},
+				content:function(){
+					'step 0'
+					target.gain(cards,player);
+					target.mingzhiCard(cards[0]);
+					'step 1'
+					var players = game.filterPlayer();
+					for (var i = 0; i < players.length; i ++){
+						if (players[i] == player) continue;
+						if (get.distance(target, players[i],'attack')<=1) players[i].damage('thunder'); 
+					}
+				},
+				prompt2:'低音炮向谁发射呢？',
+				ai:{
+					order:function(skill,player){
+						return 1;
+					},
+					result:{
+						target:function(player,target){
+							var nh=target.countCards('h');
+							var np=player.countCards('h');
+							if(player.hp==player.maxHp||player.countCards('h')<=1){
+								if(nh>=np-1&&np<=player.hp) return 0;
+							}
+							return Math.max(1,5-nh);
+						}
+					},
+					effect:{
+						target:function(card,player,target){
+							if(player==target&&get.type(card)=='equip'){
+								if(player.countCards('e',{subtype:get.subtype(card)})){
+									var players=game.filterPlayer();
+									for(var i=0;i<players.length;i++){
+										if(players[i]!=player&&get.attitude(player,players[i])>0){
+											return 0.1;
+										}
+									}
+								}
+							}
+						}
+					},
+				},
+			},
+			tiaoxian:{
+				trigger:{global:'mingzhiCardAfter'},
+				audio:2,
+				filter:function(event, player){
+					return true;
+				},
+				content:function(){
+					var cards = trigger.cards;
+					var red = false;
+					var black = false;
+					for (var i = 0; i < trigger.cards.length; i ++){
+						if (get.color(trigger.cards[i]) == 'red'){
+							red = true;
+						}
+						if (get.color(trigger.cards[i]) == 'black'){
+							black = true;
+						}
+					}
+					if (red == true){
+						trigger.player.gainlili();
+					}
+					if (black == true){
+						trigger.player.damage('thunder');
+					}
+				},
+			},
 		},
 		translate:{
             randomOL:'乱入OL',
@@ -169,6 +333,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			homuraworld:'焰的世界',
 			homuraworld_skill:'焰的世界',
 			homuraworld_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定目标时，你可以消耗1点灵力，取消之，并将之扣置于你的角色牌上。',
+			diva:'美九',
+			duzou:'独奏',
+			duzou_info:'一回合一次，出牌阶段，你可以观看一名角色手牌，明置其中一张；然后，若其没有灵力，其于回合结束后进行一个额外的出牌阶段，该阶段内其由你控制。',
+			lunwu:'轮舞',
+			lunwu_info:'一回合一次，出牌阶段，你可以交给一名角色一张手牌，并明置之；然后，对其攻击范围内除你以外的所有角色各造成１点灵击伤害。',
+			tiaoxian:'调弦',
+			tiaoxian_info:' 一名角色明置手牌时，你可以：若其中有红色牌，令其获得１点灵力；若其中有黑色牌，对其造成１点灵击伤害。',
 		},
 	};
 });

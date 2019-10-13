@@ -1523,10 +1523,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 2'
 					if (result.bool && result.cards.length){
 						if (event.control == '明置一张手牌'){
-							if (!player.storage.mingzhi) player.storage.mingzhi = [result.cards[0]];
-	                        else player.storage.mingzhi.push(result.cards[0]);
-	                        player.markSkill('mingzhi');
-	                        player.syncStorage('mingzhi');  
+							player.mingzhiCard(result.cards[0]);
 						} else if (event.control == '暗置一张手牌'){
 							player.storage.mingzhi.remove(result.cards[0]);
 							if (player.storage.mingzhi.length == 0){
@@ -1758,15 +1755,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     player.loselili(lib.skill.stage.cost);
                     if (!player.countCards('h')) player.draw(3);
                     else if (player.countCards('h') < 3) player.draw(3 - player.countCards('h'));
-                    if (!player.storage.mingzhi) player.storage.mingzhi = player.getCards('h');
-                    else {
-                    	var c = player.getCards('h');
-                    	for (var i = 0; i < c.length; c ++){
-                    		if (!player.storage.mingzhi.contains(c[i])) player.storage.mingzhi.push(c[i]);
-                    	}
-                    }
-                    player.markSkill('mingzhi');
-                    player.syncStorage('mingzhi');
+					player.mingzhiCard(player.getCards('h'));
                     player.turnOver();
                 },
 			},

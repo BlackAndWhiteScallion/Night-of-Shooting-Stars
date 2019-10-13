@@ -728,6 +728,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     return true;
                 },
                 content:function(){
+                    'step 0'
                     player.gainlili();
                     if (player.storage.qishu == "phaseDraw"){
                         player.phaseDraw();
@@ -738,6 +739,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     player.storage.qishu = null;
                     player.removeSkill('qishu2');
+                    'step 1'
+                    game.log('————————————————————');
                 },
             },
             anye:{

@@ -11276,6 +11276,59 @@
                     game.broadcast('closeDialog',event.dialogid);
                     event.dialog.close();
                 },
+                mingzhiCard:function(){
+                    "step 0"
+                    if(get.itemtype(cards)!='cards'){
+                        event.finish();
+                        return;
+                    }
+                    if(!event.str){
+                        event.str=get.translation(player.name)+'明置了手牌';
+                    }
+                    event.dialog=ui.create.dialog(event.str,cards);
+                    event.dialogid=lib.status.videoId++;
+                    event.dialog.videoId=event.dialogid;
+                   
+					if(event.hiddencards){
+						for(var i=0;i<event.dialog.buttons.length;i++){
+							if(event.hiddencards.contains(event.dialog.buttons[i].link)){
+								event.dialog.buttons[i].className='button card';
+								event.dialog.buttons[i].innerHTML='';
+							}
+						}
+					}
+					game.broadcast(function(str,cards,cards2,id){
+						var dialog=ui.create.dialog(str,cards);
+						dialog.videoId=id;
+						if(cards2){
+							for(var i=0;i<dialog.buttons.length;i++){
+								if(cards2.contains(dialog.buttons[i].link)){
+									dialog.buttons[i].className='button card';
+									dialog.buttons[i].innerHTML='';
+								}
+							}
+						}
+					},event.str,cards,event.hiddencards,event.dialogid);
+					if(event.hiddencards){
+						var cards2=cards.slice(0);
+						for(var i=0;i<event.hiddencards.length;i++){
+							cards2.remove(event.hiddencards[i]);
+						}
+						game.log(player,'明置了',cards2);
+					}
+					else{
+						game.log(player,'明置了',cards);
+					}
+                    game.delayx(2);
+                    game.addVideo('showCards',player,[event.str,get.cardsInfo(cards)]);
+                    "step 1"
+                    game.broadcast('closeDialog',event.dialogid);
+                    event.dialog.close();
+                    if (!player.storage.mingzhi) player.storage.mingzhi = cards;
+                    else player.storage.mingzhi.concat(cards);
+                    player.markSkill('mingzhi');
+                    player.syncStorage('mingzhi');
+                },
                 viewCards:function(){
                     "step 0"
                     if(player==game.me){
@@ -15737,6 +15790,24 @@
                             }
                         }
                     });
+                },
+                // 明置牌时机
+                mingzhiCard:function(cards,str){
+                    var next=game.createEvent('mingzhiCard');
+                    next.player=this;
+                    next.str=str;
+                    // 如果cards是str（如果写反了，调换str和cards）
+                    if(typeof cards=='string'){
+                        str=cards;
+                        cards=next.str;
+                        next.str=str;
+                    }
+                    if(get.itemtype(cards)=='card') next.cards=[cards];
+                    else if(get.itemtype(cards)=='cards') next.cards=cards;
+                    else _status.event.next.remove(next);
+                    next.setContent('mingzhiCard');
+                    next._args=Array.from(arguments);
+					return next;
                 },
                 moveCard:function(){
                     var next=game.createEvent('moveCard');
@@ -23063,6 +23134,11 @@
         removeCard:function(name, replace){
             for(var i=0;i<lib.card.list.length;i++){
                 if(lib.card.list[i][2]==name){
+                    if (replace){
+                        var c = lib.card.list[i];
+                        c[2] = replace;
+                        lib.card.list.push(c);
+                    }
                     lib.card.list.splice(i--,1);
                 }
             }
@@ -36072,22 +36148,6 @@
                                         var n1=0;
                                         var n2=updates.length;
                                         span.innerHTML='正在下载素材（'+n1+'/'+n2+'）';
-                                        span1.remove();
-                                        span2.remove();
-                                        span2_check.remove();
-                                        span3.remove();
-                                        span3_check.remove();
-                                        span4.remove();
-                                        span4_check.remove();
-                                        span5.remove();
-                                        span5_check.remove();
-                                        span6.remove();
-                                        span6_check.remove();
-                                        span2_br.remove();
-                                        span3_br.remove();
-                                        span4_br.remove();
-                                        span5_br.remove();
-                                        span6_br.remove();
                                         p.appendChild(span);
 
                                         var br6=ui.create.node('br');
@@ -43303,6 +43363,7 @@
             },
             locked:function(skill){
                 var info=lib.skill[skill];
+                if(info.fixed) return true;
                 if(info.locked==false) return false;
                 //if(info.trigger&&info.forced) return true;
                 if(info.mod) return true;
