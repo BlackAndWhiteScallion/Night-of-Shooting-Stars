@@ -8783,9 +8783,6 @@
                     "step 3"
 					_status.imchoosing=false;
                     if(event.bool){
-                        if(game.changeCoin){
-                            game.changeCoin(-3);
-                        }
                         var hs=game.me.getCards('h');
 						game.addVideo('lose',game.me,[get.cardsInfo(hs),[],[]]);
 						for(var i=0;i<hs.length;i++){
@@ -26798,9 +26795,9 @@
                     _status.coin=Math.ceil(_status.coin);
                     dialog.add(ui.create.div('','获得'+_status.coin+'金'));
                     if(betWin){
-                        game.changeCoin(20);
+                        game.changeCoin(40);
                         dialog.content.appendChild(document.createElement('br'));
-                        dialog.add(ui.create.div('','（下注赢得10金）'));
+                        dialog.add(ui.create.div('','（下注赢得20金）'));
                     }
                     game.changeCoin(_status.coin);
                 }
@@ -35701,12 +35698,19 @@
                     playButton.style.transition='opacity 0.3s';
                     var deleteButton=ui.create.div('.menubutton.round.highlight.hidden','删',start);
                     deleteButton.style.display='none';
-                    deleteButton.style.left='275px';
+                    deleteButton.style.left='330px';
                     deleteButton.style.transition='opacity 0.3s';
                     var saveButton=ui.create.div('.menubutton.round.highlight.hidden','存',start);
                     saveButton.style.display='none';
                     saveButton.style.transition='opacity 0.3s';
-
+                    if (lib.device){
+                        cheatButton.classList.add('mobile');
+                        runButton.classList.add('mobile');
+                        clearButton.classList.add('mobile');
+                        playButton.classList.add('mobile');
+                        deleteButton.classList.add('mobile');
+                        saveButton.classList.add('mobile');
+                    }
 
                     var clickMode=function(){
                         if(this.classList.contains('off')) return;
@@ -36762,9 +36766,6 @@
                                             break;
                                         }
                                     }
-                                }
-                                if(ui.coin){
-                                    game.changeCoin(-20);
                                 }
                                 clickContainer.call(menuContainer);
                             }

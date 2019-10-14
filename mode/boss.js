@@ -722,6 +722,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','skipfirst','boss_damagecount'],['boss'],'shu','10000'],
 				//boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
 				boss_saitama:['male','0',Infinity,['punch','skipfirst','boss_turncount'],['boss'],'shen'],
+				boss_fapaiji:['female', '5', 3, ['huanri', 'toutian'], ['boss'], 'shen'],
 			},
 		},
 		characterIntro:{
@@ -732,6 +733,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_nianshou:'比起加一堆没人想要的大杂烩设定，把本来欢乐的活动变成一个累死人的掀桌活动，还是回到最开始的简单欢乐日子好。',
 			boss_zhaoyun:'幻想乡是一切皆有可能的地方。<br>即使是那个只存在于传说中的男人……！',
 			boss_saitama:'买菜时因走错路偶然路过幻想乡的光头<br>………等等，什么？<br>画师：',
+			boss_fapaiji:'本次四轰鬼抽由Love Live!赞助提供。<br>谢谢来自μ\'s的东条希的友情出演！<br>………等等，什么？<br>画师：',
 		},
 		cardPack:{
 			mode_boss:['dianche', 'shenlin', 'reidaisai2', 'tancheng'],
@@ -1078,9 +1080,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(ui.cheat2&&ui.cheat2.dialog==_status.event.dialog){
 							return;
 						}
-						if(game.changeCoin){
-							game.changeCoin(-3);
-						}
 						list.randomSort();
 
 						var buttons=ui.create.div('.buttons');
@@ -1118,9 +1117,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.createControl=event.asboss;
 						ui.cheat2=ui.create.control('自由选将',function(){
 							if(this.dialog==_status.event.dialog){
-								if(game.changeCoin){
-									game.changeCoin(50);
-								}
+
 								this.dialog.close();
 								_status.event.dialog=this.backup;
 								ui.window.appendChild(this.backup);
@@ -1133,9 +1130,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								}
 							}
 							else{
-								if(game.changeCoin){
-									game.changeCoin(-10);
-								}
 								this.backup=_status.event.dialog;
 								_status.event.dialog.close();
 								_status.event.dialog=_status.event.parent.dialogxx;
@@ -1961,6 +1955,101 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				*/
 			},
+			huanri:{
+				trigger:{global:['drawBefore', 'gameDrawBefore', 'judgeBefore']},
+				group:['huanri_start'],
+				filter:function(event, player){
+					return event.num > 0 && ui.cardPile.childNodes.length > 0;
+				},
+				check:function(event,player){
+					if (event.name == 'gameDraw' && player.storage.huanri == 3) return false;
+					return true; 
+				},
+				content:function(){
+					'step 0'
+					var num = 0;
+					if (trigger.name == 'draw'){
+						num = trigger.num;
+					} else if (trigger.name == 'gameDraw'){
+						num = trigger.num * game.players.length;
+					} else if (trigger.name == 'judge'){
+						num = 1;
+					}
+					var cards=[];
+					var choices = [];
+					for(var i=0;i<ui.cardPile.childNodes.length;i++){
+						cards.push(ui.cardPile.childNodes[i]);
+					}
+					player.chooseCardButton(num, '将'+num+'张牌置于牌堆顶（先选的在上面）', cards).set('filterButton',function(button){
+						return true;
+					}).set('ai',function(button){
+						return _status.event.choices.contains(button.link);
+					}).set('choices', choices);
+					'step 1'
+					if (result.bool){
+						for (var i = result.links.length-1; i >=0; i --){
+							ui.cardPile.insertBefore(result.links[i],ui.cardPile.firstChild);
+						}
+					}
+				},
+			},
+			huanri_start:{
+				trigger:{global:'gameStart'},
+				direct:true,
+				content:function(){
+					if (get.mode() == 'boss') {
+						var i = get.rand();
+						if (i > 0.7) player.storage.huanri = 1;
+						else if (i > 0.3) player.storage.huanri = 2;
+						else player.storage.huanri = 3;
+					} else {
+						player.storage.huanri = 3;
+					}
+				},
+			},
+			toutian:{
+				init:function(player){
+					game.loadModeAsync('stg',function(mode){
+					});
+					game.loadModeAsync('chess',function(mode){
+					});
+				},
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.lili > 0;
+				},
+				content:function(){
+					'step 0'
+					var list = [];
+                    for (var i in lib.card){
+						if (!lib.translate[i]) continue;
+						list.add(i);
+                    }
+                    if(list.length){
+                        player.chooseButton(['创建并获得一张牌',[list,'vcard']]).set('ai',function(button){
+                            var player=_status.event.player;
+                            var recover=0,lose=1,players=game.filterPlayer();
+                            for(var i=0;i<players.length;i++){
+                                if(!players[i].isOut()){
+                                    if (get.attitude(player, players[i]) >= 0) recover ++;
+                                    if (get.attitude(player, players[i]) < 0 ){
+                                        if (players[i].hp == 1 && get.effect(players[i],{name:'juedou'},player,player)) return (button.link[2] == 'juedou')?2:-1;
+                                        lose ++;
+                                    }
+                                }
+                            }
+                            if (recover - 2 >= lose) return (button.link[2] == 'reidaisai')?2:-1;
+                            return get.value({name:button.link[2]});
+                        });
+                    }
+                    'step 1'
+                    if(result&&result.bool&&result.links[0]){
+						player.gain(game.createCard(result.links[0][2]));
+						player.loselili();
+                    }
+				},
+			},
 		},
 		translate:{
 			mode_boss_card_config:'魔王模式',
@@ -2026,6 +2115,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			serious_audio2:'稍微认真一点吧？',
 			serious_info:'锁定技，结束阶段，你摸X张牌，并将灵力和灵力上限补至X（X为游戏轮次数）。',
 			boss_saitama_die:'啊……就是这种感觉……',
+			boss_fapaiji:'发牌姬',
+			toutian:'偷天',
+			toutian_info:'一回合一次，出牌阶段，你可以消耗１点灵力，创建一张牌（可以是其他模式的牌）并获得之。',
+			huanri:'换日',
+			huanri_info:'一名角色摸一张牌时，或判定时，你可以观看牌堆，将其中一张牌置于牌堆顶。',
 			boss_turncount:'存活挑战',
 			boss_turncount_info:'锁定技，回合外你不能使用/打出牌。<br>你在游戏失败前，能够撑多少轮呢？<br><br>注：建议在左上角[选项-开始-魔王]中将[单人控制]选项打开',
 		},

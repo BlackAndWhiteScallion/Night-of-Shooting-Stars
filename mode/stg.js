@@ -1171,9 +1171,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if(ui.cheat2&&ui.cheat2.dialog==_status.event.dialog){
 							return;
 						}
-						if(game.changeCoin){
-							game.changeCoin(-3);
-						}
 						list.randomSort();
 
 						var buttons=ui.create.div('.buttons');
@@ -1206,9 +1203,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.createControl=event.asboss;
 						ui.cheat2=ui.create.control('自由选自机',function(){
 							if(this.dialog==_status.event.dialog){
-								if(game.changeCoin){
-									game.changeCoin(50);
-								}
+
 								this.dialog.close();
 								_status.event.dialog=this.backup;
 								ui.window.appendChild(this.backup);
@@ -1225,9 +1220,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								}
 							}
 							else{
-								if(game.changeCoin){
-									game.changeCoin(-10);
-								}
 								this.backup=_status.event.dialog;
 								_status.event.dialog.close();
 								_status.event.dialog=_status.event.parent.dialogxx;
@@ -1758,7 +1750,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						});
 					};
 					game.pause();
-					step1(); 
+					if (!game.me.storage.dialog){
+						if (game.me.storage.reinforce[0]){
+							game.changeBoss(game.me.storage.reinforce[0]);
+							game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
+						}
+						game.resume();
+					} else { 
+						step1(); 
+					}
 					game.me.addSkill(game.me.storage.stage);
 				},
 				filter:function(event,player){
@@ -3157,6 +3157,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								player.say('什么啊，你又来了啊？');
 								setTimeout(function(){
 									player.say('现在不说这个——不论对你还是对妹妹大人，今天都是厄日！');
+				                	setTimeout(function(){
+										game.resume();
+									}, 2500);
+				                }, 2500);
+							} else {
+								player.say('虽然不知道你是做什么来的……');
+								setTimeout(function(){
+									player.say('但是你可是挑了错误的时间出现在错误的地方了！');
 				                	setTimeout(function(){
 										game.resume();
 									}, 2500);

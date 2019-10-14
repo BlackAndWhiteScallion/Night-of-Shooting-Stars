@@ -174,6 +174,7 @@ window.noname_asset_list=[
     'image/mode/boss/character/boss_saitama.jpg',
     'image/mode/boss/character/boss_nianshou.jpg',
     'image/mode/boss/character/boss_zhaoyun.jpg',
+    'image/mode/boss/character/boss_fapaiji.jpg',
     'image/mode/stg/character/stg_scarlet.jpg',
     'image/mode/stg/character/stg_scarlet_ex.jpg',
     'image/mode/stg/character/stg_remilia.jpg',

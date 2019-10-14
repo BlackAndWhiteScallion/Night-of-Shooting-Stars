@@ -3780,9 +3780,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					if(ui.cheat2&&ui.cheat2.dialog==_status.event.dialog){
     						return;
     					}
-    					if(game.changeCoin){
-    						game.changeCoin(-3);
-    					}
     					list.randomSort();
 
     					var buttons=ui.create.div('.buttons');
@@ -3818,9 +3815,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				ui.create.cheat2=function(){
     					ui.cheat2=ui.create.control('自由选将',function(){
     						if(this.dialog==_status.event.dialog){
-    							if(game.changeCoin){
-    								game.changeCoin(50);
-    							}
     							this.dialog.close();
     							_status.event.dialog=this.backup;
     							this.backup.open();
@@ -3833,9 +3827,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     							}
     						}
     						else{
-    							if(game.changeCoin){
-    								game.changeCoin(-10);
-    							}
     							this.backup=_status.event.dialog;
     							_status.event.dialog.close();
     							_status.event.dialog=_status.event.parent.dialogxx;
