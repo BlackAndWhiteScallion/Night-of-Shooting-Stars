@@ -75,6 +75,7 @@ window.noname_asset_list=[
     'image/card/zuiye.png',
     'image/card/luanwu.png',
     'image/card/houraiyuzhi.png',
+    'image/card/holysword.png',
     'image/mode/boss/card/dianche.png',
     'image/mode/boss/card/shenlin.png',
     'image/mode/boss/card/tancheng.png',
@@ -167,6 +168,8 @@ window.noname_asset_list=[
     'image/character/tsubaki.jpg',
     'image/character/yuuko.jpg',
     'image/character/diva.jpg',
+    'image/character/kejinji.jpg',
+    'image/character/hero.jpg',
     'image/mode/boss/character/boss_reimu.jpg',
     'image/mode/boss/character/boss_reimu2.jpg',
     'image/mode/boss/character/boss_cirno.jpg',
@@ -383,4 +386,5 @@ window.noname_skin_list={
     shigure:1,
     kurumi:1,
     miku:1,
+    diva:1,
 };

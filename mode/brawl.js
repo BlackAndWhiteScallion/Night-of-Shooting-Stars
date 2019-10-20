@@ -1097,6 +1097,65 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 				},
 			},
+			/*
+			patchouli:{
+				name:'手忙脚乱',
+				intro:['小恶魔忙不过来了，帕秋莉招人来帮忙了！',
+						'帕秋莉每回合会提出一个委托，完成那个任务就会获得奖励。',
+						'（金币系统下，奖励了还会附带金币哟~）',
+						'连续3个回合没有完成委托的话，就会被帕秋莉解雇了！',
+						'你在解雇前能够完成多少个委托呢？'],
+				mode:'old_identity',
+				submode:'1v1',
+				init:function(){
+					lib.config.mode_config['old_identity']['player_number'] = '2';
+					lib.config.mode_config['old_identity']['free_choose'] = true;
+					lib.config.mode_config['old_identity']['change_identity'] = false;
+					lib.config.mode_config['old_identity']['continue_game'] = true;
+					lib.config.mode_config['old_identity']['ban_identity'] = 'zhu';
+					lib.character['patchouli'] = ['female','2',3,['mission','mianyi'],['unseen']];
+					lib.skill.mission={
+						
+						ai:{
+							effect:{
+								target:function(card,player,target,current){
+									if(get.type(card)!='equip') return 'zeroplayertarget';
+								},
+								player:function(card,player,target,current){
+									if(get.type(card)!='equip') return 'zeroplayertarget';
+								}
+							},
+							threaten:-1000,
+						}
+					};
+					lib.translate.mission='';
+					lib.translate.mission_info='';
+				},
+				showcase:function(init){
+					var node=this;
+	                var player;
+	                if(init){
+	                    player=ui.create.player(null,true).init('patchouli');
+	                    player.style.transition='all 0.5s';
+						player.style.left='calc(50% - 75px)';
+	                    player.style.top='20px';
+	                    node.appendChild(player);
+	                    node.playernode=player;
+	                }
+	                else{
+	                    player=node.playernode;
+	                }
+				},
+				content:{
+					chooseCharacterAi:function(player){
+						player.init('patchouli');
+					},
+				},
+				gameStart:function(){
+
+				}
+			},
+			*/
 	        pubg:{
 	        	name:'吃鸡模式',
 	        	mode:'identity',

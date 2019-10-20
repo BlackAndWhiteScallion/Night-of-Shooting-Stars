@@ -6,6 +6,271 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			if(lib.config.mode!='chess'||get.config('chess_mode')!='leader'){
 				_status.coin=100;
 			}
+			lib.characterPack.mode_extension_coin={
+				kejinji:['female','5',3,['chaoneng', 'chaoli', 'liyu'],[]],
+				hero:['female', '1', 4, ['weituo', 'zaguo', 'fanjian'], []],
+			};
+			lib.characterIntro['kejinji']='魔法和奇迹都没有有钱好使！（本次氪金由魔法少女伊莉亚代言）<br>画师：Binato_Lulu';
+			lib.characterIntro['hero']='卖圣剑了卖圣剑了！持勇者证可以半价！（本次圣剑由火焰纹章0赞助提供）<br>画师：志月';
+			//lib.cardPack.appendChild(mode_coin);
+			var card = {
+				holysword:{
+					fullskin:true,
+					type:'equip',
+					subtype:'equip1',
+					ai:{
+						basic:{
+							equipValue:10
+						}
+					},
+					skills:['ziheng_skill','jinu_skill','lianji_skill'],
+				},
+			};
+			for (var i in card){
+				lib.card[i] = card[i];
+			}
+			/*
+			lib.cardPack.mode_coin = {
+				mode_coin:['holysword'],
+			};*/
+			for(var i in lib.characterPack.mode_extension_coin){
+				lib.character[i]=lib.characterPack.mode_extension_coin[i];
+				lib.config.forbidai.push(i);
+			}
+			var skill = {
+				chaoneng:{
+					enable:'phaseUse',
+					group:['chaoneng_buff1', 'chaoneng_buff2'],
+					init:function(player){
+						player.storage.chaoneng1 = 0;
+						player.storage.chaoneng2 = 0;
+						player.storage.chaoneng3 = 0;
+					},
+					filter:function(event, player){
+						return lib.config.coin >= 30;
+					},
+					content:function(){
+						'step 0'
+						event.list = ['30金币: 手牌上限+1'];
+						if (lib.config.coin >= 50) event.list.push('50金币：灵力上限+1');
+						if (lib.config.coin >= 70) event.list.push('70金币：体力上限+1');
+						if (lib.config.coin >= 100) event.list.push('100金币：摸牌数+1');
+						if (lib.config.coin >= 150) event.list.push ('150金币：【轰！】伤害+1');
+						player.chooseControlList(event.list, '想要买哪一个外挂？');
+						'step 1'
+						if (result.index == 0){
+							game.changeCoin(-30);
+							player.storage.chaoneng1 ++; 
+						} else if (result.index == 1){
+							game.changeCoin(-50);
+							player.gainMaxlili();
+						} else if (result.index == 2){
+							game.changeCoin(-70);
+							player.gainMaxHp();
+						} else if (result.index == 3){
+							game.changeCoin(-100);
+							player.storage.chaoneng2 ++;
+						} else if (result.index == 4){
+							game.changeCoin(-150);
+							player.storage.chaoneng3 ++;
+						}
+					},
+				},
+				chaoneng_buff1:{
+					trigger:{player:'phaseDrawBegin'},
+					direct:true,
+					content:function(){
+						trigger.num+=player.storage.chaoneng2;
+					},
+					mod:{
+						maxHandcard:function(player,num){
+							return num + player.storage.chaoneng1;
+						}
+					}
+				},
+				chaoneng_buff2:{
+					trigger:{source:'damageBegin'},
+					filter:function(event){
+						return event.card&&event.card.name=='sha';
+					},
+					direct:true,
+					content:function(){
+						trigger.num+=player.storage.chaoneng3;
+					},
+				},
+				chaoli:{
+					enable:'phaseUse',
+					filter:function(event, player){
+						return lib.config.coin >= 250;
+					},
+					filterTarget:function(){
+						return true;
+					},
+					content:function(){
+						game.changeCoin(-250);
+						target.damage();
+					},
+					ai:{
+						order:9,
+						result:{
+							target:function(player,target){
+								return -2;
+							}
+						},
+					}
+				},
+				liyu:{
+					enable:'phaseUse',
+					usable:1,
+					filter:function(event, player){
+						return lib.config.coin >= 200;
+					},
+					filterTarget:function(card, player, target){
+						return target != player;
+					},
+					content:function(){
+						'step 0'
+						var choices = [200];
+						if (lib.config.coin >= 300) choices.push(300);
+						if (lib.config.coin >= 400) choices.push(400);
+						player.chooseControl(choices).set('dialog', ['贿赂给'+get.translation(target)+'多少钱？']);
+						'step 1'
+						if (result.control){
+							var random = 0;
+							game.changeCoin(-result.control);
+							if (result.control == 200){
+								random = 0.6;
+							} else if (result.control == 300){
+								random = 0.4;
+							} else if (result.control == 400){
+								random = 0.1;
+							}
+							if (target.name == 'reimu') random = 0;
+							if (Math.random() > random) target.addSkill('liyu_buff');
+							else game.log('利驭失败啦！');
+						}
+					},
+				},
+				liyu_buff:{
+					trigger:{player:'phaseEnd'},
+					direct:true,
+					group:'mad',
+					filter:function(){
+						return true;
+					},
+					content:function(){
+						player.removeSkill('liyu_buff');
+						player.removeSkill('mad');
+						player.unmarkSkill('mad');
+					}
+				},
+				weituo:{
+					trigger:{player:'phaseUseBegin'},
+					group:'weituo_end',
+					filter:function(event, player){
+						return true;
+					},
+					content:function(){
+						'step 0'
+						player.chooseControlList(get.prompt('weituo'), '你造成过至少2点伤害', '有角色回复过体力', '有其他角色获得过牌');
+						'step 1'
+						if (result.index == 0){
+							game.log(player, '选择了委托：你造成过至少2点伤害');
+							player.addTempSkill('weituo_damage');
+						} else if (result.index == 1){
+							game.log(player, '选择了委托：有角色回复过体力');
+							player.addTempSkill('weituo_heal');
+						} else if (result.index == 2){
+							game.log(player, '选择了委托：有其他角色获得过牌');
+							player.addTempSkill('weituo_gain');
+						}
+					},
+				},
+				weituo_damage:{
+				},
+				weituo_heal:{
+					direct:true,
+					trigger:{global:'recoverAfter'},
+					content:function(){
+						player.storage.weituo = true;
+					}
+				},
+				weituo_gain:{
+					direct:true,
+					trigger:{global:'gainAfter'},
+					filter:function(event, player){
+						return event.player != player;
+					},
+					content:function(){
+						player.storage.weituo = true;
+					}
+				},
+				weituo_end:{
+					trigger:{player:'phaseEnd'},
+					direct:true,
+					filter:function(event,player){
+						if (player.hasSkill('weituo_damage')) return player.getStat('damage') >= 2;
+						return player.storage.weituo;
+					},
+					content:function(){
+						delete player.storage.weituo;
+						game.log(player, '完成了委托！');
+						player.draw();
+						game.changeCoin(150);
+					},
+				},
+				zaguo:{
+					enable:'phaseUse',
+					filter:function(event, player){
+						return player.countCards('hej') > 0;
+					},
+					selectCard:1,
+					filterCard:true,
+					position:'hej',
+					discard:true,
+					content:function(){
+						var i = Math.ceil(Math.random() * 50 + 50);
+						game.changeCoin(i);
+						game.log('你获得了'+i+'金币！');
+					},
+				},
+				fanjian:{
+					enable:'phaseUse',
+					filter:function(event, player){
+						return lib.config.coin >= 400;
+					},
+					content:function(){
+						game.changeCoin(-400);
+						player.gain(game.createCard('holysword', 0, null, null, 5));
+					},
+				},
+			};
+			for (var i in skill){
+				lib.skill[i] = skill[i];
+			}
+			var list={
+				mode_extension_coin_character_config:'金币系统',
+				mode_extension_coin_card_config:'金币系统',
+				kejinji:'氪金姬',
+				chaoneng:'钞能',
+				chaoneng_info:'出牌阶段，你可以支付以下量的金币，获得对应的效果：30：你的手牌上限+1；50：你的灵力上限+1；70：你的体力上限+1；100：你于摸牌阶段额外摸一张牌；150：你使用【轰！】造成的伤害+1。',
+				chaoli:'钞力',
+				chaoli_info:'出牌阶段，你可以支付250金币，对一名角色造成1点弹幕伤害。',
+				liyu:'利驭',
+				liyu_info:'一回合一次，你可以支付200，300，或400金币，并指定一名角色；该角色有几率攻击其队友一回合。',
+				hero:'勇者',
+				weituo:'委托',
+				weituo_info:'出牌阶段开始时，你可以选择一项条件：1.你造成过至少2点伤害；2.有角色回复过体力；3.有其他角色获得过牌；结束阶段，若你本回合达成了该条件，你摸一张牌，并获得150金币。',
+				zaguo:'砸锅',
+				zaguo_info:'出牌阶段，你可以弃置一张牌，随机获得50~100金币。',
+				fanjian:'贩剑',
+				fanjian_info:'出牌阶段，你可以支付400金币，创建并获得一张【天赐圣剑】（装备/武器；灵力：+5；你视为拥有【连击】【激怒】【制衡】。）',
+				holysword:'天赐圣剑',
+				holysword_info:'锁定技，你视为拥有【连击】【激怒】【制衡】的效果。',
+			};
+			for(var i in list){
+				lib.translate[i]=lib.translate[i]||list[i];
+			}
 		},
 		arenaReady:function(){
 	        if(_status.video||_status.connectMode) return;
@@ -61,10 +326,10 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 						var item=game.haveFun.list[i];
 						uiintro.add('<div class="coin_buy">'+item.name+'<div class="menubutton">'+item.cost+'金</span></div></div>');
 						var buy=uiintro.content.lastChild.lastChild.lastChild;
-						if(lib.config.coin<item.cost&&!item.bought){
+						if(lib.config.coin<item.cost&&!item.bought || (item.name == '圣剑' && !game.me)){
 							buy.classList.add('disabled');
 						}
-						if(item.bought){
+						if(item.bought && item.name != '圣剑'){
 							if(item.running){
 								buy.innerHTML='停止';
 								if(item.control){
@@ -108,6 +373,8 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				},220,400);
 			}
 	    },
+		content:function(config, pack){
+		},
 		game:{
 			changeCoin:function(num){
 				if(typeof num=='number'&&ui.coin){
@@ -151,11 +418,22 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					blink:{
 						name:'闪烁',
 						cost:10
-					}
+					},
+					sword:{
+						name:'圣剑',
+						cost:800
+					},
 				},
 				alwaysSnow:function(){
 					game.saveConfig('snowFall',!lib.config.snowFall);
 					game.reload();
+				},
+				sword:function(){
+					if (game.me){
+						game.me.gain(game.createCard('holysword', 0, null, null, 5));
+						game.me.update();
+						ui.update();
+					}
 				},
 				blink:function(){
 					if(game.haveFun.list.blink.running) return;

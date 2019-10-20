@@ -314,7 +314,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				if (target.num('hej')){
-					player.discardPlayerCard('hej',target,true);
+					player.discardPlayerCard('hej',target,true).ai = function(button){
+						if (target.countCards('ej') == 1 && target.countCards('hej') > 1 &&player.storage._enhance) return !target.getCards('ej').contains(button.link);
+					};
 				}
 				if (player.storage._enhance){
 					for(var i=0;i<player.storage._enhance;i++){
@@ -1060,6 +1062,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				result:{
 					target:function(player,target){
 						if (!target.getStat('damage') && get.attitude(player, target) > 0) return -1;
+						if (player.lili == 0) return 2;
 						return target.getStat('damage');
 					}
 				},
@@ -2641,7 +2644,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				'step 0'
-				player.chooseToDiscard(1,{name:'bingyu'},'h','你可以弃置【冰域之宴】，跳过弃牌阶段');
+				player.chooseToDiscard(1,{name:'bingyu'},'h','你可以弃置【冰域之宴】，跳过弃牌阶段').set('ai',function(card){
+					return player.countCards('h') > player.getHandcardLimit();
+				});
 				'step 1'
 				if (result.bool){
 					//player.skip('phaseDiscard');
@@ -2676,7 +2681,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			forced:true,
 			content:function(){
 				var num = player.getStat('damage');
-				if (num != 0) player.draw(num);
+				if (num != 0) player.draw(num * player.countUsed('huazhi'));
 				player.removeSkill('huazhi_skill');
 			},
 		},

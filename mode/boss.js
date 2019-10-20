@@ -332,7 +332,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.modeSwapPlayer(players[1]);
 				}
 			},true);
-			if(get.config('single_control')||game.me==game.boss){
+			if(!get.config('single_control')||game.me==game.boss){
 				ui.single_swap.style.display='none';
 			}
 
@@ -722,7 +722,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','skipfirst','boss_damagecount'],['boss'],'shu','10000'],
 				//boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
 				boss_saitama:['male','0',Infinity,['punch','skipfirst','boss_turncount'],['boss'],'shen'],
-				boss_fapaiji:['female', '5', 3, ['huanri', 'toutian'], ['boss'], 'shen'],
+				boss_fapaiji:['female', '5', 3, ['huanri', 'toutian', 'boss_turncount'], ['boss'], 'shen'],
 			},
 		},
 		characterIntro:{
@@ -733,7 +733,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_nianshou:'比起加一堆没人想要的大杂烩设定，把本来欢乐的活动变成一个累死人的掀桌活动，还是回到最开始的简单欢乐日子好。',
 			boss_zhaoyun:'幻想乡是一切皆有可能的地方。<br>即使是那个只存在于传说中的男人……！',
 			boss_saitama:'买菜时因走错路偶然路过幻想乡的光头<br>………等等，什么？<br>画师：',
-			boss_fapaiji:'本次四轰鬼抽由Love Live!赞助提供。<br>谢谢来自μ\'s的东条希的友情出演！<br>………等等，什么？<br>画师：',
+			boss_fapaiji:'本次四轰鬼抽由Love Live!赞助提供。<br>谢谢来自μ\'s的东条希的友情出演！<br>………等等，什么？<br>画师：醐味屑',
 		},
 		cardPack:{
 			mode_boss:['dianche', 'shenlin', 'reidaisai2', 'tancheng'],
@@ -854,7 +854,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss.directgain(get.cards(4));
 			},
 			checkResult:function(){
-				if(game.boss==game.me){
+				if (game.boss.hasSkill('boss_turncount')){
+					game.over();
+				} else if(game.boss==game.me){
 					game.over(game.boss.isAlive());
 				}
 				else{
@@ -1316,14 +1318,35 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.config.background_music = '';
 					lib.setPopped(ui.rules,function(){
 						var uiintro=ui.create.dialog('hidden');
-							uiintro.add('<div class="text left">[选项→魔王]里可以打开单人控制<br>光头在回合外不会使用牌<br>不要放弃治疗啊！<br>这个魔王不可以重整</div>');
+							uiintro.add('<div class="text left">[选项→魔王]里可以打开单人控制<br>不要放弃治疗啊！<br>这个魔王不可以重整</div>');
 							uiintro.add(ui.create.div('.placeholder.slim'))
 						return uiintro;
 					},400);
 				},
 				gameDraw:function(player){
+					return player==game.boss?8:4;
+				},
+			},
+			boss_fapaiji:{
+				loopType:2,
+				chongzheng:false,
+				init:function(){
+                    if (ui.cardPileNumber.style.display=='none'){
+						ui.cardPileNumber.style.display='initial';
+					}
+					ui.cardPileNumber.style.color='red';
+					lib.setPopped(ui.rules,function(){
+						var uiintro=ui.create.dialog('hidden');
+							uiintro.add('<div class="text left">[选项→魔王]里可以打开单人控制<br>不要放弃治疗啊！<br>这个魔王不可以重整</div>');
+							uiintro.add(ui.create.div('.placeholder.slim'))
+						return uiintro;
+					},400);
+				},
+				/*
+				gameDraw:function(player){
 					return player==game.boss?4:4;
 				},
+				*/
 			},
 			global:{
 				loopType:2,
@@ -1956,8 +1979,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				*/
 			},
 			huanri:{
-				trigger:{global:['drawBefore', 'gameDrawBefore', 'judgeBefore']},
-				group:['huanri_start'],
+				trigger:{global:['drawBefore', 'gameDrawBefore']},
+				group:['huanri_start', 'huanri_judge'],
 				filter:function(event, player){
 					return event.num > 0 && ui.cardPile.childNodes.length > 0;
 				},
@@ -1972,19 +1995,162 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						num = trigger.num;
 					} else if (trigger.name == 'gameDraw'){
 						num = trigger.num * game.players.length;
-					} else if (trigger.name == 'judge'){
-						num = 1;
 					}
-					var cards=[];
-					var choices = [];
+					var cards = [];
+					var choices = [0, 0, 0, 0, 0];
 					for(var i=0;i<ui.cardPile.childNodes.length;i++){
 						cards.push(ui.cardPile.childNodes[i]);
+						if (ui.cardPile.childNodes[i].name == 'wuzhong'){
+							choices[2] ++;
+							continue;
+						}
+						if (player.storage.huanri == 1){
+							if (ui.cardPile.childNodes[i].name == 'sha') choices[0] ++;
+							else if (ui.cardPile.childNodes[i].name == 'danmakucraze') choices[1] ++;
+							else if (ui.cardPile.childNodes[i].name == 'tianguo') choices[3] ++;
+						} else if (player.storage.huanri == 2){
+							if (ui.cardPile.childNodes[i].name == 'juedou') choices[0] ++;
+							else if (ui.cardPile.childNodes[i].name == 'zuiye') choices[1] ++;
+							else if (ui.cardPile.childNodes[i].name == 'tianguo') choices[3] ++;
+						}
+					}					
+					if (player.storage.huanri == 1){
+						if (trigger.name == 'gameDraw'){
+							choices = ['sha'];
+						} else if (trigger.name == 'draw'){
+							if (trigger.player == player){
+								if (player.hp < trigger.player.maxHp && !trigger.player.countCards('h', {name:'tao'})) choices = ['tao'];
+								else if (choices[2] + choices[1] >= trigger.num){
+									choices = ['danmakucraze', 'wuzhong', 'huazhi'];
+								} else if (choices[1] == 0){
+									choices = ['tianguo', 'wuzhong', 'zuiye', 'sijing'];
+								} else {
+									choices = ['tianguo', 'sijing', 'dianche'];
+								}
+								if (player.hasSkill('danmaku_skill')){
+									choices.push('sha');
+								}
+								if (trigger.getParent('huazhi_skill') || _status.currentPhase != player){
+									choices = ['bailou', 'moondial', 'mirror', 'dianche', 'tao'];
+								}
+							} else {
+								choices = ['sha', 'tancheng'];
+							}
+						}
+					} else if (player.storage.huanri == 2){
+						if (trigger.name == 'gameDraw'){
+							choices = ['juedou', 'shan'];
+						} else if (trigger.name == 'draw'){
+							if (trigger.player == player){
+								if (player.hp < trigger.player.maxHp && !trigger.player.countCards('h', {name:'tao'})) choices = ['tao'];
+								else if (choices[0] + choices[1] + choices[2] >= trigger.num){
+									choices = ['juedou', 'wuzhong', 'huazhi', 'zuiye'];
+								} else if (choices[0] == 0){
+									choices = ['tianguo', 'wuzhong', 'zuiye', 'sijing'];
+								} else {
+									choices = ['tianguo', 'sijing', 'dianche'];
+								}
+								if (trigger.getParent('huazhi_skill') || _status.currentPhase != player){
+									choices = ['bailou', 'moondial', 'mirror', 'dianche', 'tao', 'book', 'hourai'];
+								}
+							} else {
+								choices = ['shan', 'louguan', 'bailou', 'pantsu', 'yuzhi', 'gungnir', 'tancheng'];
+							}
+						}
+					} else {
+						if (get.attitude(player, trigger.player) > 0){
+							if (trigger.player.hp < trigger.player.maxHp && !trigger.player.countCards('h', {name:'tao'})) choices = ['tao'];
+							else if (choices[2] > 0) choices = ['wuzhong'];
+							else if (trigger.player.countCards('he', {type:'equip'}) < 3) choices = ['mirror', 'book', 'moondial', 'hourai', 'pantsu', 'stone', 'windfan', 'lantern'];
+							else if (_status.currentPhase != trigger.player || trigger.getParent('huazhi_skill')) choices = ['shan', 'bingyu'];
+							else choices = ['shunshou', 'guohe', 'lingbi', 'sha', 'huazhi'];
+						}
 					}
 					player.chooseCardButton(num, '将'+num+'张牌置于牌堆顶（先选的在上面）', cards).set('filterButton',function(button){
 						return true;
 					}).set('ai',function(button){
-						return _status.event.choices.contains(button.link);
+						var trigger=_status.event.getTrigger();
+						var player=_status.event.player;
+						if (choices.length){
+							return choices.contains(button.link.name);
+						} else if (get.attitude(player, trigger.player) > 0){
+							return get.value(button.link) <= 5;
+						}
 					}).set('choices', choices);
+					'step 1'
+					if (result.bool){
+						if (!player.isUnderControl(true) && trigger.name == 'gameDraw'){
+							for (var i = result.links.length -1; i >= 0; i --){
+								if (result.links[i].name == 'juedou') result.links.splice(0, 0, result.links.splice(i, 1)[0]);
+								if (result.links[i].name == 'sha' && result.links[i].bonus > 0) result.links.splice(0, 0, result.links.splice(i, 1)[0]);
+							}
+							/*var playernum = 0;
+							var tplayer = trigger.player;
+							while (tplayer != player){
+								playernum ++;
+								tplayer = tplayer.next;
+							}*/
+
+						}
+						for (var i = result.links.length-1; i >=0; i --){
+							ui.cardPile.insertBefore(result.links[i],ui.cardPile.firstChild);
+						}
+					}
+				},
+				ai:{
+					effect:{
+						player:function(card,player,target){
+							if (card.name == 'tianguo' || card.name == 'sijing'){
+								var count = 0;
+								for(var i=0;i<ui.cardPile.childNodes.length;i++){
+									if (ui.cardPile.childNodes[i] == 'wuzhong') count ++;
+								}
+								if (count == 0) return [1,10000];
+							}
+						}
+					},
+				},
+			},
+			huanri_judge:{
+				trigger:{global:'judgeBegin'},
+				//frequent:true,
+				filter:function(){
+					return true;
+				},
+				check:function(){
+					return true;
+				},
+				content:function(){
+					'step 0'
+					var cards = [];
+					for(var i=0;i<ui.cardPile.childNodes.length;i++){
+						cards.push(ui.cardPile.childNodes[i]);
+					}
+					player.chooseCardButton(1, '将一张牌置于牌堆顶（先选的在上面）', cards).set('filterButton',function(button){
+						return true;
+					}).set('ai',function(button){
+						var trigger=_status.event.getTrigger();
+						var player=_status.event.player;
+						if (trigger.getParent('mingyun2')){
+							var e = trigger.getParent('useCard');
+							console.log(e.targets[0]);
+							if (get.attitude(player,e.targets[0]) > 0){
+								return get.subtype(button.link) == 'support';
+							} else {
+								return button.link.name == 'sha';
+							}
+						}
+						var judging=trigger.player.judging[0];
+						var result=trigger.judge(button.link)-trigger.judge(ui.cardPile.childNodes[0]);
+						var attitude=get.attitude(player,trigger.player);
+						if(attitude==0||result==0) return 0;
+						if(attitude>0){
+							return result;
+						}
+						else{
+							return -result;
+						}
+					});
 					'step 1'
 					if (result.bool){
 						for (var i = result.links.length-1; i >=0; i --){
@@ -1992,16 +2158,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 				},
+				ai:{
+					expose:0.1,
+					tag:{
+						rejudge:0.5
+					}
+				}
 			},
 			huanri_start:{
 				trigger:{global:'gameStart'},
 				direct:true,
 				content:function(){
 					if (get.mode() == 'boss') {
-						var i = get.rand();
+						var i = Math.random();
 						if (i > 0.7) player.storage.huanri = 1;
-						else if (i > 0.3) player.storage.huanri = 2;
-						else player.storage.huanri = 3;
+						else player.storage.huanri = 2;
 					} else {
 						player.storage.huanri = 3;
 					}
@@ -2010,9 +2181,33 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			toutian:{
 				init:function(player){
 					game.loadModeAsync('stg',function(mode){
+						for(var i in mode.translate){
+						lib.translate[i]=lib.translate[i]||mode.translate[i];
+						}
+						for(var i in mode.skill){
+							lib.skill[i]=mode.skill[i];
+							game.finishSkill(i);
+						}
+						for(var i in mode.card){
+							lib.card[i]=mode.card[i];
+							game.finishCards();
+						}
 					});
+					/*
 					game.loadModeAsync('chess',function(mode){
+						for(var i in mode.translate){
+							lib.translate[i]=lib.translate[i]||mode.translate[i];
+						}
+						for(var i in mode.skill){
+							lib.skill[i]=mode.skill[i];
+							game.finishSkill(i);
+						}
+						for(var i in mode.card){
+							lib.card[i]=mode.card[i];
+							game.finishCards();
+						}
 					});
+					*/
 				},
 				enable:'phaseUse',
 				usable:1,
@@ -2028,19 +2223,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     }
                     if(list.length){
                         player.chooseButton(['创建并获得一张牌',[list,'vcard']]).set('ai',function(button){
-                            var player=_status.event.player;
-                            var recover=0,lose=1,players=game.filterPlayer();
-                            for(var i=0;i<players.length;i++){
-                                if(!players[i].isOut()){
-                                    if (get.attitude(player, players[i]) >= 0) recover ++;
-                                    if (get.attitude(player, players[i]) < 0 ){
-                                        if (players[i].hp == 1 && get.effect(players[i],{name:'juedou'},player,player)) return (button.link[2] == 'juedou')?2:-1;
-                                        lose ++;
-                                    }
-                                }
-                            }
-                            if (recover - 2 >= lose) return (button.link[2] == 'reidaisai')?2:-1;
-                            return get.value({name:button.link[2]});
+							var count = 0;
+							for (var i=0;i<ui.cardPile.childNodes.length;i++){
+								if (ui.cardPile.childNodes[i] == 'wuzhong') count ++;
+							}
+							if (player.countCards('h', {name:'sha'})) return button.link[2] == 'lianji' || button.link[2] == 'danmakucraze';
+							if (player.getStat('damage') >= 2) return button.link[2] == 'huazhi'; 
+							if (count == 0) return button.link[2] == 'tianguo' || button.link[2] == 'sijing';
+							if (player.hp < player.maxHp) return button.link[2] == 'tao';
+							return button.link[2] == 'wuzhong';
                         });
                     }
                     'step 1'
@@ -2049,6 +2240,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.loselili();
                     }
 				},
+				ai:{
+					order:1,
+					result:{
+						player:function(player){
+							return 10;
+						}
+					},
+				}
 			},
 		},
 		translate:{
@@ -2119,13 +2318,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			toutian:'偷天',
 			toutian_info:'一回合一次，出牌阶段，你可以消耗１点灵力，创建一张牌（可以是其他模式的牌）并获得之。',
 			huanri:'换日',
+			huanri_judge:'换日',
 			huanri_info:'一名角色摸一张牌时，或判定时，你可以观看牌堆，将其中一张牌置于牌堆顶。',
+			huanri_judge_info:'一名角色摸一张牌时，或判定时，你可以观看牌堆，将其中一张牌置于牌堆顶。',
 			boss_turncount:'存活挑战',
-			boss_turncount_info:'锁定技，回合外你不能使用/打出牌。<br>你在游戏失败前，能够撑多少轮呢？<br><br>注：建议在左上角[选项-开始-魔王]中将[单人控制]选项打开',
+			boss_turncount_info:'锁定技，你在游戏失败前，能够撑多少轮呢？<br><br>注：建议在左上角[选项-开始-魔王]中将[单人控制]选项打开',
 		},
 		get:{
 			rawAttitude:function(from,to){
-				return (from.side===to.side?10:-10);
+				return (from.side===to.side?100:-100);
 			}
 		}
 	};

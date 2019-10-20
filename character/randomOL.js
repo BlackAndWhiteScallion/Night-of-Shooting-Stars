@@ -319,6 +319,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			
 		},
 		translate:{
             randomOL:'乱入OL',

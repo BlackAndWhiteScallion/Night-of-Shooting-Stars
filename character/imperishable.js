@@ -178,7 +178,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         "step 0"
                         var next = player.choosePlayerCard('h','失明：试图使用一张牌？', player,'invisible');
                         next.set('ai',function(card){
-                            return Math.random()-0.5;
+                            var hs=player.getCards('h').randomSort();
+                            return card == hs[0];
                         });
                         "step 1"
                         if (result.bool){
