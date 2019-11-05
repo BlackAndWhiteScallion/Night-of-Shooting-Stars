@@ -113,6 +113,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					// }
 				}
 			}
+			lib.character['aya'][3] = ['longjuan', 'fengmi'];
 			if(!list.length){
 				alert('没有可挑战的BOSS');
 				event.finish();
@@ -560,7 +561,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					target.showCards(target.get('h'));
 					'step 1'
-					player.chooseCard('你可以用一张牌交换'+get.translation(target)+'一张不同类型的牌', 1, function(card){
+					player.chooseCard('你可以用一张牌交换'+get.translation(target)+'一张不同类型的牌', 1, 'hej', function(card){
 						return target.countCards('h') > target.countCards('h', {type: get.type(card)})
 					}).ai=function(card){
 						var val=get.value(card);
@@ -2031,7 +2032,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									choices.push('sha');
 								}
 								if (trigger.getParent('huazhi_skill') || _status.currentPhase != player){
-									choices = ['bailou', 'moondial', 'mirror', 'dianche', 'tao'];
+									choices = ['bailou', 'lunadial', 'mirror', 'dianche', 'tao'];
 								}
 							} else {
 								choices = ['sha', 'tancheng'];
@@ -2051,7 +2052,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									choices = ['tianguo', 'sijing', 'dianche'];
 								}
 								if (trigger.getParent('huazhi_skill') || _status.currentPhase != player){
-									choices = ['bailou', 'moondial', 'mirror', 'dianche', 'tao', 'book', 'hourai'];
+									choices = ['bailou', 'lunadial', 'mirror', 'dianche', 'tao', 'book', 'hourai'];
 								}
 							} else {
 								choices = ['shan', 'louguan', 'bailou', 'pantsu', 'yuzhi', 'gungnir', 'tancheng'];
@@ -2061,7 +2062,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if (get.attitude(player, trigger.player) > 0){
 							if (trigger.player.hp < trigger.player.maxHp && !trigger.player.countCards('h', {name:'tao'})) choices = ['tao'];
 							else if (choices[2] > 0) choices = ['wuzhong'];
-							else if (trigger.player.countCards('he', {type:'equip'}) < 3) choices = ['mirror', 'book', 'moondial', 'hourai', 'pantsu', 'stone', 'windfan', 'lantern'];
+							else if (trigger.player.countCards('he', {type:'equip'}) < 3) choices = ['mirror', 'book', 'lunadial', 'hourai', 'pantsu', 'stone', 'windfan', 'lantern'];
 							else if (_status.currentPhase != trigger.player || trigger.getParent('huazhi_skill')) choices = ['shan', 'bingyu'];
 							else choices = ['shunshou', 'guohe', 'lingbi', 'sha', 'huazhi'];
 						}
@@ -2249,6 +2250,90 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},
 				}
 			},
+			longjuan:{
+				audio:2,
+				trigger:{player:'phaseAfter'},
+				group:'longjuan_count',
+				direct:true,
+				content:function(){
+					'step 0'
+					if (player.storage.longjuan_count <= 0) event.turn = true; 
+					player.storage.longjuan_count = 6;
+					player.chooseTarget(event.turn?'龙卷：令一名角色进行一个额外回合':'龙卷：令一名角色进行一个额外的出牌阶段').set('ai',function(target){
+						return get.attitude(player, target) > 0;
+					});
+					'step 1'
+					if (result.bool){
+						if (event.turn){
+							result.targets[0].insertPhase();
+						} else {
+							result.targets[0].phaseUse();
+						}
+					}
+					'step 2'
+					player.syncStorage('longjuan_count');
+				},
+			},
+			longjuan_count:{
+				direct:true,
+				trigger:{global:'phaseBegin'},
+				mark:true,
+				intro:{
+					marktext:'卷',
+					content:function(storage,player){
+						return '还有'+player.storage.longjuan_count+'回合升级';
+					}
+				},
+				init:function(player){
+					player.storage.longjuan_count = 6;
+					player.markSkill('longjuan_count');
+				},
+				filter:function(event, player){
+					return event.player != player;
+				},
+				content:function(){
+					player.storage.longjuan_count -= 1;
+					player.syncStorage('longjuan_count');
+				}
+			},
+			moxin1:{
+				trigger:{global:'phaseEnd'},
+				//direct:true,
+				filter:function(event,player){
+					return event.player.isAlive() && event.player.getStat('damage');
+				},
+				check:function(event,player){
+					return get.attitude(player,event.player) >= 0;
+				},
+				content:function(){
+					'step 0'
+					var list = [];
+					if (trigger.player.lili<trigger.player.maxlili){
+						list.push(get.translation(trigger.player)+'恢复灵力');
+					}
+					list.push('摸一张牌，交给'+get.translation(trigger.player)+'一张牌');
+					player.chooseControl(list,function(event,player){
+						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return get.translation(trigger.player)+'恢复灵力';
+						return '摸一张牌，交给'+get.translation(trigger.player)+'一张牌';
+					});
+					'step 1'
+					if (result.control == get.translation(trigger.player)+'恢复灵力'){
+						trigger.player.gainlili();
+					} else if (result.control == '摸一张牌，交给'+get.translation(trigger.player)+'一张牌'){
+						player.draw();
+						if (trigger.player != player){
+							player.chooseCard('hej','交给'+get.translation(trigger.player)+'一张牌',true).set('ai',function(card){
+								return 5-get.value(card);
+							});
+						}
+					}
+					'step 2'
+					if(result.bool){
+						trigger.player.gain(result.cards[0]);
+						player.$give(1,trigger.player);
+					}
+				},
+			},
 		},
 		translate:{
 			mode_boss_card_config:'魔王模式',
@@ -2323,6 +2408,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			huanri_judge_info:'一名角色摸一张牌时，或判定时，你可以观看牌堆，将其中一张牌置于牌堆顶。',
 			boss_turncount:'存活挑战',
 			boss_turncount_info:'锁定技，你在游戏失败前，能够撑多少轮呢？<br><br>注：建议在左上角[选项-开始-魔王]中将[单人控制]选项打开',
+			longjuan:'龙卷',
+			longjuan_count:'龙卷（计数）',
+			longjuan_count_bg:'卷',
+			longjuan_info:'结束阶段，你可以令一名角色于回合结束后进行一个额外的出牌阶段；若你在本回合前的6回合内没有进行过回合，改为令其进行一个额外的回合。',
+			moxin1:'1',
+			moxin1_info:'一名角色的结束阶段，若其本回合造成过伤害，你可以令其获得一点灵力，或摸一张牌然后交给其一张牌。',
 		},
 		get:{
 			rawAttitude:function(from,to){

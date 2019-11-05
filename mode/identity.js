@@ -1546,8 +1546,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			dongcha_info:'游戏开始时，随机一名反贼的身份对你可见；准备阶段，你可以弃置场上的一张牌',
 			sheshen:'舍身',
 			sheshen_info:'锁定技，主公处于濒死状态即将死亡时，令主公+1体力上限，回复体力至X点（X为你的体力值数），获得你的所有牌，然后你死亡',
-			luguo:'无作',
-			luguo_info:'锁定技，此角色只能在路人身份使用；游戏开始时，你明置身份（不发动明置效果），并获得一张【平和】异变牌。',
 			library_skill2:'【平和】异变效果',
 			library_skill2_info:'<u>一名角色的回合结束时，若其本回合没有对其他角色使用攻击牌或控场牌，其摸一张牌。</u>',
 			library_info:'<u>胜利条件：</u>无。<br/><u>异变效果：</u>一名角色的回合结束时，若其本回合没有对其他角色使用攻击牌或控场牌，其摸一张牌。',
@@ -2029,52 +2027,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		},
 		skill:{
 			// 阿求的三个技能：输出，辅助，控场
-			luguo:{
-				trigger:{global:"gameStart"},
-				direct:true,
-				content:function(){
-					player.identityShown = true;
-    				player.setIdentity(player.identity);
-    				player.node.identity.classList.remove('guessing');
-    				lib.card['library'] = {
-						type:'zhenfa',
-						fullskin:true,
-						enable:true,
-						vanish:true,
-						selectTarget:-1,
-						filterTarget:function(card,player,target){
-							return target == player;
-						},
-						modTarget:true,
-						skills:['library_normal'],
-						content:function(){
-							target.addSkill('library_normal');
-						},
-    				},
-    				lib.translate['library'] = '平和';
-    				lib.config.musicchange = 'luren';
-    				lib.config.backgroundchange = 'luren';
-    				player.addIncident(game.createCard('library','zhenfa',''));
-    				lib.config.backgroundchange = 'off';
-				},
-				ai:{
-					effect:{
-						// 目前习性：不会被伤害牌。
-						target:function(card,player,target,current){
-							//if(player!=target) return 'zeroplayertarget';
-							if(get.tag(card,'damage')) return 'zeroplayertarget';
-						},
-						// 觉得太路人了就把后面的去掉
-						// 目前习性：不会使用伤害牌。
-						player:function(card,player,target,current){
-							//if(player!=target) return 'zeroplayertarget';
-							//if ((player == target) && get.tag(card,'damage')) return 'zeroplayertarget';
-							if (get.tag(card,'damage')) return 'zeroplayertarget';
-						}
-					},
-					threaten:-1000,
-				}
-			},
 			library_normal:{
 				global:'library_skill',
 			},

@@ -176,7 +176,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       },
                       content:function(){
                         "step 0"
-                        var next = player.choosePlayerCard('h','失明：试图使用一张牌？', player,'invisible');
+                        var next = player.choosePlayerCard('h','失明：试图使用一张牌？', player, 'invisible', true);
                         next.set('ai',function(card){
                             var hs=player.getCards('h').randomSort();
                             return card == hs[0];

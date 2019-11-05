@@ -1123,6 +1123,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:4
 				}
 			},
+			cost:1,
 			skills:['saiqian_skill','saiqian_skill3']
 		},
 		yinyangyu:{
@@ -1134,6 +1135,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:6
 				}
 			},
+			cost:-1,
 			skills:['yinyangyu_skill_1','yinyangyu_skill_2']
 		},
 		louguan:{
@@ -1145,6 +1147,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:2
 				}
 			},
+			cost:1,
 			skills:['louguan_skill']
 		},
 		bailou:{
@@ -1157,6 +1160,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:3
 				}
 			},
+			cost:-1,
 			skills:['bailou_skill']
 		},
 		laevatein:{
@@ -1168,6 +1172,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:7
 				}
 			},
+			cost:1,
 			skills:['laevatein_skill']
 		},
 		windfan:{
@@ -1179,6 +1184,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:4
 				}
 			},
+			cost:1,
 			skills:['windfan_skill']
 		},
 		gungnir:{
@@ -1190,6 +1196,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:3
 				}
 			},
+			cost:1,
 			skills:['gungnir_skill']
 		},
 		ibuki:{
@@ -1201,6 +1208,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:2
 				}
 			},
+			cost:1,
 			skills:['ibuki_skill']
 		},
 		pantsu:{
@@ -1215,6 +1223,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:2
 				}
 			},
+			cost:1,
 			skills:['pantsu_skill', 'pantsu_skill2']
 		},
 		deathfan:{
@@ -1248,6 +1257,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:4
 				}
 			},
+			cost:1,
 			skills:['zhiyuu_skill']
 		},
 		book:{
@@ -1259,6 +1269,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:4
 				}
 			},
+			cost:1,
 			skills:['book_skill']
 		},
 		houraiyuzhi:{
@@ -1270,6 +1281,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:4
 				}
 			},
+			cost:1,
 			skills:['houraiyuzhi_skill']
 		},
 		frog:{
@@ -1284,7 +1296,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (target.countCards('e') > 0){
 					player.discardPlayerCard(target,'e');
 				}
-				target.loselili();
+				target.damage('thunder');
 				target.equip(event.card);
 				//if (player == game.me) ui.updatehl();
 				ui.updatehl();
@@ -1364,6 +1376,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:3
 				}
 			},
+			cost:1,
 			skills:['hakkero_skill']
 		},
 		lantern:{
@@ -1375,6 +1388,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:7.5
 				}
 			},
+			cost:-1,
 			skills:['lantern_skill']
 		},
 		hourai:{
@@ -1386,6 +1400,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					equipValue:7
 				}
 			},
+			cost:-1,
 			skills:['hourai_skill']
 		},
 		stone:{

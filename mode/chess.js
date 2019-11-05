@@ -3911,13 +3911,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     						}
     					}
     				}
-    				else if(glows2.length){
-    					_status.vsboss=true;
-    					_status.enemylist=[];
-    					for(var i=0;i<glows2.length;i++){
-    						_status.enemylist.push(glows2[i].link);
-    					}
-    				}
     				else{
     					event.list.randomSort();
     					_status.enemylist=event.list.splice(0,_status.mylist.length);

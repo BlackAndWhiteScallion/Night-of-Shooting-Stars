@@ -274,7 +274,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        start.style.margin='0';
 	        start.style.padding='5px';
 	        start.style.fontSize='72px';
-	        start.style.zIndex=3;
+	        start.style.zIndex=10;
 	        start.style.transition='all 0s';
 	        game.addScene=function(name,clear){
 	            var scene=lib.storage.scene[name];
@@ -1101,8 +1101,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			patchouli:{
 				name:'手忙脚乱',
 				intro:['小恶魔忙不过来了，帕秋莉招人来帮忙了！',
-						'帕秋莉每回合会提出一个委托，完成那个任务就会获得奖励。',
-						'（金币系统下，奖励了还会附带金币哟~）',
+						'帕秋莉每回合会提出一个任务，完成那个任务就会获得奖励。',
+						'（金币系统下，还会给你发工资哟？）',
 						'连续3个回合没有完成委托的话，就会被帕秋莉解雇了！',
 						'你在解雇前能够完成多少个委托呢？'],
 				mode:'old_identity',
@@ -1113,9 +1113,123 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.config.mode_config['old_identity']['change_identity'] = false;
 					lib.config.mode_config['old_identity']['continue_game'] = true;
 					lib.config.mode_config['old_identity']['ban_identity'] = 'zhu';
-					lib.character['patchouli'] = ['female','2',3,['mission','mianyi'],['unseen']];
+					lib.character['patchouli'] = ['female','2',3,['mission','mianyi', 'useless'],['unseen']];
 					lib.skill.mission={
-						
+						forced:true,
+						trigger:{player:'phaseBegin'},
+						init:function(player){
+							player.say('我的要求可是很艰苦的，你做好准备了吗？');
+							game.me.storage.completed_num = 0;
+						},
+						content:function(){
+							'step 0'
+							var list = ['damage_zigui'];
+							//var list = ['damage_zigui', 'heal_zigui', 'marisa_book', 'patchouli_book', 'spellcard', 'remilia_judge', 'drawcheck', 'lesscards'];
+							for (var i = 0; i < list.length; i ++){
+								if (player.hasSkill(list[i])){
+									player.removeSkill(list[i]);
+									list.remove(list[i]);
+								}
+							}
+							var name = list.randomGet();
+							player.addSkill(name);
+							lib.translate[name] = '任务';
+							lib.translate[name+'_bg'] ='任';
+							game.me.storage.completion = 0;
+							'step 1'
+							if (!lib.config.gameRecord.brawl){
+								lib.config.gameRecord.brawl = {data:{}};
+							}
+							if (!lib.config.gameRecord.brawl.data['patchouli']){
+								lib.config.gameRecord.brawl.data['patchouli'] = 0;
+							}
+							if (lib.config.gameRecord.brawl.data['patchouli'] < game.me.storage.completed_num){
+								lib.config.gameRecord.brawl.data['patchouli'] = game.me.storage.completed_num;
+							}
+							game.saveConfig('gameRecord',lib.config.gameRecord);
+						},
+					};
+					lib.skill.damage_zigui={
+						mark:true,
+						intro:{
+							content:function(content,player){
+								return '任务：对子规造成'+Math.floor(2+game.me.storage.completed_num/5)+'点伤害<br>奖励：体力上限+1';
+							}
+						},
+						init:function(player){
+							lib.character['zigui'] = ['female','5',5,[],[]];
+							game.addPlayer(3, 'zigui');
+							game.log('当前任务：<br>对子规造成'+Math.floor(2+game.me.storage.completed_num/5)+'点伤害<br>奖励：体力上限+1');
+						},
+						onremove:function(player){
+							game.removePlayer(game.findPlayer(function(current){
+								return current.name != 'patchouli' && current != game.me;
+							}));
+						},
+						trigger:{global:'damageAfter'},
+						filter:function(event, player){
+							return event.player.name == 'zigui';	
+						},
+						content:function(){
+							game.me.storage.completion += trigger.num;
+							if (game.me.storage.completion >= Math.floor(2+game.me.storage.completed_num/5)){
+								game.me.storage.completion = true;
+							}
+						},
+					};
+					lib.skill.heal_zigui={
+						init:function(player){
+							lib.character['zigui'] = ['female','5',5,[],[]];
+							game.addPlayer(3, 'zigui');
+							game.log('当前任务：<br>令子规回复'+Math.floor(1+game.me.storage.completed_num/5)+'点体力<br>奖励：体力上限+1');
+						},
+						onremove:function(player){
+
+						},
+					};
+					lib.skill.marisa_book={
+						init:function(player){
+							game.addPlayer(3, 'marisa');
+						},
+						onremove:function(player){
+
+						},
+					};
+					lib.skill.patchouli_book={
+						init:function(player){
+							
+						},
+						onremove:function(player){
+
+						},
+					};
+					lib.skill.spellcard={
+
+					};
+					lib.skill.remilia_judge={
+						init:function(player){
+
+						},
+						onremove:function(player){
+
+						},
+					};
+					lib.skill.drawcheck={
+
+					};
+					lib.skill.lesscards={
+
+					};
+					lib.skill.useless={
+						direct:true,
+						trigger:{global:['phaseBegin', 'phaseDrawBegin', 'phaseUseBegin', 'phaseDiscardBegin']},
+						content:function(){
+							if (trigger.player != game.me){
+								trigger.cancel();
+							} else {
+								//game.addPlayer('koakoma');
+							}
+						},
 						ai:{
 							effect:{
 								target:function(card,player,target,current){
@@ -1128,8 +1242,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							threaten:-1000,
 						}
 					};
-					lib.translate.mission='';
+					lib.translate.mission='任务';
 					lib.translate.mission_info='';
+					lib.translate.useless='没用';
+					lib.translate.useless_info='木大木大木大';
 				},
 				showcase:function(init){
 					var node=this;
@@ -1141,10 +1257,23 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    player.style.top='20px';
 	                    node.appendChild(player);
 	                    node.playernode=player;
+						var dialog=ui.create.dialog('hidden');
+							dialog.style.left = "0px";
+							dialog.style.top = "20px";
+							dialog.style.width = "100%";
+							dialog.style.height = "100%";
+							dialog.classList.add('fixed');
+		        			dialog.noopen=true;
+							node.appendChild(dialog);
+							if (lib.config.gameRecord.brawl && lib.config.gameRecord.brawl.data['patchouli']){
+								dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">委托完成数最高纪录：'+lib.config.gameRecord.brawl.data['patchouli']);
+							}
+		                    dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">有什么好怕的，不会很难的啦，就不想挣点外快吗？');
 	                }
 	                else{
 	                    player=node.playernode;
 	                }
+
 				},
 				content:{
 					chooseCharacterAi:function(player){
@@ -1153,7 +1282,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				gameStart:function(){
 
-				}
+				},
 			},
 			*/
 	        pubg:{
@@ -1269,9 +1398,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                var player;
 	        		if (init){
 	        			lib.config['library'] = [false,false,false,false];
-		                lib.character['akyuu'] = ['female','1',3,['luguo','mengji','boom','yixiang'],[]];
-	    				player=ui.create.player(null,true);
-	                    player.init('akyuu');
+	                    player=ui.create.player(null,true);
+	                    player.node.avatar.style.backgroundSize='cover';
+	                    player.node.avatar.setBackgroundImage('image/character/akyuu.jpg');
 	                    player.node.avatar.show();
 	                    player.style.left='calc(50% - 75px)';
 	                    player.style.top='20px';

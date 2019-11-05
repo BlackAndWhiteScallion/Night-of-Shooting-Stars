@@ -1276,7 +1276,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         trigger.player.update();
                     }
                     'step 2'
-                    if (result.bool){
+                    if (result.control){
                         var cards;
                         if (result.control == '手牌区') cards = trigger.player.getCards('h');
                         if (result.control == '装备区') cards = trigger.player.getCards('e');

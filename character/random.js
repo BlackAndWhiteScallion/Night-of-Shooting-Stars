@@ -18,6 +18,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			niuzhanshi:['female','2',4,['ng_wenhao','ng_wenhao2']],
 			mordred:['female','2',4,['niguang','ClarentBloodArthur'],["unseen","forbidai"]],
 			twob:['female', '3', 4, ['qiyue','yueding']],
+			illyasviel:['female','1',3,['huanzhao','wuxian','quintette_fire']],
 			kuro:['female', '1', 3, ['touying','wenmo','heyi']],
 			daria:['female', '1', 3, ['zhuanhuan', 'moli', 'chaoyue']],
 			rylai:['female', '3', 3, ['tanxue', 'bingfeng', 'aoshu']],
@@ -2348,6 +2349,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						event.finish();
 						return;
 					}
+					if (target.name == 'illyasviel') game.trySkillAudio('wenmo', target, true, 3);
 					target.chooseCard('吻魔：选择一张牌与'+get.translation(player)+'的'+get.translation(event.card2)+
 					'交换<br>相同颜色的话，'+get.translation(player)+'获得1点灵力',true, 'hej').ai=function(card){
 						if (get.attitude(target, player) >= 0) return get.color(card) == get.color(event.card2);
@@ -2374,7 +2376,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			heyi:{
-				audio:2,
+				audio:1,
 				cost:0,
 				spell:['heyi_skill'],
 				trigger:{player:'phaseBegin'},
@@ -2427,6 +2429,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.draw(player.lili);
 				},
 				ai:{
+					order:1,
 					result:{
 						player:function(player, target){
 							return player.lili - player.countCards('h');
@@ -2925,6 +2928,284 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					trigger.player.damage(trigger.num);
 				},
 			},
+			huanzhao:{
+				unique:true,
+				init:function(player){
+					player.storage.huanzhao={
+						list:[],
+						shown:[],
+						owned:{},
+						player:player,
+					}
+				},
+				get:function(player,msg){
+					var name = msg;
+					if(typeof msg!='number'){
+						msg=1;
+					}
+					var list=[];
+					game.log(player,'获得了'+msg+'张“梦幻”');
+					while(msg--){
+						if(typeof name != 'string'){
+							name=player.storage.huanzhao.list.randomRemove();
+						}
+						var skills=lib.character[name][3].slice(0);
+						for(var i=0;i<skills.length;i++){
+							var info=lib.skill[skills[i]];
+							if(info.unique&&!info.gainable){
+								skills.splice(i--,1);
+							}
+						}
+						player.storage.huanzhao.owned[name]=skills;
+						list.push(name);
+						name = msg;
+					}
+					if(player.isUnderControl(true)){
+						var cards=[];
+						for(var i=0;i<list.length;i++){
+							var cardname='huanzhao_card_'+list[i];
+							lib.card[cardname]={
+								fullimage:true,
+								image:'character:'+list[i]
+							}
+							lib.translate[cardname]=lib.translate[list[i]];
+							cards.push(game.createCard(cardname,'',''));
+						}
+						player.$draw(cards);
+					}
+				},
+				group:['huanzhao1','huanzhao2','huanzhao4'],
+				intro:{
+					content:function(storage,player){
+						var str='';
+						var slist=storage.owned;
+						var list=[];
+						for(var i in slist){
+							list.push(i);
+						}
+						if(list.length){
+							str+=get.translation(list[0]);
+							for(var i=1;i<list.length;i++){
+								str+='、'+get.translation(list[i]);
+							}
+						}
+						var skill=player.additionalSkills.huanzhao[0];
+						if(skill){
+							str+='<p>当前技能：'+get.translation(skill);
+						}
+						return str;
+					},
+					mark:function(dialog,content,player){
+						var slist=content.owned;
+						var list=[];
+						for(var i in slist){
+							list.push(i);
+						}
+						if(list.length){
+							dialog.addSmall([list,'character']);
+						}
+						if(!player.isUnderControl(true)){
+							for(var i=0;i<dialog.buttons.length;i++){
+								if(!content.shown.contains(dialog.buttons[i].link)){
+									dialog.buttons[i].node.group.remove();
+									dialog.buttons[i].node.hp.remove();
+									dialog.buttons[i].node.intro.remove();
+									dialog.buttons[i].node.name.innerHTML='未<br>知';
+									dialog.buttons[i].node.name.dataset.nature='';
+									dialog.buttons[i].style.background='';
+									dialog.buttons[i]._nointro=true;
+									dialog.buttons[i].classList.add('menubg');
+								}
+							}
+						}
+						if(player.additionalSkills.huanzhao){
+							var skill=player.additionalSkills.huanzhao[0];
+							if(skill){
+								dialog.add('<div><div class="skill">【'+get.translation(skill)+'】</div><div>'+lib.translate[skill+'_info']+'</div></div>');
+							}
+						}
+					}
+				},
+				mark:true
+			},
+			huanzhao1:{
+				audio:1,
+				trigger:{global:'gameStart'},
+				forced:true,
+				filter:function(event,player){
+					return !player.storage.huanzhaoinited;
+				},
+				content:function(){
+					for(var i in lib.character){
+						if(lib.filter.characterDisabled2(i)) continue;
+						var add=false;
+						for(var j=0;j<lib.character[i][3].length;j++){
+							var info=lib.skill[lib.character[i][3][j]];
+							if(!info){
+								continue;
+							}
+							if(info.gainable||!info.unique){
+								add=true;break;
+							}
+						}
+						if(add){
+							player.storage.huanzhao.list.push(i);
+						}
+					}
+					for(var i=0;i<game.players.length;i++){
+						player.storage.huanzhao.list.remove([game.players[i].name]);
+						player.storage.huanzhao.list.remove([game.players[i].name1]);
+						player.storage.huanzhao.list.remove([game.players[i].name2]);
+					}
+					lib.skill.huanzhao.get(player,2);
+					player.storage.huanzhaoinited=true;
+				}
+			},
+			huanzhao2:{
+				audio:2,
+				trigger:{player:['phaseBegin']},
+				filter:function(event,player,name){
+					return true;
+				},
+				prompt2:'明置一张“梦幻”并暗置其余；你视为持有明置“梦幻”牌的第一项技能。',
+				content:function(){
+					'step 0'
+					event.trigger('playercontrol');
+					'step 1'
+					var slist=player.storage.huanzhao.owned;	//获取化身库
+					var list=[];
+					for(var i in slist){
+						list.push(i);
+					}
+					var dialog=ui.create.dialog('选择一张“梦幻”明置','hidden');
+					dialog.add([list.randomGets(list.length),'character']);
+					player.chooseButton(dialog,true).ai=function(button){
+						return get.rank(button.link,true);
+					};
+					var skills=[];
+					for(var i=0;i<list.length;i++){
+						var sub=lib.character[list[i]][3];
+						skills.addArray(sub);
+					}
+					var add=player.additionalSkills.huanzhao;
+					if(typeof add=='string'){
+						add=[add];
+					}
+					if(Array.isArray(add)){
+						for(var i=0;i<add.length;i++){
+							skills.remove(add[i]);
+						}
+					}
+					'step 2'	//标记
+					player.storage.huanzhao.shown = [];
+					player.storage.huanzhao.shown.add(lib.character[result.links[0]]);
+					var mark=player.marks.huanzhao;
+						mark.hide();
+						mark.style.transition='all 0.3s';
+						setTimeout(function(){
+							mark.style.transition='all 0s';
+							ui.refresh(mark);
+							mark.setBackground(result.links[0],'character');
+							if(mark.firstChild){
+								mark.firstChild.remove();
+							}
+							setTimeout(function(){
+								mark.style.transition='';
+								mark.show();
+							},50);
+						},500);
+					'step 3'
+					var name=result.links[0];
+					event.char = name;
+					if (name == 'kuro') game.trySkillAudio('huanzhao2', player, true, 3);
+					if(!player.additionalSkills.huanzhao||!player.additionalSkills.huanzhao.contains(lib.character[name][3][0])){
+						player.addAdditionalSkill('huanzhao',lib.character[name][3][0]);
+						game.log(player,'获得技能','【'+get.translation(lib.character[name][3][0])+'】');
+						player.popup(lib.character[name][3][0]);
+					}
+					'step 4'
+					player.update();
+					'step 5'
+					if (player.lili > 0){
+						player.chooseBool('幻召：你可以消耗1点灵力，获得'+get.translation(event.char)+'的全部技能，直到回合结束').set('choice',player.lili>4);
+					}
+					'step 6'
+					if (result.bool){
+						player.loselili();
+						for (var i = 1; i < lib.character[event.char][3].length; i ++){
+							player.addTempSkill(lib.character[event.char][3][i]);
+						}
+					}
+				}
+			},
+			huanzhao4:{
+				audio:2,
+				trigger:{source:'dieAfter'},
+				forced:true,
+				filter:function(event,player){
+					return true;
+				},
+				content:function(){
+					lib.skill.huanzhao.get(player, trigger.player.name);
+				}
+			},
+			wuxian:{
+				audio:2,
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				filter:function(event,player){
+					return true;
+				},
+				content:function(){
+					"step 0"
+					player.gainlili();
+					"step 1"
+					if(player.lili==player.maxlili){
+						game.trySkillAudio('wuxian', player, true, Math.ceil(2*Math.random())+2);
+						player.draw();
+					}
+				}
+			},
+			quintette_fire:{
+				cost:0,
+				audio:2,
+				spell:["quintette_fire_2"],
+				trigger:{
+					player:"phaseBegin",
+				},
+				filter:function(event,player){
+					var slist=player.storage.huanzhao.owned;	//获取化身库
+					var num = 7;
+					for(var i in slist){
+						num --;
+						if (num <= 0) break;
+					}
+					return player.lili > num;
+				},
+				check:function(event,player){
+					return true;
+				},
+				content:function(){
+					'step 0'
+					var slist=player.storage.huanzhao.owned;	//获取化身库
+					var num = 7;
+					for(var i in slist){
+						num --;
+						if (num <= 0) break;
+					}
+					player.loselili(num);
+					player.turnOver();
+					player.chooseTarget(get.prompt('quintette_fire'),true).set('ai',function(target){
+						return get.attitude(player,target);
+					});
+					"step 1"
+					if(result.bool){
+						result.targets[0].damage(3);
+					}
+					"step 2"
+					player.discard(player.getCards('h'));
+				}
+			},
 		},
 		translate:{
 			kanade:'奏',
@@ -3094,14 +3375,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yueding1:'白之约定',
 			yueding_info:'符卡技（2）一回合一次，你可以将一张牌当作【轰！】使用；你使用【轰】的次数上限+1；你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有装备牌，你摸一张牌。',
 			kuro:'克洛伊',
+			kuro_die:'我记住你的脸了…。之后绝对要让你哭出来……',
 			touying:'投影',
+			touying_audio1:'Trace On!……是这样的吗？',
+			touying_audio2:'I am the bone of my……即使对于我来说都有点羞耻啊，这台词……',
 			touying_target:'投影',
 			touying_recast:'投影（重铸）',
 			touying_info:'一回合一次，出牌阶段，或你成为攻击牌的目标后，你可以消耗1点灵力，将一张非装备牌当作一种装备牌置于装备区内；一名角色的结束阶段，你重铸装备区内以此法置入的牌。',
 			wenmo:'吻魔',
 			wenmo_info:'一回合一次，出牌阶段，你可以与一名其他角色依次展示一张牌，交换这两张牌；若颜色相同，你获得1点灵力。',
+			wenmo_audio1:'魔力不足啊，有没有哪里有魔力充足的可爱女孩子啊？',
+			wenmo_audio2:'提供魔力就麻烦你咯？',
+			wenmo_audio3:'等、等、等一下！我还没有做好心理准备呢……',
 			heyi:'鹤翼三连',
 			heyi_skill:'鹤翼三连',
+			heyi_audio1:'就让你见识一下必杀！',
+			heyi_skill_audio1:'跋山涉水也绝不坠落的这双翅膀！',
+			heyi_skill_audio2:'『鹤翼三连』！',
 			heyi_info:'符卡技（0）【投影】中的“一次”视为“三次”；你使用【轰！】指定目标后，可以重铸装备区内的任意张牌，然后弃置目标等量牌。',
 			daria:'多萝西',
 			zhuanhuan:'次元转换',
@@ -3143,6 +3433,30 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			chunse:'椿色恋歌',
 			chunse_2:'椿色恋歌（灵击→弹幕）',
 			chunse_info:'其他角色回合结束时，若其手牌数或体力值大于你，你获得1点灵力；你造成灵击伤害时，若你灵力等于上限，可以改为造成等量弹幕伤害。',
+			illyasviel:'伊莉雅',
+			illyasviel_die:'既然牵起了伊莉雅的手，就要守护她到最后啊……',
+			huanzhao:'幻召',
+			huanzhao_info:'游戏开始时，你获得两张角色牌并暗置，称为“梦幻”；你击坠一名角色后，将其角色牌暗置加入“梦幻”；你视为拥有明置“梦幻”的第一项技能；准备阶段开始时，你可以明置一张“梦幻”并暗置其余，然后可以消耗1点灵力，获得该“梦幻”的所有技能，直到回合结束。',
+			huanzhao1:'设置“梦幻”',
+			huanzhao1_audio1:'那个、我叫伊莉雅，小学五年级。姑且……在当魔法少女。呜、虽然可能帮不上忙……但是我会努力的！',
+			huanzhao2:'幻召',
+			huanzhao2_audio1:'做到了，完成变身了！',
+			huanzhao2_audio2:'你刚才在期待什么奇奇怪怪的东西么？',
+			huanzhao2_audio3:'是小黑，和哥哥……的力量。我一定不会辜负你们的！',
+			huanzhao4:'幻召',
+			huanzhao4_audio1:'为什么不能老老实实的呢？',
+			huanzhao4_audio2:'我已经再也……不会放弃任何东西了',
+			wuxian:'无限',
+			wuxian_info:'锁定技，准备阶段，你获得1点灵力；然后：若你的灵力等于上限，你摸一张牌。',
+			wuxian_audio1:'感觉身体变得轻快了？',
+			wuxian_audio2:'伊莉雅可是有好好的在成长呢……我是在说身高啦',
+			wuxian_audio3:'好厉害……魔力好充沛……！在这之后我也会尽力战斗的。我要守护大家！',
+			wuxian_audio4:'那，那个，非常感谢你栽培我至今！今后我也会更加、更加更加地努力的！',
+			quintette_fire:'多元重奏饱和炮击',
+			quintette_fire_info:'符卡技（7）<u>此符卡消耗-X（X为“梦幻”的数量）；</u>准备阶段，你对一名角色造成3点弹幕伤害，然后弃置所有手牌。',
+			quintette_fire_audio1:'肌肉系统、神经系统、血管系统淋巴系统。拟似魔术回路变换……完成！这就是我的一切……多元重奏饱和炮击！',
+			quintette_fire_audio2:'无法和伊莉雅成为朋友的话，就只能打倒妳了！',
+			quintette_fire_2:'多元重奏饱和炮击',
 		},
 	};
 });

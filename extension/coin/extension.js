@@ -7,8 +7,9 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				_status.coin=100;
 			}
 			lib.characterPack.mode_extension_coin={
-				kejinji:['female','5',3,['chaoneng', 'chaoli', 'liyu'],[]],
-				hero:['female', '1', 4, ['weituo', 'zaguo', 'fanjian'], []],
+				kejinji:['female','5',3,['chaoneng', 'chaoli', 'liyu'], ['forbidai']],
+				hero:['female', '1', 4, ['weituo', 'zaguo', 'fanjian'], ['forbidai']],
+				rinnosuke:['male', '1', 3, ['luguo', 'shuaimai'], []],
 			};
 			lib.characterIntro['kejinji']='魔法和奇迹都没有有钱好使！（本次氪金由魔法少女伊莉亚代言）<br>画师：Binato_Lulu';
 			lib.characterIntro['hero']='卖圣剑了卖圣剑了！持勇者证可以半价！（本次圣剑由火焰纹章0赞助提供）<br>画师：志月';
@@ -18,12 +19,250 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					fullskin:true,
 					type:'equip',
 					subtype:'equip1',
+					cost:5,
 					ai:{
 						basic:{
 							equipValue:10
 						}
 					},
 					skills:['ziheng_skill','jinu_skill','lianji_skill'],
+				},		
+				spell_wuyashenxiang:{
+					type:'trick',
+					subtype:'support',
+					fullimage:true,
+					enable:true,
+					cost:-1,
+					filterTarget:function(card,player,target){
+						return target==player;
+					},
+					selectTarget:-1,
+					content:function(){
+						'step 0'
+						player.chooseControl('法术牌','基本牌').ai=function(){
+							return Math.random()<0.5?'法术牌':'基本牌';
+						}
+						'step 1'
+						var list=[];
+						var bool=(result.control=='法术牌');
+						for(var i in lib.card){
+							if(bool){
+								if(lib.card[i].type=='trick'){
+									list.push(i);
+								}
+							}
+							else{
+								if(lib.card[i].type=='basic'){
+									list.push(i);
+								}
+							}
+						}
+						list=list.randomGets(3);
+						var cards=[];
+						for(var i=0;i<list.length;i++){
+							cards.push(game.createCard(list[i]));
+						}
+						player.chooseCardButton(cards,'选择一张加入手牌',true);
+						'step 2'
+						player.gain(result.links,'draw');
+					},
+					ai:{
+						order:2,
+						value:5,
+						useful:5,
+						result:{
+							player:1
+						},
+					}
+				},
+				spell_xiaoshi:{
+					type:'trick',
+					subtype:'disrupt',
+					fullimage:true,
+					enable:true,
+					cost:-2,
+					selectTarget:1,
+					filterTarget:function(card,player,target){
+						return true;
+					},
+					content:function(){
+						'step 0'
+						target.gain(target.getCards('e'),'gain2');
+						'step 1'
+						var dh=target.countCards('h')-player.countCards('h');
+						if(dh>0){
+							target.discard(target.getCards('h').randomGets(dh));
+						}
+					},
+					ai:{
+						order:1,
+						value:1,
+						useful:1,
+						result:{
+							target:function(player,target){
+								if(target.countCards('he')>=player.countCards('h')) return -1;
+								return 0;
+							}
+						}
+					}
+				},
+				spell_piaoqie:{
+					type:'trick',
+					subtype:'disrupt',
+					fullimage:true,
+					enable:true,
+					cost:-1,
+					filterTarget:function(card,player,target){
+						return target!=player && target.countCards('h');
+					},
+					selectTarget:1,
+					content:function(){
+						var cards=target.getCards('h').randomGets(2);
+						var list=[];
+						for(var i=0;i<cards.length;i++){
+							list.push(game.createCard(cards[i]));
+						}
+						if(list.length){
+							player.gain(list,'draw');
+						}
+					},
+					ai:{
+						order:0.5,
+						result:{
+							player:1
+						}
+					}
+				},
+				gw_xinsheng:{
+					type:'trick',
+					subtype:'disrupt',
+					fullimage:true,
+					enable:function(card,player){
+						return game.hasPlayer(function(current){
+							return !current.isUnseen();
+						});
+					},
+					selectTarget:1,
+					filterTarget:function(){
+						return true;
+					},
+					contentBefore:function(){
+						player.$skill('新生','legend','metal', true);
+						game.delay(2);
+					},
+					content:function(){
+						'step 0'
+						event.aitarget=target;
+						var list=[];
+						for(var i in lib.character){
+							if(!lib.filter.characterDisabled(i)&&!lib.filter.characterDisabled2(i)){
+								list.push(i);
+							}
+						}
+						var players=game.players.concat(game.dead);
+						for(var i=0;i<players.length;i++){
+							list.remove(players[i].name);
+							list.remove(players[i].name1);
+							list.remove(players[i].name2);
+						}
+						var dialog=ui.create.dialog('选择一张角色牌','hidden');
+						dialog.add([list.randomGets(12),'character']);
+						player.chooseButton(dialog,true).ai=function(button){
+							if(get.attitude(player,event.aitarget)>0){
+								return get.rank(button.link,true);
+							}
+							else{
+								return -get.rank(button.link,true);
+							}
+						};
+						'step 1'
+						event.nametarget=result.links[0];
+						var hp=target.hp;
+						target.reinit(target.name,event.nametarget);
+						target.hp=Math.min(hp,target.maxHp);
+						target.update();
+						player.line(target,'green');
+						'step 3'
+						game.triggerEnter(target);
+					},
+					contentAfter:function(){
+						var evt=_status.event.getParent('phaseUse');
+						if(evt&&evt.name=='phaseUse'){
+							evt.skipped=true;
+						}
+					},
+					ai:{
+						value:8,
+						useful:[6,1],
+						result:{
+							player:1
+						},
+						order:0.5,
+					}
+				},
+				gw_zumoshoukao:{
+					type:'trick',
+					fullimage:true,
+					subtype:'disrupt',
+					enable:true,
+					filterTarget:function(card,player,target){
+						return !target.hasSkill('fengyin');
+					},
+					content:function(){
+						target.addTempSkill('fengyin');
+					},
+					ai:{
+						value:[4.5,1],
+						useful:[4,1],
+						result:{
+							target:function(player,target){
+								var threaten=get.threaten(target,player,true);
+								if(target.hasSkill('fengyin')){
+									return 0;
+								}
+								if(target.hasSkillTag('maixie_hp')){
+									threaten*=1.5;
+								}
+								return -threaten;
+							}
+						},
+						order:9.5,
+					}
+				},
+				gw_youer:{
+					type:'trick',
+					subtype:'disrupt',
+					enable:true,
+					fullimage:true,
+					filterTarget:function(card,player,target){
+						return target!=player&&target.countCards('h')>0;
+					},
+					content:function(){
+						'step 0'
+						var cards=target.getCards('h');
+						target.lose(cards,ui.special);
+						target.storage.gw_youer=cards;
+						target.addSkill('gw_youer');
+						'step 1'
+						player.draw();
+					},
+					ai:{
+						basic:{
+							order:10,
+							value:7,
+							useful:[3,1],
+						},
+						result:{
+							target:function(player,target){
+								if(target.hasSkillTag('noh')) return 3;
+								var num=-Math.sqrt(target.countCards('h'));
+								if(player.hasSha()&&player.canUse('sha',target)){
+									num-=2;
+								}
+								return num;
+							},
+						},
+					}
 				},
 			};
 			for (var i in card){
@@ -35,10 +274,10 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			};*/
 			for(var i in lib.characterPack.mode_extension_coin){
 				lib.character[i]=lib.characterPack.mode_extension_coin[i];
-				lib.config.forbidai.push(i);
 			}
 			var skill = {
 				chaoneng:{
+					audio:2,
 					enable:'phaseUse',
 					group:['chaoneng_buff1', 'chaoneng_buff2'],
 					init:function(player){
@@ -99,6 +338,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				chaoli:{
+					audio:2,
 					enable:'phaseUse',
 					filter:function(event, player){
 						return lib.config.coin >= 250;
@@ -120,6 +360,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				liyu:{
+					audio:2,
 					enable:'phaseUse',
 					usable:1,
 					filter:function(event, player){
@@ -165,6 +406,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				weituo:{
+					audio:2,
 					trigger:{player:'phaseUseBegin'},
 					group:'weituo_end',
 					filter:function(event, player){
@@ -206,6 +448,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				weituo_end:{
+					audio:2,
 					trigger:{player:'phaseEnd'},
 					direct:true,
 					filter:function(event,player){
@@ -220,6 +463,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				zaguo:{
+					audio:2,
 					enable:'phaseUse',
 					filter:function(event, player){
 						return player.countCards('hej') > 0;
@@ -235,6 +479,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					},
 				},
 				fanjian:{
+					audio:2,
 					enable:'phaseUse',
 					filter:function(event, player){
 						return lib.config.coin >= 400;
@@ -242,6 +487,70 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					content:function(){
 						game.changeCoin(-400);
 						player.gain(game.createCard('holysword', 0, null, null, 5));
+					},
+				},
+				shuaimai:{
+					forced:true,
+					global:'shuaimai_buy',
+					group:'shuaimai_discard',
+					trigger:{player:'loseEnd'},
+					filter:function(event,player){
+						return !player.countCards('h');
+					},
+					content:function(){
+						'step 0'
+						var list = [];
+						for(var i in lib.card){
+							if (!lib.translate[i]) continue;
+							if (get.type(i) == 'zhenfa') continue;
+							if (get.type(i) == 'delay') continue;
+							list.push(i);
+						}
+						list=list.randomGets(5);
+						for(var i=0;i<list.length;i++){
+							player.gain(game.createCard(list[i]));
+						}
+						'step 1'
+						player.mingzhiCard(player.getCards('h'));
+					},
+				},
+				shuaimai_discard:{
+					forced:true,
+					trigger:{player:'phaseEnd'},
+					content:function(){
+						player.discard(player.getCards('h'));
+					}
+				},
+				shuaimai_buy:{
+					enable:'phaseUse',
+					filter:function(event, player){
+						return game.hasPlayer(function(current){
+							return current.hasSkill('shuaimai') && (current.countCards('ej') || current.storage.mingzhi); 
+						}) && lib.config.coin >= 200;
+					},
+					selectTarget:1,
+					filterTarget:function(card, player, target){
+						return target != player && target.hasSkill('shuaimai') && (target.storage.mingzhi || target.countCards('hj'))
+					},
+					content:function(){
+						if (target == game.me){
+							game.changeCoin(200);
+						}
+						if (player == game.me){
+							game.changeCoin(-200);
+						}
+						player.gainPlayerCard('hej',target,true).set('filterButton',function(button){
+							return target.getCards('ej').contains(button.link) || (target.storage.mingzhi && target.storage.mingzhi.contains(button.link));
+						});
+					},
+					prompt:'选择购买商家（有【甩卖】和明置牌的角色）',
+					ai:{
+						order:1,
+						result:{
+							player:function(player,target){
+								return (Math.random() < 0.01)?1:-1;
+							},
+						},
 					},
 				},
 			};
@@ -254,19 +563,52 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				kejinji:'氪金姬',
 				chaoneng:'钞能',
 				chaoneng_info:'出牌阶段，你可以支付以下量的金币，获得对应的效果：30：你的手牌上限+1；50：你的灵力上限+1；70：你的体力上限+1；100：你于摸牌阶段额外摸一张牌；150：你使用【轰！】造成的伤害+1。',
+				chaoneng_audio1:'有钱你就会变的更强！',
+				chaoneng_audio2:'只有没钱的人才会觉得钱买不来幸福！',
 				chaoli:'钞力',
 				chaoli_info:'出牌阶段，你可以支付250金币，对一名角色造成1点弹幕伤害。',
+				chaoli_audio1:'给，打自己一个耳光吧？',
+				chaoli_audio2:'金币当作炮弹意外的效果不错呢~',
 				liyu:'利驭',
 				liyu_info:'一回合一次，你可以支付200，300，或400金币，并指定一名角色；该角色有几率攻击其队友一回合。',
+				liyu_audio1:'任何人都有一个价格。',
+				liyu_audio2:'这么多钱够吧？够吧？',
+				kejinji_die:'你钱太少了吧！',
 				hero:'勇者',
 				weituo:'委托',
 				weituo_info:'出牌阶段开始时，你可以选择一项条件：1.你造成过至少2点伤害；2.有角色回复过体力；3.有其他角色获得过牌；结束阶段，若你本回合达成了该条件，你摸一张牌，并获得150金币。',
+				weituo_audio1:'即使是我应该也做得来这个？',
+				weituo_audio2:'作为勇者就是要助人为乐吧！',
+				weituo_end_audio1:'完成了完成了！太好了！',
+				weituo_end_audio2:'今晚可以吃一顿好的啦~',
 				zaguo:'砸锅',
 				zaguo_info:'出牌阶段，你可以弃置一张牌，随机获得50~100金币。',
+				zaguo_audio1:'再见了我的炒锅酱……',
+				zaguo_audio2:'卖东西只能以1/4市价卖？？太过分了吧？？？',
 				fanjian:'贩剑',
 				fanjian_info:'出牌阶段，你可以支付400金币，创建并获得一张【天赐圣剑】（装备/武器；灵力：+5；你视为拥有【连击】【激怒】【制衡】。）',
+				fanjian_audio1:'啊——终于攒出来了……',
+				fanjian_audio2:'有了这个我就无敌了！',
+				hero_die:'勇者不是不会输的吗！',
 				holysword:'天赐圣剑',
 				holysword_info:'锁定技，你视为拥有【连击】【激怒】【制衡】的效果。',
+				rinnosuke:'霖之助',
+				shuaimai:'甩卖',
+				shuaimai_buy:'甩卖（买）',
+				shuaimai_info:'结束阶段，你弃置所有手牌；你失去最后手牌后，创建5张任意游戏牌（包括其他模式和其他游戏的牌），获得这些牌并明置之；其他角色的出牌阶段，其可以支付200金币，获得你一张明置牌。',
+				spell_wuyashenxiang:'乌鸦神像',
+				spell_wuyashenxiang_info:'出牌阶段，对自己使用；目标选择一项：法术牌或基本牌，然后从三张该种类的牌中获得一张。',
+				spell_xiaoshi:'消失',
+				spell_xiaoshi_info:'出牌阶段，对一名角色使用；其收回装备区内的所有牌，并弃置其若干张手牌，直到其手牌数与你相等',
+				spell_piaoqie:'剽窃',
+				spell_piaoqie_info:'出牌阶段，对一名角色使用；复制其两张手牌，加入你的手牌',
+				gw_xinsheng:'新生',
+				gw_xinsheng_info:'出牌阶段，对一名角色使用；你随机观看12张角色牌，选择一张替代目标角色牌（保留当前体力值和灵力值，且不大于新上限），然后结束出牌阶段',
+				gw_zumoshoukao:'阻魔手铐',
+				gw_zumoshoukao_info:'出牌阶段，对一名角色使用；目标技能失效，直到回合结束',
+				gw_youer:'诱饵',
+				gw_youer_bg:'饵',
+				gw_youer_info:'出牌阶段，对一名其他角色使用；目标将所有手牌移出游戏，你摸一张牌；回合结束后目标将以此法失去的牌收回手牌',
 			};
 			for(var i in list){
 				lib.translate[i]=lib.translate[i]||list[i];

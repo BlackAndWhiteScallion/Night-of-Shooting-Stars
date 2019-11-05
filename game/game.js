@@ -3029,8 +3029,8 @@
 					popequip:{
 						name:'触屏装备弹出',
 						intro:'触屏布局中，选择装备时会弹出大装备栏',
-						init:true,
-						unfrequent:true,
+						init:false,
+						unfrequent:false,
 					},
                     filternode_button:{
                         name:'触屏筛选按钮',
@@ -8459,6 +8459,8 @@
             equip5:'宝物',
             luanwu:'乱武',
             luanwu_info:'出牌阶段，对所有其他角色使用；目标各选择一项：对与其最近的角色使用一张【轰！】，或失去1点体力。',
+            luguo:'无作',
+			luguo_info:'锁定技，此角色只能在路人身份使用；游戏开始时，你明置身份（不发动明置效果），并获得一张【平和】异变牌。',
             zero:'零',
             one:'一',
             two:'二',
@@ -19978,7 +19980,7 @@
                     this.suit=card[0];
                     this.number=parseInt(card[1])||0;
                     this.name=card[2];
-                    this.bonus=card[4];
+                    this.bonus=card[4]||info.cost;
                     this.classList.add('card');
                     if(card[3]){
                         if(lib.nature.contains(card[3])) this.nature=card[3];
@@ -20006,6 +20008,7 @@
                             this.node.range.innerHTML = '灵力：' + this.bonus;
                             //this.node.range.style.color = 'rgb(0,0,255)';
                         }
+                        //this.node.range.innerHTML.style.color = 'rgb()';
                     }
                     switch(get.subtype(this)){
                         case 'equip1':
@@ -21621,6 +21624,63 @@
                     }
                 }
             },
+            luguo:{
+				trigger:{global:"gameStart"},
+				direct:true,
+				content:function(){
+                    if (player.identity != 'nei'){
+                        var newz = game.findPlayer(function(current){
+                            return current.identity == 'nei';
+                        })
+                        if (newz) newz.identity = player.identity;
+                        player.identity = 'nei';
+                    }
+					player.identityShown = true;
+    				player.setIdentity(player.identity);
+    				player.node.identity.classList.remove('guessing');
+    				lib.card['library'] = {
+						type:'zhenfa',
+						fullskin:true,
+						enable:true,
+						vanish:true,
+						selectTarget:-1,
+						filterTarget:function(card,player,target){
+							return target == player;
+						},
+						modTarget:true,
+						skills:['library_normal'],
+						content:function(){
+							target.addSkill('library_normal');
+						},
+    				},
+    				lib.translate['library'] = '平和';
+    				lib.config.musicchange = 'luren';
+    				lib.config.backgroundchange = 'luren';
+    				player.addIncident(game.createCard('library','zhenfa',''));
+    				lib.config.backgroundchange = 'off';
+				},
+                
+				ai:{
+					effect:{
+						// 目前习性：不会被伤害牌。
+						target:function(card,player,target,current){
+                            if (game.players.length > 2 && player != target) return [1,-10];
+						},
+					},
+					threaten:-1000,
+				},
+                mod:{
+                    cardEnabled:function(card,player){
+                        if (player != game.me && get.type(card) != 'equip') return false;
+                    },
+                    cardUsable:function(card,player){
+                        if (player != game.me && get.type(card) != 'equip') return false;
+                    },
+                    cardSavable:function(card,player){
+                        if (player != game.me && get.type(card) != 'equip') return false;
+                    }
+                },
+			},
             // 护甲……就是护甲
             counttrigger:{
                 trigger:{global:'phaseAfter'},
@@ -44592,8 +44652,8 @@
              replace(/符卡技（1）/g,'<span class="firetext">符卡技（1）</span>').
              replace(/符卡技（2）/g,'<span class="firetext">符卡技（2）</span>').
              replace(/符卡技（3）/g,'<span class="firetext">符卡技（3）</span>').
-             replace(/符卡技（4）/g,'<span class="firetext">符卡技（4）</span>');
-             //replace(/符卡技*）/g,'<span class="firetext">符卡技*）</span>');
+             replace(/符卡技（4）/g,'<span class="firetext">符卡技（4）</span>').
+             replace(/符卡技（7）/g,'<span class="firetext">符卡技（7）</span>');
              //replace(/符卡技*)/g,'<span class="firetext">符卡技*)</span>');
             //  replace(/主将技/g,'<span class="bluetext">主将技</span>').
             //  replace(/副将技/g,'<span class="bluetext">副将技</span>').
