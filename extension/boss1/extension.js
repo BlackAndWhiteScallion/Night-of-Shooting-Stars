@@ -6,6 +6,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			lib.characterIntro['boss_zhaoyun'] = '幻想乡是一切皆有可能的地方。<br>即使是原本不可能打得过的人物……！';
 			if (lib.config.gameRecord.boss){
 				lib.characterPack.mode_extension_boss1={
+					yuri:['female', '3', 3, ['chongzou', 'moxin1'], []],
 				};
 				if (lib.config.gameRecord.boss.data['boss_reimu2']){
 					lib.characterPack.mode_extension_boss1.boss_reimu = ['female','5',4,['lingji','mengxiangtiansheng'], [], 'shu'];

@@ -230,6 +230,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             rumeng:{
             	audio:2,
             	group:['dshift','rumeng_2'],
+				derivation:'mengjing',
             	trigger:{player:'gainliliBegin'},
             	forced:true,
             	filter:function(event,player){

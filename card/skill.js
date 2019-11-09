@@ -394,6 +394,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			qianxing_skill:{
 				trigger:{player:'phaseEnd'},
+				filter:function(event, player){
+					return !player.hasSkill('qianxing_skill2');
+				},
 				content:function(){
 					player.addSkill('qianxing_skill2');
 				},

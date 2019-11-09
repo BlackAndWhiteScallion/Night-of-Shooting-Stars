@@ -188,20 +188,20 @@
 .removing>.menubg.charactercard{
 	transform: scale(0.8);
 	opacity: 0;
-	transition: all 0.3s;
+	transition: all 0.2s;
 }
 .menubg.charactercard{
 	background:#666666;
-	width: 500px;
-	height: 300px;
-	left: calc(50% - 250px);
-	top: calc(50% - 150px);
+	width: 625px;
+	height: 400px;
+	left: calc(50% - 312px);
+	top: calc(50% - 200px);
 	animation: dialog_start2 0.3s;
 	-webkit-animation: dialog_start2 0.3s;
 }
 .menubg.charactercard>.menubutton.large.ava{
 	width: 180px;
-	height: 240px;
+	height: 325px;
 	left: 10px;
 	top: 10px;
 	overflow: hidden;
@@ -223,9 +223,9 @@
 }
 .menubg.charactercard>.ava>.changeskin{
 	bottom: 8px;
-	left: 8px;
+	left: 12px;
 	font-family: 'xinwei';
-	font-size: 20px;
+	font-size: 30px;
 	z-index: 2;
 	color: white;
 	text-shadow: black 0 0 2px;
@@ -242,8 +242,8 @@
 	left: 191px;
     padding-left: 9px;
     padding-right: 10px;
-    width: 290px;
-    top: 125px;
+    width: 400px;
+    top: 175px;
     height: 50px;
     white-space: nowrap;
     overflow-x: scroll;
@@ -259,8 +259,8 @@
 }
 .menubg.charactercard .characterintro{
 	left: 200px;
-	width: 280px;
-	height: 105px;
+	width: 400px;
+	height: 150px;
 	padding: 5px;
 	overflow: scroll;
 	border-radius: 4px;

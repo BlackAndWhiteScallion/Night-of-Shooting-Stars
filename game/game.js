@@ -9031,7 +9031,6 @@
 						event.finish();
 					}
 					"step 1"
-
                     if(event.cancelled){
                         event.finish();
                         return;
@@ -9111,7 +9110,8 @@
 						event.finish();
                         return;
                     }
-                    var next=game.createEvent(event.skill);
+                    //var next=game.createEvent(event.skill);
+                    var next = game.createEvent('useSkill');
                     if(typeof info.usable=='number'){
                         player.addSkill('counttrigger');
                         if(!player.storage.counttrigger){
@@ -9129,6 +9129,7 @@
                     next.triggername=event.triggername;
                     next.setContent(info.content);
                     next.skillHidden=event.skillHidden;
+                    next.skill=event.skill;
                     if(info.popup!=false&&!info.direct){
                         if(info.popup){
                             player.popup(info.popup);
@@ -9148,6 +9149,7 @@
                             }
                         }
                     }
+                    event.trigger('useSkill');
 					"step 4"
 					if(player._hookTrigger){
 						for(var i=0;i<player._hookTrigger.length;i++){
@@ -16602,6 +16604,7 @@
                     var str='';
                     if(next.card) str=get.translation(next.card.viewAs||next.card.name);
                     else if(next.skill) str=get.translation(next.skill);
+                    else if(_status.event.skill) str=get.translation(_status.event.skill);
                     else str=get.translation(_status.event.name);
                     next.judgestr=str;
                     next.setContent('judge');

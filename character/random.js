@@ -25,29 +25,31 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			jack:['female', '3', 3, ['wulin', 'yejiang', 'maria']],
 			yuuko:['female', '1', 3, ['waimai', 'heike']],
 			tsubaki:['female', '2', 4, ['xiangyi', 'chunse']],
+			m4a1:['female', '2', 4, ['huoli', 'zhihui', 'shenyuan']],
 		},
 		characterIntro:{
-			illyasviel:'在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子',
+			illyasviel:'全名伊莉雅丝菲尔·冯·爱因兹贝伦，在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子<br>出自：Fate/kaleid liner 魔法少女☆伊莉雅<b>画师：永恒之舞MK_2',
 			shigure:'白露级驱逐舰2号舰，名是从前代神风级驱逐舰10号舰所继承。<br>出自：舰队collection <b>画师：konomi★きのこのみ</b>',
 			yudachi:'白露级驱逐舰4号舰，以初春级为基础，加固了舰体，提高了稳定性。<br>出自：舰队collection <b>画师：ﾏｸｰ</b>',
 			megumin:'以“艺术就是爆炸”为人生信条的小萝莉红魔法师。<br>出自：为美好的世界献上祝福！<b>画师：seki</b>',
-			satone:'索菲亚琳·SP·撒旦七世，传说中的魔法魔王少女，可以召唤天使！<br>出自：中二病也要谈恋爱！ <b>设计：子规    画师：あかつき聖</b>',
-			kanade:'啊，是天使，我死了——<br>死后世界的学校中的学生会长，标准的无口萌妹。<br>出自：Angel Beats! <b>画师：sua(スア)</b>',
+			satone:'全名索菲亚琳·SP·撒旦七世，传说中的魔法魔王少女，可以召唤天使！<br>出自：中二病也要谈恋爱！ <b>设计：子规    画师：あかつき聖</b>',
+			kanade:'啊，是天使，我死了——<br>全名立华奏，死后世界的学校中的学生会长，标准的无口萌妹。<br>出自：Angel Beats! <b>画师：sua(スア)</b>',
 			arisa:'守护森林的妖精弓手。（不过森林里的东西比她要恐怖多了）<br>出自：暗影之诗 <b>画师：黒井ススム</b>',
-			nero:'古罗马的皇帝，比起皇帝更像个偶像，奢华浪费和浮夸无人能出其右。<br>出自:Fate/Extra <b>画师：demercles</b>',
-			kurumi:'咕咕咕<br>出自：Date-A-Live! <b>画师：kyuriin</b>',
-			miku:'我们天下第一的公主大人~<br>出自：Vocaloid<b>画师：saberii</b>',
+			nero:'全名尼禄·克劳狄乌斯·凯萨·奥古斯都·日耳曼尼库斯。古罗马的皇帝，比起皇帝更像个偶像，奢华浪费和浮夸无人能出其右。<br>出自:Fate/Extra <b>画师：demercles</b>',
+			kurumi:'全名时崎狂三。咕咕咕<br>出自：Date-A-Live! <b>画师：kyuriin</b>',
+			miku:'全名初音未来，我们天下第一的公主大人~<br>出自：Vocaloid<b>画师：saberii</b>',
 			sinon:'被称为“冰之狙击手”的GGO玩家。“死枪”事件后在桐谷和人的邀请下转换到新生了ALO中扮演擅长使用弓箭狙击猫妖精。<br>出自：刀剑神域<b>画师：PCManiac88</b>',
 			scathach:'影之国的女王，当女王当了几千年了。<br>出自：Fate/Grand Order <b>设计：冰茶	画师：saberii</b>',
 			niuzhanshi:'还能是谁呢这。<br>出自：Fate/Apocrypha <b>画师：イセ川</b>',
 			mordred:'圆桌骑士之一，亚瑟王的儿子——同时也是终结父王的叛逆骑士。<br>出自：Fate/Apocrypha <b>画师：Shigure</b><br><br>（注：莫德雷德由？发动【？】变身而成，不能正常选出使用）',
 			twob:'——机器人会梦见电子绵羊吗？<br>——不，机器人会梦见和小男朋友一起去商城买T恤衫————<br>出自：NieR:Automata <b>设计：雪樱   画师：saberii</b>',
-			kuro:'小腹上的那个不是○纹，不要问了！<b>出自：魔法少女伊莉雅 画师：トミフミ</b>',
+			kuro:'全名克洛伊·冯·爱因兹贝伦，小腹上的那个不是○纹，不要问了！<b>出自：Fate/kaleid liner 魔法少女☆伊莉雅 <b>画师：トミフミ</b>',
 			daria:'先手，5费，巨像突击，守护者巨像，命运的指引，智慧之光，剑仙，使徒，魔法剑，魔法剑，奇美拉，多萝西，引导，啊，这3个大眼下不去了，到你了吧<b>出自：影之诗 设计：雪樱  画师：アカトネ</b>',
 			rylai:'<b>出自：dota2 设计：路人orz  画师：forest</b>',
 			jack:'同时是杀人狂和暴露狂的幼女？快收住你奇怪的想法……<br><b>出自：Fate/Apocrypha 画师：オウカ</b>',
 			yuuko:'<b>出自：神的记事本 画师：岸田メル 设计：伶</b>',
-			tsubaki:'<b>出自：牵绊闪耀的恋之伊吕波 画师：ぺろ 设计：冰茶</b>',
+			tsubaki:'全名朱雀院椿。<b>出自：牵绊闪耀的恋之伊吕波 画师：ぺろ 设计：冰茶</b>',
+			m4a1:'<b>出自：少女前线 画师：怠惰姬空白 设计：Freyr</b>',
 		},	   
 		perfectPair:{
 		},
@@ -2221,6 +2223,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     dialog:function(){
                         var list = [];
                         for (var i in lib.card){
+							if (!lib.translate[i]) continue;
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
                             if(lib.card[i].type == 'equip'){
@@ -3010,6 +3013,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									dialog.buttons[i].node.group.remove();
 									dialog.buttons[i].node.hp.remove();
 									dialog.buttons[i].node.intro.remove();
+									dialog.buttons[i].node.lili.remove();
 									dialog.buttons[i].node.name.innerHTML='未<br>知';
 									dialog.buttons[i].node.name.dataset.nature='';
 									dialog.buttons[i].style.background='';
@@ -3205,6 +3209,97 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 2"
 					player.discard(player.getCards('h'));
 				}
+			},
+			huoli:{
+				usable:1,
+				trigger:{player:'shaBefore'},
+				filter:function(event, player){
+					return player.countCards('hej');
+				},
+				content:function(){
+					'step 0'
+					player.chooseToDiscard(1,'hej').set('ai', function(card){
+						return get.value(card) < 8;
+					});
+					'step 1'
+					if (result.bool){
+						player.addTempSkill('huoli_1', {player:'shaAfter'});
+					}
+				},
+				check:function(event, player){
+					return get.attitude(event.targets[0], player) < 0 && event.targets[0].lili == 1;
+				},
+			},
+			huoli_1:{
+				audio:2,
+				trigger:{source:'damageEnd'},
+				forced:true,
+				filter:function(event,player){
+					return event.card&&event.card.name=='sha';
+				},
+				content:function(){
+					trigger.player.damage('thunder');
+				}
+			},
+			zhihui:{
+				trigger:{global:'phaseBegin'},
+				filter:function(event, player){
+					return event.player != player && player.lili > 0;
+				},
+				content:function(){
+					'step 0'
+					player.loselili();
+					trigger.player.chooseControl(['摸一张牌','多出一张轰','获得1点灵力'], true).set('ai',function(){
+						if (trigger.player.countCards('h', {name:'sha'}) > 1) return '多出一张轰';
+						if (trigger.player.lili < 2) return '获得1点灵力';
+						return '摸一张牌';
+					});
+					'step 1'
+					if (result.control == '摸一张牌'){
+						trigger.player.draw();
+					} else if (result.control == '多出一张轰'){
+						trigger.player.addTempSkill('zhihui_1');
+					} else if (result.control == '获得1点灵力'){
+						trigger.player.gainlili();
+					}
+				},
+				check:function(event, player){
+					return get.attitude(player, event.player) > 0 && player.lili > 1;
+				},
+			},
+			zhihui_1:{
+				mod:{
+					cardUsable:function(card,player,num){
+						if(card.name=='sha') return num + 1;
+					}
+				},
+			},
+			shenyuan:{
+				audio:2,
+				cost:2,
+				spell:['shenyuan_1'],
+				trigger:{player:'phaseBegin'},
+				filter:function(event,player){
+					return player.lili > lib.skill.shenyuan.cost;
+				},
+				content:function(){
+					player.loselili(lib.skill.shenyuan.cost);
+					player.turnOver();
+				},
+				check:function(event, player){
+					return player.countCards('h', {name:'sha'}) && player.lili > 3;
+				},
+			},
+			shenyuan_1:{
+				trigger:{player:'shaBegin'},
+				content:function(){
+					trigger.directHit=true;
+				},
+				mod:{
+					selectTarget:function(card,player,range){
+						if(card.name=='sha'&&range[1]!=-1) range[1] = player.maxHp - player.hp;
+					},
+				},
 			},
 		},
 		translate:{
@@ -3457,6 +3552,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			quintette_fire_audio1:'肌肉系统、神经系统、血管系统淋巴系统。拟似魔术回路变换……完成！这就是我的一切……多元重奏饱和炮击！',
 			quintette_fire_audio2:'无法和伊莉雅成为朋友的话，就只能打倒妳了！',
 			quintette_fire_2:'多元重奏饱和炮击',
+			m4a1:'M4A1',
+			huoli:'火力专注',
+			huoli_info:'一回合一次，你使用【轰！】时，可以弃置一张牌：若如此做，该【轰！】造成伤害时，对受伤角色造成1点灵击伤害。',
+			zhihui:'指挥人形',
+			zhihui_info:'一名其他角色的回合开始时，你可以消耗1点灵力，令其选择一项：摸一张牌；本回合出牌阶段可以额外使用一张【轰！】；或获得1点灵力。',
+			shenyuan:'申冤者印记',
+			shenyuan_info:'符卡技（2）你使用的【轰！】可以指定至多X名目标（X为你已受伤值）；你使用【轰！】指定目标后，你可以令之对目标直接造成伤害。',
+			shenyuan_1:'申冤者印记',
+			shenyuan_1_info:'你可以令该【轰！】对目标直接造成伤害',
 		},
 	};
 });
