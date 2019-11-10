@@ -234,7 +234,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	trigger:{player:'gainliliBegin'},
             	forced:true,
             	filter:function(event,player){
-            		return event.getParent().name != 'rumeng';
+					var e = event.getParent('useSkill');
+            		return !e || e.skill != 'rumeng';
             	},
             	content:function(){
             		if (player.maxlili < 5) player.gainMaxlili();

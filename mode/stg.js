@@ -790,7 +790,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					target.addTempSkill('mianyi');
 					console.log(event);
-					if (event.getParent('_stg_lingji')){
+					var e = event.getParent('useSkill');
+					if (e.skill == '_stg_lingji'){
 						var trigger = event.getParent('damage');
 						trigger.cancel();
 						game.log('灵击：防止本回合所有伤害');

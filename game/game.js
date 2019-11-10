@@ -3770,7 +3770,7 @@
                     }
                 },
                 intro:{
-                    name:'每完成一次对局，可获得一定数量的金币；金币可用于购买游戏特效。<br>追加角色：氪金姬，勇者。<br>追加卡牌：天赐圣剑',
+                    name:'每完成一次对局，可获得一定数量的金币；金币可用于购买游戏特效。<br>追加角色：氪金姬，勇者，霖之助。<br>追加卡牌：天赐圣剑',
                     clear:true,
                     nopointer:true,
                 },
@@ -21929,7 +21929,7 @@
                 },
                 content:function(){
                     if (player.isTurnedOver()){
-                        var skillname = trigger.parent.name;
+                        var skillname = trigger.parent.skill;
                         var info = lib.skill[skillname];
                         if (info.spell){
                             for (var i = 0; i < info.spell.length; i ++){

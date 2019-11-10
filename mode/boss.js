@@ -1646,7 +1646,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				trigger:{player:'gainBegin'},
 				filter:function(event,player){
-					if (!event.getParent('zuanshi')) return false;
+					var e = event.getParent('useSkill');
+					if (!e || event.skill != 'zuanshi') return false;
 					return true;
 				},
 				content:function(){
@@ -2047,7 +2048,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								if (player.hasSkill('danmaku_skill')){
 									choices.push('sha');
 								}
-								if (trigger.getParent('huazhi_skill') || _status.currentPhase != player){
+								if (trigger.getParent('phaseEnd') || _status.currentPhase != player){
 									choices = ['bailou', 'lunadial', 'mirror', 'dianche', 'tao'];
 								}
 							} else {
@@ -2067,7 +2068,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								} else {
 									choices = ['tianguo', 'sijing', 'dianche'];
 								}
-								if (trigger.getParent('huazhi_skill') || _status.currentPhase != player){
+								if (trigger.getParent('phaseEnd') || _status.currentPhase != player){
 									choices = ['bailou', 'lunadial', 'mirror', 'dianche', 'tao', 'book', 'hourai'];
 								}
 							} else {
@@ -2079,7 +2080,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							if (trigger.player.hp < trigger.player.maxHp && !trigger.player.countCards('h', {name:'tao'})) choices = ['tao'];
 							else if (choices[2] > 0) choices = ['wuzhong'];
 							else if (trigger.player.countCards('he', {type:'equip'}) < 3) choices = ['mirror', 'book', 'lunadial', 'hourai', 'pantsu', 'stone', 'windfan', 'lantern'];
-							else if (_status.currentPhase != trigger.player || trigger.getParent('huazhi_skill')) choices = ['shan', 'bingyu'];
+							else if (_status.currentPhase != trigger.player || trigger.getParent('phaseEnd')) choices = ['shan', 'bingyu'];
 							else choices = ['shunshou', 'guohe', 'lingbi', 'sha', 'huazhi'];
 						}
 					}
@@ -2148,7 +2149,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}).set('ai',function(button){
 						var trigger=_status.event.getTrigger();
 						var player=_status.event.player;
-						if (trigger.getParent('mingyun2')){
+						var t = _status.event.getParent('useSkill');
+						if (t && t.skill == 'mingyun2'){
 							var e = trigger.getParent('useCard');
 							console.log(e.targets[0]);
 							if (get.attitude(player,e.targets[0]) > 0){

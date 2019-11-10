@@ -13,6 +13,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			};
 			lib.characterIntro['kejinji']='魔法和奇迹都没有有钱好使！（本次氪金由魔法少女伊莉亚代言）<br>画师：Binato_Lulu';
 			lib.characterIntro['hero']='卖圣剑了卖圣剑了！持勇者证可以半价！（本次圣剑由火焰纹章0赞助提供）<br>画师：志月';
+			lib.characterIntro['rinnosuke']='幻想乡里的万事屋·香霖堂的店主。店里兜售来自外界的各种各样的新鲜东西。不包修不包换也不包退款就是了。<br>画师：';
 			//lib.cardPack.appendChild(mode_coin);
 			var card = {
 				holysword:{
