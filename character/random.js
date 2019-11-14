@@ -28,7 +28,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			m4a1:['female', '2', 4, ['huoli', 'zhihui', 'shenyuan']],
 		},
 		characterIntro:{
-			illyasviel:'全名伊莉雅丝菲尔·冯·爱因兹贝伦，在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子<br>出自：Fate/kaleid liner 魔法少女☆伊莉雅<b>画师：永恒之舞MK_2',
+			illyasviel:'全名伊莉雅丝菲尔·冯·爱因兹贝伦，在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子<br>出自：Fate/kaleid liner 魔法少女☆伊莉雅 <b>画师：永恒之舞MK_2',
 			shigure:'白露级驱逐舰2号舰，名是从前代神风级驱逐舰10号舰所继承。<br>出自：舰队collection <b>画师：konomi★きのこのみ</b>',
 			yudachi:'白露级驱逐舰4号舰，以初春级为基础，加固了舰体，提高了稳定性。<br>出自：舰队collection <b>画师：ﾏｸｰ</b>',
 			megumin:'以“艺术就是爆炸”为人生信条的小萝莉红魔法师。<br>出自：为美好的世界献上祝福！<b>画师：seki</b>',
@@ -38,18 +38,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			nero:'全名尼禄·克劳狄乌斯·凯萨·奥古斯都·日耳曼尼库斯。古罗马的皇帝，比起皇帝更像个偶像，奢华浪费和浮夸无人能出其右。<br>出自:Fate/Extra <b>画师：demercles</b>',
 			kurumi:'全名时崎狂三。咕咕咕<br>出自：Date-A-Live! <b>画师：kyuriin</b>',
 			miku:'全名初音未来，我们天下第一的公主大人~<br>出自：Vocaloid<b>画师：saberii</b>',
-			sinon:'被称为“冰之狙击手”的GGO玩家。“死枪”事件后在桐谷和人的邀请下转换到新生了ALO中扮演擅长使用弓箭狙击猫妖精。<br>出自：刀剑神域<b>画师：PCManiac88</b>',
+			sinon:'被称为“冰之狙击手”的GGO玩家。“死枪”事件后在桐谷和人的邀请下转换到新生了ALO中，扮演擅长使用弓箭狙击的猫妖精。<br>出自：刀剑神域<b>画师：PCManiac88</b>',
 			scathach:'影之国的女王，当女王当了几千年了。<br>出自：Fate/Grand Order <b>设计：冰茶	画师：saberii</b>',
 			niuzhanshi:'还能是谁呢这。<br>出自：Fate/Apocrypha <b>画师：イセ川</b>',
 			mordred:'圆桌骑士之一，亚瑟王的儿子——同时也是终结父王的叛逆骑士。<br>出自：Fate/Apocrypha <b>画师：Shigure</b><br><br>（注：莫德雷德由？发动【？】变身而成，不能正常选出使用）',
 			twob:'——机器人会梦见电子绵羊吗？<br>——不，机器人会梦见和小男朋友一起去商城买T恤衫————<br>出自：NieR:Automata <b>设计：雪樱   画师：saberii</b>',
-			kuro:'全名克洛伊·冯·爱因兹贝伦，小腹上的那个不是○纹，不要问了！<b>出自：Fate/kaleid liner 魔法少女☆伊莉雅 <b>画师：トミフミ</b>',
-			daria:'先手，5费，巨像突击，守护者巨像，命运的指引，智慧之光，剑仙，使徒，魔法剑，魔法剑，奇美拉，多萝西，引导，啊，这3个大眼下不去了，到你了吧<b>出自：影之诗 设计：雪樱  画师：アカトネ</b>',
+			kuro:'全名克洛伊·冯·爱因兹贝伦，小腹上的那个不是○纹，不要问了！<br>出自：Fate/kaleid liner 魔法少女☆伊莉雅 <b>画师：トミフミ</b>',
+			daria:'先手，5费，巨像突击，守护者巨像，命运的指引，智慧之光，剑仙，使徒，魔法剑，魔法剑，奇美拉，多萝西，引导，啊，这3个大眼下不去了，到你了吧<br>出自：影之诗 <b>设计：雪樱  画师：アカトネ</b>',
 			rylai:'<b>出自：dota2 设计：路人orz  画师：forest</b>',
-			jack:'同时是杀人狂和暴露狂的幼女？快收住你奇怪的想法……<br><b>出自：Fate/Apocrypha 画师：オウカ</b>',
-			yuuko:'<b>出自：神的记事本 画师：岸田メル 设计：伶</b>',
-			tsubaki:'全名朱雀院椿。<b>出自：牵绊闪耀的恋之伊吕波 画师：ぺろ 设计：冰茶</b>',
-			m4a1:'<b>出自：少女前线 画师：怠惰姬空白 设计：Freyr</b>',
+			jack:'同时是杀人狂和暴露狂的幼女？快收住你奇怪的想法……<br>出自：Fate/Apocrypha <b>画师：オウカ</b>',
+			yuuko:'<br>出自：神的记事本 <b>画师：岸田メル 设计：伶</b>',
+			tsubaki:'全名朱雀院椿。“这是你为我锻造的翅膀，我将用它们将尽情翱翔。”。。。椿姐赛高！<br>出自：牵绊闪耀的恋之伊吕波 <b>画师：ぺろ 设计：冰茶</b>',
+			m4a1:'<br>出自：少女前线 <b>画师：怠惰姬空白 设计：Freyr</b>',	
 		},	   
 		perfectPair:{
 		},
@@ -485,6 +485,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				popup:false,
 				filter:function(event,player){
+					console.log(event);
 					return true;
 				},
 				content:function(){
@@ -681,14 +682,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player:"phaseBegin",
 				},
 				filter:function(event,player){
-					return player.hp == 1||player.lili > lib.skill.solomon.cost;
+					return player.hp < 3 ||player.lili > lib.skill.solomon.cost;
 				},
 				check:function(event,player){
 					return true;
 				},
 				content:function(){
 					'step 0'
-					if(player.hp == 1){
+					if(player.hp < 3){
 						player.loselili(0);
 					} else{
 						player.loselili(lib.skill.solomon.cost);
@@ -753,6 +754,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				mark:true,
 			},
 			sbrs_liansuo:{
+				audio:2,
 				trigger:{
 					player:'phaseBegin',
 				},
@@ -2287,7 +2289,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 }
 			},
 			touying_target:{
-				audio:'touying',
+				audio:'touying_backup',
 				trigger:{target:'useCardToBefore'},
 				usable:1,
 				filter:function(event,player){
@@ -2844,10 +2846,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:1,
 				enable:['chooseToRespond','chooseToUse'],
 				filterCard:function(card,player){
-					if (!player.countCards('e', {subtype:'equip1', color:'black'})){
+					if (!player.countCards('e', {color:'black'})){
 						if (get.color(card) == 'black') return false;
 					}
-					if (!player.countCards('e', {subtype:'equip1', color:'red'})){
+					if (!player.countCards('e', {color:'red'})){
 						if (get.color(card) == 'red') return false;
 					}
 					return true;
@@ -2855,13 +2857,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				position:'he',
 				viewAs:{name:'sha'},
 				viewAsFilter:function(player){
-					return player.countCards('e', {subtype:'equip1'});
+					return player.countCards('e');
 				},
 				prompt:'将一张牌当作轰！使用/打出',
 				check:function(card){return 4-get.value(card)},
 				ai:{
 					skillTagFilter:function(player){
-						return player.countCards('e', {subtype:'equip1'});
+						return player.countCards('e');
 					},
 					respondSha:true,
 				}
@@ -2881,14 +2883,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				position:'he',
 				viewAs:{name:'shan'},
 				viewAsFilter:function(player){
-					return player.countCards('e', {subtype:'equip1'});
+					return player.countCards('e');
 				},
 				prompt:'将一张牌当作躲～使用/打出',
 				check:function(){return 1},
 				ai:{
 					respondShan:true,
 					skillTagFilter:function(player){
-						return player.countCards('e', {subtype:'equip1'});
+						return player.countCards('e');
 					},
 					effect:{
 						target:function(card,player,target,current){
@@ -3349,7 +3351,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			hongxi_audio1:'首先从哪里开始打呢？',
 			hongxi_audio2:'那么，让我们举办一场华丽的派对吧！',
 			solomon:'所罗门的噩梦',
-			solomon_info:'符卡技（2）<u>若你的体力值为1，此符卡消耗视为0；</u>符卡发动时，你获得一张【连击】技能牌；【轰袭】追加描述“辅助／宝物／道具～令该【轰！】造成的弹幕伤害＋１”。',
+			solomon_info:'符卡技（2）<u>若你的体力值小于3，此符卡消耗视为0；</u>符卡发动时，你获得一张【连击】技能牌；【轰袭】追加描述“辅助／宝物／道具～令该【轰！】造成的弹幕伤害＋１”。',
 			solomon_audio1:'所罗门的噩梦，让你们见识一下！',
 			megumin:'惠惠',
 			megumin_die:'和真，快来背我回去啊OAQ',
@@ -3465,15 +3467,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			twob:'2B',
 			qiyue:'白之契约',
 			qiyue_info:'你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有手牌，你获得1点灵力。',
+			qiyue_audio1:'……',
+			qiyue_audio2:'哈啊——',
 			yueding:'白之约定',
 			yueding2:'白之约定（转化）',
 			yueding1:'白之约定',
 			yueding_info:'符卡技（2）一回合一次，你可以将一张牌当作【轰！】使用；你使用【轰】的次数上限+1；你使用【轰！】指定目标后，可以弃置目标一张牌；然后，若目标没有装备牌，你摸一张牌。',
+			yueding_audio1:'看招——',
+			yueding_audio2:'……',
 			kuro:'克洛伊',
 			kuro_die:'我记住你的脸了…。之后绝对要让你哭出来……',
 			touying:'投影',
-			touying_audio1:'Trace On!……是这样的吗？',
-			touying_audio2:'I am the bone of my……即使对于我来说都有点羞耻啊，这台词……',
+			touying_backup_audio1:'Trace On!……是这样的吗？',
+			touying_backup_audio2:'I am the bone of my……即使对于我来说都有点羞耻啊，这台词……',
 			touying_target:'投影',
 			touying_recast:'投影（重铸）',
 			touying_info:'一回合一次，出牌阶段，或你成为攻击牌的目标后，你可以消耗1点灵力，将一张非装备牌当作一种装备牌置于装备区内；一名角色的结束阶段，你重铸装备区内以此法置入的牌。',
@@ -3489,12 +3495,19 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			heyi_skill_audio2:'『鹤翼三连』！',
 			heyi_info:'符卡技（0）【投影】中的“一次”视为“三次”；你使用【轰！】指定目标后，可以重铸装备区内的任意张牌，然后弃置目标等量牌。',
 			daria:'多萝西',
+			daria_die:'这次我就好心让你赢吧！',
 			zhuanhuan:'次元转换',
 			zhuanhuan_info:'一回合一次，出牌阶段，你可以弃置所有手牌，然后摸X张牌（X为灵力值）。',
+			zhuanhuan_audio1:'这就是大魔女的实力！',
+			zhuanhuan_audio2:'我要把你打成稀巴烂了哟？',
 			moli:'次元魔力',
 			moli_info:'一回合一次，出牌阶段，你可以弃置一张牌，并弃置至多三名角色各一张牌；然后，你观看牌堆底等量的牌，依次交给这些角色各一张。',
+			moli_audio1:'呐，这忙就让我来帮吧？',
+			moli_audio2:'嗯……我应该做什么的来着？',
 			chaoyue:'次元超越',
 			chaoyue_info:'符卡技（7）<u>你使用法术牌时，令此符卡的消耗-1；</u>符卡发动时，重置此符卡的消耗；当前回合结束后，你进行一个额外回合。',
+			chaoyue_audio1:'撒，开门了哟？',
+			chaoyue_audio2:'来，见识一下次元的尽头吧？',
 			rylai:'莉莱',
 			tanxue:'坍雪寒裘',
 			tanxue_info:'一名角色使用【轰！】指定你为目标后，若其灵力小于你，你可以令该【轰！】造成的伤害改为灵击伤害。',

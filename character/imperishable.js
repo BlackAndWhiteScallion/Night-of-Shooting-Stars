@@ -1145,8 +1145,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.logSkill('zhenshi',result.targets);
                         event.targets = result.targets;
                         event.targets.push(trigger.targets[0]);
-                        var rand = [game.createCard('?','',''),game.createCard('?','','')];
-                        if (result.targets.length == 2){
+                        var rand = [game.createCard('?','',''), game.createCard('?','','')];
+                        if (event.targets.length == 3){
                           rand.push(game.createCard('?','',''));
                         }
                         trigger.player.chooseCardButton(1,true,rand,'选择'+get.translation(trigger.card)+'新的目标').set('ai',function(button){

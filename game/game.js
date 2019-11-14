@@ -9130,6 +9130,7 @@
                     next.setContent(info.content);
                     next.skillHidden=event.skillHidden;
                     next.skill=event.skill;
+                    console.log(next);
                     if(info.popup!=false&&!info.direct){
                         if(info.popup){
                             player.popup(info.popup);
@@ -26789,9 +26790,9 @@
                     if(result=='战斗胜利'){
                         if(_status.betWin){
                             betWin=true;
-                            _status.coin+=10;
+                            _status.coin+=50;
                         }
-                        _status.coin+=20;
+                        _status.coin+=50;
                         if(_status.additionalReward){
                             _status.coin+=_status.additionalReward();
                         }
@@ -26852,9 +26853,9 @@
                     _status.coin=Math.ceil(_status.coin);
                     dialog.add(ui.create.div('','获得'+_status.coin+'金'));
                     if(betWin){
-                        game.changeCoin(40);
+                        game.changeCoin(200);
                         dialog.content.appendChild(document.createElement('br'));
-                        dialog.add(ui.create.div('','（下注赢得20金）'));
+                        dialog.add(ui.create.div('','（下注赢得200金）'));
                     }
                     game.changeCoin(_status.coin);
                 }
@@ -30732,13 +30733,7 @@
                     node._link={config:config};
                     if(!config.clear){
                         if(config.name!='开启'){
-                            if(config.name=='屏蔽弱将'){
-                                config.intro='强度过低的角色（孙策除外）不会出现在选将框，也不会被AI选择'
-                            }
-                            else if(config.name=='屏蔽强将'){
-                                config.intro='强度过高的角色不会出现在选将框，也不会被AI选择'
-                            }
-                            else if(!config.intro){
+                            if(!config.intro){
                                 config.intro='设置'+config.name;
                             }
                             lib.setIntro(node,function(uiintro){
@@ -43946,6 +43941,7 @@
             return lib.config.mode_config[mode][item];
         },
         coinCoeff:function(list){
+            /*
             var num=0;
             for(var i=0;i<list.length;i++){
                 var rank=get.rank(list[i]);
@@ -43962,7 +43958,8 @@
                     case 'd':num+=1.8;break;
                 }
             }
-            return num/list.length;
+            */
+            return 2.5;
         },
         rank:function(name,num){
             if(typeof name=='object'&&name.name){

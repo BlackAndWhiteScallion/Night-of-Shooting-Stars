@@ -3,7 +3,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'randomOL',
 		connect:true,
 		character:{
-			homura:['female', '2', 3, ['time2', 'time', 'homuraworld']],
+			homura:['female', '2', 3, ['time3', 'time', 'homuraworld']],
 			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']]
 		},
 		characterIntro:{
@@ -15,6 +15,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		skill:{
 			time:{
 				forced:true,
+				group:'time2',
 				trigger:{global:'gameStart'},
 				audio:2,
 				intro:{
@@ -54,7 +55,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			time2:{
-				group:['time3', 'time4'],
 				forced:true,
 				audio:2,
 				trigger:{player:'dieBegin'},
@@ -78,6 +78,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				selectCard:[1,Infinity],
 				discard:false,
 				audio:2,
+				group:'time4',
 				prepare:function(cards, player, targets){
 					player.lose(cards,ui.special)._triggered=null;
 				},
@@ -324,16 +325,27 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		translate:{
             randomOL:'乱入OL',
             homura:'焰',
+			homura_die:'无论是多少次……',
 			time:'再回',
 			time_bg:'储',
 			time_info:'锁定技，游戏开始时，你创建上次晓美焰游戏结束/坠机时角色牌上的所有牌，将这些牌扣置于角色牌上。',
+			time_audio1:'这次一定会成功！',
+			time_audio2:'但愿这个世界里不会发生什么奇怪的事情……',
 			time3:'保存（存）',
+			time3_audio1:'这个应该会用得到。',
+			time3_audio2:'嗯……回去之后需要把盾牌里好好清理一下。',
 			time4:'保存（取）',
-			time2_info:'一回合一次，出牌阶段，你可以将任意张牌扣置于角色牌上；你需要使用牌时，若你的手牌数小于体力值，你可以获得角色牌上一张牌。',
-			time2:'保存',
+			time4_audio1:'有时候一想，这东西还真是方便啊。',
+			time4_audio2:'早就预料这种情况了！',
+			time3_info:'一回合一次，出牌阶段，你可以将任意张牌扣置于角色牌上；你需要使用牌时，若你的手牌数小于体力值，你可以获得角色牌上一张牌。',
+			time3:'保存',
 			homuraworld:'焰的世界',
 			homuraworld_skill:'焰的世界',
+			homuraworld_audio1:'……',
+			homuraworld_audio2:'欢迎来到我的世界。',
 			homuraworld_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定目标时，你可以消耗1点灵力，取消之，并将之扣置于你的角色牌上。',
+			homuraworld_skill_audio1:'无论是什么，在这个魔法下！',
+			homuraworld_skill_audio2:'嗯，谢谢了。',
 			diva:'美九',
 			duzou:'独奏',
 			duzou_info:'一回合一次，出牌阶段，你可以观看一名角色手牌，明置其中一张；然后，若其没有灵力，其于回合结束后进行一个额外的出牌阶段，该阶段内其由你控制。',

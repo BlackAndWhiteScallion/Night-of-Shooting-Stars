@@ -1851,10 +1851,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     					if(_status.roundStart&&_status.roundStart.side==player.side){
     						// 每轮开始时扣宝箱
                             for(var i=0;i<game.treasures.length;i++){
-                                game.treasures[i].loseHp();
-                                if(game.treasures[i].hp<=0){
-                                    game.removeTreasure(game.treasures[i--]);
-                                }
+								if (game.treasures[i].hp == 1){
+									game.removeTreasure(game.treasures[i--]);
+								} else {
+									game.treasures[i].loseHp();
+								}
                             }
                             // 每轮开始有概率来一个宝箱
                             if(Math.random()<parseFloat(get.config('chess_treasure'))){
@@ -5126,6 +5127,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     			forced:true,
     			priority:100,
     			popup:false,
+				filter:function(event, player){
+					if (event.skill) return event.skill[0] != '_';
+					return true;
+				},
     			content:function(){
     				player.chessFocus();
     			},

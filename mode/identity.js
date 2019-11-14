@@ -16,6 +16,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			// 替换牌堆的东西，但是没看到在哪里用的（也不在乎）
 			// 好像是强化牌？顺手换成盛东……？
 			// 好像是某种阵法牌替换还是侠客牌替换。
+			/*
 			event.replacePile=function(){
 				var list=['shengdong','qijia','caomu','jinchan','zengbin','fulei','qibaodao','zhungangshuo','lanyinjia'];
 				var map={
@@ -41,6 +42,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			}
+			*/
 			// 首先，如果是录像就试图播放这个录像？
 			"step 1"
 			var playback=localStorage.getItem(lib.configprefix+'playback');

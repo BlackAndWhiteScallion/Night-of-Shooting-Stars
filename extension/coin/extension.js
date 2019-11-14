@@ -6,6 +6,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			if(lib.config.mode!='chess'||get.config('chess_mode')!='leader'){
 				_status.coin=100;
 			}
+			if (!lib.config.coin) game.changeCoin(100);
 			lib.characterPack.mode_extension_coin={
 				kejinji:['female','5',3,['chaoneng', 'chaoli', 'liyu'], ['forbidai']],
 				hero:['female', '1', 4, ['weituo', 'zaguo', 'fanjian'], ['forbidai']],
@@ -693,12 +694,12 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 
 					if(!game.phaseNumber&&!game.online){
 						uiintro.add('下注');
-						uiintro.add('<div class="coin_buy">本局获胜<div class="menubutton">20金</span></div></div>');
+						uiintro.add('<div class="coin_buy">本局获胜<div class="menubutton">100金</span></div></div>');
 						var bet=uiintro.content.lastChild.lastChild.lastChild;
 						bet.listen(function(){
 							if(_status.betWin) return;
 							_status.betWin=true;
-							game.changeCoin(-20);
+							game.changeCoin(-100);
 							this.innerHTML='已下注';
 						});
 						if(_status.betWin){
