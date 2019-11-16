@@ -1048,7 +1048,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									'5. 有她的名字的文件夹吗？如果有，打开它。如果没有，创建一个，然后打开它。',
 									'6. 把图片（.jpg格式）放进文件夹里。命名为1.jpg。已经有了就+1，2.jpg。以此类推。',
 									'就这样，皮肤就可以在游戏内切换啦！',
-									'添加游戏牌的皮肤也是相同的方式',
+									'添加游戏牌的皮肤也是相同的方式。找出卡牌的名字，找出它的文件夹来。区别是，游戏牌的图片是.png格式而不是.jpg格式。',
 								];
 								dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 							},{marginLeft:'6px'});
