@@ -2665,11 +2665,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<players.length;i++){
 						if (-get.attitude(player, players[i]) && players[i].countCards('h') > 3) bad_att = true;
 					}
-					return bad_att;
+					return bad_att && get.attitude(player, event.player) && event.player.countCards('h','sha') > 1;
 				},
 				content:function(){
 					"step 0"
-					player.chooseTarget('雾临：洗混一名角色手牌，且其本回合可以被轰两次',function(card, player, target){
+					player.chooseTarget('雾临：洗混一名角色手牌，且其本回合可以被轰两次',true, function(card, player, target){
 							return get.distance(player,target,'attack')<=1;
 						}).ai=function(target){
 							return -get.attitude(player, target);
@@ -2706,17 +2706,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				check:function(event, player){
 					var bad_att = false;
 					var players = game.filterPlayer();
-					for(var i=0;i<players.length;i++){
-						if (-get.attitude(player, players[i]) && players[i].countCards('h') > 3) bad_att = true;
-					}
+					if (-get.attitude(player, event.player) && event.player.countCards('h') > 3) bad_att = true;
 					return bad_att;
 				},
 				content:function(){
 					"step 0"
-					player.chooseTarget('夜降：一名角色攻击范围为0，且其本回合装备无效',function(card, player, target){
+					player.chooseTarget('夜降：一名角色攻击范围为0，且其本回合装备无效', true, function(card, player, target){
 							return get.distance(player,target,'attack')<=1;
 						}).ai=function(target){
-							return -get.attitude(player, target);
+							return -get.attitude(player, target) && target == trigger.player;
 						};
 					"step 1"
  					if (result.bool){
@@ -3149,7 +3147,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{source:'dieAfter'},
 				forced:true,
 				filter:function(event,player){
-					return true;
+					return !(get.mode() == 'boss' && game.bossinfo.chongzheng);
 				},
 				content:function(){
 					lib.skill.huanzhao.get(player, trigger.player.name);

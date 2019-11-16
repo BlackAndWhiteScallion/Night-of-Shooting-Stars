@@ -865,8 +865,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        cardview:{
 	        	name:'游戏牌',
 	        	mode:'',
-	        	intro:'卡牌的花色点数和灵力以牌局内为准。',
-	        	showcase:function(init){
+	        	intro:['卡牌的花色点数和灵力以牌局内为准。右键或长按卡牌可以查看卡牌简介，也可以更换卡牌皮肤。',],
+				showcase:function(init){
 	        		if (init){
 		        		var i;
 		            	var list=[];
@@ -877,6 +877,35 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
+						var style2={position:'relative',display:'block',left:0,top:0,marginBottom:'6px',padding:0,width:'100%'};
+						var line1=ui.create.div(style2);
+						dialog.add(line1);
+						var scenelist=ui.create.selectlist(['默认','妖妖梦风格'],null,line1);
+						var addButton=ui.create.node('button','批量更换皮肤',line1,function(){
+							if (scenelist.value == '默认'){
+	                        	for (i in lib.card){
+									delete lib.config.skin[i];
+								}
+							} else if (scenelist.value == '妖妖梦风格'){
+								var r = lib.config.skinSet[0];
+								if (lib.config.skinSet[0]){
+									for (i in lib.config.skinSet[0]){
+										if (lib.config.skinSet[0][i] == 0){
+											delete lib.config.skin[i];
+										} else {
+											lib.config.skin[i] = lib.config.skinSet[0][i];
+										}
+									}
+								}
+							}
+							game.saveConfig('skin',lib.config.skin);
+							var list = document.getElementsByClassName('card');
+							for(var i=0;i<list.length;i++){
+                                if(list[i].classList.contains('card')){
+                                    list[i].node.image.setBackground(list[i].name,'card');
+                                }
+                            }
+	                    },{marginLeft:'6px',marginRight:'12px'});
 						for (i in lib.card){
 							if(lib.translate[i] && lib.card[i].type != 'zhenfa' && !lib.card[i].vanish && lib.card[i].type != 'delay'){
 								var card=game.createCard(i, undefined, undefined, undefined);
@@ -891,7 +920,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        skillview:{
 	        	name:'技能牌',
 	        	mode:'',
-	        	intro:'技能牌是特殊的游戏卡牌，没有花色点数，也不可以转化',
+	        	intro:['技能牌是特殊的游戏卡牌，没有花色点数，也不可以转化',],
 	        	showcase:function(init){
 	        		if (init){
 		        		var i;
@@ -903,11 +932,29 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
+						var style2={position:'relative',display:'block',left:0,top:0,marginBottom:'6px',padding:0,width:'100%'};
+						var line1=ui.create.div(style2);
+						var scenelist=ui.create.selectlist(['图标','文字'],null,line1);
+						var addButton=ui.create.node('button','批量更换皮肤',line1,function(){
+	                        for (i in lib.card){
+								if (lib.card[i].type != 'delay') continue;
+								if (scenelist.value == '图标') delete lib.config.skin[i];
+								else if (scenelist.value == '文字') lib.config.skin[i] = 1;
+							}
+							game.saveConfig('skin',lib.config.skin);
+							var list = document.getElementsByClassName('card');
+							for(var i=0;i<list.length;i++){
+                                if(list[i].classList.contains('card')){
+                                    list[i].node.image.setBackground(list[i].name,'card');
+                                }
+                            }
+	                    },{marginLeft:'6px',marginRight:'12px'});
 						for (i in lib.card){
 							if(lib.translate[i] && !lib.card[i].vanish && lib.card[i].type == 'delay'){
 								list.push(i);
 	                        }
 						}
+						dialog.add(line1);
 						dialog.add([list,'vcard']);
 						this.appendChild(dialog);
 						dialog.noopen=true;
@@ -917,7 +964,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        incidentview:{
 	        	name:'异变牌',
 	        	mode:'identity',
-	        	intro:'异变牌持有胜利条件，特殊效果。不是游戏牌，也没有花色点数的。',
+	        	intro:['异变牌持有胜利条件，特殊效果。不是游戏牌，也没有花色点数的。',],
 	        	showcase:function(init){
 	        		if (init){
 	        			var i;
@@ -1001,6 +1048,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									'5. 有她的名字的文件夹吗？如果有，打开它。如果没有，创建一个，然后打开它。',
 									'6. 把图片（.jpg格式）放进文件夹里。命名为1.jpg。已经有了就+1，2.jpg。以此类推。',
 									'就这样，皮肤就可以在游戏内切换啦！',
+									'添加游戏牌的皮肤也是相同的方式',
 								];
 								dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 							},{marginLeft:'6px'});
