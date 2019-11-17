@@ -12039,9 +12039,6 @@
                     else{
                         cards=[];
                     }
-                    if(event.drawDeck){
-                        cards=cards.concat(player.getDeckCards(event.drawDeck));
-                    }
                     if(event.animate!=false){
                         if(event.visible){
                             player.gain(cards,'gain2');
@@ -12063,29 +12060,40 @@
                     if(typeof event.minnum=='number'&&num<event.minnum){
 						num=event.minnum;
 					}
+                    var cards = [];
+                    var cardname = event.cardname;
+                    var message = event.message;
+                    if (!ui.skillPile.childNodes || ui.skillPile.childNodes.length == 0){
+                        game.log('没有技能牌了！');
+                        event.finish();
+                    }
+                    if (ui.skillPile.childNodes.length < num){
+                        game.log('技能牌不够了！');
+                        num = ui.skillPile.childNodes.length;
+                    }
                     if(event.log!=false){
                         if(num>0){
-                            game.log(player,'摸了'+get.cnNumber(num)+'张牌');
+                            game.log(player,'摸了'+get.cnNumber(num)+'张技能牌');
                         }
                     }
-                    var cards;
-                    if(num>0){
-                        cards=get.cards(num);
-                    }
-                    else{
-                        cards=[];
-                    }
-                    if(event.drawDeck){
-                        cards=cards.concat(player.getDeckCards(event.drawDeck));
+                    for(var i=0;i<num;i++){
+                        if (cardname){
+                            if (!message) message = '没找到'+get.translation(cardname);
+                            for(var j=0;j<ui.skillPile.childNodes.length;j++){
+                                if (ui.skillPile.childNodes[j].name == cardname){
+                                    cards.push(ui.skillPile.childNodes[j]);
+                                    break;
+                                } else if (j == ui.skillPile.childNodes.length -1){
+                                    player.say(message);
+                                    i = 10000; 
+                                }
+                            }
+                        } else {
+    					    cards.push(ui.skillPile.childNodes[i]);
+                        }
                     }
                     if(event.animate!=false){
-                        if(event.visible){
-                            player.gain(cards,'gain2');
-                            game.log(player,'摸了'+get.cnNumber(num)+'张牌（',cards,'）');
-                        }
-                        else{
-                            player.gain(cards,'draw');
-                        }
+                        player.gain(cards);
                     }
                     else{
                         player.gain(cards);
@@ -13308,7 +13316,7 @@
                             cards[0].clone.moveDelete(player);
                             game.addVideo('gain2',player,get.cardsInfo(cards));
                         }
-                        // player.$gain2(cards);
+                        player.$gain2(cards);
                         if(get.itemtype(card)!='card'){
                             if(typeof card=='string') cards[0].viewAs=card;
                             else cards[0].viewAs=card.name;
@@ -16039,6 +16047,10 @@
                         }
                         else if(typeof arguments[i]=='boolean'){
                             next.animate=arguments[i];
+                        } 
+                        else if (typeof arguments[i]=='string'){
+                            if (!next.cardname) next.cardname=arguments[i];
+                            else next.message = arguments[i];
                         }
                     }
                     if(next.num==undefined) next.num=1;

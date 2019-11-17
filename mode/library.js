@@ -880,24 +880,29 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						var style2={position:'relative',display:'block',left:0,top:0,marginBottom:'6px',padding:0,width:'100%'};
 						var line1=ui.create.div(style2);
 						dialog.add(line1);
-						var scenelist=ui.create.selectlist(['默认','妖妖梦风格'],null,line1);
+						var scenelist=ui.create.selectlist(['默认','红魔乡风格','妖妖梦风格'],null,line1);
 						var addButton=ui.create.node('button','批量更换皮肤',line1,function(){
 							if (scenelist.value == '默认'){
 	                        	for (i in lib.card){
 									delete lib.config.skin[i];
 								}
-							} else if (scenelist.value == '妖妖梦风格'){
-								var r = lib.config.skinSet[0];
-								if (lib.config.skinSet[0]){
-									for (i in lib.config.skinSet[0]){
-										if (lib.config.skinSet[0][i] == 0){
+							} else{
+								var r = null;
+								if (scenelist.value == '妖妖梦风格'){
+									r = lib.config.skinSet[0];
+								} else if (scenelist.value == '红魔乡风格'){
+									r = lib.config.skinSet[1];
+								}
+								if (r){
+									for (i in r){
+										if (r[i] == 0){
 											delete lib.config.skin[i];
 										} else {
-											lib.config.skin[i] = lib.config.skinSet[0][i];
+											lib.config.skin[i] = r[i];
 										}
 									}
 								}
-							}
+							} 
 							game.saveConfig('skin',lib.config.skin);
 							var list = document.getElementsByClassName('card');
 							for(var i=0;i<list.length;i++){

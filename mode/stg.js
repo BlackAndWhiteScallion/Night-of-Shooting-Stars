@@ -488,7 +488,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							source.draw();
 							source.gainlili();
 						}
-						//game.me.gain(ui.skillPile.childNodes[0],'draw2');
 						this.hide();
 						game.addVideo('hidePlayer',this);
 						game.players.remove(this);
@@ -734,24 +733,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if (result.control == '回复1点体力，获得圣盾'){
 						target.recover();
-						for(var i=0;i<ui.skillPile.childNodes.length;i++){
-							if (ui.skillPile.childNodes[i].name == 'shengdun'){
-								target.gain(ui.skillPile.childNodes[i]);
-								break;
-							} else if (i == ui.skillPile.childNodes.length -1){
-								target.say('没找到【圣盾】');					  
-							}
-						}
+						player.drawSkill('shengdun');
 					} else if (result.control == '获得1点灵力，获得连击'){
 						target.gainlili();
-						for(var i=0;i<ui.skillPile.childNodes.length;i++){
-							if (ui.skillPile.childNodes[i].name == 'lianji'){
-								target.gain(ui.skillPile.childNodes[i]);
-								break;
-							} else if (i == ui.skillPile.childNodes.length -1){
-								target.say('没找到【连击】');					  
-							}
-						}
+						player.drawSkill('lianji');
 					}
 				},
 				ai:{

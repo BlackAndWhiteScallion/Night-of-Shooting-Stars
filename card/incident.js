@@ -203,8 +203,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
     			content:function(){
     				trigger.player.logSkill(this);
-					trigger.player.gain(ui.skillPile.childNodes[0],'draw2');
-    			},
+					trigger.player.drawSkill();
+				},
     		},
     		imperishable_win:{
     			trigger:{player:'phaseBegin'},

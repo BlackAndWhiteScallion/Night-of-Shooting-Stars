@@ -768,14 +768,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           player.$give(result.cards.length,result.targets[0]);
                           result.targets[0].say('只要998，保证你出SSR——');  
                         }
-                        for(var i=0;i<ui.skillPile.childNodes.length;i++){
-                          if (ui.skillPile.childNodes[i].name == 'shenyou'){
-                            player.gain(ui.skillPile.childNodes[i]);
-                            break;
-                          } else if (i == ui.skillPile.childNodes.length -1){
-                              result.targets[0].say('技能牌堆里并没有【神佑】，呵呵——');                      
-                          }
-                        }
+                        player.drawSkill('shenyou');
                         player.addTempSkill('kaiyun_3');
                         result.targets[0].addTempSkill('kaiyun_4');
                     },
@@ -1798,8 +1791,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       return player.lili <= 2;
                     },
                     content:function(){
-                      player.gain(ui.skillPile.childNodes[0],'draw2');
-                      player.gain(ui.skillPile.childNodes[1],'draw2');
+                      player.drawSkill(2);
                     }
                   },
                   yongye4:{

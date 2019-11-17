@@ -113,16 +113,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     	} else if (event.list[result.index] == '摸一张技能牌和一张【灵涌】'){
                     		player.addTempSkill('sihuan_3');
                             event.control = 'sihuan_3';
-                    		for(var i=0;i<ui.skillPile.childNodes.length;i++){
-			                  if (ui.skillPile.childNodes[i].name == 'lingyong'){
-			                    player.gain(ui.skillPile.childNodes[i]);
-			                    break;
-			                  } else if (i == ui.skillPile.childNodes.length -1){
-			                      player.say('哎，技能牌堆里居然没有【灵涌】？');                      
-			                  }
-			                }
-							//player.draw(1, ui.skillPile, 'visible');
-			                player.gain(ui.skillPile.childNodes[0],'draw2');
+							player.drawSkill('lingyong', '哎，技能牌堆里居然没有【灵涌】？');
+			                player.drawSkill();
                     	} else if (event.list[result.index] == '将弃置牌交给一名符卡发动中的角色') {
                     		player.addTempSkill('sihuan_4');
                     		event.control = 'sihuan_4';

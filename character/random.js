@@ -187,14 +187,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:"gameStart"},
 				content:function(){
 					'step 0'
-					for(var i=0;i<ui.skillPile.childNodes.length;i++){
-						if (ui.skillPile.childNodes[i].name == 'shenyou'){
-							player.gain(ui.skillPile.childNodes[i]);
-							break;
-						} else if (i == ui.skillPile.childNodes.length -1){
-							player.say('技能牌堆里并没有【神佑】，呵呵——');					  
-						}
-					}
+					player.drawSkill('shenyou', '啊嘞，没有【神佑】了吗……');
 				},
 			},
 			kc_yuzhi_2:{
@@ -295,14 +288,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if(player.countCards('h')<3)player.draw(3-player.countCards('h'));
 					'step 2'
-					for(var i=0;i<ui.skillPile.childNodes.length;i++){
-						if (ui.skillPile.childNodes[i].name == 'shenyou'){
-							player.gain(ui.skillPile.childNodes[i]);
-							break;
-						} else if (i == ui.skillPile.childNodes.length -1){
-							player.say('啊，没有【神佑】了吗……');					  
-						}
-					}
+					player.drawSkill('shenyou', '啊嘞，没有【神佑】了吗……');
 				},
 			},
 			zuoshibao_2:{
@@ -696,14 +682,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					player.turnOver();
 					'step 1'
-					for(var i=0;i<ui.skillPile.childNodes.length;i++){
-						if (ui.skillPile.childNodes[i].name == 'lianji'){
-							player.gain(ui.skillPile.childNodes[i]);
-							break;
-						} else if (i == ui.skillPile.childNodes.length -1){
-							player.say('技能牌堆里居然没有【连击】了poi？');					  
-						}
-					}
+					player.drawSkill('lianji', '居然没有【连击】了poi？');
 					'step 2'
 					game.log(player,'更改了','【轰袭】','的描述');
 					player.markSkill('hongxi');
@@ -1146,14 +1125,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								return get.value(card) < 6 && player.countCards('j') < 3;
 							},
   							content:function(event,player){
-  								for(var i=0;i<ui.skillPile.childNodes.length;i++){
-		                          if (ui.skillPile.childNodes[i].name == event.getParent().getParent()._result.links[0][2]){
-		                            player.gain(ui.skillPile.childNodes[i]);
-		                            break;
-		                          } else if (i == ui.skillPile.childNodes.length -1){
-		                              player.say('什么，余居然没有这种技能？');                      
-		                          }
-		                        }
+								player.drawSkill(event.getParent().getParent()._result.links[0][2], '什么，余居然没有这种技能？');
   							}
                         }
                     },

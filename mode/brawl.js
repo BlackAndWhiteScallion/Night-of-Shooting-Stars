@@ -1285,6 +1285,146 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			*/
+			crow:{
+				name:'神的指引',
+				mode:'identity',
+				intro:['牌堆里的所有牌换成【乌鸦神像】！', '【乌鸦神像】无法获得更多的【乌鸦神像】'],
+				init:function(){
+					lib.card['spell_wuyashenxiang'] = {
+						type:'trick',
+						subtype:'support',
+						fullimage:true,
+						enable:true,
+						cost:0,
+						filterTarget:function(card,player,target){
+							return target==player;
+						},
+						selectTarget:-1,
+						content:function(){
+							'step 0'
+							player.chooseControl('法术牌','基本牌').set('prompt', '乌鸦神像：发现哪种类型的牌？').ai=function(){
+								return Math.random()<0.5?'法术牌':'基本牌';
+							};
+							'step 1'
+							var list=[];
+							var bool=(result.control=='法术牌');
+							for(var i in lib.card){
+								if(bool){
+									if(lib.card[i].type=='trick' && i != 'spell_wuyashenxiang'){
+										list.push(i);
+									}
+								}
+								else{
+									if(lib.card[i].type=='basic'){
+										list.push(i);
+									}
+								}
+							}
+							list=list.randomGets(3);
+							var cards=[];
+							for(var i=0;i<list.length;i++){
+								cards.push(game.createCard(list[i]));
+							}
+							player.chooseCardButton(cards,'选择一张加入手牌',true);
+							'step 2'
+							player.gain(result.links,'draw');
+						},
+						ai:{
+							order:2,
+							value:5,
+							useful:5,
+							result:{
+								player:1
+							},
+						}
+					};
+				},
+				showcase:function(init){
+					var node=this;
+					var player;
+					if(init){
+						player=ui.create.player(null,true);
+						player.node.avatar.style.backgroundSize='cover';
+						player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_fapaiji.jpg');
+						player.node.name.innerHTML = '发<br>牌<br>姬';
+						player.node.avatar.show();
+						player.style.left='calc(50% - 75px)';
+						player.style.top='20px';
+						player.node.count.remove();
+						player.node.hp.remove();
+						player.node.lili.remove();
+						player.style.transition='all 0.5s';
+						node.appendChild(player);
+						node.playernode=player;
+					}
+					else{
+						player=node.playernode;
+					}
+					if (lib.card['spell_wuyashenxiang']){
+						lib.card['spell_wuyashenxiang'].cost = 0;
+						var num=0;
+						var num2=0;
+						this.showcaseinterval=setInterval(function(){
+							var dx,dy
+							if(num2%5==0){
+								for(var i=0;i<5;i++){
+									switch(i){
+										case 0:dx=-180;dy=0;break;
+										case 1:dx=-140;dy=100;break;
+										case 2:dx=0;dy=155;break;
+										case 3:dx=140;dy=100;break;
+										case 4:dx=180;dy=0;break;
+									}
+									var card=game.createCard('spell_wuyashenxiang');
+									card.style.left='calc(50% - 52px)';
+									card.style.top='68px';
+									card.style.position='absolute';
+									card.style.margin=0;
+									card.style.zIndex=2;
+									card.style.opacity=0;
+									setTimeout((function(card, dx, dy){
+										return function(){
+											node.appendChild(card);
+											ui.refresh(card);
+											card.style.opacity=1;
+											card.style.transform='translate('+dx+'px,'+dy+'px)';
+										};
+									})(card, dx, dy),i*200);
+									setTimeout((function(card){
+										return function(){
+											card.delete();
+										};
+									})(card),3000);
+								}
+							}
+							num2++;
+							if(num>=5){
+								num=0;
+							}
+						},700);
+					} else {
+						var dialog=ui.create.dialog('hidden');
+						dialog.style.left = "0px";
+						dialog.style.top = "0px";
+						dialog.style.width = "100%";
+						dialog.style.height = "100%";
+						dialog.classList.add('fixed');
+						dialog.noopen=true;
+						node.appendChild(dialog);
+						dialog.addText('<div><div style="display:block;left:calc(50% - 100px);top:200px;text-align:left;font-size:16px">需要打开金币扩展才能使用这个场景！');
+					}
+	            },
+				content:{
+	            	cardPile:function(list){
+						for (var i = 0; i < list.length; i ++){
+							if (list[i][0]){
+								list[i][2] = 'spell_wuyashenxiang';
+							}
+						}
+						return list;
+					},
+				}
+			},
 	        pubg:{
 	        	name:'吃鸡模式',
 	        	mode:'identity',

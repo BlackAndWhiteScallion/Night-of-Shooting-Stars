@@ -511,9 +511,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				if (target.name == 'cirno') target.say('我是最强的！');
 				if (player.storage._enhance){
-					for(var i=0;i<player.storage._enhance;i++){
-    					target.gain(ui.skillPile.childNodes[0],'draw2');
-    				}
+					target.drawSkill(player.storage._enhance);
 				}
 				target.draw(2);
 			},
@@ -864,7 +862,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				target.draw();
 				target.gainlili();
-				target.gain(ui.skillPile.childNodes[0],'draw2');
+				target.drawSkill();
 			},
 			ai:{
 				basic:{
@@ -1796,12 +1794,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{player:'phaseEnd'},
 			frequent:false,
 			filter:function(event,player){
-				return player.lili > 0 && ui.skillPile.childNodes.length > 0;
+				return player.lili > 0;
 			},
 			content:function(){
 				if (player.name == 'patchouli') player.say('书中自有黄金屋。');
 				player.loselili();
-				player.gain(ui.skillPile.childNodes[0],'draw2');
+				player.drawSkill();
 			},
 			check:function(event, player){
 				if (player.lili < 3) return false;
@@ -2630,14 +2628,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				'step 1'
 				if(result.bool){
 					player.discard(result.cards[0]);
-					for(var i=0;i<ui.skillPile.childNodes.length;i++){
-                          if (ui.skillPile.childNodes[i].name == 'qianxing'){
-                            player.gain(ui.skillPile.childNodes[i]);
-                            break;
-                          } else if (i == ui.skillPile.childNodes.length -1){
-                            player.say('没找到【潜行】');                      
-                          }
-                        }
+					player.drawSkill('qianxing');
 					player.logSkill('_jingxia');
 				}
 			},

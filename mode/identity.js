@@ -1618,7 +1618,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					// 奖惩：获得1灵力和1技能牌
 					if (source){
 						source.gainlili();
-						source.gain(ui.skillPile.childNodes[0],'draw2');
+						source.drawSkill();
 					}
 					// 投降设置
 					if(!_status.over){
