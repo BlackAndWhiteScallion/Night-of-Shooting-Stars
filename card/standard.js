@@ -1291,17 +1291,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return true;
 			},
 			content:function(){
+				'step 0'
 				if (target.countCards('e') > 0){
 					player.discardPlayerCard(target,'e');
 				}
 				target.damage('thunder');
 				target.equip(event.card);
 				//if (player == game.me) ui.updatehl();
+				'step 1'
 				ui.updatehl();
 				ui.updatej();
 				ui.updatem();
 				ui.update();
 				player.update();
+				game.syncState();
 			},
 			skills:['frog_skill'],
 			ai:{

@@ -256,6 +256,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			// 这个是设置布局的好像
 			// 不太对吧，那联机模式就不选将了？？
 			"step 4"
+			/*
+			ui.create.cardsAsync();
+    		game.finishCards();
+			*/
 			if (lib.config.auto_auto && !_status.auto){
 				ui.click.auto();
 			}

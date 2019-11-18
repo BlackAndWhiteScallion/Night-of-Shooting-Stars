@@ -231,6 +231,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 			}
 			"step 4"
+			/*
+			ui.create.cardsAsync();
+    		game.finishCards();
+			*/
 			if (lib.config.auto_auto && !_status.auto){
 				ui.click.auto();
 			}

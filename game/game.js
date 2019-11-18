@@ -5871,6 +5871,7 @@
                     }
                     this.setBackgroundImage(src);
                     this.style.backgroundSize="cover";
+                    if (lib.card[name] && lib.card[name].type == 'delay' && !lib.config.skin[name]) this.style.backgroundSize = "115%";
                     return this;
                 };
                 HTMLDivElement.prototype.setBackgroundDB=function(img){
@@ -12060,17 +12061,17 @@
                     if(typeof event.minnum=='number'&&num<event.minnum){
 						num=event.minnum;
 					}
-                    var cards = [];
                     var cardname = event.cardname;
                     var message = event.message;
                     if (!ui.skillPile.childNodes || ui.skillPile.childNodes.length == 0){
                         game.log('没有技能牌了！');
+                        num = 0;
                         event.finish();
-                    }
-                    if (ui.skillPile.childNodes.length < num){
+                    } else if (ui.skillPile.childNodes.length < num){
                         game.log('技能牌不够了！');
                         num = ui.skillPile.childNodes.length;
                     }
+                    var cards = [];
                     if(event.log!=false){
                         if(num>0){
                             game.log(player,'摸了'+get.cnNumber(num)+'张技能牌');
@@ -13430,7 +13431,6 @@
                         player.node.turnedover.setBackgroundImage('');
                         player.node.turnedover.style.opacity=0;
                         ui.refresh(player);
-                        game.log(player,'符卡结束');
                     }
                     // 到这里结束
                     game.broadcast(function(player){
@@ -21635,6 +21635,19 @@
 				trigger:{global:"gameStart"},
 				direct:true,
 				content:function(){
+                    if (get.mode() != 'identity' && get.mode() != 'old_identity'){
+                        game.loadModeAsync('identity',function(mode){
+                            for(var i in mode.translate){
+                                lib.translate[i]=lib.translate[i]||mode.translate[i];
+                                //lib.translate[i]=mode.translate[i];
+                            }
+                            for(var i in mode.skill){
+                                if(lib.skill[i]) console.log(i);
+                                else lib.skill[i]=mode.skill[i];
+                                game.finishSkill(i);
+                            }
+                        });
+                    }
                     if (player.identity != 'nei'){
                         var newz = game.findPlayer(function(current){
                             return current.identity == 'nei';
@@ -21882,12 +21895,14 @@
                 priority:-20,
                 popup:false,
                 content:function(){
+                    'step 0'
                     while(ui.dialogs.length){
                         ui.dialogs[0].close();
                     }
                     if(!player.noPhaseDelay&&lib.config.show_phase_prompt){
                         player.popup('回合结束');
                     }
+                    'step 1'
                     // 结束阶段，如果有角色是背面朝上的，就翻过去。
                     var players = game.filterPlayer();
                     for (var j = 0; j < players.length; j ++) {
@@ -21902,6 +21917,7 @@
                         }
                     }
                     game.syncState();
+                    'step 2'
                     game.addVideo('phaseChange',player);
                     game.log(player,'的回合结束');
                     game.log('————————————————————');
@@ -21933,15 +21949,30 @@
                 },
                 content:function(){
                     if (player.isTurnedOver()){
-                        var skillname = trigger.parent.skill;
-                        var info = lib.skill[skillname];
-                        if (info.spell){
-                            for (var i = 0; i < info.spell.length; i ++){
-                                player.addSkill(info.spell[i]);
+                        var skillname = null;
+                        var r = trigger.getParent();
+                        while (r){
+                            if (!r.skill || !lib.skill[r.skill].spell){
+                            } else {
+                                skillname = r.skill;
+                                break;
                             }
-                            player.removeSkillTrigger(skillname);
+                            if (r.parent) r = r.getParent();
+                            else break;
                         }
-                        player.storage.spell = skillname;
+                        if (!skillname){
+                            event.finish();
+                            trigger.cancel();
+                        } else {
+                            var info = lib.skill[skillname];
+                            if (info.spell){
+                                for (var i = 0; i < info.spell.length; i ++){
+                                    player.addSkill(info.spell[i]);
+                                }
+                                player.removeSkillTrigger(skillname);
+                            }
+                            player.storage.spell = skillname;
+                        }
                     } else {
                         if (player.storage.spell){
                             var info = lib.skill[player.storage.spell];
@@ -26678,7 +26709,6 @@
 				game.saveConfig('show_splash','always');
                 game.saveConfig('player_number','5','old_identity');
             } else {
-                
                 var i,j,k,num,table,tr,td,dialog;
                 _status.over=true;
                 ui.control.show();
@@ -27230,6 +27260,7 @@
                     delete ui.giveup;
                 }
                 if (lib.config.auto_restart){
+                    game.pause();
                     setTimeout(game.reload(), 10000);
 			    }
                 if(lib.config.test_game&&!_status.connectMode){
@@ -27242,7 +27273,7 @@
                             case 'chess':game.saveConfig('mode','identity');break;
                         }
                     }
-                    setTimeout(game.reload,500);
+                    setTimeout(game.reload(), 10000);
                 }
                 if(game.controlOver){
                     game.controlOver();return;

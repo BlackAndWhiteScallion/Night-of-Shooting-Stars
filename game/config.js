@@ -2,13 +2,11 @@ window.config={
 	forbidai:[],
 	forbidai_user:[],
 	forbidall:[],
-	forbidversus:[],
-	forbidstone:[
-	],
+	forbidversus:['rinnosuke'],
 	replacecharacter:{
 	},
-	forbidchess:[],
-	forbidboss:[],
+	forbidchess:['rinnosuke'],
+	forbidboss:['rinnosuke'],
 	forbiddouble:[],
 	all:{
 		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka','secret'],

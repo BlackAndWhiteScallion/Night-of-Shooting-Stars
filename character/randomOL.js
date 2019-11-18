@@ -88,6 +88,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.syncStorage('time');
 					player.markSkill('time');
 				},
+				ai:{
+					order:10,
+					result:{
+						player:1,
+					}
+				}
 			},
 			time4:{
 				enable:'chooseToUse',
@@ -103,7 +109,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(player.skipList.contains('phaseUse')){
 							return -val;
 						}
-						return val;
+						return val < 8;
 					}
 					"step 1"
 					if (result.links){
@@ -112,6 +118,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.storage.time.remove(result.links[i]);
 						}
 						player.syncStorage('time');
+					}
+				},
+				ai:{
+					order:2,
+					result:{
+						player:1,
 					}
 				}
 			},
