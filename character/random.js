@@ -2927,6 +2927,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var skills=lib.character[name][3].slice(0);
 						for(var i=0;i<skills.length;i++){
 							var info=lib.skill[skills[i]];
+							if (!info) continue;
 							if(info.unique&&!info.gainable){
 								skills.splice(i--,1);
 							}
@@ -3074,7 +3075,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					'step 2'	//标记
 					player.storage.huanzhao.shown = [];
-					player.storage.huanzhao.shown.add(lib.character[result.links[0]]);
+					player.storage.huanzhao.shown.add(result.links[0]);
 					var mark=player.marks.huanzhao;
 						mark.hide();
 						mark.style.transition='all 0.3s';
@@ -3123,6 +3124,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					lib.skill.huanzhao.get(player, trigger.player.name);
+					player.storage.huanzhao.shown.add(trigger.player.name);
 				}
 			},
 			wuxian:{

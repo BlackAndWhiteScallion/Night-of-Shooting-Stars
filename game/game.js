@@ -2364,7 +2364,6 @@
                             map.pop_logv.show();
                         }
                         if(lib.device){
-                            map.auto_check_update.show();
                             map.enable_vibrate.show();
                             map.keep_awake.show();
                             if(lib.device=='android'){
