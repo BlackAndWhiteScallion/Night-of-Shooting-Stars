@@ -93,7 +93,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							var mod=game.checkMod(card,player,'unchanged','cardEnabled',player.get('s'));
 							if(mod!='unchanged') return mod;
 							return true;
-						},});
+						},
+						prompt:'【轰！】来了，请使用一张【躲~】',});
+						//filterCard:{name:'shan'}, selectCard:[1,1]});
 					next.set('ai1',function(){
 						var target=_status.event.player;
 						var evt=_status.event.getParent();
@@ -1300,7 +1302,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				//if (player == game.me) ui.updatehl();
 				'step 1'
 				ui.updatehl();
-				ui.updatej();
+				//ui.updatej();
 				ui.updatem();
 				ui.update();
 				player.update();

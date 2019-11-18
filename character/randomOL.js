@@ -95,7 +95,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			/*
 			time4:{
+				hiddenCard:function(player,name){
+                    return name == 'shan';
+                },
 				enable:'chooseToUse',
 				audio:2,
 				filter:function(event,player){
@@ -121,11 +125,68 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				ai:{
+					savable:true,
 					order:2,
 					result:{
 						player:1,
 					}
-				}
+				},
+			},
+			*/
+			time4:{
+				enable:'chooseToUse',
+				complexSelect:true,
+				filter:function(event,player){
+                    return player.storage.time && player.countCards('h') < player.hp;
+                },
+                chooseButton:{
+                    dialog:function(event, player){
+                        return ui.create.dialog([player.storage.time,'vcard']);
+                    },
+                    filter:function(button,player){
+						return true;
+					},
+                    check:function(button){
+                        var player=_status.event.player;
+                        return get.value({name:button.link[2]}) >= 6;
+                    },
+                    backup:function(links,player){
+                        return {
+                            selectCard:0,
+                            audio:2,
+                            popname:true,
+							content:function(event,player){
+								var cards = event.getParent().getParent()._result.links;
+								player.gain(cards);
+								for(var i=0;i<cards.length;i++){
+									player.storage.time.remove(cards[i]);
+								}
+								player.syncStorage('time');
+								// 无可奈何的改法，以后希望可以有别的方法改
+								event.getParent().getParent().goto(0);
+  							},
+							check:function(card){
+								return get.value(card) < 7;
+							},
+                        }
+                    },
+                    /*prompt:function(links,player){
+                        return '保存：选择一张牌获得';
+                    },*/
+                },
+				hiddenCard:function(player,name){
+                    return name == 'shan' || name == 'wuxie';
+                },
+                ai:{
+                	save:true,
+                    order:2,
+                    result:{
+                        player:function(player){
+                            return 1;
+                        }
+                    },
+                    threaten:1,
+                }
 			},
 			homuraworld:{
                 audio:2,
@@ -347,8 +408,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			time3_audio1:'这个应该会用得到。',
 			time3_audio2:'嗯……回去之后需要把盾牌里好好清理一下。',
 			time4:'保存（取）',
-			time4_audio1:'有时候一想，这东西还真是方便啊。',
-			time4_audio2:'早就预料这种情况了！',
+			time4_backup:'保存（取）',
+			time4_backup_audio1:'有时候一想，这东西还真是方便啊。',
+			time4_backup_audio2:'早就预料这种情况了！',
 			time3_info:'一回合一次，出牌阶段，你可以将任意张牌扣置于角色牌上；你需要使用牌时，若你的手牌数小于体力值，你可以获得角色牌上一张牌。',
 			time3:'保存',
 			homuraworld:'焰的世界',
