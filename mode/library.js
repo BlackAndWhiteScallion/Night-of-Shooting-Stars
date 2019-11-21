@@ -485,14 +485,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
-						dialog.addText('喏'+lib.config.connect_nickname+'，<a href = "https://mp.weixin.qq.com/s/2dvbkhEezGQn7pUjETRlpQ" target = " _blank">这里也有教程哟。</a>');
+						dialog.addText('喏，'+lib.config.connect_nickname+'，<a href = "https://mp.weixin.qq.com/s/2dvbkhEezGQn7pUjETRlpQ" target = " _blank">这里也有教程哟。</a>');
 						dialog.classList.add('fixed');
 	        			dialog.noopen=true;
 	        			this.appendChild(dialog);
 	        			var incident=ui.create.node('button','电脑端下载',line2,function(){
 	        			var i = ['下载链接：',
-								'国外镜像：<a herf = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip">https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip</a>',
-								'国内镜像：<a herf = https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master>https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master</a>',
+								'国外镜像：<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip">https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip</a>',
+								'国内镜像：<a href = https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master>https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master</a>',
 								'',
 								'国内镜像因神奇腾讯有可能炸了，还请大家注意。',
 	    					];
@@ -503,7 +503,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								'手机端目前只支持安卓系统。为您带来的不便表达万分歉意。',
 								'',
 								'百度网盘链接：<a href = "https://pan.baidu.com/s/1oZRuEzNt2TYx2-8aDVs58Q">https://pan.baidu.com/s/1oZRuEzNt2TYx2-8aDVs58Q</a>',
-								'直接下载链接：<a href = "https://dev.tencent.com/api/share/download/6df3f820-1f20-4d27-9fd8-a6649eea99ac">https://dev.tencent.com/api/share/download/6df3f820-1f20-4d27-9fd8-a6649eea99ac</a>',
+								'直接下载链接：<a href = "https://dev.tencent.com/api/project/4566234/files/5506886/download">https://dev.tencent.com/api/project/4566234/files/5506886/download</a>',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
@@ -512,7 +512,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								'要保存你的数据的话，首先，从[选项-选项-文件-导出游戏设置]，把当前的游戏设置保存下来。',
 								'然后，打开下载的流星夜，从[选项-选项-文件-导入游戏设置]，把刚存下来的游戏设置导入。',
 								'',
-								'这个操作也可以同样用于把本地的数据导入网页版。',
+								'这个操作也可以同样用于把本地的数据导入网页版，或者把电脑的数据导入手机。',
 								'但是注意的是，像自己加的皮肤，自己加的音乐与配音这些本地素材，是无法导入网页版的。',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
@@ -523,7 +523,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    	updatelog:{
 	    		name:'更新事宜',
 	    		mode:'',
-	    		intro:['定期更新一下是最好的，隔一周更新一下大部分时候都会有些更新的。<br>大更新了的时候，在群里和贴吧里都会发出消息来的。'],
+	    		intro:['定期更新一下是最好的，比如隔一周更新一下，大部分时候都会有些更新的。<br>大更新了的时候，在<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG target="_blank">群里 </a>和 <a href="https://mp.weixin.qq.com/s/PC6a3Y8Y8bslqgsVWqcTqw" target="_blank">微信公众号</a>里都会发出消息来的。'],
 	        	showcase:function(init){
 	        		if (init){
 	        			var style2={position:'relative',display:'block',left:10,top:0,marginBottom:'6px',padding:0,width:'100%'};
