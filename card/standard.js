@@ -1083,6 +1083,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			content:function(){
 				"step 0"
+				player.$skill('惊吓派对',null,null,true);
 				player.line(target,'blue');
 				player.chooseToCompare(target);
 				"step 1"
@@ -1811,6 +1812,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (player.countCards('j') >= 3) return false;
 				return true;
 			},
+			prompt2:'你可以消耗1点灵力，摸一张技能牌',
 		},
 		houraiyuzhi_skill:{
 			audio:2,

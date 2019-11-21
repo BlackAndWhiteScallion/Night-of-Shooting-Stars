@@ -187,11 +187,6 @@
                         intro:'在动画结算完成前不执行下一步操作，开启后游戏操作的间隔更长但画面更浏畅，在游戏较卡时建议开启',
                         init:true
                     },
-                    enable_vibrate:{
-                        name:'开启震动',
-                        intro:'回合开始时使手机震动',
-                        init:false
-                    },
                     video:{
                         name:'保存录像',
                         init:'20',
@@ -2533,7 +2528,7 @@
                         unfrequent:true,
                     },
                     show_history:{
-                        name:'出牌记录栏————————————————',
+                        name:'<u>出牌记录栏</u>',
                         init:'off',
                         intro:'在屏幕左侧或右侧出牌记录',
                         unfrequent:true,
@@ -2601,7 +2596,7 @@
                         intro:'开启后历史记录不同类别的信息将以不同颜色',
                     },
                     show_time:{
-                        name:'当前时间—————————————————',
+                        name:'<u>当前时间</u>',
                         intro:'在屏幕顶部显示当前时间',
                         init:true,
                         unfrequent:true,
@@ -2649,7 +2644,7 @@
                         unfrequent:true
                     },
                     keep_awake:{
-                        name:'屏幕常亮————————————————',
+                        name:'<u>屏幕常亮</u>',
                         init:false,
                         unfrequent:true,
                         intro:'防止屏幕自动关闭',
@@ -2721,7 +2716,7 @@
                         }
                     },
                      enable_drag:{
-                        name:'启用拖拽————————————————',
+                        name:'<u>启用拖拽</u>',
                         init:true,
                         intro:'按住卡牌后可将卡牌拖至目标',
                         unfrequent:true,
@@ -2758,7 +2753,7 @@
                         }
                     },
                     enable_pressure:{
-                        name:'启用压感————————————————',
+                        name:'<u>启用压感</u>',
                         init:false,
                         intro:'开启后可通过按压执行操作',
                         unfrequent:true,
@@ -2781,7 +2776,7 @@
                         }
                     },
                     right_click:{
-                        name:'右键操作————————————————',
+                        name:'<u>右键操作</u>',
                         init:'pause',
                         intro:'在空白区域点击右键时的操作',
                         unfrequent:true,
@@ -2842,7 +2837,7 @@
                         intro:'双击角色头像后显示其资料卡',
                     },
                     swipe:{
-                        name:'滑动手势————————————————',
+                        name:'<u>滑动手势</u>',
                         init:true,
                         unfrequent:true,
                         intro:'在非滚动区域向四个方向滑动可执行对应操作',
@@ -2920,7 +2915,7 @@
                         }
                     },
                     show_round_menu:{
-                        name:'触屏按钮————————————————',
+                        name:'<u>触屏按钮</u>',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -3033,7 +3028,7 @@
                         unfrequent:true,
                     },
                     show_phaseuse_prompt:{
-                        name:'出牌阶段提示————————————————',
+                        name:'<u>出牌阶段提示</u>',
                         intro:'在你出牌时提示文字',
                         init:true,
                         unfrequent:true,
@@ -3119,7 +3114,7 @@
                         }
                     },
                     show_replay:{
-                        name:'重来按钮————————————————',
+                        name:'<u>重来按钮</u>',
                         init:true,
                         unfrequent:true,
                         onclick:function(bool){
@@ -9497,7 +9492,6 @@
                 },
                 chooseToUse:function(){
                     "step 0"
-                    console.log(event);
 					if(game.modeSwapPlayer&&player.isUnderControl()&&!lib.filter.wuxieSwap(trigger)){
 						game.modeSwapPlayer(player);
 					}
@@ -9528,7 +9522,6 @@
                             event.fakeforce=false;
                         }
                     }
-                    "step 1"
                     if(event.player.isUnderControl()){
                         event.result={
                             bool:false
@@ -9613,7 +9606,7 @@
                     else{
                         event.result='ai';
                     }
-                    "step 2"
+                    "step 1"
                     if(event.result=='ai'){
                         var ok=game.check();
                         if(ok){
@@ -9665,7 +9658,7 @@
                             game.delayx();
                         }
                     }
-                    "step 3"
+                    "step 2"
                     if(event.endButton){
                         event.endButton.close();
                         delete event.endButton;
@@ -9691,7 +9684,7 @@
                             }
                         }
                     }
-                    "step 4"
+                    "step 3"
                     if(event.buttoned){
                         if(result.bool){
                             var info=get.info(event.buttoned).chooseButton;
@@ -9709,10 +9702,10 @@
                             ui.control.animate('nozoom',100);
                             event._aiexclude.add(event.buttoned);
                         }
-                        delete event.buttoned;
                         event.goto(0);
+                        delete event.buttoned;
                     }
-                    "step 5"
+                    "step 4"
                     if(event._aiexcludeclear){
                         delete event._aiexcludeclear;
                         event._aiexclude.length=0;
@@ -9731,7 +9724,7 @@
                     if(!_status.noclearcountdown){
                         game.stopCountChoose();
                     }
-                    "step 6"
+                    "step 5"
                     if(event._result&&event.result){
                         event.result.result=event._result;
                     }

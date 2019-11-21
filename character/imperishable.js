@@ -5,7 +5,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		character:{
 			   wriggle:['female','4',3,['yingguang','yechong']],
-                  mystia:['female','4',3,['shiming','wuye']],
+                  mystia:['female','4',3,['shiming','zangsong','wuye']],
                   keine:['female','3',4,['jiehuo','richuguo']],
                   reimu:['female','2',3,['yinyang','mengdie','mengxiang']],
                   marisa:['female','2',3,['liuxing','xingchen','stardust']],
@@ -22,7 +22,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 reimu:'全名博丽灵梦。东方project的主角，博丽神社的巫女，符卡规则的创建人。因为是巫女，在幻想乡是绝对权威势力。但是平常懒到连异变都不去解决……<br> <b>画师：萩原</b>',
                 marisa:'全名雾雨魔理沙。东方project的主角。住在魔法森林里的人类魔法使（魔炮流派）。总是抢在巫女之前冲去解决异变。因为种种原因与多名少女有说不清楚的关系。<br> <b>画师：フアルケン</b> <br><s>据说其实是创星神的分身？</s>',
                 tewi:'全名因蟠帝。住在迷途竹林里的兔妖。据说在竹林里见到她的人能获得好运。虽然，从竹林里活着出来的人并没有发现他们怎么好运了。<br> <b>画师：ねこぜ</b>',
-                reisen:'全名铃仙·优昙华院·因蟠。从月亮逃下，躲入幻想乡的一只月兔妖。因为在永远亭中是最下级的位置，总是被其他人欺负。持有令人解释不清楚程度的能力。<br> <b>画师：k2pudding</b>',
+                reisen:'全名铃仙·优昙华院·因蟠。从月亮逃下，躲入幻想乡的一只月兔妖。因为在永远亭中是最下级的位置，总是被其他人欺负。持有令人解释不清楚程度的能力。<br> <b>画师：ksk(かそく) </b>',
                 eirin:'全名八意永琳。不老不死的药师，月都创立人之一。数千年前从月亮逃出，带着辉夜躲入幻想乡。最近才冒出来，并开设了一个诊所。<br> <b>画师：minusT</b>',
                 kaguya:'全名蓬莱山辉夜。不老不死的月亮的公主，数千年前从月亮逃出，与永琳一同躲入幻想乡，最近才冒出来。<br> <b>画师：Riv</b>',
                 mokou:'全名藤原妹红。原本是人类，数千年前因为辉夜成为了不老不死。一段时间前流浪入了幻想乡，最近住在竹林里。<br> <b>画师：palinus</b>',
@@ -141,7 +141,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   },
                   shiming:{
                     audio:2,
-                    trigger:{player:['phaseBegin','damageEnd']},
+                    enable:'phaseUse',
+                    usable:1,
+                    trigger:{player:'damageEnd'},
                     content:function(){
                       'step 0'
                       player.chooseTarget('失明：洗混一名角色手牌').set('ai',function(target){
@@ -153,6 +155,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.logSkill(event.name,result.targets);
                         result.targets[0].addTempSkill('shiming_2');
                         result.targets[0].addTempSkill('shiming_3');
+                        player.addSkill('counttrigger');
+                        if(!player.storage.counttrigger){
+                            player.storage.counttrigger={};
+                        }
+                        player.storage.counttrigger['shiming']=1;
+                        player.stat[player.stat.length-1].skill['shiming']=1;
                       }
                     },
                     check:function(){
@@ -236,6 +244,26 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       content:function(){
                         delete player.storage.shiming;
                       }
+                  },
+                  zangsong:{
+                    audio:2,
+                    trigger:{player:'discardAfter'},
+                    usable:1,
+                    content:function(){
+                      'step 0'
+                      player.chooseTarget('葬颂：可以弃置一名角色一张牌').set('ai',function(target){
+                          if (_status.currentPhase == target && get.attitude(player, _status.currentPhase) < 0) return 100;
+                          return -get.attitude(_status.event.player,target);
+                      });
+                      'step 1'
+                      if (result.bool){
+                          player.logSkill(event.name,result.targets);
+                          player.discardPlayerCard('hej',result.targets[0],true);
+                      }
+                    },
+                    check:function(event,player){
+                      return true;
+                    },
                   },
                   wuye:{
                     audio:2,
@@ -1075,6 +1103,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.finish();
                       }
                     },
+                    /*
                     mod:{
                       cardEnabled:function(card,player){
                         if(get.subtype(card) == 'defense') return false;
@@ -1089,6 +1118,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if(get.subtype(card) == 'defense') return false;
                       },
                     },
+                    */
                   },
                   huanshi_3:{
                   },
@@ -1974,7 +2004,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   shiming_2:'失明',
                   shiming_audio1:'我来让你获得夜盲症吧！',
                   shiming_audio2:'我来教教你暗夜的恐怖吧！',
-                  shiming_info:'准备阶段，或你受到伤害后，你可以令一名角色获得以下效果，直到当前回合结束：其不能以此技能以外的方式使用牌；其需要使用牌时，可以洗混其手牌；其不能查看其中暗置牌；其展示其中一张：若可以使用，本次结算中其可以使用该牌；否则，其弃置之，并可以重复此流程。',
+                  shiming_info:'一回合一次，出牌阶段，或你受到伤害后，你可以令一名角色直到当前回合结束：其不能以此法以外的方式使用牌；其需要使用牌时，可以随机展示一张手牌：若可以使用，本次结算中其可以使用该牌；否则，其弃置之，并可以重复此流程。',
+                  zangsong:'葬颂',
+                  zangsong_info:'一回合一次，你弃置牌后，可以弃置一名角色一张牌。',
                   wuye:'午夜中的合唱指挥',
                   wuye_audio1:'米斯蒂亚的独唱会开始啦！',
                   wuye_audio2:'独家专辑正在绝赞发售中！',
@@ -2050,7 +2082,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   reisen:'铃仙',
                   huanshi:'幻视',
                   huanshi_2:'幻视',
-                  huanshi_info:'一回合每名角色限一次，出牌阶段，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；目标角色不能对之使用防御牌；其成为该牌目标后，可将一张牌当作防御牌打出，令扣置牌无效且你亮出之：若此牌不为此防御牌的合法目标，则你对其使用此牌。',
+                  huanshi_info:'一回合每名角色限一次，出牌阶段，你可以扣置一张手牌，当做一种攻击牌或控场牌使用；其成为该牌目标后，可将一张牌当作防御牌打出，亮出扣置牌并令之无效：若原牌不为此防御牌的合法目标，则你对其使用原牌。',
                   huanshi_audio1:'你也一同陷入狂乱吧！',
                   huanshi_audio2:'来，看着我的眼睛——',
                   huanshi_audio3:'啊，师、师匠，我、我不是故意的！',
@@ -2075,7 +2107,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   yongye:'永夜归返',
                   yongye2:'永夜归返',
                   yongye_die:'永夜归返',
-                  yongye_info:'符卡技（1）<极意><终语>结束阶段，你消耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你 可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
+                  yongye_info:'符卡技（1）<极意><终语>结束阶段，你消耗1点灵力；若你的灵力值不大于：4，你不会坠机；3，出牌阶段开始时，你可以重铸所有牌；2，准备阶段，你摸2张技能牌；1，你使用一张牌后，摸一张牌。',
                   kaguya_die:'=w=明天晚上再见！',
                   eirin:'永琳',
                   zhaixing:'摘星',

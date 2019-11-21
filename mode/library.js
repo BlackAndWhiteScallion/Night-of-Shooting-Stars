@@ -853,6 +853,31 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
+						/*
+						var style2={position:'relative',display:'block',left:0,top:0,marginBottom:'6px',padding:0,width:'100%'};
+						var line1=ui.create.div(style2);
+						dialog.add(line1);
+						var scenelist=ui.create.selectlist(['默认','随机'],null,line1);
+						var addButton=ui.create.node('button','批量更换皮肤',line1,function(){
+							if (scenelist.value == '默认'){
+	                        	for (i in lib.character){
+									delete lib.config.skin[i];
+								}
+							} else{
+								var r = null;
+								if (scenelist.value == '随机'){
+									//r = lib.config.skinSet[0];
+								}
+							} 
+							game.saveConfig('skin',lib.config.skin);
+							var list1 = document.getElementsByClassName('character');
+							for(var i1=0;i1<list1.length;i1++){
+                                if(list1[i1].classList.contains('character')){
+                                    list1[i1].node.setBackground(list1[i1].name,'character');
+                                }
+                            }
+	                    },{marginLeft:'6px',marginRight:'12px'});
+						*/
 						dialog.add([list,'character'],false);
 	                    for (var i = 0; i < dialog.buttons.length; i ++){
 	                    	dialog.buttons[i].classList.add('show');
