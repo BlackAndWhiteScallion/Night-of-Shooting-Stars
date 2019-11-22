@@ -252,7 +252,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                       'step 0'
                       player.chooseTarget('葬颂：可以弃置一名角色一张牌').set('ai',function(target){
-                          if (_status.currentPhase == target && get.attitude(player, _status.currentPhase) < 0) return 100;
                           return -get.attitude(_status.event.player,target);
                       });
                       'step 1'
@@ -2006,7 +2005,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   shiming_audio2:'我来教教你暗夜的恐怖吧！',
                   shiming_info:'一回合一次，出牌阶段，或你受到伤害后，你可以令一名角色直到当前回合结束：其不能以此法以外的方式使用牌；其需要使用牌时，可以随机展示一张手牌：若可以使用，本次结算中其可以使用该牌；否则，其弃置之，并可以重复此流程。',
                   zangsong:'葬颂',
-                  zangsong_info:'一回合一次，你弃置牌后，可以弃置一名角色一张牌。',
+                  zangsong_info:'一回合一次，你因弃置牌失去牌后，可以弃置一名角色一张牌。',
                   wuye:'午夜中的合唱指挥',
                   wuye_audio1:'米斯蒂亚的独唱会开始啦！',
                   wuye_audio2:'独家专辑正在绝赞发售中！',

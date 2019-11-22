@@ -35,9 +35,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shuangjiang:{
                 audio:2,
                 group:['shuangjiang2','shuangjiang3'],
-                trigger:{player:'phaseEnd'},
+                trigger:{player:['useCard', 'phaseEnd']},
                 filter:function(event,player){
-                    //if (_status.event.name != 'phaseEnd' && !player.hasSkill('baofengxue2')) return false; 
+                    if (_status.event.name =='useCard' && !player.hasSkill('baofengxue2')) return false; 
                     return game.hasPlayer(function(target){
                         return target!=player&&!target.storage.shuang && target.storage._mubiao;
                     });
@@ -2169,7 +2169,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             baofengxue3:'暴风雪之眼',
             baofengxue_audio1:'这是我新的符卡！',
             baofengxue_audio2:'感受一下自然的力量吧！',
-            baofengxue_info:'符卡技（2）你使用一张牌时，可以令其他角色不能使用/打出与之相同花色的牌，直到结束阶段；【霜降】中的“一名”视为“所有”',
+            baofengxue_info:'符卡技（2）你使用一张牌时，可以令其他角色不能使用/打出与之相同花色的牌，直到结束阶段；【霜降】中的“结束阶段”视为“你使用牌时，和结束阶段”。',
             letty_die:'（擦鼻涕）这种天气算哪门子的冬天啊。',
             chen:'橙',
             mingdong:'鸣动',
