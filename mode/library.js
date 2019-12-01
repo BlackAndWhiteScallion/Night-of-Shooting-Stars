@@ -474,7 +474,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			downloadlog:{
 				name:'下载事宜',
 				mode:'',
-				intro:['网络版再方便，玩起来还是不如下载下来方便的。'],
+				intro:['网络上的页游再方便，玩起来还是不如下载下来方便的。', '下载版的好处包括：素材立即加载，可以自己添加皮肤和音乐，还可以自己制作角色和导入扩展包。'],
 				showcase:function(init){
 	        		if (init){
 	        			var style2={position:'relative',display:'block',left:10,top:0,marginBottom:'6px',padding:0,width:'100%'};

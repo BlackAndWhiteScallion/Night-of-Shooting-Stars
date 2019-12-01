@@ -1081,9 +1081,11 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filterTarget:function(card,player,target){
 				return target != player;
 			},
+			contentBefore:function(){
+				player.$skill('惊吓派对',null,null,true);
+			},
 			content:function(){
 				"step 0"
-				player.$skill('惊吓派对',null,null,true);
 				player.line(target,'blue');
 				player.chooseToCompare(target);
 				"step 1"

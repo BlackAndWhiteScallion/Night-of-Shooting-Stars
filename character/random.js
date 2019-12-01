@@ -17,7 +17,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			scathach:['female', '1', 4, ['ruizhi','mojing']],
 			niuzhanshi:['female','2',4,['ng_wenhao','ng_wenhao2']],
 			mordred:['female','2',4,['niguang','ClarentBloodArthur'],["unseen","forbidai"]],
-			twob:['female', '3', 4, ['qiyue','yueding']],
+			twob:['female', '1', 4, ['qiyue','yueding']],
 			illyasviel:['female','1',3,['huanzhao','wuxian','quintette_fire']],
 			kuro:['female', '1', 3, ['touying','wenmo','heyi']],
 			daria:['female', '1', 3, ['zhuanhuan', 'moli', 'chaoyue']],
@@ -1504,6 +1504,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						} else if (event.control == '暗置一张手牌'){
 							player.storage.mingzhi.remove(result.cards[0]);
 							if (player.storage.mingzhi.length == 0){
+								delete player.storage.mingzhi;
 								player.unmarkSkill('mingzhi');
 	                        	player.syncStorage('mingzhi');
 							}

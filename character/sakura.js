@@ -37,7 +37,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 group:['shuangjiang2','shuangjiang3'],
                 trigger:{player:['useCard', 'phaseEnd']},
                 filter:function(event,player){
-                    if (_status.event.name =='useCard' && !player.hasSkill('baofengxue2')) return false; 
+                    
+                    if (event.name =='useCard' && !player.hasSkill('baofengxue2')) return false; 
                     return game.hasPlayer(function(target){
                         return target!=player&&!target.storage.shuang && target.storage._mubiao;
                     });

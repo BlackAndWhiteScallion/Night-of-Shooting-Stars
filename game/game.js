@@ -21957,6 +21957,7 @@
                         } else {
                             var info = lib.skill[skillname];
                             if (info.spell){
+                                player.$skill(get.translation(skillname), null, null, true);
                                 for (var i = 0; i < info.spell.length; i ++){
                                     player.addSkill(info.spell[i]);
                                 }
