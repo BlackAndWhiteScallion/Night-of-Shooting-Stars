@@ -1523,6 +1523,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filterCard:function(card){
 				return get.color(card)=='red';
 			},
+			precontent:function(){
+				player.$effect('yinyangyu_skill', 7);
+			},
 			viewAs:{name:'shan'},
 			viewAsFilter:function(player){
 				if(!player.num('he',{color:'red'})) return false;
@@ -1544,12 +1547,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		yinyangyu_skill_2:{
 			audio:2,
+			cardAnimation:7,
 			enable:['chooseToRespond','chooseToUse'],
 			filterCard:function(card){
 				return get.color(card)=='black';
 			},
 			position:'he',
 			viewAs:{name:'sha'},
+			precontent:function(){
+				player.$effect('yinyangyu_skill', 7);
+			},
 			viewAsFilter:function(player){
 				if(!player.num('he',{color:'black'})) return false;
 			},
@@ -1601,6 +1608,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		gungnir_skill:{
 			audio:true,
+			//cardAnimation:3,
 			trigger:{player:'shaBegin'},
 			check:function(event,player){
 				if (!ai.get.attitude(player,event.target)<=0) return false;
@@ -1801,6 +1809,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:2,
 			trigger:{player:'phaseEnd'},
 			frequent:false,
+			cardAnimation:11,
 			filter:function(event,player){
 				return player.lili > 0;
 			},
@@ -1819,6 +1828,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		houraiyuzhi_skill:{
 			audio:2,
 			enable:'phaseUse',
+			cardAnimation:17,
 			usable:1,
 			discard:false,
 			lose:false,
@@ -1913,6 +1923,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(result.color){
 					if(result.color==get.color(trigger.card)){
 						trigger.cancel();
+						player.$effect('shengdun_skill', 17);
 						game.log('八咫镜：'+get.translation(trigger.card)+'对'+get.translation(player)+'无效。');
 					}
 				}
@@ -1926,6 +1937,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			audio:0,
 			enable:'phaseUse',
 			usable:1,
+			cardAnimation:11,
 			filter:function(event, player){
 				return player.lili > 0;
 			},
@@ -2066,6 +2078,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				"step 1"
 				if(result.bool){
 					game.log('人魂灯：',trigger.card, '对',player,'无效');
+					player.$effect('shengdun_skill', 17);
 					trigger.cancel();
 				}
 			},
@@ -2088,6 +2101,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (player.name == 'alice'){
 					game.trySkillAudio('hourai_skill',player,true,Math.ceil(2*Math.random()));
 				}
+				player.$effect('shengdun_skill', 17);
 				trigger.untrigger();
 				trigger.finish();
 			},

@@ -2677,7 +2677,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				limited:true,
 				mark:true,
 				intro:{
-					content:'limited'
+					content:'limited',
 				},
 				filter:function(event,player){
 					return (player.countCards('hej')>0);

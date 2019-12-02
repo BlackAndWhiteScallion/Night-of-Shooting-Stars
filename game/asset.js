@@ -178,6 +178,7 @@ window.noname_asset_list=[
     'image/character/hero.jpg',
     'image/character/rinnosuke.jpg',
     'image/character/illyasviel.jpg',
+    'image/character/m4a1.jpg',
     'image/mode/boss/character/boss_reimu.jpg',
     'image/mode/boss/character/boss_reimu2.jpg',
     'image/mode/boss/character/boss_cirno.jpg',

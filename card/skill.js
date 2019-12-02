@@ -226,6 +226,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
 			},
 			ziheng_skill:{
+				cardAnimation:11,
     			trigger:{player:'phaseDrawEnd'},
     			content:function(){
     				"step 0"
@@ -264,6 +265,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     				return false;
     			},
     			trigger:{target:'useCardToBefore'},
+				cardAnimation:17,
     			content:function(){
     				"step 0"
     				player.chooseToCompare(trigger.player);
@@ -334,6 +336,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			shenyou_skill_1:{
 				audio:2,
+				skillAnimation:11,
     			trigger:{player:'damageBefore'},
     			forced:true,
     			filter:function(event,player){
@@ -393,6 +396,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			qianxing_skill:{
+				cardAnimation:6,
 				trigger:{player:'phaseEnd'},
 				filter:function(event, player){
 					return !player.hasSkill('qianxing_skill2');
