@@ -422,3 +422,17 @@ window.noname_skin_list={
     miku:1,
     diva:1,
 };
+window.noname_animate_list={
+    jinu_skill:11,
+    louguan_skill:5,
+    qianxing_skill:6,
+    lunadial_skill:11,
+    recover:11,
+    gainlili:4,
+    yinyangyu_skill:7,
+    shenyou_skill_1:11,
+    book_skill:11,
+    ziheng_skill:11,
+    qusan_skill:18,
+    shengdun_skill:17,
+};

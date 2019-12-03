@@ -1498,6 +1498,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				for (var i = 0; i < trigger.targets.length; i ++){
 					trigger.targets[i].addTempSkill('unequip', 'useCardAfter');
+					trigger.targets[i].$effect('louguan_skill', 5);
 				}
 			},
 		},

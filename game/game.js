@@ -19458,8 +19458,8 @@
                         var Animation = ui.create.div();
                         Animation.style["z-index"] = 7;
                         
-                        Animation.style.width = (120/715)*document.body.clientHeight + "px";
-                        Animation.style.height= (120/715)*document.body.clientHeight + "px";
+                        Animation.style.width = (150/715)*document.body.clientHeight + "px";
+                        Animation.style.height= (150/715)*document.body.clientHeight + "px";
                         
                         if (left || top){
                             if (left) Animation.style.left = left;
@@ -19471,21 +19471,20 @@
                             ui.window.appendChild(Animation);
                         }
                         else {
-                            Animation.style.left= "15%";
-                            Animation.style.top = "60%";
+                            Animation.style.left= "5%";
+                            Animation.style.top = "50%";
                             this.appendChild(Animation);
                         }
-                        
+                        Animation.style.backgroundSize="cover";
                         var zhen = 0;
                         var ID = setInterval(function(){
+                            var SRC = lib.assetURL + "image/effect/" + name +"/"+ zhen + ".png";
                             if(zhen>frame){
                                 clearInterval(ID);
-                                Animation.delete();
+                                Animation.delete(); 
                                 return ;
                             }
-                            var SRC = lib.assetURL + "image/effect/" + name +"/"+ zhen + ".png";
-                            //Animation.innerHTML = "<img width=100% height=100% ondragstart='return false;' src='"+SRC+"' />";
-                            Animation.innerHTML = "<img background-size= 'cover'; ondragstart='return false;' src='"+SRC+"' />";
+                            Animation.setBackgroundImage(SRC);
                             zhen ++;
                         },100);
                     }
@@ -36205,6 +36204,8 @@
                                     delete window.noname_asset_list;
                                     var skins=window.noname_skin_list;
                                     delete window.noname_skin_list;
+                                    var animes=window.noname_animate_list;
+                                    delete window.noname_animate_list;
                                     var asset_version=updates.shift();
 
                                     var skipcharacter=[],skipcard=['tiesuo_mark'];
@@ -36264,6 +36265,11 @@
                                         for(var i in skins){
                                             for(var j=1;j<=skins[i];j++){
                                                 updates.push('image/skin/'+i+'/'+j+'.jpg');
+                                            }
+                                        }
+                                        for(var i in animes){
+                                            for(var j=0;j<=animes[i];j++){
+                                                updates.push('image/effect/'+i+'/'+j+'.png');
                                             }
                                         }
                                     }

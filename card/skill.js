@@ -377,6 +377,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			jinu_skill:{
     			audio:2,
+				cardAnimation:11,
     			trigger:{player:'damageEnd'},
     			filter:function(event,player){
     				return event.source && event.source.countCards('ej') && event.nature != 'thunder';
@@ -396,7 +397,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			qianxing_skill:{
-				cardAnimation:6,
 				trigger:{player:'phaseEnd'},
 				filter:function(event, player){
 					return !player.hasSkill('qianxing_skill2');
@@ -415,6 +415,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				mark:true,
 				intro:{
 					content:'不能成为攻击牌的目标',
+				},
+				init:function(player){
+					player.$effect('qianxing_skill', 6);
 				},
 				mod:{
 					targetEnabled:function(card,player,target,now){
