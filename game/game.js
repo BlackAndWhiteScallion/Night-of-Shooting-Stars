@@ -19454,12 +19454,14 @@
                     },avatar?0:300);
                 },
                 $effect:function(name, frame, left, top){
+                    game.log('过来了');
                     if(lib.config.animation&&!lib.config.low_performance){
+                        game.log('没有了');
                         var Animation = ui.create.div();
-                        Animation.style["z-index"] = 7;
+                        Animation.style["z-index"] = 20;
                         
-                        Animation.style.width = (150/715)*document.body.clientHeight + "px";
-                        Animation.style.height= (150/715)*document.body.clientHeight + "px";
+                        Animation.style.width = (140/715)*document.body.clientHeight + "px";
+                        Animation.style.height= (140/715)*document.body.clientHeight + "px";
                         
                         if (left || top){
                             if (left) Animation.style.left = left;
@@ -19477,7 +19479,17 @@
                         }
                         Animation.style.backgroundSize="cover";
                         var zhen = 0;
+                        game.log(Animation.style);
                         var ID = setInterval(function(){
+                            var img = new Image();
+                            img.onload=function(){
+                                //delete img;
+                            };
+                            img.onerror=function(){
+                                zhen = frame + 1;
+                                game.log('到底了');
+                            };
+                            img.src = lib.assetURL + "image/effect/" + name +"/"+ zhen + ".png";
                             var SRC = lib.assetURL + "image/effect/" + name +"/"+ zhen + ".png";
                             if(zhen>frame){
                                 clearInterval(ID);
@@ -19486,7 +19498,7 @@
                             }
                             Animation.setBackgroundImage(SRC);
                             zhen ++;
-                        },100);
+                        },200);
                     }
                 },
                 $thunder:function(){
