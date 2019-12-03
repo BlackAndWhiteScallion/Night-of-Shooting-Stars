@@ -36524,7 +36524,7 @@
                         var span4_br=ui.create.node('br');
                         li2.lastChild.appendChild(span4_br);
 
-                        var span2=ui.create.div('','皮肤素材（24MB）');
+                        var span2=ui.create.div('','皮肤+动画素材（30MB）');
                         span2.style.fontSize='small';
                         span2.style.lineHeight='16px';
                         li2.lastChild.appendChild(span2);
