@@ -5465,6 +5465,12 @@
                     }
                 }
             },
+            puzzle:{
+                name:'残局',
+                config:{
+
+                },
+            },
             library:{
                 name:'图鉴',
                 config:{
@@ -7808,6 +7814,8 @@
                             setDialog('据说这个战棋模式里面有些很神奇的东西，你可以陪我一起去吗？');
                         } else if (mode.includes('brawl')){
                             setDialog('打牌打累了，就搞点好玩的小场景休闲一下吧，打子规可是最最最减压的事情啦！而且，还可以自己创建场景玩哟。我就做了一个呢，是不是很棒⭐。');
+                        } else if (mode.includes('puzzle')){
+                            setDialog('必须在一回合内胜利的残局谜题——好玩挺好玩，对水平也有不小的提升……就是难的题真的好难啊！无论是制作起来还是解起来都太费脑子了！');
                         }
                     }
                     var upNode=function(){
@@ -8466,6 +8474,7 @@
             _enhance:'强化',
             qianxing:'潜行',
             mianyi:'免疫',
+            mianyi_info:'锁定技，你受到伤害时，防止该伤害。',
             fengyin:'沉默',
             unequip:'封印',
 
@@ -23812,6 +23821,15 @@
             ui.window.appendChild(audio);
         },
         playBackgroundMusic:function(music, temp, marisa){
+            if (!ui.backgroundMusic){
+                ui.backgroundMusic=document.createElement('audio');
+                ui.backgroundMusic.volume=lib.config.volumn_background/8;
+                ui.backgroundMusic.autoplay=true;
+                ui.backgroundMusic.loop=true;
+                //ui.backgroundMusic.addEventListener('ended',game.playBackgroundMusic);
+                if (ui.window) ui.window.appendChild(ui.backgroundMusic);
+                else document.body.appendChild(ui.backgroundMusic);
+            }
             if (!marisa && lib.config.background_music == 'marisa') return ;
             if (!lib.config.background_music) lib.config.background_music = 'music_default';
             if(lib.config.background_music=='music_off'){
@@ -28410,16 +28428,6 @@
                         }
                     }
                     for(i=0;i<lib.card.list.length;i++){
-                        if(lib.card.list[i][2]=='huosha'){
-                            lib.card.list[i]=lib.card.list[i].slice(0);
-                            lib.card.list[i][2]='sha';
-                            lib.card.list[i][3]='fire';
-                        }
-                        else if(lib.card.list[i][2]=='leisha'){
-                            lib.card.list[i]=lib.card.list[i].slice(0);
-                            lib.card.list[i][2]='sha';
-                            lib.card.list[i][3]='thunder';
-                        }
                         if(!lib.card[lib.card.list[i][2]]){
                             lib.card.list.splice(i,1);i--;
                         }
@@ -44514,7 +44522,7 @@
                                 game.over(_status.maxShuffleCheck());
                             }
                             else{
-                                game.over('平局');
+                                game.over('平局——无法摸牌');
                             }
                             return [];
                         }

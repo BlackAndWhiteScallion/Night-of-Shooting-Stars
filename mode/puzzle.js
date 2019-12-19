@@ -1,42 +1,40 @@
 'use strict';
 game.import('mode',function(lib,game,ui,get,ai,_status){
 	return {
-		name:'brawl',
+		name:'puzzle',
 	    game:{
 	        syncMenu:true,
 	    },
 	    start:function(){
 	        ui.auto.hide();
-	        if(!lib.storage.scene || Object.keys(lib.storage.scene).length == 0){
-	            lib.storage.scene={
-					斗地主II:{
-						name:'斗地主（新）',
-						intro:['两名单将的农民，对战双将的地主！'],
-						players:[
-							{equips: [], handcards: [], hp: NaN, identity: "zhu", judges: [], lili: NaN, maxHp: NaN, maxlili: NaN, name: "random", name2: "random", playercontrol: false, position: 1},
-							{equips: [], handcards: [], hp: NaN, identity: "fan", judges: [], lili: NaN, maxHp: NaN, maxlili: NaN, name: "random", name2: "none", playercontrol: false, position: 2},
-							{equips: [], handcards: [], hp: NaN, identity: "fan", judges: [], lili: NaN, maxHp: NaN, maxlili: NaN, name: "random", name2: "none", playercontrol: false, position: 3},
-						],
-						gameDraw:true,
-						cardPileBottom:[],
-						cardPileTop:[],
-						skillPileBottom:[],
-						skillPileTop:[],
-						discardPile:[],
-					},
-				};
-	        }
-	        if(!lib.storage.stage){
-	            lib.storage.stage={};
+			if (!lib.storage.puzzle){
+				lib.storage.puzzle = {};
+			}
+	        if(!lib.storage.puzzleset){
+	            lib.storage.puzzleset={};
 	        }
 	        if(!_status.extensionmade){
 	            _status.extensionmade=[];
 	        }
+			if (lib.puzzleset){
+				for (var i in lib.puzzleset){
+					//lib.storage.puzzleset[i] = lib.puzzleset[i];
+					if (!lib.storage.puzzleset[i]){
+						lib.storage.puzzleset[i] = lib.puzzleset[i];
+					} else {
+						for (var j in lib.puzzleset[i].scenes){
+							if (!lib.storage.puzzleset[i].scenes[j]){
+								lib.storage.puzzleset[i].scenes[j] = lib.puzzleset[i].scenes[j];
+							}
+						}
+					}
+				}
+			}
 	        if(_status.extensionscene){
-	            game.save('scene',lib.storage.scene);
+	            game.save('scene',lib.storage.puzzle);
 	        }
 	        if(_status.extensionstage){
-	            game.save('stage',lib.storage.stage);
+	            game.save('stage',lib.storage.puzzleset);
 	        }
 	        var dialog=ui.create.dialog('hidden');
 	        dialog.classList.add('fixed');
@@ -59,12 +57,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					uiintro.add(ui.create.div('.placeholder.slim'))
 				return uiintro;
 			},400);
+			lib.character['kosuzu'] = ['female', '2', 3, [], []];
+			lib.translate['kosuzu']='小铃';
+			lib.characterIntro['kosuzu']='全名本居小铃，古书店“铃奈庵”的店员。爱好自然是读书，还有收集各种各样稀奇古怪的妖怪书。但愿她不要把自己又搞进什么危险的情况……<br><b>画师：安威拓郎</b><br>目前收到了阿求的邀请，正在做残局模式的管理员和导师。';
 	        lib.setScroll(packnode);
 	        var clickCapt=function(){
 	            var active=this.parentNode.querySelector('.active');
 	            if(this.link=='stage'){
-	                if(get.is.empty(lib.storage.scene)){
-	                    alert('请创建至少1个场景');
+	                if(get.is.empty(lib.storage.puzzle)){
+	                    alert('请创建至少1个残局');
 	                    return;
 	                }
 	            }
@@ -92,7 +93,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	            if(this._nostart) start.style.display='none';
 	            else start.style.display='';
-	            game.save('currentBrawl',this.link);
+	            game.save('currentPuzzle',this.link);
 	        }
 	        var createNode=function(name){
 	            var info=lib.brawl[name];
@@ -116,7 +117,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    intro+='<li>'+modeinfo;
 	                }
 	                for(var i=0;i<info.intro.length;i++){
-	                    intro+='<li>'+info.intro[i];
+	                    intro+='<br>'+info.intro[i];
 	                }
 	            }
 	            else{
@@ -126,12 +127,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	                intro+=info.intro;
 	            }
+	           var i = ui.create.div('.text center',intro);
+	            i.style.overflow='scroll';
+	            i.style.margin='0px';
+	            i.style.padding='0px';
 	            var showcase=ui.create.div();
 	            showcase.style.margin='0px';
 	            showcase.style.padding='0px';
 	            showcase.style.width='100%';
 	            showcase.style.display='block'
-				showcase.style.overflow='scroll';
+	            showcase.style.overflow='scroll';
 	            showcase.action=info.showcase;
 	            showcase.link=name;
 	            if(info.fullshow){
@@ -141,13 +146,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            else{
 	                node.nodes=[
 	                    ui.create.div('.caption',caption),
-	                    ui.create.div('.text center',intro),
-	                    showcase
+	                    i,
+	                    showcase,
 	                ];
 	            }
 	            node.link=name;
 	            node._nostart=info.nostart;
-	            if(lib.storage.currentBrawl==name){
+	            if(lib.storage.currentPuzzle==name){
 	                clickCapt.call(node);
 	            }
 	            return node;
@@ -171,42 +176,42 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        level=dialog.content.querySelector('.menubutton.large.active');
 	                    }
 	                    if(level){
-	                        var stagesave=lib.storage.stage;
+	                        var stagesave=lib.storage.puzzleset;
 	                        var stage=stagesave[active.link.slice(6)];
 	                        game.save('lastStage',level.index);
 	                        lib.onover.push(function(bool){
 	                            _status.createControl=ui.controls[0];
 	                            if(bool&&level.index+1<stage.scenes.length){
 	                                ui.create.control('下一关',function(){
-	                                    game.save('directStage',[stage.name,level.index+1],'brawl');
+	                                    game.save('directStage',[stage.name,level.index+1],'puzzle');
 	                                    localStorage.setItem(lib.configprefix+'directstart',true);
 	                                    game.reload();
 	                                });
 	                                if(level.index+1>stage.level){
 	                                    stage.level=level.index+1;
-	                                    game.save('stage',stagesave,'brawl');
+	                                    game.save('puzzleset',stagesave,'puzzle');
 	                                }
 	                                if(stage.mode!='sequal'){
-	                                    game.save('lastStage',level.index+1,'brawl');
+	                                    game.save('lastStage',level.index+1,'puzzle');
 	                                }
 	                            }
 	                            else{
 	                                ui.create.control('重新开始',function(){
 	                                    if(stage.mode=='sequal'&&bool&&level.index==stage.scenes.length-1){
-	                                        game.save('directStage',[stage.name,0],'brawl');
+	                                        game.save('directStage',[stage.name,0],'puzzle');
 	                                    }
 	                                    else{
-	                                        game.save('directStage',[stage.name,level.index],'brawl');
+	                                        game.save('directStage',[stage.name,level.index],'puzzle');
 	                                    }
 	                                    localStorage.setItem(lib.configprefix+'directstart',true);
 	                                    game.reload();
 	                                });
 	                                if(stage.mode=='sequal'&&level.index==stage.scenes.length-1){
 	                                    stage.level=0;
-	                                    game.save('stage',stagesave,'brawl');
+	                                    game.save('puzzleset',stagesave,'puzzle');
 	                                }
 	                                if(stage.mode!='sequal'){
-	                                    game.save('lastStage',level.index,'brawl');
+	                                    game.save('lastStage',level.index,'puzzle');
 	                                }
 	                            }
 	                            delete _status.createControl;
@@ -233,30 +238,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                }
 	                lib.translate.restart='返回';
 	                dialog.delete();
-	                ui.brawlinfo=ui.create.system('场景',null,true);
-	                lib.setPopped(ui.brawlinfo,function(){
-	                    var uiintro=ui.create.dialog('hidden');
-	                    uiintro.add(info.name);
-	                    var intro;
-	                    if(Array.isArray(info.intro)){
-	                        intro='<ul style="text-align:left;margin-top:0;width:450px">';
-	                        for(var i=0;i<info.intro.length;i++){
-	                            intro+='<li>'+info.intro[i];
-	                        }
-	                        intro+='</ul>'
-	                    }
-	                    else{
-	                        intro=info.intro;
-	                    }
-	                    uiintro.add('<div class="text center">'+intro+'</div>');
-	                    var ul=uiintro.querySelector('ul');
-	                    if(ul){
-	                        ul.style.width='180px';
-	                    }
-	                    uiintro.add(ui.create.div('.placeholder'));
-	                    return uiintro;
-	                },250);
-	                ui.auto.show();
 	                _status.brawl=info.content;
 	                game.switchMode(info.mode);
 	                if(info.init){
@@ -279,7 +260,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        start.style.zIndex=10;
 	        start.style.transition='all 0s';
 	        game.addScene=function(name,clear){
-	            var scene=lib.storage.scene[name];
+	            var scene=lib.storage.puzzle[name];
 	            var brawl={
 	                name:name,
 	                intro:scene.intro,
@@ -300,7 +281,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	        };
 	        game.addStage=function(name,clear){
-	            var stage=lib.storage.stage[name];
+	            var stage=lib.storage.puzzleset[name];
 	            var brawl={
 	                name:name,
 	                intro:stage.intro,
@@ -318,8 +299,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	        }
 	        game.removeScene=function(name){
-	            delete lib.storage.scene[name];
-	            game.save('scene',lib.storage.scene);
+	            delete lib.storage.puzzle[name];
+	            game.save('scene',lib.storage.puzzle);
 	            _status.sceneChanged=true;
 	            for(var i=0;i<packnode.childElementCount;i++){
 	                if(packnode.childNodes[i].link=='scene_'+name){
@@ -336,13 +317,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	        }
 	        game.removeStage=function(name){
-	            delete lib.storage.stage[name];
-	            game.save('stage',lib.storage.stage);
+	            delete lib.storage.puzzleset[name];
+	            game.save('puzzleset',lib.storage.puzzleset);
 	            for(var i=0;i<packnode.childElementCount;i++){
 	                if(packnode.childNodes[i].link=='stage_'+name){
 	                    if(packnode.childNodes[i].classList.contains('active')){
 	                        for(var j=0;j<packnode.childElementCount;j++){
-	                            if(get.is.empty(lib.storage.scene)){
+	                            if(get.is.empty(lib.storage.puzzle)){
 	                                if(packnode.childNodes[j].link=='scene'){
 	                                    clickCapt.call(packnode.childNodes[j]);
 	                                }
@@ -366,7 +347,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                sceneNode=createNode(i);
 					sceneNode.style.color = '#3fff00';
 	            }
-	            else{
+	            else if (lib.brawl[i].stage == true){
+					game.addStage(i);
+				} else {
 	                createNode(i);
 	            }
 	        }
@@ -375,1234 +358,111 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                clickCapt.call(sceneNode);
 	            }
 	        }
-	        for(var i in lib.storage.scene){
-	            game.addScene(i);
+	        for(var i in lib.storage.puzzle){
+				game.addScene(i);
 	        }
-	        for(var i in lib.storage.stage){
-	            game.addStage(i);
+	        for(var i in lib.storage.puzzleset){
+	            if (!lib.brawl[i]) game.addStage(i);
 	        }
-	        if(!lib.storage.currentBrawl){
+	        if(!lib.storage.currentPuzzle){
 	            clickCapt.call(packnode.firstChild);
 	        }
-	        game.save('lastStage');
+			game.save('lastStage');
 	        if(lib.storage.directStage){
 	            var directStage=lib.storage.directStage;
 	            game.save('directStage');
 	            clickStart(directStage);
 	        }
-	        lib.init.onfree();
+			lib.init.onfree();
 	    },
 	    brawl:{
-	    	practise:{
-	        	name:'对战练习',
-	        	mode:'old_identity',
-	        	submode:'1v1',
-	        	intro:[
-	        		'不会用角色？不熟悉牌堆？不熟悉游戏操作？',
-	        		'来和5血<s>稻草人</s>子规老师练习一下吧？',
-	        	],
-	        	init:function(){
-					lib.config.mode_config['old_identity']['player_number'] = '2';
-					lib.config.mode_config['old_identity']['free_choose'] = true;
-					lib.config.mode_config['old_identity']['change_identity'] = true;
-					lib.config.mode_config['old_identity']['continue_game'] = true;
-				},
-	        	content:{
-					//chooseCharacterFixed:true,
-					chooseCharacterAi:function(player){
-						player.init('zigui');
-					},
-	        	},
+	        library:{
+	        	name:'残局向导',
+				mode:'',
+				nostart:true,
+	        	intro:'',
 	        	showcase:function(init){
-					var node=this;
-					var player;
-					if(init){
-						player=ui.create.player(null,true);
-						player.init('zigui');
-						player.node.avatar.show();
-						player.style.left='calc(50% - 75px)';
-						player.style.top='20px';
-						player.node.count.remove();
-						//player.node.hp.remove();
-						player.style.transition='all 0.5s';
-						node.appendChild(player);
-						node.playernode=player;
-					}
-					else{
-						player=node.playernode;
-					}
-				},
-	        },
-	        weiwoduzun:{
-	            name:'唯我独尊',
-	            mode:'old_identity',
-	            intro:[
-	                '牌堆中【轰！】的数量增加30%',
-	                '游戏开始时，主公获得一枚战神标记',
-	                '拥有战神标记的角色【轰！】造成的伤害+1',
-	                '受到【轰！】造成的伤害后战神印记将移到伤害来源的武将牌上'
-	            ],
-	            showcase:function(init){
-	                var node=this;
-	                var player;
-	                if(init){
-	                    player=ui.create.player(null,true);
-	                    player.node.avatar.style.backgroundSize='cover';
-	                    player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_reimu2.jpg');
+	    			var node=this;
+	    			if(init){
+	                    var player=ui.create.player(null,true);
+						/*
+	                    lib.character['akyuu'] = ['female','1',3,['mengji'],[]];
+	                    lib.characterIntro['akyuu']='全名稗田阿求，将毕生奉献于记载幻想乡的历史的稗田家的现任家主。持有过目不忘的记忆能力。<br><b>画师：渡瀬　玲<br></b><br>现因一些原因，被赋予了幻想乡的管理员权限。不过依然是和平常一样做着记录屋的工作。';
+				        lib.skill['mengji'] = {};
+				        lib.translate['mengji'] = '隐藏';
+				        lib.translate['mengji_info'] = '达成多次异变胜利的话，可以解锁这个角色哟？';
+	                    */
+						player.init('kosuzu');
 	                    player.node.avatar.show();
-	                    player.style.left='calc(50% - 75px)';
-	                    player.style.top='20px';
+	                    //player.style.left='calc(50% - 75px)';
+	                    player.style.left='0px';
+	                    player.style.top='0px';
+	                    player.style.zIndex = '10';
+	                    player.style.cursor = 'pointer';
 	                    player.node.count.remove();
-	                    player.node.hp.remove();
-	                    player.style.transition='all 0.5s';
-	                    node.appendChild(player);
-	                    node.playernode=player;
-	                }
-	                else{
-	                    player=node.playernode;
-	                }
-	                var num=0;
-	                var num2=0;
-	                this.showcaseinterval=setInterval(function(){
-	                    var dx,dy
-	                    if(num2%5==0){
-	                        // player.animate('target');
-	                        // player.animate('zoomin');
-	                        player.classList.add('zoomin3');
-	                        player.hide();
-	                        setTimeout(function(){
-	                            player.style.transitionProperty='none';
-	                            player.classList.remove('zoomin3');
-	                            player.classList.add('zoomout2');
-	                            setTimeout(function(){
-	                                player.style.transitionProperty='';
-	                                player.classList.remove('zoomout2');
-	                                player.show();
-	                            },500);
-	                        },700);
-							for(var i=0;i<5;i++){
-								switch(i){
-			                        case 0:dx=-180;dy=0;break;
-			                        case 1:dx=-140;dy=100;break;
-			                        case 2:dx=0;dy=155;break;
-			                        case 3:dx=140;dy=100;break;
-			                        case 4:dx=180;dy=0;break;
-			                    }
-								var card=game.createCard('sha','noclick');
-			                    card.style.left='calc(50% - 52px)';
-			                    card.style.top='68px';
-			                    card.style.position='absolute';
-			                    card.style.margin=0;
-			                    card.style.zIndex=2;
-			                    card.style.opacity=0;
-			                    node.appendChild(card);
-			                    ui.refresh(card);
-			                    card.style.opacity=1;
-			                    card.style.transform='translate('+dx+'px,'+dy+'px)';
-			                    setTimeout((function(card){
-			                        return function(){
-										card.delete();
-									};
-			                    })(card),700);
-							}
-	                    }
-	                    num2++;
-	                    if(num>=5){
-	                        num=0;
-	                    }
-	                },700);
-	            },
-	            init:function(){
-	                lib.skill.weiwoduzun={
-	                    mark:true,
-	                    intro:{
-	                        content:'杀造成的伤害+1'
-	                    },
-	                    group:['weiwoduzun_damage','weiwoduzun_lose'],
-	                    subSkill:{
-	                        damage:{
-	                            trigger:{source:'damageBegin'},
-	                            forced:true,
-	                            filter:function(event){
-	                                return event.card&&event.card.name=='sha';
-	                            },
-	                            content:function(){
-	                                trigger.num++;
-	                            }
-	                        },
-	                        lose:{
-	                            trigger:{player:'damageEnd'},
-	                            forced:true,
-	                            filter:function(event){
-	                                return event.source&&event.source.isAlive();
-	                            },
-	                            content:function(){
-	                                player.removeSkill('weiwoduzun');
-	                                trigger.source.addSkill('weiwoduzun');
-	                            }
-	                        }
-	                    }
-	                };
-	                lib.translate.weiwoduzun='战神';
-	                lib.translate.weiwoduzun_bg='尊';
-	            },
-	            content:{
-	                cardPile:function(list){
-	                    var num=0;
-	                    for(var i=0;i<list.length;i++){
-	                        if(list[i][2]=='sha') num++;
-	                    }
-	                    num=Math.round(num*0.3);
-	                    if(num<=0) return list;
-	                    while(num--){
-	                        var nature='';
-	                        var rand=Math.random();
-	                        if(rand<0.15){
-	                            nature='fire';
-	                        }
-	                        else if(rand<0.3){
-	                            nature='thunder';
-	                        }
-	                        var suit=['heart','spade','club','diamond'].randomGet();
-	                        var number=Math.ceil(Math.random()*13);
-	                        if(nature){
-	                            list.push([suit,number,'sha',nature]);
-	                        }
-	                        else{
-	                            list.push([suit,number,'sha']);
-	                        }
-	                    }
-	                    return list;
-	                },
-	                gameStart:function(){
-	                    if(_status.mode=='zhong'){
-	                        game.zhong.addSkill('weiwoduzun');
-	                    }
-	                    else{
-	                        game.zhu.addSkill('weiwoduzun');
-	                    }
-	                }
-	            }
-	        },
-	        tongjiangmoshi:{
-	            name:'同⑨模式',
-	            mode:'identity',
-	            intro:'玩家选择一个角色，所有玩家均使用此角色',
-	            showcase:function(init){
-	                if(init){
-	                    this.nodes=[];
-	                }
-	                else{
-	                    while(this.nodes.length){
-	                        this.nodes.shift().remove();
-	                    }
-	                }
-	                var lx=this.offsetWidth/2-120;
-	                var ly=Math.min(lx,this.offsetHeight/2-60);
-	                var setPos=function(node){
-	                    var i=node.index;
-	                    var deg=Math.PI/4*i;
-	                    var dx=Math.round(lx*Math.cos(deg));
-	                    var dy=Math.round(ly*Math.sin(deg));
-	                    node.style.transform='translate('+dx+'px,'+dy+'px)';
-	                }
-	                for(var i=0;i<8;i++){
-	                    var node=ui.create.player(null,true);
-	                    this.nodes.push(node);
-	                    node.init('cirno');
-	                    node.classList.add('minskin');
-	                    node.node.marks.remove();
-	                    node.node.hp.remove();
-	                    node.node.lili.remove();
-	                    node.node.count.remove();
-	                    node.style.left='calc(50% - 60px)';
-	                    node.style.top='calc(50% - 60px)';
-	                    node.index=i;
-	                    setPos(node);
-	                    this.appendChild(node);
-	                }
-	                var nodes=this.nodes;
-	                this.showcaseinterval=setInterval(function(){
-	                    for(var i=0;i<nodes.length;i++){
-	                        nodes[i].index++;
-	                        if(nodes[i].index>7){
-	                            nodes[i].index=0;
-	                        }
-	                        setPos(nodes[i]);
-	                    }
-	                },1000);
-	            },
-	            content:{
-	                gameStart:function(){
-	                    var target=(_status.mode=='zhong')?game.zhong:game.zhu;
-	                    if(get.config('double_character')){
-	                        target.init(game.me.name,game.me.name2);
-	                    }
-	                    else{
-	                        target.init(game.me.name);
-	                    }
-	                    target.hp++;
-	                    target.maxHp++;
-	                    target.update();
-	                },
-	                chooseCharacterAi:function(player,list,list2,back){
-	                    if(player==game.zhu){
-	                        return;
-	                    }
-	                    else{
-	                        if(get.config('double_character')){
-	                            player.init(game.me.name,game.me.name2);
-	                        }
-	                        else{
-	                            player.init(game.me.name);
-	                        }
-	                    }
-	                },
-	                chooseCharacter:function(list,list2,num){
-	                    if(game.me!=game.zhu){
-	                        return list.slice(0,list2);
-	                    }
-	                    else{
-	                        if(_status.event.zhongmode){
-	    						return list.slice(0,6);
-	    					}
-	    					else{
-	    						return list.concat(list2.slice(0,num));
-	    					}
-	                    }
-	                }
-	            }
-	        },
-			/*
-	        pandora:{
-	        	name:'禁忌解放',
-	            mode:'identity',
-	            intro:[
-	            	'不知道谁把潘多拉的魔盒打开了！',
-	                '牌堆中的<b><u>禁忌牌</b></u>数量增加了<b><u>400%！</b></u>',
-	            ],
-	            showcase:function(init){
-	                var node=this;
-	                var player;
-	                if(init){
-	                    player=ui.create.player(null,true);
-	                    player.init('yuyuko');
-	                    player.node.avatar.show();
-	                    player.style.left='calc(50% - 75px)';
-	                    player.style.top='20px';
-	                    player.node.count.remove();
-	                    player.node.hp.remove();
 	                    player.node.lili.remove();
-	                    player.style.transition='all 0.5s';
-	                    node.appendChild(player);
-	                    node.playernode=player;
-	                }
-	                else{
-	                    player=node.playernode;
-	                }
-	                var num=0;
-	                var num2=0;
-	                this.showcaseinterval=setInterval(function(){
-	                    var dx,dy
-	                    if(num2%5==0){
-							for(var i=0;i<5;i++){
-								switch(i){
-			                        case 0:dx=-180;dy=0;break;
-			                        case 1:dx=-140;dy=100;break;
-			                        case 2:dx=0;dy=155;break;
-			                        case 3:dx=140;dy=100;break;
-			                        case 4:dx=180;dy=0;break;
-			                    }
-								var card=game.createCard('simen');
-			                    card.style.left='calc(50% - 52px)';
-			                    card.style.top='68px';
-			                    card.style.position='absolute';
-			                    card.style.margin=0;
-			                    card.style.zIndex=2;
-			                    card.style.opacity=0;
-			                    setTimeout((function(card, dx, dy){
-			                        return function(){
-					                    node.appendChild(card);
-					                    ui.refresh(card);
-					                    card.style.opacity=1;
-					                    card.style.transform='translate('+dx+'px,'+dy+'px)';
-									};
-			                    })(card, dx, dy),i*200);
-			                    setTimeout((function(card){
-			                    	return function(){
-			                    		card.delete();
-			                    	};
-			                    })(card),1400);
-							}
-	                    }
-	                    num2++;
-	                    if(num>=5){
-	                        num=0;
-	                    }
-	                },700);
-	            },
-	            init:function(){
-	            },
-	            content:{
-	                cardPile:function(list){
-	                    var num=0;
-	                    var cardlist = [];
-	                    for(var i=0;i<list.length;i++){
-	                        if(get.type({name:list[i][2]}) == 'jinji'){
-	                        	num++;
-	                        	cardlist.push(list[i][2]);
-	                        }
-	                    }
-	                    num=num*4;
-	                    if(num<=0) return list;
-	                    while(num--){
-	                        var rand=Math.floor(Math.random()*cardlist.length);
-	                        var name = cardlist[rand];
-	                        var suit=['heart','spade','club','diamond'].randomGet();
-	                        var number=Math.ceil(Math.random()*13);
-	                        list.push([suit,number,name]);
-	                    }
-	                    return list;
-	                },
-	                gameStart:function(){
-	                }
-	            }
-	        },
-			*/
-		    shenxian:{
-	            name:'神仙打架',
-	            mode:'identity',
-	            intro:[
-	            	'高达一号凭依了幻想乡里的所有人！',
-	                '所有角色在失去牌后摸一张牌！',
-	                '顺便，牌堆牌数翻倍了。',
-	            ],
-	            showcase:function(init){
-	                var node=this;
-	                var player;
-	                if(init){
-	                    player=ui.create.player(null,true);
-	                    player.node.avatar.style.backgroundSize='cover';
-	                    player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_zhaoyun.jpg');
-	                    player.node.avatar.show();
-	                    player.style.left='calc(50% - 75px)';
-	                    player.style.top='20px';
-	                    player.node.count.remove();
 	                    player.node.hp.remove();
 	                    player.style.transition='all 0.5s';
 	                    node.appendChild(player);
 	                    node.playernode=player;
-	                }
-	                else{
-	                    player=node.playernode;
-	                }
-	            },
-	            init:function(){
-	                lib.skill._gaoda={
-	                	trigger:{player:'loseAfter'},
-	                	direct:true,
-	                	content:function(){
-	                		player.draw();
-	                	},
-	                };
-	            },
-	            content:{
-	                cardPile:function(list){
-	                    return list.concat(list);
-	                },
-	                gameStart:function(){
-	                	var players = game.filterPlayer();
-	                	for (var i = 0; i < players.length; i ++){
-	                		
-	                	}
-	                }
-	            }
-	        },
-			landlord:{
-				name:'斗地主',
-				intro:['两名农民对战一名地主！',
-					'地主体力上限+1，回合开始时摸一张牌，且可以额外使用一张【轰！】'],
-				mode:'old_identity',
-				init:function(){
-					_status.brawl.playerNumber=3;
-					lib.skill.landlord={
-						direct:true,
-						init:function(player){
-							player.gainMaxHp();
-							player.recover();
-							player.say('初次见面，那么，永别了。');
-						},
-						trigger:{player:'phaseBegin'},
-						content:function(){
-							player.draw();
-						},
-						mod:{
-							cardUsable:function(card,player,num){
-								if(card.name=='sha') return num + 1;
-							}
-						},
-					};
-					lib.translate['landlord'] = '地主技能（摸牌）';
-				},
-				showcase:function(init){
-	                var node=this;
-	                var player, player1, player2;
-	                if(init){
-						this.style.margin = '-200px';
-						this.style.padding = '200px';
-	                    player=ui.create.player(null,true);
-	                    player.init('remilia');
-	                    player.node.avatar.show();
-	                    player.style.left='calc(50% - 75px)';
-	                    player.style.top='200px';
-						player.maxHp++;
-						player.hp++;
-						player.update();
-	                    player.node.count.innerHTML='100';
-	                    player.style.transition='all 0.5s';
-						player1=ui.create.player(null,true);
-	                    player1.node.avatar.style.backgroundSize='cover';
-						player1.node.avatar.setBackgroundImage('image/character/zigui.jpg');
-	                    player1.node.avatar.show();
-	                    player1.style.left='calc(50% - 250px)';
-	                    player1.style.top='400px';
-	                    player1.style.transition='all 0.5s';
-						player1.style.transform='scale(0.7)';
-						player2=ui.create.player(null,true);
-	                    player2.node.avatar.style.backgroundSize='cover';
-						player2.node.avatar.setBackgroundImage('image/character/zigui.jpg');
-	                    player2.node.avatar.show();
-	                    player2.style.left='calc(50% + 100px)';
-	                    player2.style.top='400px';
-	                    player2.style.transition='all 0.5s';
-						player2.style.transform='scale(0.7)';
-	                    node.appendChild(player);
-	                    node.appendChild(player1);
-						node.appendChild(player2);
-	                    node.playernode=player;
-	                }
-	                else{
-	                    player=node.playernode;
-	                }
-					var list = [
-						'我不是针对你们任何一个人，我是说你们在座的各位，都是垃圾！',
-						'想打我？我怀疑你们脑子有点问题。',
-						'你们这些战五渣连看我都不配！',
-						'你们这些龙套炮灰，连第一集的ED都活不到！',
-						'我看看，左边的是白板，右边的，什么，还是白板？',
-						'你们这几个白板是哪个二货设计的，推了重来推了重来！',
-						'才两个人？就是来100个也打不过本小姐的！',
-						'我查下百科，等下、你居然掉心脏？',
-						'你们打的这么菜，就是氪金也救不了你们了！',
-						'找不到回家的路了吗？出门右转有垃圾桶哦',
-						'我认得你，你就是《如何与傻逼相处》的封面！',
-						'你打牌菜的像子规！',
-						'你妈生个叉烧也好过生你！',
-					];
-	                this.showcaseinterval=setInterval(function(){
-						if (list.length != 0){
-							node.playernode.say(list.randomRemove());
-						} else {
-							node.playernode.say('大傻逼！都是大傻逼！');
-						}
-					},5000);
-				},
-				content:{
-					gameStart:function(){
-	                	var players = game.filterPlayer();
-	                	lib.translate['zhu'] = '地主';
-						lib.translate['zhu2'] = '地主';
-						lib.translate['fan'] = '农民';
-						lib.translate['fan2'] = '农民';
-						lib.translate['nei'] = '农民';
-						lib.translate['nei2'] = '农民';
-						for (var i = 0; i < players.length; i ++){
-							if (players[i].identity == 'nei') players[i].identity = 'fan';
-							if (players[i].identity == 'zhu') players[i].addSkill('landlord');
-							players[i].identityShown = true;
-	                	}
-						game.showIdentity();
-                        _status.identityShown=true;
-	                }
-				},
-			},
-			marisa:{
-				name:'偷书贼！',
-				intro:['该死的老鼠又来偷东西了！',
-					'魔理沙对战帕秋莉与小恶魔',
-					'魔理沙增加1点体力上限，且在3号位行动前进行一个额外的回合（3号位坠机则不执行）。',
-					'小恶魔游戏开始时装备3张【魔导书】。',
-					'双方胜利条件均为：对方全部坠机。',
-					'额外的，魔理沙回合开始时，如果魔理沙装备了至少2张【魔导书】，魔理沙胜利。',
-					],
-				mode:'old_identity',
-				init:function(){
-					ui.background.setBackgroundImage('image/background/stg_library.jpg');
-					_status.brawl.playerNumber=3;
-					lib.skill.steal={
-						direct:true,
-						group:'steal2',
-						init:function(player){
-							player.say('帕秋莉，听说你今天没时间，所以我就来啦！');
-							player.gainMaxHp();
-							player.recover();
-						},
-						trigger:{player:'phaseBegin'},
-						content:function(){
-							if (player.countCards('e', 'book') > 1){
-								if (game.me == player) game.over(true);
-								else game.over(false);
-							}
-						},
-					};
-					lib.skill.steal2={
-						direct:true,
-						trigger:{global:'phaseAfter'},
-						filter:function(event,player){
-							return game.filterPlayer().length == 3 && player == event.player.nextSeat.nextSeat;
-						},
-						content:function(){
-							player.insertPhase();
-						},
-					};
-				},
-				showcase:function(init){
-					var node=this;
-					var player1,player2,player3;
-					if(init){
-						player1=ui.create.player(null,true).init('marisa');
-						player2=ui.create.player(null,true).init('patchouli');
-						player3=ui.create.player(null,true).init('koakuma');
-						player1.style.left='20px';
-						player1.style.top='20px';
-						player1.style.transform='scale(0.9)';
-						player1.node.count.hide();
-						player2.style.left='auto';
-						player2.style.right='20px';
-						player2.style.top='20px';
-						player2.style.transform='scale(0.9)';
-						player2.node.count.hide();
-						player3.style.left='auto';
-						player3.style.right='200px';
-						player3.style.top='20px';
-						player3.style.transform='scale(0.9)';
-						player3.$equip(game.createCard('book',null,null,null,'1'));
-						player3.$equip(game.createCard('book',null,null,null,'1'));
-						player3.$equip(game.createCard('book',null,null,null,'1'));
-						player3.node.count.hide();
-						this.appendChild(player1);
-						this.appendChild(player2);
-						this.appendChild(player3);
-						this.player1=player1;
-						this.player2=player2;
-						this.player3=player3;
-					}
-					else{
-						player1=this.player1;
-						player2=this.player2;
-						player3=this.player3;
-					}
-					var rect1=player1.getBoundingClientRect();
-					var rect2=player2.getBoundingClientRect();
-					var rect3=player3.getBoundingClientRect();
-					var left1=rect1.left+rect1.width/2-ui.arena.offsetLeft;
-					var left2=rect2.left+rect2.width/2-ui.arena.offsetLeft;
-					var left3=rect3.left+rect3.width/2-ui.arena.offsetLeft;
-					var top1=rect1.top+rect1.height/2-ui.arena.offsetTop;
-					var top2=rect2.top+rect2.height/2-ui.arena.offsetTop;
-					var top3=rect3.top+rect3.height/2-ui.arena.offsetTop;
-
-					var createCard=function(wuxie){
-						var card;
-						if(wuxie){
-							card=game.createCard('wuxie','noclick');
-							card.style.transform='scale(0.9)';
-						}
-						else{
-							card=game.createCard('shunshou','noclick');
-						}
-						card.style.opacity=0;
-						card.style.position='absolute';
-						card.style.zIndex=2;
-						card.style.margin=0;
-						return card;
-					}
-
-					var func=function(){
-						game.linexy([left1,top1,left3,top3]);
-						var card=createCard();
-						card.style.left='43px';
-						card.style.top='58px';
-						node.appendChild(card);
-						ui.refresh(card);
-						card.style.opacity=1;
-						card.style.transform='scale(0.9) translate(137px,152px)';
-						setTimeout(function(){
-							card.delete();
-						},1500);
-
-						setTimeout(function(){
-							if(!node.showcaseinterval) return;
-							game.linexy([left2,top2,left1,top1]);
-							var card=createCard(true);
-							card.style.left='auto';
-							card.style.right='43px';
-							card.style.top='58px';
-							node.appendChild(card);
-							ui.refresh(card);
-							card.style.opacity=1;
-							card.style.transform='scale(0.9) translate(-137px,152px)';
-							setTimeout(function(){
-								card.delete();
-							},500);
-						},1000);
-					};
-					node.showcaseinterval=setInterval(func,2200);
-					func();
-				},
-				content:{
-					list:['patchouli', 'koakuma'],
-					chooseCharacterFixed:true,
-					chooseCharacterAi:function(player){
-						if(player==game.zhu){
-							player.init('marisa');
-						}
-						else{
-							_status.brawl.list.remove(game.me.name);
-							player.init(_status.brawl.list.randomRemove());
-						}
-					},
-					chooseCharacter:function(){
-						if(game.me==game.zhu){
-							return ['marisa'];
-						}
-						else{
-							_status.brawl.list.randomSort();
-							return _status.brawl.list;
-							// return _status.brawl.list.randomGets(1);
-						}
-					},
-					gameStart:function(){
-	                	var players = game.filterPlayer();
-	                	for (var i = 0; i < players.length; i ++){
-							if (players[i].identity == 'nei') players[i].identity = 'fan';
-							if (players[i].identity == 'zhu') players[i].addSkill('steal');
-							players[i].identityShown = true;
-							if (players[i].name == 'koakuma'){
-								players[i].equip(game.createCard('book',null,null,null,'1'));
-								players[i].equip(game.createCard('book',null,null,null,'1'));
-								players[i].equip(game.createCard('book',null,null,null,'1'));
-							}
-	                	}
-						game.showIdentity();
-                        _status.identityShown=true;
-	                }
-				},
-			},
-			/*
-			patchouli:{
-				name:'手忙脚乱',
-				intro:['小恶魔忙不过来了，帕秋莉招人来帮忙了！',
-						'帕秋莉每回合会提出一个任务，完成那个任务就会获得奖励。',
-						'（金币系统下，还会给你发工资哟？）',
-						'连续3个回合没有完成委托的话，就会被帕秋莉解雇了！',
-						'你在解雇前能够完成多少个委托呢？'],
-				mode:'old_identity',
-				submode:'1v1',
-				init:function(){
-					lib.config.mode_config['old_identity']['player_number'] = '2';
-					lib.config.mode_config['old_identity']['free_choose'] = true;
-					lib.config.mode_config['old_identity']['change_identity'] = false;
-					lib.config.mode_config['old_identity']['continue_game'] = true;
-					lib.config.mode_config['old_identity']['ban_identity'] = 'zhu';
-					lib.character['patchouli'] = ['female','2',3,['mission','mianyi', 'useless'],['unseen']];
-					lib.skill.mission={
-						forced:true,
-						trigger:{player:'phaseBegin'},
-						init:function(player){
-							player.say('我的要求可是很艰苦的，你做好准备了吗？');
-							game.me.storage.completed_num = 0;
-						},
-						content:function(){
-							'step 0'
-							var list = ['damage_zigui'];
-							//var list = ['damage_zigui', 'heal_zigui', 'marisa_book', 'patchouli_book', 'spellcard', 'remilia_judge', 'drawcheck', 'lesscards'];
-							for (var i = 0; i < list.length; i ++){
-								if (player.hasSkill(list[i])){
-									player.removeSkill(list[i]);
-									list.remove(list[i]);
-								}
-							}
-							var name = list.randomGet();
-							player.addSkill(name);
-							lib.translate[name] = '任务';
-							lib.translate[name+'_bg'] ='任';
-							game.me.storage.completion = 0;
-							'step 1'
-							if (!lib.config.gameRecord.brawl){
-								lib.config.gameRecord.brawl = {data:{}};
-							}
-							if (!lib.config.gameRecord.brawl.data['patchouli']){
-								lib.config.gameRecord.brawl.data['patchouli'] = 0;
-							}
-							if (lib.config.gameRecord.brawl.data['patchouli'] < game.me.storage.completed_num){
-								lib.config.gameRecord.brawl.data['patchouli'] = game.me.storage.completed_num;
-							}
-							game.saveConfig('gameRecord',lib.config.gameRecord);
-						},
-					};
-					lib.skill.damage_zigui={
-						mark:true,
-						intro:{
-							content:function(content,player){
-								return '任务：对子规造成'+Math.floor(2+game.me.storage.completed_num/5)+'点伤害<br>奖励：体力上限+1';
-							}
-						},
-						init:function(player){
-							lib.character['zigui'] = ['female','5',5,[],[]];
-							game.addPlayer(3, 'zigui');
-							game.log('当前任务：<br>对子规造成'+Math.floor(2+game.me.storage.completed_num/5)+'点伤害<br>奖励：体力上限+1');
-						},
-						onremove:function(player){
-							game.removePlayer(game.findPlayer(function(current){
-								return current.name != 'patchouli' && current != game.me;
-							}));
-						},
-						trigger:{global:'damageAfter'},
-						filter:function(event, player){
-							return event.player.name == 'zigui';	
-						},
-						content:function(){
-							game.me.storage.completion += trigger.num;
-							if (game.me.storage.completion >= Math.floor(2+game.me.storage.completed_num/5)){
-								game.me.storage.completion = true;
-							}
-						},
-					};
-					lib.skill.heal_zigui={
-						init:function(player){
-							lib.character['zigui'] = ['female','5',5,[],[]];
-							game.addPlayer(3, 'zigui');
-							game.log('当前任务：<br>令子规回复'+Math.floor(1+game.me.storage.completed_num/5)+'点体力<br>奖励：体力上限+1');
-						},
-						onremove:function(player){
-
-						},
-					};
-					lib.skill.marisa_book={
-						init:function(player){
-							game.addPlayer(3, 'marisa');
-						},
-						onremove:function(player){
-
-						},
-					};
-					lib.skill.patchouli_book={
-						init:function(player){
-							
-						},
-						onremove:function(player){
-
-						},
-					};
-					lib.skill.spellcard={
-
-					};
-					lib.skill.remilia_judge={
-						init:function(player){
-
-						},
-						onremove:function(player){
-
-						},
-					};
-					lib.skill.drawcheck={
-
-					};
-					lib.skill.lesscards={
-
-					};
-					lib.skill.useless={
-						direct:true,
-						trigger:{global:['phaseBegin', 'phaseDrawBegin', 'phaseUseBegin', 'phaseDiscardBegin']},
-						content:function(){
-							if (trigger.player != game.me){
-								trigger.cancel();
-							} else {
-								//game.addPlayer('koakoma');
-							}
-						},
-						ai:{
-							effect:{
-								target:function(card,player,target,current){
-									if(get.type(card)!='equip') return 'zeroplayertarget';
-								},
-								player:function(card,player,target,current){
-									if(get.type(card)!='equip') return 'zeroplayertarget';
-								}
-							},
-							threaten:-1000,
-						}
-					};
-					lib.translate.mission='任务';
-					lib.translate.mission_info='';
-					lib.translate.useless='没用';
-					lib.translate.useless_info='木大木大木大';
-				},
-				showcase:function(init){
-					var node=this;
-	                var player;
-	                if(init){
-	                    player=ui.create.player(null,true).init('patchouli');
-	                    player.style.transition='all 0.5s';
-						player.style.left='calc(50% - 75px)';
-	                    player.style.top='20px';
-	                    node.appendChild(player);
-	                    node.playernode=player;
-						var dialog=ui.create.dialog('hidden');
-							dialog.style.left = "0px";
-							dialog.style.top = "20px";
-							dialog.style.width = "100%";
-							dialog.style.height = "100%";
-							dialog.classList.add('fixed');
-		        			dialog.noopen=true;
-							node.appendChild(dialog);
-							if (lib.config.gameRecord.brawl && lib.config.gameRecord.brawl.data['patchouli']){
-								dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">委托完成数最高纪录：'+lib.config.gameRecord.brawl.data['patchouli']);
-							}
-		                    dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">有什么好怕的，不会很难的啦，就不想挣点外快吗？');
-	                }
-	                else{
-	                    player=node.playernode;
-	                }
-
-				},
-				content:{
-					chooseCharacterAi:function(player){
-						player.init('patchouli');
-					},
-				},
-				gameStart:function(){
-
-				},
-			},
-			*/
-			crow:{
-				name:'神的指引',
-				mode:'identity',
-				intro:['牌堆里的所有牌换成【乌鸦神像】！', '【乌鸦神像】无法获得更多的【乌鸦神像】'],
-				init:function(){
-					lib.card['spell_wuyashenxiang'] = {
-						type:'trick',
-						subtype:'support',
-						fullimage:true,
-						enable:true,
-						cost:0,
-						filterTarget:function(card,player,target){
-							return target==player;
-						},
-						selectTarget:-1,
-						content:function(){
-							'step 0'
-							player.chooseControl('法术牌','基本牌').set('prompt', '乌鸦神像：发现哪种类型的牌？').ai=function(){
-								return Math.random()<0.5?'法术牌':'基本牌';
-							};
-							'step 1'
-							var list=[];
-							var bool=(result.control=='法术牌');
-							for(var i in lib.card){
-								if(bool){
-									if(lib.card[i].type=='trick' && i != 'spell_wuyashenxiang'){
-										list.push(i);
-									}
-								}
-								else{
-									if(lib.card[i].type=='basic'){
-										list.push(i);
-									}
-								}
-							}
-							list=list.randomGets(3);
-							var cards=[];
-							for(var i=0;i<list.length;i++){
-								cards.push(game.createCard(list[i]));
-							}
-							player.chooseCardButton(cards,'选择一张加入手牌',true);
-							'step 2'
-							player.gain(result.links,'draw');
-						},
-						ai:{
-							order:2,
-							value:5,
-							useful:5,
-							result:{
-								player:1
-							},
-						}
-					};
-				},
-				showcase:function(init){
-					var node=this;
-					var player;
-					if(init){
-						player=ui.create.player(null,true);
-						player.node.avatar.style.backgroundSize='cover';
-						player.node.avatar.setBackgroundImage('image/mode/boss/character/boss_fapaiji.jpg');
-						player.node.name.innerHTML = '发<br>牌<br>姬';
-						player.node.avatar.show();
-						player.style.left='calc(50% - 75px)';
-						player.style.top='20px';
-						player.node.count.remove();
-						player.node.hp.remove();
-						player.node.lili.remove();
-						player.style.transition='all 0.5s';
-						node.appendChild(player);
-						node.playernode=player;
-					}
-					else{
-						player=node.playernode;
-					}
-					if (lib.card['spell_wuyashenxiang']){
-						lib.card['spell_wuyashenxiang'].cost = 0;
-						var num=0;
-						var num2=0;
-						this.showcaseinterval=setInterval(function(){
-							var dx,dy
-							if(num2%5==0){
-								for(var i=0;i<5;i++){
-									switch(i){
-										case 0:dx=-180;dy=0;break;
-										case 1:dx=-140;dy=100;break;
-										case 2:dx=0;dy=155;break;
-										case 3:dx=140;dy=100;break;
-										case 4:dx=180;dy=0;break;
-									}
-									var card=game.createCard('spell_wuyashenxiang');
-									card.style.left='calc(50% - 52px)';
-									card.style.top='68px';
-									card.style.position='absolute';
-									card.style.margin=0;
-									card.style.zIndex=2;
-									card.style.opacity=0;
-									setTimeout((function(card, dx, dy){
-										return function(){
-											node.appendChild(card);
-											ui.refresh(card);
-											card.style.opacity=1;
-											card.style.transform='translate('+dx+'px,'+dy+'px)';
-										};
-									})(card, dx, dy),i*200);
-									setTimeout((function(card){
-										return function(){
-											card.delete();
-										};
-									})(card),3000);
-								}
-							}
-							num2++;
-							if(num>=5){
-								num=0;
-							}
-						},700);
-					} else {
-						var dialog=ui.create.dialog('hidden');
+	        			var dialog=ui.create.dialog('hidden');
 						dialog.style.left = "0px";
 						dialog.style.top = "0px";
 						dialog.style.width = "100%";
 						dialog.style.height = "100%";
 						dialog.classList.add('fixed');
-						dialog.noopen=true;
+	        			dialog.noopen=true;
 						node.appendChild(dialog);
-						dialog.addText('<div><div style="display:block;left:calc(50% - 100px);top:200px;text-align:left;font-size:16px">需要打开金币扩展才能使用这个场景！');
+						var i = ['欢迎来到残局模式,'+lib.config.connect_nickname+'!',
+							'一个残局，指的是一个由我预先布好的场面，然后由你来解开它！',
+							'',
+							'<u>残局的具体规则</u>',
+							'1. 残局破解方式，是在一个回合内获得胜利。胜利方式与正常游戏相同。',
+							'2. 游戏从你的回合开始，并从准备阶段开始进行。在你的回合结束时，如果游戏没有结束，则判定为游戏失败。',
+							'3. 所有角色的手牌，装备，和技能牌都是固定的。',
+							'4. 牌堆是固定的，且不包括多余的牌。洗牌时也不会重置至正常牌堆。技能牌堆同样。',
+	    				];
+						var j = [
+							'<u>然后呢，是一些相当关键的注意事项：</u>',
+							'1. 在右上角的【牌堆】键可以查看牌堆和技能牌堆里的牌，【手牌】键可以查看所有其他角色的手牌。',
+							'2. 残局中的AI与正常游戏相同：虽然智商不高，但是绝不会做出完全傻子的事情，所以不要想的太简单了！',
+							'3. 抽牌时，没有牌构成牌堆了，就会游戏平局！这跟普通游戏也是一样的。',
+							'4. 残局是以难度分类的：新手，简单，普通，困难，和噩梦。虽然说也没有限制，但是还是从简单点的开始比较好啦。',
+							'',
+							'那么，祝你武运昌盛！',
+	    				];
+						if (!game.layout=='nova'){
+							dialog.addText('<div><div style="display:block;left:180px;text-align:left;font-size:16px">'+i.join('<br>'));
+							dialog.addText('<div><div style="display:block;top:140px;text-align:left;font-size:16px">'+j.join('<br>'));
+						} else {
+							dialog.addText('<div><div style="display:block;left:150px;text-align:left;font-size:16px">'+i.join('<br>'));
+							dialog.addText('<div><div style="display:block;top:160px;text-align:left;font-size:16px">'+j.join('<br>'));
+						}
 					}
-	            },
-				content:{
-	            	cardPile:function(list){
-						for (var i = 0; i < list.length; i ++){
-							if (list[i][0]){
-								list[i][2] = 'spell_wuyashenxiang';
-							}
-						}
-						return list;
-					},
-				}
+	        	},
+	        },
+			"新手":{
+				name:'新手',
+				stage:true,
 			},
-	        pubg:{
-	        	name:'吃鸡模式',
-	        	mode:'identity',
-	        	intro:[
-	        		'游戏开始时，所有角色获得一张【皆杀】异变牌。',
-	        		'简单来说，所有角色的胜利条件仅为击坠所有其他角色，且所有角色击坠角色后，摸3张牌，获得1点灵力，摸一张技能牌。',
-	        		'额外的，牌堆里加入了3张专属禁忌牌。',
-	        	],
-	        	init:function(){
-	        		lib.card.luanwu={
-						filterTarget:function(card,player,target){
-							return target!=player;
-						},
-						audio:true,
-						fullskin:true,
-						type:'jinji',
-						enable:true,
-						selectTarget:-1,
-						content:function(){
-							"step 0"
-							target.chooseToUse('乱武：使用一张轰！或失去一点体力',{name:'sha'},function(card,player,target){
-								if(player==target) return false;
-								if(!player.canUse('sha',target)) return false;
-								if(get.distance(player,target)<=1) return true;
-								if(game.hasPlayer(function(current){
-									return current!=player&&get.distance(player,current)<get.distance(player,target);
-								})){
-									return false;
-								}
-								return true;
-							});
-							"step 1"
-							if(result.bool==false) target.loseHp();
-						},
-						ai:{
-							order:1,
-							value:5,
-							useful:2,
-							result:{
-								player:function(player){
-									if(lib.config.mode=='identity'&&game.zhu.isZhu&&player.identity=='fan'){
-										if(game.zhu.hp==1&&game.zhu.countCards('h')<=2) return 1;
-									}
-									var num=0;
-									var players=game.filterPlayer();
-									for(var i=0;i<players.length;i++){
-										var att=get.attitude(player,players[i]);
-										if(att>0) att=1;
-										if(att<0) att=-1;
-										if(players[i]!=player&&players[i].hp<=3){
-											if(players[i].countCards('h')==0) num+=att/players[i].hp;
-											else if(players[i].countCards('h')==1) num+=att/2/players[i].hp;
-											else if(players[i].countCards('h')==2) num+=att/4/players[i].hp;
-										}
-										if(players[i].hp==1) num+=att*1.5;
-									}
-									if(player.hp==1){
-										return -num;
-									}
-									if(player.hp==2){
-										return -game.players.length/4-num;
-									}
-									return -game.players.length/3-num;
-								}
-							}
-						},
-	        		};
-				},
-				showcase:function(init){
-	                var node=this;
-					var card=game.createCard('death');
-                    card.style.left='calc(50% - 52px)';
-                    card.style.top='68px';
-                    card.style.position='absolute';
-                    card.style.margin=0;
-                    card.style.zIndex=2;
-                    card.style.opacity=0;
-                    node.appendChild(card);
-                    ui.refresh(card);
-                    card.style.opacity=1;
-	            },
-	            content:{
-	            	cardPile:function(list){
-						var num=3;
-						if(num<=0) return list;
-						while(num--){
-							var suit=['heart','spade','club','diamond'].randomGet();
-							var number=Math.ceil(Math.random()*13);
-							list.push([suit,number,'luanwu']);
-						}
-						return list;
-					},
-	            	gameStart:function(){
-	                	var players = game.players;
-	                	for (var i = 0; i < players.length; i ++){
-	                		players[i].identityShown = true;
-	                		//players[i].setIdentity(players[i].identity);
-	                		players[i].addIncident(game.createCard('death'));
-	                	}
-	                }
-	            },
-	        },
-	        library:{
-	        	name:'稗田教室',
-	        	mode:'identity',
-	        	intro:[
-	        		'阿求老师的特殊规则！',
-	        	],
-	        	showcase:function(init){
-	        		var node=this;
-	                var player;
-	        		if (init){
-	        			lib.config['library'] = [false,false,false,false];
-	                    player=ui.create.player(null,true);
-	                    player.node.avatar.style.backgroundSize='cover';
-	                    player.node.avatar.setBackgroundImage('image/character/akyuu.jpg');
-	                    player.node.avatar.show();
-	                    player.style.left='calc(50% - 75px)';
-	                    player.style.top='20px';
-						if (game.layout == 'nova') player.style.top='0px';
-	                    player.node.count.remove();
-	                    player.node.hp.remove();
-	                    player.node.lili.remove();
-	                    player.style.transition='all 0.5s';
-	                    node.appendChild(player);
-	                    node.playernode=player;
-	        			if (lib.config.akyuu){
-	        				var style2={position:'relative',display:'block',left:0,top:'210px',marginBottom:'6px',padding:0,width:'100%'};
-	        				var line2=ui.create.div(style2,this);
-	        				var style3={position:'relative',display:'block',left:0,top:'210px',marginBottom:'6px',padding:0,width:'100%'};
-	        				var line3=ui.create.div(style3, this);
-	        				ui.create.node('span','请选择你想要使用的规则！',line2,{marginLeft:'20px'});
-	        				ui.create.node('span','<br>一名角色的回合结束时，其摸X张牌（X为其本回合造成的伤害数）。 ',line2,{});
-		                    var linked=ui.create.node('input',line2);
-		                    linked.type='checkbox';
-		                    ui.create.node('span','<br>所有角色的体力上限+1，灵力上限+2，手牌上限+3。 ',line2,{});
-		                    var turn=ui.create.node('input',line2,{marginLeft:'116px'});
-		                    turn.type='checkbox';
-		                    ui.create.node('span','<br>一名角色造成伤害时，若其手牌数为场上最高（之一），该伤害+1。 ',line2,{});
-		                    var round=ui.create.node('input',line2);
-		                    round.type='checkbox';
-		                    ui.create.node('span','<br>阿求老师来一起玩！ ',line2,{});
-		                    var akyuu=ui.create.node('input',line2,{});
-		                    akyuu.type='checkbox';
-		                    ui.create.div('.menubutton.large','设置完毕',line3,{position:'relative'},function(){
-		                    	lib.config['library'] = [linked.checked,turn.checked,round.checked,akyuu.checked];
-		                    });
-	        			} else {
-		                    var dialog=ui.create.dialog('hidden');
-							dialog.style.left = "0px";
-							dialog.style.top = "0px";
-							dialog.style.width = "100%";
-							dialog.style.height = "100%";
-							dialog.classList.add('fixed');
-		        			dialog.noopen=true;
-							node.appendChild(dialog);
-							var number = 3;
-							if (lib.config.gameRecord.incident && lib.config.gameRecord.incident.data['akyuu']){
-								number = lib.config.gameRecord.incident.data['akyuu'] < 3?3-lib.config.gameRecord.incident.data['akyuu']:0;
-							}
-		                    dialog.addText('<div><div style="display:block;left:180px;top:200px;text-align:left;font-size:16px">成功召唤阿求就可以使用这个场景啦！<br>召唤阿求还需要'+number+'次异变胜利。');
-	        			}
-	        		}
-	        	},
-	        	content:{
-	        		gameStart:function(){
-	        			if (lib.config.library){
-	        				if (lib.config.library[0]) game.zhu.addSkill('shuchu');
-	        				if (lib.config.library[1]) game.zhu.addSkill('fuzhu');
-	        				if (lib.config.library[2]) game.zhu.addSkill('kongchang');
-	        			}
-	                }
-	        	},
-	        },
+			'简单':{
+				name:'简单',
+				stage:true,
+			},
+			'普通':{
+				name:'普通',
+				stage:true,
+			},
+			/*
+			'困难':{
+				name:'困难',
+			},
+			'噩梦':{
+				stage:true,
+			},
+			*/
 	        scene:{
-	            name:'创建场景',
+	            name:'创建残局',
 	            content:{
 	                submode:'normal'
 	            },
@@ -1617,8 +477,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                showcase:function(init){
 	                    if(init){
 	                        var name=lib.brawl[this.link].name;
-	                        var scene=lib.storage.scene[name];
-	                        ui.create.node('button','编辑场景',this,function(){
+	                        var scene=lib.storage.puzzle[name];
+	                        ui.create.node('button','编辑残局',this,function(){
 	                            _status.sceneToLoad=scene;
 	                            game.switchScene();
 	                        });
@@ -1629,16 +489,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            },{marginLeft:'6px'});
 	                        }
 	                        else{
-	                            ui.create.node('button','删除场景',this,function(){
+	                            ui.create.node('button','删除残局',this,function(){
 	                                if(confirm('确定删除'+name+'？')){
 	                                    game.removeScene(name);
 	                                }
 	                            },{marginLeft:'6px'});
 	                        }
 	                        ui.create.node('button','导出扩展',this,function(){
-	                            var str='{name:"'+name+'",content:function(){\nif(lib.config.mode=="brawl"){\n'+
-	                            'if(!lib.storage.scene) lib.storage.scene={};\n'+
-	                            'if(!lib.storage.scene["'+name+'"]){\nlib.storage.scene["'+name+'"]='+get.stringify(scene)+';\n_status.extensionscene=true;}\n'+
+	                            var str='{name:"'+name+'",content:function(){\nif(lib.config.mode=="puzzle"){\n'+
+	                            'if(!lib.storage.puzzle) lib.storage.puzzle={};\n'+
+	                            'if(!lib.storage.puzzle["'+name+'"]){\nlib.storage.puzzle["'+name+'"]='+get.stringify(scene, 10)+';\n_status.extensionscene=true;}\n'+
 	                            'if(!_status.extensionmade) _status.extensionmade=[];\n'+
 	                            '_status.extensionmade.push("'+name+'");\n}}\n}';
 	                            var extension={'extension.js':'game.import("extension",function(lib,game,ui,get,ai,_status){return '+str+'})'};
@@ -1682,6 +542,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            else{
 	                                info2.push(info[0]);
 	                            }
+								if (info[3]){
+									info2.push('');
+									info2.push(info[3]);
+								}
 	                            return info2;
 	                        }
 	                        if(scene.replacepile){
@@ -1706,7 +570,96 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        return list;
 	                    },
 	                    gameStart:function(){
-	                        for(var i=0;i<game.players.length;i++){
+							game.saveConfig('background_music',lib.config.background_music);
+                            game.playBackgroundMusic();
+	                        ui.cardPileButton.style.display='';
+							ui.auto.style.display='none';
+                			ui.wuxie.style.display='none';
+							ui.playerids.style.display = 'none';
+							ui.rules.style.display = 'none';
+							var puzzleButton = function(){
+								var uiintro=ui.create.dialog('hidden');
+								uiintro.listen(function(e){
+									e.stopPropagation();
+								});
+								var num;
+								if(game.online){
+									num=_status.cardPileNum||0;
+								}
+								else{
+									num=ui.cardPile.childNodes.length;
+								}
+								uiintro.add('牌堆剩余 <span style="font-family:'+'xinwei'+'">'+num);
+								var list=[];
+								if(ui.cardPile.childNodes.length){
+									for(var i=0;i<ui.cardPile.childNodes.length;i++){
+										list.unshift(ui.cardPile.childNodes[i]);
+									}
+									uiintro.addSmall([list,'card']);
+								}
+								uiintro.add('技能牌剩余 <span style="font-family:'+'xinwei'+'">'+ui.skillPile.childNodes.length);
+								var list=[];
+								if(ui.skillPile.childNodes.length){
+									for(var i=0;i<ui.skillPile.childNodes.length;i++){
+										list.unshift(ui.skillPile.childNodes[i]);
+									}
+									uiintro.addSmall([list,'card']);
+								}
+								uiintro.add('<div class="text center">弃牌堆</div>' + ui.discardPile.childNodes.length +'');
+								if(ui.discardPile.childNodes.length){
+									var list=[];
+									for(var i=0;i<ui.discardPile.childNodes.length;i++){
+										list.unshift(ui.discardPile.childNodes[i]);
+									}
+									uiintro.addSmall([list,'card']);
+								}
+								else{
+									uiintro.add('<div class="text center" style="padding-bottom:3px">无</div>');
+								}
+								return uiintro;
+							};
+							lib.setPopped(ui.cardPileButton,puzzleButton,220);
+							lib.setPopped(ui.create.system('手牌',null,true),function(){
+								var uiintro=ui.create.dialog('hidden');
+
+								var players=game.players.concat(game.dead);
+								for(var i=0;i<players.length;i++){
+									if(players[i]!=game.me){
+										uiintro.add(get.translation(players[i]));
+										var cards=players[i].getCards('h');
+										if(cards.length){
+											uiintro.addSmall(cards,true);
+										}
+										else{
+											uiintro.add('（无）');
+										}
+									}
+								}
+
+								return uiintro;
+							},220);
+							/*
+							ui.create.system('重来',function(){
+								var level;
+								if(Array.isArray(arguments[0])){
+									level={index:arguments[0][1]};
+								}
+								else{
+									level=dialog.content.querySelector('.menubutton.large.active');
+								}
+								var stagesave=lib.storage.puzzleset;
+								var stage=stagesave[active.link.slice(6)];
+								if(stage.mode=='sequal'&&bool&&level.index==stage.scenes.length-1){
+									game.save('directStage',[stage.name,0],'puzzle');
+								}
+								else{
+									game.save('directStage',[stage.name,level.index],'puzzle');
+								}
+								localStorage.setItem(lib.configprefix+'directstart',true);
+								game.reload();
+							});
+							*/
+							for(var i=0;i<game.players.length;i++){
 	                            game.players[i].node.marks.show();
 	                            game.players[i].node.name.show();
 	                            game.players[i].node.name2.show();
@@ -1729,7 +682,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                    game.players[i].lili=game.players[i].maxlili;
 	                                }
 	                            }
-	                            if(info.lili){
+	                            if(info.lili || info.lili == 0){
 	                                game.players[i].lili=info.lili;
 	                                if(game.players[i].lili>game.players[i].maxlili){
 	                                    game.players[i].maxlili=game.players[i].lili;
@@ -1763,6 +716,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                }
 	                            });
 	                        }
+							game.pause();
+							ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">'+scene.intro);
+							ui.create.div('.avatar',ui.dialog).setBackground('kosuzu','character');
+							ui.create.control('走起！',function(){
+								ui.dialog.close();
+								while(ui.controls.length) ui.controls[0].close();
+								game.resume();
+							});
 	                    },
 	                    chooseCharacterBefore:function(){
 	                        var scene=_status.brawl.scene;
@@ -1829,7 +790,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            else{
 	                                info2.push(info[0]);
 	                            }
-	                            return ui.create.card().init(info2);
+								if (info[3]){
+									info2.push('');
+									info2.push(info[3]);
+								}
+								return ui.create.card().init(info2);
 	                        }
 	                        _status.firstAct=game.me;
 	                        for(var i=0;i<scene.players.length;i++){
@@ -1857,7 +822,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                    }
 	                                    else{
 	                                        target.init(info.name);
-	                                    }
+										}
 	                                }
 	                            }
 	                            if(info.position<_status.firstAct.brawlinfo.position) _status.firstAct=target;
@@ -1872,8 +837,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                target.$equip(createCard(info.equips[j]));
 	                            }
 	                            for(var j=0;j<info.judges.length;j++){
-	                                target.node.judges.appendChild(createCard(info.judges[j]));
-	                            }
+	                                //target.node.judges.appendChild(createCard(info.judges[j]));
+	                            	target.addJudge(createCard(info.judges[j]));
+								}
 	                            target=target.next;
 	                        }
 	                    },
@@ -1903,7 +869,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        if(info.name2=='none'){
 	                            if(info.name!='random'){
 	                                event.chosen=[info.name];
-	                            }
+								}
 	                        }
 	                        else{
 	                            if(info.name2=='random'&&info.name=='random'){
@@ -1949,10 +915,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    var style3={marginLeft:'4px',marginRight:'4px',position:'relative'}
 
 
-	                    var scenename=ui.create.node('input',ui.create.div(style2,'','场景名称：',this),{width:'120px'});
+	                    var scenename=ui.create.node('input',ui.create.div(style2,'','残局名称：',this),{width:'120px'});
 	                    scenename.type='text';
 	                    scenename.style.marginTop='20px';
-	                    var sceneintro=ui.create.node('input',ui.create.div(style2,'','场景描述：',this),{width:'120px'});
+	                    var sceneintro=ui.create.node('input',ui.create.div(style2,'','残局描述：',this),{width:'120px'});
 	                    sceneintro.type='text';
 	                    sceneintro.style.marginBottom='10px';
 
@@ -1979,19 +945,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        if(line6_e.childElementCount) capt_e.style.display='block';
 	                        if(line6_j.childElementCount) capt_j.style.display='block';
 	                    },style);
-	                    var editPile=ui.create.node('button','场景选项',line1,function(){
+	                    var editPile=ui.create.node('button','游戏选项',line1,function(){
 	                        resetCharacter();
 	                        addCharacter.disabled=true;
 	                        // editCode.disabled=true;
 	                        saveButton.disabled=true;
 	                        // exportButton.disabled=true;
 	                        line7.style.display='none';
-	                        line8.style.display='block';
-	                        capt8.style.display='block';
+	                        //line8.style.display='block';
+	                        //capt8.style.display='block';
 	                        line9.style.display='block';
 	                        line10.style.display='block';
 	                        line11.style.display='block';
-	                        capt9.style.display='block';
+	                        //capt9.style.display='block';
 	                        line3.style.display='block';
 
 	                        line6_t.style.display='block';
@@ -2008,9 +974,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    // var editCode=ui.create.node('button','编辑代码',line1,function(){
 	                    //     console.log(1);
 	                    // },style);
-	                    var saveButton=ui.create.node('button','保存场景',line1,function(){
+	                    var saveButton=ui.create.node('button','保存残局',line1,function(){
 	                        if(!scenename.value){
-	                            alert('请填写场景名称');
+	                            alert('请填写残局名称');
 	                            return;
 	                        }
 	                        var scene={
@@ -2030,9 +996,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            alert('请添加至少两名角色');
 	                            return;
 	                        }
-	                        if(lib.storage.scene[scenename.value]){
+	                        if(lib.storage.puzzle[scenename.value]){
 	                            if(_status.currentScene!=scenename.value){
-	                                if(!confirm('场景名与现有场景重复，是否覆盖？')){
+	                                if(!confirm('残局名与现有残局重复，是否覆盖？')){
 	                                    return;
 	                                }
 	                            }
@@ -2065,8 +1031,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        if(washesresult.value!='none'){
 	                            scene.washes=[parseInt(washes.value),washesresult.value]
 	                        }
-	                        lib.storage.scene[scene.name]=scene;
-	                        game.save('scene',lib.storage.scene);
+	                        lib.storage.puzzle[scene.name]=scene;
+	                        game.save('scene',lib.storage.puzzle);
 	                        game.addScene(scene.name,true);
 	                    },style);
 
@@ -2492,7 +1458,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    var line7=ui.create.div(style2,this);
 	                    line7.style.marginTop='12px';
 
-
 	                    var capt8=ui.create.div(style2,'','胜负条件',this);
 	                    capt8.style.display='none';
 	                    var line8=ui.create.div(style2,this);
@@ -2503,7 +1468,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    var results=[['none','无'],['win','胜利'],['lose','失败'],['tie','平局']];
 	                    var turns=ui.create.selectlist(turnslist,'1',line8);
 	                    ui.create.node('span','个回合后',line8,style);
-	                    var turnsresult=ui.create.selectlist(results,'none',line8);
+	                    var turnsresult=ui.create.selectlist(results,'lose',line8);
 
 
 	                    var washes=ui.create.selectlist(turnslist,'1',line8);
@@ -2541,7 +1506,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        line6_t.style.display='none';
 	                        line6_b.style.display='none';
 							line6_st.style.display='none';
-	                        line6_sb.style.display='none';
+	                        line6_sb.style.display='none'; 
 	                        line6_d.style.display='none';
 	                        capt_t.style.display='none';
 	                        capt_b.style.display='none';
@@ -2553,7 +1518,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            replacepile.checked=false;
 	                            gameDraw.checked=true;
 	                            turns.value='1';
-	                            turnsresult.value='none';
+	                            turnsresult.value='lose';
 	                            washes.value='1';
 	                            washesresult.value='none';
 	                            line6_t.innerHTML='';
@@ -2625,8 +1590,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                showcase:function(init){
 	                    if(init){
 	                        var name=lib.brawl[this.link].name;
-	                        var stage=lib.storage.stage[name];
-	                        var style2={position:'relative',display:'block',left:0,top:0,marginBottom:'10px',padding:0,width:'100%'};
+	                        var stage=lib.storage.puzzleset[name];
+							var style2={position:'relative',display:'block',left:0,top:'15px',marginBottom:'10px',padding:0,width:'100%'};
 	                        var style3={marginLeft:'4px',marginRight:'4px',position:'relative'}
 	                        var line1=ui.create.div(style2,this);
 	                        var line2=ui.create.div(style2,this);
@@ -2636,8 +1601,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                ui.click.configMenu();
 	                                ui.click.extensionTab(name);
 	                            },{marginLeft:'6px'});
-	                        }
-	                        else{
+	                        }else{
 	                            ui.create.node('button','删除关卡',line1,function(){
 	                                if(confirm('确定删除'+name+'？')){
 	                                    game.removeStage(name);
@@ -2647,16 +1611,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                        ui.create.node('button','导出扩展',line1,function(){
 	                            var level=stage.level;
 	                            stage.level=0;
-	                            var str='{name:"'+name+'",content:function(){\nif(lib.config.mode=="brawl"){\n'+
-	                            'if(!lib.storage.stage) lib.storage.stage={};\n'+
-	                            'if(!lib.storage.stage["'+name+'"]){\nlib.storage.stage["'+name+'"]='+get.stringify(stage)+';\n_status.extensionstage=true;}\n'+
+	                            var str='{name:"'+name+'",content:function(){\nif(lib.config.mode=="puzzle"){\n'+
+	                            'if(!lib.storage.puzzleset) lib.storage.puzzleset={};\n'+
+	                            'if(!lib.storage.puzzleset["'+name+'"]){\nlib.storage.puzzleset["'+name+'"]='+get.stringify(stage)+';\n_status.extensionstage=true;}\n'+
 	                            'if(!_status.extensionmade) _status.extensionmade=[];\n'+
 	                            '_status.extensionmade.push("'+name+'");\n}}\n}';
 	                            stage.level=level;
 	                            var extension={'extension.js':'game.import("extension",function(lib,game,ui,get,ai,_status){return '+str+'})'};
 	                            game.importExtension(extension,null,name);
 	                        },{marginLeft:'6px'});
-	                        var noactive=true;
+	                        if (lib.brawl[name]) line1.style.display = 'none';
+							var noactive=true;
 	                        var clickNode=function(){
 	                            if(this.classList.contains('unselectable')) return;
 	                            if(!this.classList.contains('active')){
@@ -2722,11 +1687,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    line1.style.marginBottom='10px';
 	                    line2.style.lineHeight='50px';
 	                    var scenes=[];
-	                    for(var i in lib.storage.scene){
+	                    for(var i in lib.storage.puzzle){
 	                        scenes.push([i,i]);
 	                    }
 	                    if(!scenes.length){
-	                        alert('请创建至少1个场景');
+	                        alert('请创建至少1个残局');
 	                        return;
 	                    }
 	                    var scenelist=ui.create.selectlist(scenes,null,line1);
@@ -2763,11 +1728,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            node.onmouseleave=e3;
 	                        }
 	                    }
-	                    var addButton=ui.create.node('button','添加场景',line1,function(){
+	                    var addButton=ui.create.node('button','添加残局',line1,function(){
 	                        e4(scenelist.value);
 	                    },{marginLeft:'6px',marginRight:'12px'});
 	                    var sceneconfig=ui.create.selectlist([
-	                        ['normal','按顺序解锁'],
+	                        ['normal','默认模式'],
 	                        ['sequal','连续闯关'],
 	                        ['free','自由选关']
 	                    ],null,line1);
@@ -2777,7 +1742,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            return;
 	                        }
 	                        if(line2.childElementCount<2){
-	                            alert('请添加至少2个场景');
+	                            alert('请添加至少2个残局');
 	                            return;
 	                        }
 	                        var stage={
@@ -2788,16 +1753,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                            level:0
 	                        };
 	                        for(var i=0;i<line2.childElementCount;i++){
-	                            stage.scenes.push(lib.storage.scene[line2.childNodes[i].innerHTML]);
+	                            stage.scenes.push(lib.storage.puzzle[line2.childNodes[i].innerHTML]);
 	                        }
-	                        if(lib.storage.stage[scenename.value]){
+	                        if(lib.storage.puzzleset[scenename.value]){
 	                            if(!confirm('关卡名与现有关卡重复，是否覆盖？')){
 	                                return;
 	                            }
 	                            game.removeStage(scenename.value);
 	                        }
-	                        lib.storage.stage[stage.name]=stage;
-	                        game.save('stage',lib.storage.stage);
+	                        lib.storage.puzzleset[stage.name]=stage;
+	                        game.save('puzzleset',lib.storage.puzzleset);
 	                        game.addStage(stage.name,true);
 	                    },{marginLeft:'6px'});
 	                    game.addStageClear=function(){
@@ -2811,5 +1776,414 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	            }
 	        }
 	    },
+		puzzleset:{
+			"新手":{
+				name:"新手",
+				intro:"无论是谁都有新手上路的时候！<br>解开这些残局，来证明你已经精通了游戏的操作吧！",
+				stage:true,
+				scenes:[
+					{name:'1',
+						intro:"新手入门的第一关，不用紧张！<br>我们来复习一下残局模式的规则吧：<br>在一回合内要拿下游戏胜利。<br>牌堆，手牌，技能牌，装备，都是固定的。<br>牌堆里的牌，和其他人手牌，都可以在右上角查看。<br>那么，去拿下你的首胜吧！",
+						players:[
+							{name:"kosuzu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:2,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:2, maxlili:null,
+							playercontrol:false,
+							handcards:[["shan","diamond",10],],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","spade",8], ["shunshou","diamond",4]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'2',
+						intro:"该强化的时候就要强化，灵力毕竟不能留着过年啊！",
+						players:[
+							{name:"kosuzu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:2,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:null, maxlili:null,
+							playercontrol:false,
+							handcards:[["shan","diamond",10]],equips:[["mirror","club",8]],judges:[]
+							},
+						],
+						cardPileTop:[["guohe","spade",8],["sha","spade",2],["sha","spade",6]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'3',
+						intro:"禁忌牌的力量，虽然说从我这里说出来不太合适，但是请一定小心……",
+						players:[
+							{name:"kosuzu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:2,maxlili:null,
+							playercontrol:true,
+							handcards:[["lingbi","spade",4]],equips:[],judges:[]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:null, maxlili:null,
+							playercontrol:false,
+							handcards:[["tao","diamond",12]],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","spade",2],["sha","spade",5]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'4',
+						intro:"这里可是幻想乡，不要忘记了你那独一无二的武器……！",
+						players:[
+							{name:"reimu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:3,maxlili:null,
+							playercontrol:true,
+							handcards:[["sha","spade",2]],equips:[],judges:[]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:null, maxlili:null,
+							playercontrol:false,
+							handcards:[],equips:[["mirror","club",8]],judges:[]
+							},
+						],
+						cardPileTop:[["sha","club",3],["sha","club",4],["sha","spade",5]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'5',
+						intro:"除了别忘记你那独一无二的武器以外，也别忘记你对手那独一无二的武器！",
+						players:[
+							{name:"kosuzu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:2,maxHp:null,lili:3,maxlili:null,
+							playercontrol:true,
+							handcards:[["tao","heart",8]],equips:[],judges:[]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:3, maxlili:null,
+							playercontrol:false,
+							handcards:[["wuzhong","heart",8]],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","club",3],["zhiyuu","club",13]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'6',
+						intro:"技能牌可比想象的容易使用多啦。",
+						players:[
+							{name:"kosuzu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:1,maxHp:null,lili:3,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[["lianji",null,null]]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:2, maxHp:null, lili:2, maxlili:null,
+							playercontrol:false,
+							handcards:[],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","spade",5],["sha","spade",2]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'7',
+						intro:"禁忌牌的两种效果，对手的技能牌效果，该做出什么选择呢？",
+						players:[
+							{name:"kosuzu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:3,maxlili:null,
+							playercontrol:true,
+							handcards:[["zuiye","club",3]],equips:[],judges:[["lianji",null,null]]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:2, maxHp:null, lili:2, maxlili:null,
+							playercontrol:false,
+							handcards:[['tao', 'heart', 13]],equips:[],judges:[["shengdun",null,null]]
+							},
+						],
+						cardPileTop:[["sha","spade",5], ["sha","spade",2]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'8',
+						intro:"没有灵力了就没法造成伤害了啊，该怎么办啊！",
+						players:[
+							{name:"kosuzu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:1,maxHp:null,lili:0,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[["lianji",null,null]]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:2, maxlili:null,
+							playercontrol:false,
+							handcards:[],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","heart",5, 1],["sha","spade",2]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'9',
+						intro:"游戏相关的规则差不多就到这里了。<br>那么，该是时候来进行你的毕业测验啦！<br>加油！",
+						players:[
+							{name:"reimu",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:3,maxlili:null,
+							playercontrol:true,
+							handcards:[['guohe', 'spade', '3']],equips:[['stone', 'spade', '7']],judges:[['lingyong', null, null]]
+							},
+							{name:"lunasa",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:3, maxlili:null,
+							playercontrol:false,
+							handcards:[["shan","heart",5], ["shan","diamond",7], ["wuxie","spade",12]],equips:[["mirror","club",8]],judges:[['shengdun', null, null]],
+							},
+						],
+						cardPileTop:[["shunshou","diamond",3],["sha","spade",2], ['sha', 'spade', 9]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+				],
+				level:0,
+				mode:'normal',
+			},
+			'简单':{
+				name:'简单',
+				intro:"简单易懂，相对轻松的残局们。<br>用你的智慧来扫荡这些敌人吧！",
+				stage:true,
+				scenes:[
+					{name:'1',
+						intro:"禁忌牌的使用还记得吗？记不得的话，再来一次吧？",
+						players:[
+							{name:"keine",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:2,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[]
+							},
+							{name:"kosuzu",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:2, maxHp:null, lili:2, maxlili:null,
+							playercontrol:false,
+							handcards:[["shan","diamond",10],],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","spade",8], ["zuiye","club",3]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'2',
+						intro:"即使是神的保佑，也不是万能的。",
+						players:[
+							{name:"wriggle",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:1,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[]
+							},
+							{name:"kosuzu",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:2, maxHp:null, lili:2, maxlili:null,
+							playercontrol:false,
+							handcards:[],equips:[['mirror', 'club', 8]],judges:[]
+							},
+						],
+						cardPileTop:[["sha","spade",8], ["zuiye","club",3], ['sha', 'club', '7']],cardPileBottom:[],discardPile:[],
+						skillPileTop:[['shenyou', null, null]],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'3',
+						intro:"就是自损一千，也要伤敌八百！",
+						players:[
+							{name:"flandre",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:5,maxlili:null,
+							playercontrol:true,
+							handcards:[["sha", 'spade', 10]],equips:[],judges:[]
+							},
+							{name:"lyrica",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:5, maxlili:null,
+							playercontrol:false,
+							handcards:[["tao","heart",6],["tao", "heart", 7], ["tao", "heart", 8], ["tao", "heart", 12]],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","spade",8], ["danmakucraze","spade",12], ['sha', 'club', 7]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'4',
+						intro:"一个夜雀的基本本领，要从完全驾驭夜盲症开始。",
+						players:[
+							{name:"mystia",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:null,maxHp:null,lili:2,maxlili:null,
+							playercontrol:true,
+							handcards:[["shan", 'diamond', 10], ["shan", 'diamond', 11], ["shan", 'heart', 2]],equips:[],judges:[]
+							},
+							{name:"koakuma",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:1, maxlili:null,
+							playercontrol:false,
+							handcards:[["shan","diamond",4],["shan", "diamond", 7], ["shan", "heart", 13]],equips:[],judges:[['shenyou', null, null]]
+							},
+						],
+						cardPileTop:[["juedou","heart",11], ['guohe', 'club', 4]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					}
+				],
+				level:0,
+				mode:'normal',
+			},
+			'普通':{
+				intro:"普普通通，不难不弱的难度<br>好好享受脑海闪电的感觉吧。",
+				stage:true,
+				scenes:[
+					{name:'1',
+						intro:"操作命运是很强的能力，但是命运数量不够，种类不够……该怎么办呢？",
+						players:[
+							{name:"remilia",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:3,maxHp:null,lili:null,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[]
+							},
+							{name:"merlin",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:5, maxlili:null,
+							playercontrol:false,
+							handcards:[],equips:[["yinyangyu","heart",5, -1], ["bailou","club",6, -1]],judges:[]
+							},
+						],
+						cardPileTop:[["juedou","heart",11], ["tao","diamond",12], ["guohe","club",4], ["gungnir","heart", 13], ["simen","spade",2], ["reidaisai","heart",6]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'2',
+						intro:"只有做好裁决自己的觉悟的人，才能够裁决别人。",
+						players:[
+							{name:"eiki",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:3,maxHp:null,lili:5,maxlili:null,
+							playercontrol:true,
+							handcards:[["sha","diamond",7, 1],["deathfan","heart",1],["tao","heart",8]],equips:[],judges:[]
+							},
+							{name:"flandre",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:3, maxHp:null, lili:1, maxlili:null,
+							playercontrol:false,
+							handcards:[["shan","diamond",10],["tao","heart",12]],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["shan","diamond",4], ["tao","heart",3]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					/*
+					{name:'3',
+						intro:"",
+						players:[
+							{name:"yuuka",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:1,maxHp:null,lili:5,maxlili:null,
+							playercontrol:true,
+							handcards:[],equips:[],judges:[]
+							},
+							{name:"lyrica",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:5, maxlili:null,
+							playercontrol:false,
+							handcards:[["tao","heart",6],["tao", "heart", 7], ["tao", "heart", 8]],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["sha","spade",8], ["danmakucraze","spade",12], ['sha', 'club', '7']],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					*/
+				],
+				level:0,
+				mode:'normal',
+			},
+			/*
+			'困难':{
+				intro:"到这里就困难起来啦！<br>没有可以表演的闲暇了呢。",
+				stage:true,
+			},
+			'噩梦':{
+				intro:"一直以来的难度<br>不懂的话还是不要靠近的好。",
+				stage:true,
+				
+			},
+			*/
+		}
 	};
 });

@@ -854,7 +854,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       }
                     },
                     check:function(event, player){
-                      return get.attitude(player, event.target) < 0;
+                      return get.attitude(player, event.target) > 0;
                       },
                     intro:{
                         mark:function(dialog,content,player){

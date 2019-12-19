@@ -118,24 +118,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
          },
          lianxu:{
-                      audio:2,
-                      cost:0,
-                      spell:['lianxu2'],
-                      trigger:{player:'phaseBegin'},
-                      filter:function(event,player){
-                          return player.lili > lib.skill.lianxu.cost;
-                      },
-                      check:function(event,player){
-                        var att = 0;
-                        att += player.lili;
-                        att += (4 - player.hp);
-                        att += (player.hp - player.getCards('h').length);
-                        return att > 3;
-                      },
-                      content:function(){
-                          player.loselili(lib.skill.lianxu.cost);
-                          player.turnOver();
-                      },
+               audio:2,
+               cost:0,
+               spell:['lianxu2'],
+               trigger:{player:'phaseBegin'},
+               filter:function(event,player){
+                  return player.lili > lib.skill.lianxu.cost;
+               },
+                  check:function(event,player){
+                  var att = 0;
+                  att += player.lili;
+                  att += (4 - player.hp);
+                  att += (player.hp - player.getCards('h').length);
+                  return att > 3;
+               },
+               content:function(){
+                  player.loselili(lib.skill.lianxu.cost);
+                  player.turnOver();
+               },
          },
          lianxu2:{
             group:['lianxu3'],

@@ -1172,7 +1172,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						delete ui.cheat2;
 					}
 					if(event.chosen.length){
-						game.me.init(event.chosen[0],event.chosen[1]);
+						// 在场景和残局模式下，这个init是额外的（角色在choosecharacterbefore里就已经选好的话，在这里会再选一次），
+						// 只针对game.me。副作用是会清掉玩家的choosecharacterbefore里获得的所有技能，包括技能牌效果。
+						// 目前已删掉，检测是如果game.me已经有名字了（已经有选角色了）就不会再生成。
+						if (!game.me.name) game.me.init(event.chosen[0],event.chosen[1]);
 					}
 					else if(event.modchosen){
 						if(event.modchosen[0]=='random') event.modchosen[0]=result.buttons[0].link;

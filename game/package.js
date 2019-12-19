@@ -33,6 +33,7 @@ window.noname_package={
         stg:'闯关',
         chess:'战棋',
         brawl:'场景',
+        puzzle:'残局',
     },
     background:{
         tianjie:'天界',
