@@ -37,7 +37,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 group:['shuangjiang2','shuangjiang3'],
                 trigger:{player:['useCard', 'phaseEnd']},
                 filter:function(event,player){
-                    
                     if (event.name =='useCard' && !player.hasSkill('baofengxue2')) return false; 
                     return game.hasPlayer(function(target){
                         return target!=player&&!target.storage.shuang && target.storage._mubiao;
@@ -55,11 +54,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         if (get.attitude(player, players[i]) > 0) num --;
                         if (get.attitude(player,players[i]) < 0) num ++;
                     }
+                    if (p.length == 0) event.finish();
+                    else {
                     player.chooseTarget(p.length,('霜降：是否对所有亮的角色各造成1点灵击伤害'),function(card,player,target){
                             return p.contains(target);
                           }).set('num',num).set('ai',function(target){
                               return _status.event.num > 0;
-                          }); 
+                          });
+                    } 
                     'step 1'
                     if(result.bool){
                         player.logSkill('shuangjiang',result.targets);
@@ -152,7 +154,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     if (get.suit(trigger.card) && !player.storage.baofengxue.contains(get.suit(trigger.card))) player.storage.baofengxue.push(get.suit(trigger.card));
-                    player.useSkill('shuangjiang');
                 },
                 ai:{
                     threaten:1.4,
@@ -163,22 +164,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 mod:{
                     cardEnabled:function(card,player){
                         if (game.hasPlayer(function(current){
-                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card)) && current != player;
                             })) return false;
                     },
                     cardUsable:function(card,player){
                         if (game.hasPlayer(function(current){
-                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card))&& current != player;
                             })) return false;
                     },
                     cardRespondable:function(card,player){
                         if (game.hasPlayer(function(current){
-                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card))&& current != player;
                             })) return false;
                     },
                     cardSavable:function(card,player){
                         if (game.hasPlayer(function(current){
-                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card));
+                                return current.storage.baofengxue && current.storage.baofengxue.contains(get.suit(card))&& current != player;
                             })) return false;
                     }
                 },
@@ -944,7 +945,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     });
                     'step 1'
                     if (result.bool){
-                        player.mingzhiCard(result.bool[0]);
+                        player.mingzhiCard(result.cards[0]);
                     }
                 },
                 ai:{
@@ -1047,6 +1048,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.recast(result.cards[0]);
                         player.logSkill(event.name,result.targets);
                         if (!trigger.targets.contains(player)){
+                            game.log('对',trigger.target,'使用的',trigger.card,'转移给了',player);
                             trigger.targets.remove(trigger.target);
                             trigger.target=player;
                             trigger.targets.push(player);

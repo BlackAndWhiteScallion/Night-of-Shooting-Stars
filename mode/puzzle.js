@@ -593,25 +593,25 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								var list=[];
 								if(ui.cardPile.childNodes.length){
 									for(var i=0;i<ui.cardPile.childNodes.length;i++){
-										list.unshift(ui.cardPile.childNodes[i]);
+										list.push(ui.cardPile.childNodes[i]);
 									}
-									uiintro.addSmall([list,'card']);
+									uiintro.add([list,'card']);
 								}
 								uiintro.add('技能牌剩余 <span style="font-family:'+'xinwei'+'">'+ui.skillPile.childNodes.length);
 								var list=[];
 								if(ui.skillPile.childNodes.length){
 									for(var i=0;i<ui.skillPile.childNodes.length;i++){
-										list.unshift(ui.skillPile.childNodes[i]);
+										list.push(ui.skillPile.childNodes[i]);
 									}
-									uiintro.addSmall([list,'card']);
+									uiintro.add([list,'card']);
 								}
 								uiintro.add('<div class="text center">弃牌堆</div>' + ui.discardPile.childNodes.length +'');
 								if(ui.discardPile.childNodes.length){
 									var list=[];
 									for(var i=0;i<ui.discardPile.childNodes.length;i++){
-										list.unshift(ui.discardPile.childNodes[i]);
+										list.push(ui.discardPile.childNodes[i]);
 									}
-									uiintro.addSmall([list,'card']);
+									uiintro.add([list,'card']);
 								}
 								else{
 									uiintro.add('<div class="text center" style="padding-bottom:3px">无</div>');
@@ -628,7 +628,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 										uiintro.add(get.translation(players[i]));
 										var cards=players[i].getCards('h');
 										if(cards.length){
-											uiintro.addSmall(cards,true);
+											uiintro.add(cards,true);
 										}
 										else{
 											uiintro.add('（无）');
@@ -2089,7 +2089,53 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						],
 						cardPileTop:[["juedou","heart",11], ['guohe', 'club', 4]],cardPileBottom:[],discardPile:[],
 						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
-					}
+					},
+					{name:'5',
+						intro:"不仅牌堆里完全没有伤害牌，甚至还有三张葱？这得什么疯子才能赢？",
+						players:[
+							{name:"merlin",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:1,maxHp:null,lili:2,maxlili:null,
+							playercontrol:true,
+							handcards:[['houraiyuzhi', 'heart', 12]],equips:[],judges:[]
+							},
+							{name:"kosuzu",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:1, maxlili:null,
+							playercontrol:false,
+							handcards:[["shan", "heart", 13]],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["tao", "heart", 6], ["tao", 'heart', 4], ["tao", "heart", "9"], ['shan', 'diamond', 3]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
+					{name:'6',
+						intro:"下雪天那么冷，就是能复活也不会愿意复活在雪大的天气吧……特别是暴风雪的话……",
+						players:[
+							{name:"letty",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:3,maxHp:null,lili:3,maxlili:null,
+							playercontrol:true,
+							handcards:[['lingbi', 'spade', 4],["wuxie", "diamond", 12],['sha', 'spade', 9]],equips:[],judges:[]
+							},
+							{name:"kaguya",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:5, maxlili:null,
+							playercontrol:false,
+							handcards:[["wuxie", "club", 12],['shan', 'diamond', 5], ['tao', 'heart', 7]],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["tianguo", "heart", 8],['juedou', 'club', 1]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
 				],
 				level:0,
 				mode:'normal',
@@ -2169,6 +2215,29 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						skillPileTop:[],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
 					},
 					*/
+					{name:'3',
+						intro:"对于怨念如此深的人，别以为打趴一次就足够了！",
+						players:[
+							{name:"kaguya",
+							name2:"none",
+							identity:"zhu",
+							position:0,
+							hp:1,maxHp:null,lili:1,maxlili:null,
+							playercontrol:true,
+							handcards:[["juedou","diamond",1],["zuiye", "club", 3]],equips:[["laevatein","heart",13]],judges:[["shenyou",null,0]],
+							},
+							{name:"mokou",
+							name2:"none",
+							identity:"fan",
+							position:1,
+							hp:1, maxHp:null, lili:5, maxlili:null,
+							playercontrol:false,
+							handcards:[],equips:[],judges:[]
+							},
+						],
+						cardPileTop:[["huazhi","diamond",9], ["sha","club",4], ['simen', 'spade', 2], ["sha","club",7],['shan', 'diamond', 3], ['juedou', 'spade', 1]],cardPileBottom:[],discardPile:[],
+						skillPileTop:[['lingyong', null, 0]],skillPileBottom:[],gameDraw:false,replacepile:true,turns:[1,"lose"],
+					},
 				],
 				level:0,
 				mode:'normal',

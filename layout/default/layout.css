@@ -2317,14 +2317,17 @@ div:not(.handcards)>.card>.info>span,
 	z-index: 4
 }
 .judges>div,.marks>div {
-	width: 28px;
-	height: 28px;
+	width: 30px;
+	height: 30px;
 	margin: 0;
 	left: 0;
 	top: 0;
 	opacity: 1;
 	position: absolute;
 	line-height: 20px;
+}
+.judges>div.selected,.marks>div{
+	background:rgba(0, 133, 255,0.5) !important;
 }
 
 .hp {

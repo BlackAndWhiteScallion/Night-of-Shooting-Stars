@@ -12234,7 +12234,7 @@
                     var num  = 0;
                     for(var i=0;i<cards.length;i++){
                         if(get.type(cards[i]) == 'delay'){
-                            player.gain(ui.skillPile.childNodes[i],'draw2');
+                            player.drawSkill();
                         } else {
                             num ++;
                         }
@@ -36279,8 +36279,14 @@
                                     }
                                     if(lib.config.asset_skin){
                                         for(var i in skins){
-                                            for(var j=1;j<=skins[i];j++){
-                                                updates.push('image/skin/'+i+'/'+j+'.jpg');
+                                            if (lib.card[i]){
+                                                for(var j=1;j<=skins[i];j++){
+                                                    updates.push('image/skin/'+i+'/'+j+'.png');
+                                                }
+                                            } else {
+                                                for(var j=1;j<=skins[i];j++){
+                                                    updates.push('image/skin/'+i+'/'+j+'.jpg');
+                                                }
                                             }
                                         }
                                         for(var i in animes){

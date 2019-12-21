@@ -1506,7 +1506,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{source:'damageEnd'},
 			forced:true,
 			filter:function(event){
-				return (event.card && get.subtype(event.card) == 'attack' && event.nature != 'thunder');
+				return (event.card && get.subtype(event.card) == 'attack' && event.nature != 'thunder' && event.player.isAlive());
 			},
 			content:function(){
 				if (player.name == 'youmu'){
