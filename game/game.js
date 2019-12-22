@@ -26760,7 +26760,7 @@
                 }
                 var step4=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">如果还不太懂，或者想练习角色，欢迎来【场景】→【对战练习】！如果哪个模式不熟的话，可以在那模式用自由选将召唤我！');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">如果还不太懂，欢迎来【残局】→【新手】！如果想练习角色，欢迎来【场景】→【对战练习】！如果哪个模式不熟的话，可以在那模式用自由选将召唤我！');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('谢谢，再见！',step5);
                 }
