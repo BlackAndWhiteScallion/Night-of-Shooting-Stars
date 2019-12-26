@@ -498,74 +498,6 @@
                             }
                         }
                     },
-                    player_height:{
-                        name:'角色高度',
-                        init:'long',
-                        // unfrequent:true,
-                        item:{
-                            short:'矮',
-                            default:'中',
-                            long:'高',
-                        },
-                        onclick:function(item){
-                            game.saveConfig('player_height',item);
-                            ui.arena.dataset.player_height=item;
-                        }
-                    },
-                    player_height_nova:{
-						name:'角色高度',
-						init:'long',
-						item:{
-							// auto:'自动',
-							short:'矮',
-							default:'中',
-							long:'高',
-						},
-						onclick:function(item){
-							game.saveConfig('player_height_nova',item);
-							// if(item=='auto'){
-							// 	if(parseInt(ui.arena.dataset.number)>=7){
-							// 		ui.arena.dataset.player_height_nova='short';
-							// 	}
-							// 	else{
-							// 		ui.arena.dataset.player_height_nova='default';
-							// 	}
-							// }
-							// else{
-								ui.arena.dataset.player_height_nova=item;
-							// }
-						}
-                    },
-                    ui_zoom:{
-                        name:'界面缩放',
-                        unfrequent:true,
-                        init:'normal',
-                        item:{
-                            esmall:'80%',
-                            vsmall:'90%',
-                            small:'95%',
-                            normal:'100%',
-                            big:'105%',
-                            vbig:'110%',
-                            ebig:'120%',
-                            biggest:'绯想天则',
-                        },
-                        onclick:function(zoom){
-                            game.saveConfig('ui_zoom',zoom);
-                            switch(zoom){
-                                case 'esmall':zoom=0.8;break;
-                                case 'vsmall':zoom=0.9;break;
-                                case 'small':zoom=0.95;break;
-                                case 'big':zoom=1.05;break;
-                                case 'vbig':zoom=1.1;break;
-                                case 'ebig':zoom=1.2;break;
-                                case 'biggest': zoom = 2; break;
-                                default:zoom=1;
-                            }
-                            game.documentZoom=game.deviceZoom*zoom;
-                            document.documentElement.style.zoom=game.documentZoom;
-                        }
-                    },
                     image_background:{
                         name:'游戏背景',
                         init:'ol_bg',
@@ -781,6 +713,86 @@
                                 ui.background.style.transform='';
                             }
                         },
+                    },
+                    intro_character:{
+                        name:'看板角色',
+                        init:'marisa',
+                        item:{
+                            'marisa':'魔理沙',
+                            //'':'',
+                        },
+                        intro:'菜单界面做介绍的看板娘',
+                        onclick:function(item){
+                            game.saveConfig('intro_character',item);
+                        }
+                    },
+                    player_height:{
+                        name:'角色高度',
+                        init:'long',
+                        // unfrequent:true,
+                        item:{
+                            short:'矮',
+                            default:'中',
+                            long:'高',
+                        },
+                        onclick:function(item){
+                            game.saveConfig('player_height',item);
+                            ui.arena.dataset.player_height=item;
+                        }
+                    },
+                    player_height_nova:{
+						name:'角色高度',
+						init:'long',
+						item:{
+							// auto:'自动',
+							short:'矮',
+							default:'中',
+							long:'高',
+						},
+						onclick:function(item){
+							game.saveConfig('player_height_nova',item);
+							// if(item=='auto'){
+							// 	if(parseInt(ui.arena.dataset.number)>=7){
+							// 		ui.arena.dataset.player_height_nova='short';
+							// 	}
+							// 	else{
+							// 		ui.arena.dataset.player_height_nova='default';
+							// 	}
+							// }
+							// else{
+								ui.arena.dataset.player_height_nova=item;
+							// }
+						}
+                    },
+                    ui_zoom:{
+                        name:'界面缩放',
+                        unfrequent:true,
+                        init:'normal',
+                        item:{
+                            esmall:'80%',
+                            vsmall:'90%',
+                            small:'95%',
+                            normal:'100%',
+                            big:'105%',
+                            vbig:'110%',
+                            ebig:'120%',
+                            biggest:'绯想天则',
+                        },
+                        onclick:function(zoom){
+                            game.saveConfig('ui_zoom',zoom);
+                            switch(zoom){
+                                case 'esmall':zoom=0.8;break;
+                                case 'vsmall':zoom=0.9;break;
+                                case 'small':zoom=0.95;break;
+                                case 'big':zoom=1.05;break;
+                                case 'vbig':zoom=1.1;break;
+                                case 'ebig':zoom=1.2;break;
+                                case 'biggest': zoom = 2; break;
+                                default:zoom=1;
+                            }
+                            game.documentZoom=game.deviceZoom*zoom;
+                            document.documentElement.style.zoom=game.documentZoom;
+                        }
                     },
                     phonelayout:{
                         name:'触屏布局',
@@ -6283,6 +6295,9 @@
                             lib.config.gameRecord.identity={data:{}};
                         }
                     }
+                    if (lib.config.gameRecord.general.data['akyuu']){
+                        lib.configMenu.appearence.config.intro_character.item.akyuu = '阿求';
+                    }
                     if(pack.background){
                         for(i in pack.background){
                             if(lib.config.hiddenBackgroundPack.contains(i)) continue;
@@ -7797,25 +7812,25 @@
                         this.classList.add('glow');
                         var mode = this.childNodes[1].style.backgroundImage; 
                         if (mode.includes('library')){
-                            setDialog('啊，这里是阿求的家。阿求家里有很多的藏书，讲述着幻想乡的：幻想乡如何运作啊，现有角色啊，现有卡牌啊，这些看几次都有受益的资料。');
+                            setDialog(lib.config.intro_character+'_library');
                         } else if (mode.includes('old_identity')){
-                            setDialog('啊，都已经10年了吗？这无比熟悉的，令人智熄的超级无聊感……');
+                            setDialog(lib.config.intro_character+'_old_identity');
                         } else if (mode.includes('identity')){
-                            setDialog('幻想乡几乎每个月都有大大小小的异变，异变模式就是讲述我们去解决这些异变的故事啦~');
+                            setDialog(lib.config.intro_character+'_identity');
                         } else if (mode.includes('versus')){
-                            setDialog('如果只是想轻松的打把牌，对决模式最方便啦。这里支持2v2，3v3，4v4，还有看你喜好自由设定。这些在模式内，通过右上角[选项-对决-游戏模式]就可以设置了。');
+                            setDialog(lib.config.intro_character+'_versus');
                         } else if (mode.includes('connect')){
-                            setDialog('你朋友欠你钱了？快把他叫来跟你1v1，把钱从他身上打出来！…………什么，这样做不行吗？');
+                            setDialog(lib.config.intro_character+'_connect');
                         } else if (mode.includes('boss')){
-                            setDialog('这里就是传说中的，必须3个人打1个才打的过的超绝超强超无敌的究极绝望大魔王！<br><br>……我想跟她们单挑。');
+                            setDialog(lib.config.intro_character+'_boss');
                         } else if (mode.includes('stg')){
-                            setDialog('这才是幻想乡的正确战斗方式！以一人之力，在杂鱼群里割草，然后与boss们展开华丽酷炫的弹幕战……啊啊啊，我手痒啦！走走走，闯关去！');
+                            setDialog(lib.config.intro_character+'_stg');
                         } else if (mode.includes('chess')){
-                            setDialog('据说这个战棋模式里面有些很神奇的东西，你可以陪我一起去吗？');
+                            setDialog(lib.config.intro_character+'_chess');
                         } else if (mode.includes('brawl')){
-                            setDialog('打牌打累了，就搞点好玩的小场景休闲一下吧，打子规可是最最最减压的事情啦！而且，还可以自己创建场景玩哟。我就做了一个呢，是不是很棒⭐。');
+                            setDialog(lib.config.intro_character+'_brawl');
                         } else if (mode.includes('puzzle')){
-                            setDialog('必须在一回合内胜利的残局谜题——好玩挺好玩，对水平也有不小的提升……就是难的题真的好难啊！无论是制作起来还是解起来都太费脑子了！');
+                            setDialog(lib.config.intro_character+'_puzzle');
                         }
                     }
                     var upNode=function(){
@@ -7824,8 +7839,9 @@
                     var setDialog=function(text){
                         var date = new Date();
                         if (date.getHours() > 1 && date.getHours() < 8) text = 'Zzzzzz……';
-                        dialog.innerHTML = '<div><div style="width:500px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;overflow:scroll;display:block;">'+text+'</div>';
-                        ui.create.div('.avatar',dialog).setBackground('marisa','character');
+                        //text = lib.translate[text];
+                        dialog.innerHTML = '<div><div style="width:500px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;overflow:scroll;display:block;">'+lib.translate[text]+'</div>';
+                        ui.create.div('.avatar',dialog).setBackground(lib.config.intro_character,'character');
                     }
                     // 这里是开始界面
                     var splash=ui.create.div('#splash',document.body);
@@ -7881,56 +7897,53 @@
                     dialog.style.top = 'calc(75%)';
                     dialog.style.position = 'absolute';
                     dialog.style.cursor = 'pointer';
-                    var list = ['欢迎回来！你是先陪我打牌呢，还是先陪我打牌呢，还是先陪我打牌呢？',
-                                '今天我们玩什么呢,'+lib.config.connect_nickname+'? 要不，去灵梦家蹭饭怎么样？',
-                                '这个背景也有点看腻了，等下换个背景换换口味怎么样？',
-                                '最近从外界来了好多人啊。机器人啊，妖精啊，高中生啊，还有好几个外界来的魔法师呢。真想去找她们好好的交流一下~',
-                                '哟，你来了啊⭐ 今天过的开心吗？有没有碰上什么好事~？快告诉我！',
-                                '对哪里有问题的话，右键点一下就行啦。这个界面的模式也好，游戏里，点一下自己手牌，点一下自己身份也行。很多可以点的地方啦。',
-                                ];
+                    var list = [];
+                    for (var i = 1; i < 7; i ++){
+                        list.push(lib.config.intro_character + '_' + i.toString());
+                    }
                     var text = ui.create.div('', '点击继续', document.body);
                     text.style.top = 'calc(75% + 120px)';
                     text.style.left = 'calc(25% + 560px)';
                     if (!lib.config.gameRecord.stg){
-                        list.add('都来幻想乡了，还不挑战一下红魔乡算个什么事嘛。走走走，去闯关模式！我可是在那里大放光彩的哟⭐');
+                        list.add(lib.config.intro_character+'_nostg');
                     }
                     if (!lib.config.gameRecord.boss){
-                        list.add('据说啊，幻想乡里有一些强大到不敢想象的强者。有的还是从外界来的！是不是有点跃跃欲试了？走，去魔王模式吧！');
+                        list.add(lib.config.intro_character+'_noboss');
                     }
                     if (!lib.config.gameRecord.incident) {
-                        list.add('有异变就去解决，才是我们正义的伙伴的做法，对吧？走，去异变模式！');
+                        list.add(lib.config.intro_character+'_noincident');
                     }
                     if (lib.config.gameRecord.incident && !lib.config.gameRecord.general.data['akyuu']) {
-                        list.add('啊，阿求怎么还没有准备好啊！咱们去图鉴模式催催她怎么样？');
+                        list.add(lib.config.intro_character+'_noakyuu');
                     } else {
-                        list.add('阿求又邀请我们去玩了。场景下的稗田教室里。我们一起去陪陪她吧？');
+                        list.add(lib.config.intro_character+'_akyuu');
                     }
                     var date = new Date();
                     if (date.getMonth() == 11){
-                        setDialog('圣诞节快乐！那个红白色的家伙，今年也是买不起礼物送给我们呢。作为补偿，一会儿陪我一起去调戏她玩，怎么样？');
+                        setDialog(lib.config.intro_character+'_christmas');
                     } else if (date.getMonth() == 1 && date.getDate() == 14){
-                        setDialog('情人节快乐！<br>给，这是义理巧克力！……别这么沮丧的看着我啊，我的本命巧克力如果不是已经给别人了，就会给你了呢。');
+                        setDialog(lib.config.intro_character+'_valentine');
                     } else if (date.getMonth() == 5 && date.getDate() == 1){
-                        setDialog('儿童节快乐！我准备了气球，蛋糕，和……你说你已经不是儿童了？你有1000岁吗？没有？那你就是个儿童啦，来一起庆祝吧！');
+                        setDialog(lib.config.intro_character+'_child');
                     } else if (date.getMonth() == 3 && date.getDate() == 1){    
-                        setDialog('愚人节快乐！我和另外两位老师一起，给你准备了个 大·惊·喜 哟⭐');
+                        setDialog(lib.config.intro_character+'_fool');
                     } else if (date.getHours() > 22){
-                        setDialog('你知道吗，人类最具工作力和灵感的时候，就是三更大半夜！……至少我是这样。让我们来好好的享受这个夜晚吧！');
+                        setDialog(lib.config.intro_character+'_night');
                     } else if (date.getHours() >= 7 && date.getHours() <= 8){
-                        setDialog('早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………');
+                        setDialog(lib.config.intro_character+'_morning');
                     } else if (date.getHours() >= 11 && date.getHours() <= 12){
-                        setDialog('到吃午饭的时间了呢。我今天的午餐是蘑菇汤，你呢？');
+                        setDialog(lib.config.intro_character+'_noon');
                     } else if (location.hostname){
-                        setDialog('网页版根据你的网速，可能会有图片或是音乐加载的比较慢。建议先去图鉴打开[角色一览]和[卡牌一览]预先加载下。');
+                        setDialog(lib.config.intro_character+'_online');
                     } else {
                         setDialog(list.randomRemove());
                     }
-                    list.add('【轰！】，【疾风骤雨】，【顺手牵羊】都是可以对自己使用的哟，所以，嘿嘿，咱们来想些很奇怪的操作吧？');
-                    list.add('你有看这期的“流星画园”吗？超级好玩的啦。<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">在微信公众号上就可以找到哟。</a>');
-                    list.add('闲的没事的话，来支持东方project的正作吧！弹幕战和格斗作都是精品游戏，还有大量的很好看的周边哟！');
+                    list.add(lib.config.intro_character+'_7');
+                    list.add(lib.config.intro_character+'_8');
+                    list.add(lib.config.intro_character+'_9');
                     dialog.onclick = function(){
                         if (list.length == 0){
-                            setDialog('就我一个人说话很累的！你倒是回句话啊？不回你就快点打牌去！');
+                            setDialog(lib.config.intro_character+'_no');
                             text.delete();
                         } else {
                             setDialog(list.randomRemove());
@@ -8416,11 +8429,6 @@
             fire:"火",
             thunder:"灵击",
             poison:"毒",
-            wei:'魏',
-            shu:'蜀',
-            wu:'吴',
-            qun:'群',
-            shen:'神',
             male:'男',
             female:'女',
             mad:'混乱',
@@ -8492,6 +8500,74 @@
             unknown6:'七号位',
             unknown7:'八号位',
             akyuu:'阿求',
+
+            marisa_1:'欢迎回来！你是先陪我打牌呢，还是先陪我打牌呢，还是先陪我打牌呢？',
+            marisa_2:'今天我们玩什么呢? 要不，去灵梦家蹭饭怎么样？',
+            marisa_3:'这个背景也有点看腻了，等下换个背景换换口味怎么样？',
+            marisa_4:'最近从外界来了好多人啊。机器人啊，妖精啊，高中生啊，还有好几个外界来的魔法师呢。真想去找她们好好的交流一下~',
+            marisa_5:'哟，你来了啊⭐ 今天过的开心吗？有没有碰上什么好事~？快告诉我！',
+            marisa_6:'对哪里有问题的话，右键点一下就行啦。这个界面的模式也好，游戏里，点一下自己手牌，点一下自己身份也行。很多可以点的地方啦。',
+            marisa_7:'【轰！】，【疾风骤雨】，【顺手牵羊】都是可以对自己使用的哟，所以，嘿嘿，咱们来想些很奇怪的操作吧？',
+            marisa_8:'你有看这期的“流星画园”吗？超级好玩的啦。<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">在微信公众号上就可以找到哟。</a>',
+            marisa_9:'闲的没事的话，来支持东方project的正作吧！弹幕战和格斗作都是精品游戏，还有大量的很好看的周边哟！',
+            marisa_no:'就我一个人说话很累的！你倒是回句话啊？不回你就快点打牌去！',
+            marisa_library:'啊，这里是阿求的家。阿求家里有很多的藏书，讲述着幻想乡的：幻想乡如何运作啊，现有角色啊，现有卡牌啊，这些看几次都有受益的资料。',
+            marisa_old_identity:'啊，都已经10年了吗？这无比熟悉的，令人智熄的超级无聊感……',
+            marisa_identity:'幻想乡几乎每个月都有大大小小的异变，异变模式就是讲述我们去解决这些异变的故事啦~',
+            marisa_versus:'如果只是想轻松的打把牌，对决模式最方便啦。这里支持2v2，3v3，4v4，还有看你喜好自由设定。这些在模式内，通过右上角[选项-对决-游戏模式]就可以设置了。',
+            marisa_connect:'你朋友欠你钱了？快把他叫来跟你1v1，把钱从他身上打出来！…………什么，这样做不行吗？',
+            marisa_boss:'这里就是传说中的，必须3个人打1个才打的过的超绝超强超无敌的究极绝望大魔王！<br><br>……我想跟她们单挑。',
+            marisa_stg:'这才是幻想乡的正确战斗方式！以一人之力，在杂鱼群里割草，然后与boss们展开华丽酷炫的弹幕战……啊啊啊，我手痒啦！走走走，闯关去！',
+            marisa_chess:'据说这个战棋模式里面有些很神奇的东西，你可以陪我一起去吗？',
+            marisa_brawl:'打牌打累了，就搞点好玩的小场景休闲一下吧，打子规可是最最最减压的事情啦！而且，还可以自己创建场景玩哟。我就做了一个呢，是不是很棒⭐。',
+            marisa_puzzle:'必须在一回合内胜利的残局谜题——好玩挺好玩，对水平也有不小的提升……就是难的题真的好难啊！无论是制作起来还是解起来都太费脑子了！',
+            marisa_nostg:'都来幻想乡了，还不挑战一下红魔乡算个什么事嘛。走走走，去闯关模式！我可是在那里大放光彩的哟⭐',
+            marisa_noboss:'据说啊，幻想乡里有一些强大到不敢想象的强者。有的还是从外界来的！是不是有点跃跃欲试了？走，去魔王模式吧！',
+            marisa_noincident:'有异变就去解决，才是我们正义的伙伴的做法，对吧？走，去异变模式！',
+            marisa_noakyuu:'啊，阿求怎么还没有准备好啊！咱们去图鉴模式催催她怎么样？',
+            marisa_akyuu:'阿求又邀请我们去玩了。场景下的稗田教室里。我们一起去陪陪她吧？',
+            marisa_christmas:'圣诞节快乐！那个红白色的家伙，今年也是买不起礼物送给我们呢。作为补偿，一会儿陪我一起去调戏她玩，怎么样？',
+            marisa_valentine:'情人节快乐！<br>给，这是义理巧克力！……别这么沮丧的看着我啊，我的本命巧克力如果不是已经给别人了，就会给你了呢。',
+            marisa_fool:'儿童节快乐！我准备了气球，蛋糕，和……你说你已经不是儿童了？你有1000岁吗？没有？那你就是个儿童啦，来一起庆祝吧！',
+            marisa_child:'愚人节快乐！我和另外两位老师一起，给你准备了个 大·惊·喜 哟⭐',
+            marisa_morning:'早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………',
+            marisa_noon:'到吃午饭的时间了呢。我今天的午餐是蘑菇汤，你呢？',
+            marisa_night:'你知道吗，人类最具工作力和灵感的时候，就是三更大半夜！……至少我是这样。让我们来好好的享受这个夜晚吧！',
+            marisa_online:"网页版根据你的网速，可能会有图片或是音乐加载的比较慢。建议先去图鉴打开[角色一览]和[卡牌一览]预先加载下。",
+
+            akyuu_1:'欢迎回来。今天也是适合打牌的天气呢。',
+            akyuu_2:'你有好好的学习吗？放松是很重要的事情，但是绝不能把学习丢下哦。',
+            akyuu_3:'幻想乡最近从外界来了不少人。外面的世界可真的是形形色色的人都有啊，托他们的福，乡里也越来越热闹起来了。但是我的工作量也大起来了这一点……',
+            akyuu_4:'如果你感兴趣的话，哪天我来介绍一下目前所有卡牌和角色的开发历史和各式版本吧？一次肯定是讲不完的就是了。',
+            akyuu_5:'',
+            akyuu_6:'',
+            akyuu_7:'读书很重要，但是实践和亲身体验也是非常重要的。所以，有时间的话，一定要出去看看！',
+            akyuu_8:'“流星画园”，流星夜的周边4格漫画，正在<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">在微信公众号上好评连载中哟</a>。',
+            akyuu_9:'东方project从一个单人社团的弹幕游戏，能够发展到今天的超大型同人话题性企划，也是拜了无数人的辛酸所赐。如果愿意的话，也去支持一下现在活跃的同人作家她们吧。',
+            akyuu_no:'虽然说我不介意与你说话，但是我这会儿有事情要忙……抱歉，先失陪了。',
+            akyuu_library:'这里是我管理的档案存储处，游戏内的所有资料，我都在这里保存了记录。有什么不解的地方，随时都欢迎你来查询！',
+            akyuu_old_identity:'这个身份局，是继承自三国杀的身份局。而三国杀的身份局，则是继承自bang!的身份局。而bang！的身份局……这历史可是意外的悠久呢。',
+            akyuu_identity:'异变局，是将原本“主公反贼”的身份局，进行元素重组，并追加了新概念，最后得到的极具东方project特色的模式。来玩玩吧？',
+            akyuu_versus:'2v2，3v3，4v4，是最简单，最方便，且又不缺游戏性的玩法。如果觉得有点不合你口味的话，欢迎使用[选项-对决-游戏模式-自由设定]来调味。',
+            akyuu_connect:'AI是有极限的。玩牌的乐趣，终究还是来自玩家与玩家之间的互动。叫上大家来一起打一把牌吧！',
+            akyuu_boss:'在幻想乡里，在外界，都有强到以一人之力几乎无法应付的角色。这些角色被称作魔王，她们就在这里，等着有勇者来挑战——能够打败她们的勇者，会是你吗？',
+            akyuu_stg:'忠实重现东方project本作的单人无双，连续打关，符卡决斗，和游戏剧情的模式。学习历史最好的方式就是亲身体验。',
+            akyuu_chess:'这个战棋是继承自无名杀的战棋模式，并在之上进行了些元素重组。就规则上来说是完全颠覆了卡牌，但是玩法并不复杂。要试试看吗？',
+            akyuu_brawl:'场景是一些小型场景——基于其他模式，做简单的规则改变，带来有趣和新颖游戏体验的玩法——的集合处。这里也有子规老师的[对战练习]，也有我的[稗田教室]，请多来玩玩！',
+            akyuu_puzzle:'残局可是项必修课。怎么说呢——抛开随机性，抛开发牌姬，在设定好的布局下，测试一下你的水平到底在哪里，并予以锻炼——呐，差不多就是这种模式。',
+            akyuu_nostg:'想听听幻想乡第一次符卡战斗和第一次异变的故事吗？走，我们去闯关模式吧。',
+            akyuu_noboss:'嗯，魔王有点太过恐怖了吗？虽然说不是不能理解，但是凡事不试一下，也无法知道结果呢。',
+            akyuu_noincident:'啊嘞，又有异变了呢。这次是什么样的呢……帮我拿一下纸笔，我们该去异变模式了。',
+            akyuu_noakyuu:'',
+            akyuu_akyuu:'今天来我的教室里玩玩怎么样？我准备了好东西呢。',
+            akyuu_christmas:'圣诞节快乐。虽然说并没有几个妖怪在乎基督的生日，但是交换礼物是大家都相当喜欢的。说起来，神子的生日好像正好是圣诞节呢？',
+            akyuu_valentine:'情人节快乐。喏，这个巧克力是给你的。说起来，白色情人节是男性送女性返利的日子，但是幻想乡里的男性数量……',
+            akyuu_fool:'虽然儿童节在世界各地的庆祝时间都不一样，但是一个日期并不重要。重要的是，祝你今年也儿童节快乐！',
+            akyuu_child:'愚人节快乐！我想你会很不喜欢我们给你准备的惊喜的，嘿嘿嘿。',
+            akyuu_morning:'早上好。千万不要不吃早饭啊。',
+            akyuu_noon:'午安。中午差不多是人最没有干劲的时候，因此午休是相当重要的。好好的放松一下吧。',
+            akyuu_night:'早睡早起可是好习惯。我还有些事情要忙，你就快点先去睡吧。晚安。',
+            akyuu_online:"网页版的图片和音乐都需要一些时间来加载的。建议在游戏前，去图鉴打开[角色一览]和[卡牌一览]加载图片。",      
         },
         element:{
             content:{
@@ -26662,9 +26738,9 @@
                if (p[i].hasSkill('death_win') && p.length > 1){
                    return ;
                } else {
-                if (p[i] == game.me) game.over(true);
-                else game.over();
-                return;
+                    if (p[i] == game.me) game.over(true);
+                    else game.over();
+                    return;
                }
             }
             "step 3"
@@ -26699,7 +26775,7 @@
             "step 5"
         },
         incidentoverOL:function(player){
-
+            
         },
         // 这里是游戏结束的设置
         over:function(result){
@@ -36698,7 +36774,7 @@
                                         nodename2.setBackground(video.name2,'character');
                                     }
                                     var date=new Date(video.time);
-                                    var str=date.getFullYear()+'.'+(date.getMonth()+2)+'.'+(date.getDay()+1)+' '+
+                                    var str=date.getFullYear()+'.'+(date.getMonth()+1)+'.'+(date.getDay()+1)+' '+
                                         date.getHours()+':';
                                     var minutes=date.getMinutes();
                                     if(minutes<10){

@@ -2326,7 +2326,7 @@ div:not(.handcards)>.card>.info>span,
 	position: absolute;
 	line-height: 20px;
 }
-.judges>div.selected,.marks>div{
+.judges>div.selected>div{
 	background:rgba(0, 133, 255,0.5) !important;
 }
 

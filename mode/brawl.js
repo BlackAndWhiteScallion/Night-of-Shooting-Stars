@@ -1872,7 +1872,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                target.$equip(createCard(info.equips[j]));
 	                            }
 	                            for(var j=0;j<info.judges.length;j++){
-	                                target.node.judges.appendChild(createCard(info.judges[j]));
+	                                //target.node.judges.appendChild(createCard(info.judges[j]));
+									target.addJudge(createCard(info.judges[j]));
 	                            }
 	                            target=target.next;
 	                        }
