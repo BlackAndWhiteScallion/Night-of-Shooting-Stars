@@ -2170,8 +2170,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list=list;
 					for(var i=0;i<game.players.length;i++){
 						var str = '选择角色（'+lib.translate['unknown'+get.distance(firstChoose, game.players[i],'absolute')]+'）';
-						if(lib.configOL.free_choose && (game.players[i].nickname || player == game.me)){
-							choose.push([game.players[i],[str,[list,'character']],true]);
+						if(lib.configOL.free_choose){
+							if (game.players[i].nickname || player == game.me){
+								choose.push([game.players[i],[str,[list,'character']],true]);
+							} else {
+								choose.push([game.players[i],[str,[list.randomGets(7),'character']],true]);
+							}
 						} else {
 							choose.push([game.players[i],[str,[list.randomRemove(7),'character']],true]);
 						}

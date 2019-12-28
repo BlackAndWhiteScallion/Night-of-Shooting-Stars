@@ -6295,7 +6295,7 @@
                             lib.config.gameRecord.identity={data:{}};
                         }
                     }
-                    if (lib.config.gameRecord.general.data['akyuu']){
+                    if (lib.config.gameRecord.general && lib.config.gameRecord.general.data['akyuu']){
                         lib.configMenu.appearence.config.intro_character.item.akyuu = '阿求';
                     }
                     if(pack.background){
@@ -8539,10 +8539,10 @@
             akyuu_2:'你有好好的学习吗？放松是很重要的事情，但是绝不能把学习丢下哦。',
             akyuu_3:'幻想乡最近从外界来了不少人。外面的世界可真的是形形色色的人都有啊，托他们的福，乡里也越来越热闹起来了。但是我的工作量也大起来了这一点……',
             akyuu_4:'如果你感兴趣的话，哪天我来介绍一下目前所有卡牌和角色的开发历史和各式版本吧？一次肯定是讲不完的就是了。',
-            akyuu_5:'',
-            akyuu_6:'',
+            akyuu_5:'“流星画园”，流星夜的周边4格漫画，正在<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">在微信公众号上好评连载中哟</a>。来看看吧？',
+            akyuu_6:'喜欢流星夜的话，请一定不要犹豫，赶紧推荐给朋友们吧！玩家越多，主人动力越大，游戏就会变的越好！',
             akyuu_7:'读书很重要，但是实践和亲身体验也是非常重要的。所以，有时间的话，一定要出去看看！',
-            akyuu_8:'“流星画园”，流星夜的周边4格漫画，正在<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">在微信公众号上好评连载中哟</a>。',
+            akyuu_8:'真是的，到底到哪里去宣传最有效呢………………想不出来啊……',
             akyuu_9:'东方project从一个单人社团的弹幕游戏，能够发展到今天的超大型同人话题性企划，也是拜了无数人的辛酸所赐。如果愿意的话，也去支持一下现在活跃的同人作家她们吧。',
             akyuu_no:'虽然说我不介意与你说话，但是我这会儿有事情要忙……抱歉，先失陪了。',
             akyuu_library:'这里是我管理的档案存储处，游戏内的所有资料，我都在这里保存了记录。有什么不解的地方，随时都欢迎你来查询！',
@@ -9276,6 +9276,7 @@
                         }
                         ui.sidebar.innerHTML='';
                         ui.cardPile.innerHTML='';
+                        ui.skillPile.innerHTML='';
                         ui.discardPile.innerHTML='';
                         ui.special.innerHTML='';
                     }
@@ -9336,7 +9337,7 @@
                     'step 2'
                     if(event.video.length){
                         var content=event.video.shift();
-                        // console.log(content);
+                        console.log(content);
                         if(content.type=='delay'){
                             game.delay(content.content);
                         }
@@ -12543,7 +12544,8 @@
                     }
                     var addv=function(){
                         if(player==game.me){
-                            game.addVideo('gain12',player,[get.cardsInfo(frag1.childNodes),get.cardsInfo(frag2.childNodes)]);
+                            //game.addVideo('gain12',player,[get.cardsInfo(frag1.childNodes),get.cardsInfo(frag2.childNodes)]);
+                            game.addVideo('gain2',player,get.cardsInfo(cards));
                         }
                     };
                     var broadcast=function(){
@@ -14410,7 +14412,7 @@
                         }
                     }
                     if(!_status.video){
-                        game.addVideo('update',this,[this.countCards('h'),this.hp,this.maxHp]);
+                        game.addVideo('update',this,[this.countCards('h'),this.hp,this.maxHp, this.lili, this.maxlili]);
                     }
                     this.updateMarks();
                     return this;
@@ -24474,7 +24476,7 @@
                 }
                 ui.updatehl();
                 for(var i=0;i<players.length;i++){
-                    if(lib.config.mode=='identity'){
+                    if(lib.config.mode=='identity' || lib.config.mode == 'old_identity'){
                         game.players[i].init(players[i].name,players[i].name2);
                         game.players[i].setIdentity(players[i].identity);
                     }
@@ -24489,27 +24491,8 @@
                         game.players[i].node.identity.firstChild.innerHTML=players[i].identity;
                         game.players[i].node.identity.dataset.color=players[i].color;
                         game.players[i].node.action.innerHTML='行动';
-                    }
-                    else if(lib.config.mode=='guozhan'){
-                        game.players[i].name=players[i].name;
-                        game.players[i].name1=players[i].name1;
-                        game.players[i].name2=players[i].name2;
-
-                        game.players[i].sex='unknown';
-                        game.players[i].identity='unknown';
-
-                        lib.translate[game.players[i].name]=players[i].translate;
-                        game.players[i].init(players[i].name1,players[i].name2);
-
-                        game.players[i].classList.add('unseen_v');
-                        game.players[i].classList.add('unseen2_v');
-                        if(game.players[i]!=game.me){
-                            game.players[i].node.identity.firstChild.innerHTML='猜';
-                            game.players[i].node.identity.dataset.color='unknown';
-                        }
-                        else{
-                            game.players[i].setIdentity(game.players[i].group);
-                        }
+                    } else {
+                        game.players[i].init(players[i].name,players[i].name2);
                     }
                 }
                 for(var i=0;i<game.players.length;i++){
@@ -29437,6 +29420,7 @@
             }
             ui.sidebar.innerHTML='';
             ui.cardPile.innerHTML='';
+            ui.skillPile.innerHTML='';
             ui.discardPile.innerHTML='';
             ui.special.innerHTML='';
             ui.playerids.remove();
@@ -45212,53 +45196,6 @@
                 case 'hard':return 3;
                 default: return 1;
             }
-        },
-        cardPile:function(name,create){
-            var filter=function(card){
-                if(typeof name=='string'){
-                    if(card.name==name){
-                        return true;
-                    }
-                }
-                else if(typeof name=='function'){
-                    if(name(card)){
-                        return true;
-                    }
-                }
-                return false;
-            };
-            for(var i=0;i<ui.cardPile.childNodes.length;i++){
-                if(filter(ui.cardPile.childNodes[i])){
-                    return ui.cardPile.childNodes[i];
-                }
-            }
-            if(create!='cardPile'){
-                for(var i=0;i<ui.discardPile.childNodes.length;i++){
-                    if(filter(ui.discardPile.childNodes[i])){
-                        return ui.discardPile.childNodes[i];
-                    }
-                }
-                if(create=='field'){
-                    var found=null;
-                    game.findPlayer(function(current){
-                        var ej=current.getCards('ej');
-                        for(var i=0;i<ej.length;i++){
-                            if(filter(ej[i])){
-                                found=ej[i];
-                                return true;
-                            }
-                        }
-                    });
-                    return found;
-                }
-                else if(create){
-                    return game.createCard(name);
-                }
-            }
-            return null;
-        },
-        cardPile2:function(name){
-            return get.cardPile(name,'cardPile');
         },
         aiStrategy:function(){
             switch(get.config('ai_strategy')){

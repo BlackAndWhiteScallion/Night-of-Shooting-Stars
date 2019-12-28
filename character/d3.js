@@ -4,8 +4,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'d3',
 		connect:true,
 		character:{
-			zigui:['female','5',5,["always_win"]],
-			//zigui:['female','5',5,["shijianliushi"]],
+			//zigui:['female','5',5,["always_win"]],
+			zigui:['female','5',5,["shijianliushi"]],
 			zither:['female','2',3,["zhisibuyu","chenshihuanxiang"]],
 			actress:['female','3',3,["ye’sbian","schrÖdinger"]],
 			bullygang:['male','1',3,["huanshu","zuanqu","aidoulu"]],
