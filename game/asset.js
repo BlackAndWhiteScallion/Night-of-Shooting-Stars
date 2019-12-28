@@ -15,6 +15,7 @@ window.noname_asset_list=[
     'image/background/tiangou.jpg',
     'image/background/yuji.jpg',
     'image/background/nero.jpg',
+    'image/background/ol_bg.jpg',
     'image/background/stg_scarlet.jpg',
     'image/background/stg_library.jpg',
     'image/background/stg_basement.jpg',

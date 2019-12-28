@@ -591,7 +591,10 @@
                                     });
                                 }
                                 else{
+                                    node.classList.remove('dashedmenubutton');
                                     node.parentNode.defaultNode=node;
+                                    node.setBackgroundImage('image/background/ol_bg.jpg');
+                                    node.style.backgroundSize='cover';
                                 }
                             }
                             else{
