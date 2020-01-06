@@ -4,11 +4,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		connect:true,
 		character:{
 			homura:['female', '2', 3, ['time3', 'time', 'homuraworld']],
-			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']]
+			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']],
+			monika:['female', '2', 3, ['miaohui', 'kehua']],
 		},
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
 			diva:'<br><b>出自：约会大作战 画师：干物A太</b>',
+			monika:'<br><b>出自：心跳文学部 画师：はっく',
 		},	   
 		perfectPair:{
 		},
@@ -393,6 +395,317 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			miaohui:{
+				enable:'phaseUse',
+				usable:1,
+				audio:2,
+				content:function(){
+					game.pause();
+					var list = ['game.me.draw()<br>你抽一张牌', 'game.me.gainlili()<br>你获得1点灵力','game.players[1].damage()<br>对下家造成1点弹幕伤害'];
+					if (player.hp < player.maxHp) list.push('game.me.recover()<br>你回复1点体力');
+					if (get.mode() == 'identity' || get.mode() == 'old_identity') list.push('game.players[1].setIdentity(game.players[1].identity)<br>展示下家的身份');
+					if (get.mode() != 'identity') list.push('game.me.addIncident(game.createCard(\'scarlet\'))<br>你获得【红月】异变牌');
+					if (Object.keys(lib.config.monika).length >= 5) list.push("lib.skill['miaohui'].usable = Infinity<br>【描绘】改为'一回合无限次'");
+					if (Object.keys(lib.config.monika).length >= 10) list.push("game.removeCard('sha')<br>移除牌堆里的所有【轰！】");
+					if (Object.keys(lib.config.monika).length >= 15) list.push('game.me.insertPhase()<br>你进行一个额外的回合');
+					if (Object.keys(lib.config.monika).length >= 20) list.push('game.over(true)<br>你获得游戏胜利');
+					var dialog = ui.create.dialog('请输入代码<br><br><br><div><div style="text-align:center;font-size:14px">'+list.randomRemove()+'<br><br>'+list.randomGet()+'</div>');
+					var text2=document.createElement('input');
+                        text2.style.width='350px';
+                        text2.style.height='20px';
+                        text2.style.padding='0';
+                        text2.style.position='relative';
+                        text2.style.top='50px';
+                        //text2.style.left='30px';
+                        text2.style.resize='none';
+                        text2.style.border='none';
+                        text2.style.borderRadius='2px';
+                        text2.style.boxShadow='rgba(0, 0, 0, 0.2) 0 0 0 1px';
+					dialog.appendChild(text2);
+					var runCommand=function(e){
+						try{
+							var result=eval(text2.value);
+							game.log(text2.value);
+						}
+						catch(e){
+							game.log(text2.value + ' —— ' + e);
+						}
+						text2.value='';
+					}
+					text2.addEventListener('keydown',function(e){
+                            if(e.keyCode==13){
+                                dialog.close();
+								ui.dialog.close();
+								runCommand();
+								while(ui.controls.length) ui.controls[0].close();
+								game.resume();
+                            }
+                        });
+					ui.create.control('确定',function(){
+						dialog.close();
+						ui.dialog.close();
+						runCommand();
+						while(ui.controls.length) ui.controls[0].close();
+						game.resume();
+					});
+				},
+			},
+			kehua:{
+				enable:'phaseUse',
+				audio:2,
+				content:function(){
+					'step 0'
+					/*
+					lib.config.monika = {};
+					game.saveConfig('monika', lib.config.monika);
+					*/
+					if (!lib.config.monika) lib.config.monika = {};
+					var list = [];
+					for (var i in lib.character){
+						if (i == 'marisa' || i == 'akyuu') continue;
+						list.push(i);
+					}
+					player.chooseButton(['选择一名角色',[list,'character']]);
+					'step 1'
+					if (!result.bool){
+						event.finish();
+						return ;
+					}
+					event.character = result.buttons[0].link;
+					player.chooseControlList(['增加技能','删除技能','更改体力上限','更改起始灵力值','更改灵力上限','删除角色']).set('prompt','想要对'+get.translation(event.character)+'做些什么？');
+					'step 2'
+					event.index = result.index;
+					if (result.index == 0){
+						var list = [];
+						for (var i in lib.skill){
+							list.push([i, get.translation(i) || i]);
+						}
+						game.pause();
+						var dialog = ui.create.dialog('请选择一项技能获得<br><br><br><br>');
+						dialog.style.height = '275px';
+						var textbox = ui.create.selectlist(list,'global');
+							textbox.style.width='350px';
+							textbox.style.height='20px';
+							textbox.style.position='relative';
+							textbox.style.top='60px';
+							//text2.style.left='30px';
+							textbox.style.resize='none';
+							textbox.style.border='none';
+							textbox.style.borderRadius='2px';
+							textbox.style.overflow = 'auto';
+						var box = ui.create.div();
+							box.style.width='350px';
+							box.style.height='20px';
+							box.style.position='relative';
+							box.style.top='90px';
+							if (!lib.device) box.innerHTML='打开上方列表后，可以通过在键盘上输入字母，搜索对应首字母的技能';
+						textbox.onchange = function(){
+							if (textbox.value) box.innerHTML = lib.translate[textbox.value + '_info'] || '没有技能描述';
+						};
+						dialog.appendChild(textbox);
+						dialog.appendChild(box);
+						ui.create.control('确定',function(){
+							if (textbox.value) event.addskill = textbox.value;
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+						ui.create.control('取消',function(){
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+						//player.chooseControl(list).set('prompt', '想要为'+get.translation(event.character)+'增加哪项技能？');
+					} else if (result.index == 1){
+						var list = [];
+						for (var i = 0; i < lib.character[event.character][3].length; i ++){
+							list.push(get.translation(lib.character[event.character][3][i]));
+						}
+						player.chooseControl(list).set('prompt', '想要为'+get.translation(event.character)+'删除哪项技能？');
+					} else if (result.index == 2){
+						game.pause();
+						var dialog = ui.create.dialog('想要将'+get.translation(event.character)+'的体力上限改为多少？<br><br><br>');
+						var text2=document.createElement('input');
+							text2.type = 'number';
+							text2.style.width='200px';
+							text2.style.height='20px';
+							text2.style.padding='0';
+							text2.style.position='relative';
+							text2.style.top='80px';
+							//text2.style.left='30px';
+							text2.style.resize='none';
+							text2.style.border='none';
+							text2.style.borderRadius='2px';
+							text2.style.boxShadow='rgba(0, 0, 0, 0.2) 0 0 0 1px';
+							text2.value= lib.character[event.character][2]; 
+							dialog.appendChild(text2);
+						ui.auto.hide();
+						ui.create.control('确定',function(){
+							if (text2.value) event.value = text2.value; 
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+						ui.create.control('取消',function(){
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+					} else if (result.index == 3){
+						game.pause();
+						var dialog = ui.create.dialog('想要将'+get.translation(event.character)+'的起始灵力值改为多少？<br><br><br>');
+						var text2=document.createElement('input');
+							text2.type = 'number';
+							text2.style.width='200px';
+							text2.style.height='20px';
+							text2.style.padding='0';
+							text2.style.position='relative';
+							text2.style.top='80px';
+							//text2.style.left='30px';
+							text2.style.resize='none';
+							text2.style.border='none';
+							text2.style.borderRadius='2px';
+							text2.style.boxShadow='rgba(0, 0, 0, 0.2) 0 0 0 1px';
+							text2.value= lib.character[event.character][1]; 
+							dialog.appendChild(text2);
+						ui.auto.hide();
+						ui.create.control('确定',function(){
+							if (text2.value) event.value = text2.value; 
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+						ui.create.control('取消',function(){
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+					} else if (result.index == 4){
+						game.pause();
+						var dialog = ui.create.dialog('想要将'+get.translation(event.character)+'的灵力上限改为多少？<br><br><br>');
+						var text2=document.createElement('input');
+							text2.type = 'number';
+							text2.style.width='200px';
+							text2.style.height='20px';
+							text2.style.padding='0';
+							text2.style.position='relative';
+							text2.style.top='80px';
+							//text2.style.left='30px';
+							text2.style.resize='none';
+							text2.style.border='none';
+							text2.style.borderRadius='2px';
+							text2.style.boxShadow='rgba(0, 0, 0, 0.2) 0 0 0 1px';
+							text2.value = lib.character[event.character][6] || '5'; 
+							dialog.appendChild(text2);
+						ui.auto.hide();
+						ui.create.control('确定',function(){
+							if (text2.value) event.value = text2.value; 
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+						ui.create.control('取消',function(){
+							dialog.close();
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+							game.resume();
+						});
+					} else if (result.index == 5){
+						game.log(event.character,'被删除');
+						lib.config.monika[event.character] = 'null';
+						delete lib.character[event.character];
+						for(var i=0;i<game.players.length;i++){
+							if (game.players[i].name == event.character){
+								game.removePlayer(game.players[i]);
+							}
+						}
+					}
+					'step 3'
+					var info = lib.character[event.character];
+					if (event.index == 0){
+						if (event.addskill){
+							lib.character[event.character][3].push(event.addskill);
+							game.log(event.character, '添加了技能', event.addskill);
+							for(var i=0;i<game.players.length;i++){
+								if (game.players[i].name == event.character){
+									game.players[i].addSkill(event.addskill);
+								}
+							}
+							lib.config.monika[event.character] = lib.character[event.character];
+						} else {
+							game.log('没有为', event.character,'选择技能');
+						}
+					} else if (event.index == 1){
+						if(result.control){
+							var list = lib.character[event.character][3];
+							for (var i = 0; i < list.length; i ++){
+								if (get.translation(list[i]) && get.translation(list[i]) == result.control){
+									lib.character[event.character][3].splice(i, 1);
+								}
+							}
+							for(var i=0;i<game.players.length;i++){
+								if (game.players[i].name == event.character){
+									for(var j=0;j<game.players[i].skills.length;j++){
+										if (get.translation(game.players[i].skills[j]) == result.control){
+											game.players[i].removeSkill(game.players[i].skills[j]);
+										}
+									}
+								}
+							}
+							game.log(event.character, '失去了', result.control);
+							lib.config.monika[event.character] = lib.character[event.character];
+						}
+					} else if (event.index == 2){
+						if(event.value){
+							event.value = parseInt(event.value);
+							for(var i=0;i<game.players.length;i++){
+								if (game.players[i].name == event.character){
+									game.players[i].maxHp = event.value;
+									game.players[i].update();
+								}
+							}
+							game.log(event.character, '的体力上限改为了', event.value);
+							lib.character[event.character][2] = event.value;
+							lib.config.monika[event.character] = lib.character[event.character];
+						} else {
+							game.log(event.character, '的体力上限没有改动');
+						}
+					} else if (event.index == 3){
+						if(event.value){
+							event.value = parseInt(event.value);
+							game.log(event.character, '的起始灵力值改为了', event.value);
+							lib.character[event.character][1] = event.value.toString();
+							lib.config.monika[event.character] = lib.character[event.character];
+						} else {
+							game.log(event.character, '的起始灵力值没有改动');
+						}
+					} else if (event.index == 4){
+						if(event.value){
+							event.value = parseInt(event.value);
+							for(var i=0;i<game.players.length;i++){
+								if (game.players[i].name == event.character){
+									game.players[i].maxlili = event.value;
+									game.players[i].update();
+								}
+							}
+							game.log(event.character, '的灵力上限改为了', event.value);
+							lib.character[event.character][6] = event.value.toString();
+							lib.config.monika[event.character] = lib.character[event.character];
+						} else {
+							game.log(event.character, '的灵力上限没有改动');
+						}
+					}
+					'step 4'
+					game.saveConfig('monika', lib.config.monika);
+				},
+			},
 			
 		},
 		translate:{
@@ -427,6 +740,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			lunwu_info:'一回合一次，出牌阶段，你可以交给一名角色一张手牌，并明置之；然后，对其攻击范围内除你以外的所有角色各造成１点灵击伤害。',
 			tiaoxian:'调弦',
 			tiaoxian_info:' 一名角色明置手牌时，你可以：若其中有红色牌，令其获得１点灵力；若其中有黑色牌，对其造成１点灵击伤害。',
+			monika:'莫妮卡',
+			miaohui:"描绘",
+			miaohui_info:'一回合一次，出牌阶段，你可以输入一行代码并执行。',
+			kehua:"刻画",
+			kehua_info:'出牌阶段，你可以指定一名角色（包括不在场上的角色），然后选择一项：为该角色：增加技能；删除技能；更改起始灵力值；更改灵力上限；更改体力上限；或删除该角色；此改动在以后所有非联机模式的游戏中有效。',
 		},
 	};
 });

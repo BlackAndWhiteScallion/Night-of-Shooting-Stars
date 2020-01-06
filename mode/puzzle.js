@@ -2053,7 +2053,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							name2:"none",
 							identity:"zhu",
 							position:0,
-							hp:null,maxHp:null,lili:5,maxlili:null,
+							hp:null,maxHp:null,lili:4,maxlili:null,
 							playercontrol:true,
 							handcards:[["sha", 'spade', 10]],equips:[],judges:[]
 							},

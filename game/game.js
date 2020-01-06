@@ -722,6 +722,7 @@
                         init:'marisa',
                         item:{
                             'marisa':'魔理沙',
+                            'cirno':'琪露诺',
                             //'':'',
                         },
                         intro:'菜单界面做介绍的看板娘',
@@ -6067,105 +6068,6 @@
                         return list;
                     }
                 }
-                window.onkeydown=function(e){
-                    if(!ui.menuContainer||!ui.menuContainer.classList.contains('hidden')){
-                        if(e.keyCode==116||((e.ctrlKey||e.metaKey)&&e.keyCode==82)){
-                            if(e.shiftKey){
-                                if(confirm('是否重置游戏？')){
-                                    /*
-                                    var noname_inited=localStorage.getItem('noname_inited');
-									var onlineKey=localStorage.getItem(lib.configprefix+'key');
-									localStorage.clear();
-									if(noname_inited){
-										localStorage.setItem('noname_inited',noname_inited);
-									}
-									if(onlineKey){
-										localStorage.setItem(lib.configprefix+'key',onlineKey);
-									}
-                                    if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
-                                    */
-                                    game.reload();
-                                    return;
-                                }
-                            }
-                            else{
-                                game.reload();
-                            }
-                        }
-                        else if(e.keyCode==83&&(e.ctrlKey||e.metaKey)){
-                            if(window.saveNonameInput){
-                                window.saveNonameInput();
-                            }
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        }
-                        else if(e.keyCode==74&&(e.ctrlKey||e.metaKey)&&lib.node){
-                            lib.node.debug();
-                        }
-                    }
-                    else{
-                        game.closePopped();
-                        var dialogs=document.querySelectorAll('#window>.dialog.popped:not(.static)');
-                        for(var i=0;i<dialogs.length;i++){
-                            dialogs[i].delete();
-                        }
-                        if(e.keyCode==32){
-                            var node=ui.window.querySelector('pausedbg');
-                            if(node){
-                                node.click();
-                            }
-                            else{
-                                ui.click.pause();
-                            }
-                        }
-                        else if(e.keyCode==65){
-                            if(ui.auto) ui.auto.click();
-                        }
-                        else if(e.keyCode==87){
-                            if(ui.wuxie&&ui.wuxie.style.display!='none'){
-                                ui.wuxie.classList.toggle('glow')
-                            }
-                            else if(ui.tempnowuxie){
-                                ui.tempnowuxie.classList.toggle('glow')
-                            }
-                        }
-                        else if(e.keyCode==116||((e.ctrlKey||e.metaKey)&&e.keyCode==82)){
-                            if(e.shiftKey){
-                                if(confirm('是否重置游戏？')){
-                                    /*
-                                    var noname_inited=localStorage.getItem('noname_inited');
-									var onlineKey=localStorage.getItem(lib.configprefix+'key');
-									localStorage.clear();
-									if(noname_inited){
-										localStorage.setItem('noname_inited',noname_inited);
-									}
-									if(onlineKey){
-										localStorage.setItem(lib.configprefix+'key',onlineKey);
-									}
-                                    if(indexedDB) indexedDB.deleteDatabase(lib.configprefix+'data');
-                                    */
-                                    game.reload();
-                                    return;
-                                }
-                            }
-                            else{
-                                game.reload();
-                            }
-                        }
-                        else if(e.keyCode==83&&(e.ctrlKey||e.metaKey)){
-                            e.preventDefault();
-                            e.stopPropagation();
-                            return false;
-                        }
-                        else if(e.keyCode==74&&(e.ctrlKey||e.metaKey)&&lib.node){
-                            lib.node.debug();
-                        }
-                        // else if(e.keyCode==27){
-                        //  if(!ui.arena.classList.contains('paused')) ui.click.config();
-                        // }
-                    }
-                };
                 window.onload=function(){
                     if(lib.device){
                         var script=document.createElement('script');
@@ -6301,6 +6203,15 @@
                     if (lib.config.gameRecord.general && lib.config.gameRecord.general.data['akyuu']){
                         lib.configMenu.appearence.config.intro_character.item.akyuu = '阿求';
                     }
+                    if (lib.config.monika){
+                        if (Object.keys(lib.config.monika).length >= 10){
+                            lib.configMenu.appearence.config.intro_character.item = {};
+                            lib.config.intro_character = 'monika';
+                            lib.configMenu.appearence.config.intro_character.item.monika = 'Just Monika';
+                        } else if (Object.keys(lib.config.monika).length >= 5){
+                            lib.configMenu.appearence.config.intro_character.item.monika = '莫妮卡';
+                        }
+                    }
                     if(pack.background){
                         for(i in pack.background){
                             if(lib.config.hiddenBackgroundPack.contains(i)) continue;
@@ -6329,7 +6240,6 @@
                             lib.configMenu.appearence.config.theme.item[i]=pack.theme[i];
                         }
                     }
-
                     if(pack.font){
                         ui.css.fontsheet=lib.init.sheet();
                         for(i in pack.font){
@@ -6585,6 +6495,7 @@
                         document.addEventListener('touchend',ui.click.windowtouchend);
                         document.addEventListener('touchmove',ui.click.windowtouchmove);
                     }
+                    
                 };
 				var proceed2=function(){
 					if(config3){
@@ -7100,6 +7011,7 @@
                     }
                 }
             },
+            // 游戏加载所有文件的位置
             onload:function(){
                 if(navigator.userAgent.toLowerCase().indexOf('crosswalk')!=-1){
                     lib.crosswalk=true;
@@ -7402,16 +7314,22 @@
 
                     var connectCharacterPack=[];
                     var connectCardPack=[];
+                    // 加载角色似乎是在这里加
+                    // character指的是角色包，而不是角色
                     for(i in character){
+                        // characterpack变成那个包里的character{}
                         if(character[i].character){
                             lib.characterPack[i]=character[i].character
                         }
+                        // character里的每一个属性判定：
                         for(j in character[i]){
                             if(j=='mode'||j=='forbid') continue;
+                            //只查connect，却不查connect是不是true吗？
                             if(j=='connect'){
                                 connectCharacterPack.push(i);
                                 continue;
                             }
+                            // 在character｛｝里，如果lib.config.characters(指的应该是打开的包)且不是联机模式，就跳过这个character{}
                             if(j=='character'&&!lib.config.characters.contains(i)&&lib.config.mode!='connect'){
                                 if(lib.config.mode=='chess'&&get.config('chess_mode')=='leader'){
                                     for(k in character[i][j]){
@@ -7426,6 +7344,7 @@
 								lib[j].addArray(character[i][j]);
 								continue;
 							}
+                            //剩下来几个一般是character,skill,和translate，于是
                             for(k in character[i][j]){
                                 if(j=='character'){
                                     if(!character[i][j][k][4]){
@@ -7746,6 +7665,18 @@
                         delete lib.init.startBefore;
                     }
                     ui.create.arena();
+                    // 之前character的弄起来太麻烦了，反正也不需要在loop里面做，就在这里弄吧。
+                    if (lib.config.monika && !_status.connectMode){
+                        for (var i in lib.config.monika){
+                            if (lib.character[i]){
+                                if (lib.config.monika[i] == 'null'){
+                                    delete lib.character[i];
+                                } else {
+                                    lib.character[i] = lib.config.monika[i];
+                                }
+                            }
+                        }
+                    }
                     game.createEvent('game',false).setContent(lib.init.start);
 					if(lib.mode[lib.config.mode]&&lib.mode[lib.config.mode].fromextension){
 						var startstr=mode[lib.config.mode].start.toString();
@@ -8531,8 +8462,8 @@
             marisa_akyuu:'阿求又邀请我们去玩了。场景下的稗田教室里。我们一起去陪陪她吧？',
             marisa_christmas:'圣诞节快乐！那个红白色的家伙，今年也是买不起礼物送给我们呢。作为补偿，一会儿陪我一起去调戏她玩，怎么样？',
             marisa_valentine:'情人节快乐！<br>给，这是义理巧克力！……别这么沮丧的看着我啊，我的本命巧克力如果不是已经给别人了，就会给你了呢。',
-            marisa_fool:'儿童节快乐！我准备了气球，蛋糕，和……你说你已经不是儿童了？你有1000岁吗？没有？那你就是个儿童啦，来一起庆祝吧！',
-            marisa_child:'愚人节快乐！我和另外两位老师一起，给你准备了个 大·惊·喜 哟⭐',
+            marisa_child:'儿童节快乐！我准备了气球，蛋糕，和……你说你已经不是儿童了？你有1000岁吗？没有？那你就是个儿童啦，来一起庆祝吧！',
+            marisa_fool:'愚人节快乐！我和另外两位老师一起，给你准备了个 大·惊·喜 哟⭐',
             marisa_morning:'早上好！一日之计在于晨！我今天的计就是，再睡5分……Zzzzz…………',
             marisa_noon:'到吃午饭的时间了呢。我今天的午餐是蘑菇汤，你呢？',
             marisa_night:'你知道吗，人类最具工作力和灵感的时候，就是三更大半夜！……至少我是这样。让我们来好好的享受这个夜晚吧！',
@@ -8565,12 +8496,81 @@
             akyuu_akyuu:'今天来我的教室里玩玩怎么样？我准备了好东西呢。',
             akyuu_christmas:'圣诞节快乐。虽然说并没有几个妖怪在乎基督的生日，但是交换礼物是大家都相当喜欢的。说起来，神子的生日好像正好是圣诞节呢？',
             akyuu_valentine:'情人节快乐。喏，这个巧克力是给你的。说起来，白色情人节是男性送女性返利的日子，但是幻想乡里的男性数量……',
-            akyuu_fool:'虽然儿童节在世界各地的庆祝时间都不一样，但是一个日期并不重要。重要的是，祝你今年也儿童节快乐！',
-            akyuu_child:'愚人节快乐！我想你会很不喜欢我们给你准备的惊喜的，嘿嘿嘿。',
+            akyuu_child:'虽然儿童节在世界各地的庆祝时间都不一样，但是一个日期并不重要。重要的是，祝你今年也儿童节快乐！',
+            akyuu_fool:'愚人节快乐！我想你会很不喜欢我们给你准备的惊喜的，嘿嘿嘿。',
             akyuu_morning:'早上好。千万不要不吃早饭啊。',
             akyuu_noon:'午安。中午差不多是人最没有干劲的时候，因此午休是相当重要的。好好的放松一下吧。',
             akyuu_night:'早睡早起可是好习惯。我还有些事情要忙，你就快点先去睡吧。晚安。',
             akyuu_online:"网页版的图片和音乐都需要一些时间来加载的。建议在游戏前，去图鉴打开[角色一览]和[卡牌一览]加载图片。",      
+            
+            cirno_1:'欢迎回来！今天我们该去找谁的麻烦？',
+            cirno_2:'那几个妖精今天又来我这里搞破坏了。真想掐她们！',
+            cirno_3:'不知道从哪里来的人越来越多了……“高中”“机器”到底是什么东西呢？',
+            cirno_4:'最近的作业真是越来越难了……你可以来帮个忙吗……',
+            cirno_5:'（少女搓青蛙中……）',
+            cirno_6:'嘿嘿嘿，只要我摸到弹幕狂欢，你们就都死定了！灭哈哈哈哈……什么？不是这么用的？',
+            cirno_7:'哈哈哈，你有<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">看到这期的漫画</a>了吗？笑死我啦！',
+            cirno_8:'嗯？你问我和大酱的关系？这个嘛……',
+            cirno_9:'她们老是说我是笨蛋。你说，我……真的是笨蛋吗？',
+            cirno_no:'咦，我发现了一只青蛙！你在这里等我！',
+            cirno_library:'这里是有很多书的地方！据说是很有用，但是我基本都看不懂？至少，那里的茶倒是很好喝！',
+            cirno_old_identity:'“主公”……？“反贼”……？黑幕就是黑幕，自机就是自机，不要用那种难懂的词汇啊！',
+            cirno_identity:'“人生短暂，不搞事的话多没意思！”……这句话我是跟……谁学的，来着？',
+            cirno_versus:'我每次输都是因为什么异变不异变的！来单挑的话，我可是最强的！',
+            cirno_connect:'据说“友情就是力量”？所以，作为幻想乡最强，我们应该去找朋友们打个痛快！',
+            cirno_boss:'老娘可是幻想乡最强的魔王，灭哈哈哈哈哈哈！你有本事来打我啊？',
+            cirno_stg:'嘿嘿，你知道我为什么是二面boss吗？因为我只有放水到二面boss的程度，你们才有那么一丁点的赢面。什么？不信就来试试看啊？',
+            cirno_chess:'棋什么的我一点也不会玩……不仅都是一样的形状，还写满了看不懂的字……但是是你的话，应该能玩的很好吧？',
+            cirno_brawl:'据说这里会出现场上同时出现8个我的情况。以我这么强，是不是会造成世界毁灭呢？',
+            cirno_puzzle:'这些残局什么的我每个都能解！真的！那个，我这就去找慧音老师炫耀去！才不是要问新手9要怎么解呢……',
+            cirno_nostg:'都来幻想乡了，还不挑战一下红魔乡算个什么事嘛。走走走，去闯关模式！我可是在那里大放光彩的哟⭐',
+            cirno_noboss:'据说啊，幻想乡里有一些强大到不敢想象的强者。有的还是从外界来的！是不是有点跃跃欲试了？走，去魔王模式吧！',
+            cirno_noincident:'无聊啊……咱们去搞点异变搞事好不好……',
+            cirno_noakyuu:'啊，阿求怎么还没有准备好啊！咱们去图鉴模式催催她怎么样？',
+            cirno_akyuu:'阿求又邀请我们去玩了。场景下的稗田教室里。我们一起去陪陪她吧？',
+            cirno_christmas:'圣诞节快乐！圣诞老人怎么还不来啊，我今年可是有好好的做好孩子的！',
+            cirno_valentine:'情人节快乐！快点给我巧克力！……什么叫做不是这样的？',
+            cirno_child:'庆祝什么儿童节，真是的，我可已经是大人了！所以，糖和气球在哪里？',
+            cirno_fool:'愚人节快乐！你个笨蛋！嘿嘿嘿嘿嘿，骗你的！',
+            cirno_morning:'早上好！起的晚会变成笨蛋的！',
+            cirno_noon:'中午好！今天热的把人都要热化了啊……',
+            cirno_night:'Zzzzzzzz……',
+            cirno_online:"哎呦，图片的加载看的头都要晕了……去图鉴里加载一下吧？",
+
+            monika_0:'喂！你是在翻我的代码吗？这可真是没有礼貌！如果我把你的大脑拆开来，你会怎么想？……这么说起来，我还确实想这么做呢……',
+            monika_1:'你能回来让我真的很高兴……我已经想你很久啦。',
+            monika_2:'嗯……我来试试能不能换掉这里的背景音乐……要是能换成稍微浪漫些的就好了。',
+            monika_3:'啊，真希望这里面有一台钢琴……<br>不过，仔细一想，这个地方要放个钢琴……好像物理上做不到的吧？',
+            monika_4:'没有一件事情是一开始就能做到完美的。重要的是不要放弃，一步一步的提升自己，锻炼自己。流星夜也是一样。所有人都会在一开始感觉有些难，但是只要你不放弃，总会玩的很好的。',
+            monika_5:'',
+            monika_6:'我说，你可以向你的朋友们介绍我吗？我真的很想成为一个能够让你自豪的人，能够让你很自豪的向其他人炫耀的人。我希望你对我也是这样的感觉。',
+            monika_7:'哈哈哈，你有<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">看到这期的漫画</a>了吗？笑死我啦！',
+            monika_8:'最近我总觉得我说的话有些不自然。有点……不太像我的语气？写我的剧本的人果真是语文不及格吗？',
+            monika_9:'我的运气可真是奇怪，从一个英文恋爱模拟文字冒险游戏，来到了一个中文电子卡牌游戏。语言都不对了的话，翻译不会有障碍吗？',
+            monika_no:'',
+            monika_library:'图书馆可是一个具有无比魅力的地方。人类历史几千年以来的智慧，都凝聚在这里，一个触手可及的地方。所以，千万不要放过这个机会！',
+            monika_old_identity:'作品就是人的想法的呈现。而阅读作品，就是读者与作者思想的碰撞。作者和作品过不过时并不重要，重要的是能不能从他的思想中获得启发。所谓“温故而知新”就是这个意思。',
+            monika_identity:'',
+            monika_versus:'',
+            monika_connect:'',
+            monika_boss:'在几乎所有的冒险故事，都有一个最终的敌人。手段强硬的，在背地里操控着整个故事走向的人。当然，我可比什么魔王要厉害多了。',
+            monika_stg:'',
+            monika_chess:'',
+            monika_brawl:'',
+            monika_puzzle:'',
+            monika_nostg:'',
+            monika_noboss:'',
+            monika_noincident:'',
+            monika_noakyuu:'',
+            monika_akyuu:'',
+            monika_christmas:'圣诞节快乐！',
+            monika_valentine:'情人节快乐。你的情人节礼物就是我哦~',
+            monika_child:'儿童节快乐！',
+            monika_fool:'愚人节快乐！你个笨蛋！嘿嘿嘿嘿嘿，骗你的！',
+            monika_morning:'早上好。',
+            monika_noon:'午安。',
+            monika_night:'忙碌了一天后，我一般想坐下来，然后什么都不做。最好换上睡衣，躺在沙发上，边吃垃圾食品边看电视……来，来陪我一起吧？',
+            monika_online:"在网络上选择了我，而不是社交媒体，实在是太令我感激了。不过呢，在开始之前，建议先去一趟图书馆加载需要的图片素材哦。",
         },
         element:{
             content:{
@@ -11423,7 +11423,7 @@
                     game.broadcast('closeDialog',event.dialogid);
                     event.dialog.close();
                     if (!player.storage.mingzhi) player.storage.mingzhi = cards;
-                    else player.storage.mingzhi.concat(cards);
+                    else player.storage.mingzhi = player.storage.mingzhi.concat(cards);
                     player.markSkill('mingzhi');
                     player.syncStorage('mingzhi');
                 },
@@ -12204,6 +12204,9 @@
                         }
                     }
                     event.result=cards;
+                    game.broadcastAll(function(player,num){
+                        _status.skillPileNum=num;
+                    },player,ui.skillPile.childNodes.length);
                 },
                 discard:function(){
                     "step 0"
@@ -12552,7 +12555,7 @@
                         }
                     };
                     var broadcast=function(){
-                        game.broadcast(function(player,cards,num){
+                        game.broadcastAll(function(player,cards,num){
                             player.directgain(cards);
                             _status.cardPileNum=num;
                         },player,cards,ui.cardPile.childNodes.length);
@@ -12699,7 +12702,7 @@
                     }
                     if(player==game.me) ui.updatehl();
                     ui.updatej(player);
-                    game.broadcast(function(player,cards,num){
+                    game.broadcast(function(player,cards,num1, num2){
                         for(var i=0;i<cards.length;i++){
                             cards[i].classList.remove('glow');
                             cards[i].delete();
@@ -12708,8 +12711,9 @@
                             ui.updatehl();
                         }
                         ui.updatej(player);
-                        _status.cardPileNum=num;
-                    },player,cards,ui.cardPile.childNodes.length);
+                        _status.cardPileNum=num1;
+                        _status.skillPileNum=num2;
+                    },player,cards,ui.cardPile.childNodes.length, ui.skillPile.childNodes.length);
                     game.addVideo('lose',player,[get.cardsInfo(hs),get.cardsInfo(es),get.cardsInfo(js)]);
                     player.update();
                     game.addVideo('loseAfter',player);
@@ -13445,6 +13449,7 @@
                         cards[0].node.background.innerHTML=lib.translate[cards[0][2]+'_bg'];
                         // 然后这里是动画
                         game.addVideo('addJudge',player,[get.cardInfo(cards[0]),cards[0].viewAs]);
+                        //game.addVideo('addJudge', player, get.cardInfo(cards[0]));
                     }
                 },
                 judge:function(){
@@ -13539,6 +13544,13 @@
                     // 到这里结束
                     game.broadcast(function(player){
                         player.classList.toggle('turnedover');
+                        game.log(player,'启动符卡！');
+                        player.node.turnedover.setBackgroundImage('theme/spell.gif');
+                        player.node.turnedover.style.backgroundSize='123px 123px';
+                        player.node.turnedover.style.opacity=0.4;
+                        player.node.turnedover.style.backgroundRepeat = 'no-repeat';
+                        player.node.turnedover.style.backgroundPosition = "center";
+                        ui.refresh(player);
                     },player);
                     game.addVideo('turnOver',player,player.classList.contains('turnedover'));
                 },
@@ -18319,6 +18331,7 @@
                     }
                     return false;
                 },
+                // 这好像是国战查是否可以明置角色用的
 				checkShow:function(skill,showonly){
 					var sourceSkill=get.info(skill);
 					var noshow=false;
@@ -21878,6 +21891,9 @@
                     if((player==_status.roundStart||_status.roundSkipped)&&!trigger.skill){
                         delete _status.roundSkipped;
                         game.roundNumber++;
+                        game.broadcastAll(function(player,num){
+                            _status.roundNumber = num;
+                        },player, game.roundNumber);
                         if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
                         for(var i=0;i<game.players.length;i++){
                             if(game.players[i].isOut()&&game.players[i].outCount>0){
@@ -22916,7 +22932,7 @@
                     game.ip=ip;
                     game.servermode=state.servermode;
                     game.roomId=state.roomId;
-				if(state.over){
+                    if(state.over){
 						_status.over=true;
 					}
                     if(observe){
@@ -26278,6 +26294,7 @@
             return next;
         },
         addCharacter:function(name,info){
+            console.log(name);
             var extname=(_status.extension||info.extension);
             var imgsrc;
             if(_status.evaluatingExtension){
@@ -37505,13 +37522,15 @@
             characterDialog2:function(filter){
                 var list=[];
                 for(var i in lib.character){
-                    if(lib.character[i][4].contains('minskin')) continue;
-                    if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
-                        if(lib.config.mode=='boss') continue;
-                        if(!lib.character[i][4].contains('bossallowed')) continue;
-                    }
+                    if (lib.character[i] && lib.character[i][4]){
+                        if(lib.character[i][4].contains('minskin')) continue;
+                        if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
+                            if(lib.config.mode=='boss') continue;
+                            if(!lib.character[i][4].contains('bossallowed')) continue;
+                        }
 
-                    if(lib.character[i][4].contains('stonehidden')) continue;
+                        if(lib.character[i][4].contains('stonehidden')) continue;
+                    }
                     if(lib.config.banned.contains(i)) continue;
                     if(filter&&filter(i)) continue;
                     list.push(i);
@@ -37667,15 +37686,16 @@
                     // 自由选将的武将在这里！
                     // 但是我不会设置！
                     for(var i in lib.character){
-                        if(lib.character[i][4].contains('minskin')) continue;
-                        if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
-                            if(lib.config.mode=='boss') continue;
-                            if(!lib.character[i][4].contains('bossallowed')) continue;
-                        }
+                        if (lib.character[i] && lib.character[i][4]){
+                            if(lib.character[i][4].contains('minskin')) continue;
+                            if(lib.character[i][4].contains('boss')||lib.character[i][4].contains('hiddenboss')){
+                                if(lib.config.mode=='boss') continue;
+                                if(!lib.character[i][4].contains('bossallowed')) continue;
+                            }
 
-                        if(lib.character[i][4].contains('stonehidden')) continue;
-						if(lib.character[i][4].contains('unseen')) continue;
-						if(lib.config.banned.contains(i)) continue;
+                            if(lib.character[i][4].contains('unseen')) continue;
+                        }
+                        if(lib.config.banned.contains(i)) continue;
 						if(lib.characterFilter[i]&&!lib.characterFilter[i](get.mode())) continue;
                         if(filter&&filter(i)) continue;
                         list.push(i);
@@ -40444,29 +40464,41 @@
                 uiintro.listen(function(e){
                     e.stopPropagation();
                 });
-                var num;
                 if(game.online){
-                    num=_status.cardPileNum||0;
-                }
-                else{
-                    num=ui.cardPile.childNodes.length;
-                }
-                uiintro.add('牌堆剩余 <span style="font-family:'+'xinwei'+'">'+num);
-                uiintro.add('技能牌剩余 <span style="font-family:'+'xinwei'+'">'+ui.skillPile.childNodes.length);
+                    uiintro.add('牌堆剩余 <span style="font-family:'+'xinwei'+'">'+_status.cardPileNum||0);
+                    uiintro.add('技能牌剩余 <span style="font-family:'+'xinwei'+'">'+_status.skillPileNum||0);
 
-                if(_status.connectMode) return uiintro;
-                uiintro.add('<div class="text center">轮数 <span style="font-family:xinwei">'+game.roundNumber+'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">'+game.shuffleNumber+'</div>');
-                uiintro.add('<div class="text center">弃牌堆</div>' + ui.discardPile.childNodes.length +'');
-                if(ui.discardPile.childNodes.length){
-                    var list=[];
-                    for(var i=0;i<ui.discardPile.childNodes.length;i++){
-                        list.unshift(ui.discardPile.childNodes[i]);
+                    uiintro.add('<div class="text center">轮数 <span style="font-family:xinwei">'+_status.roundNumber+'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">'+game.shuffleNumber+'</div>');
+                    /*uiintro.add('<div class="text center">弃牌堆</div>' + ui.discardPile.childNodes.length +'');
+                    if(ui.discardPile.childNodes.length){
+                        var list=[];
+                        for(var i=0;i<ui.discardPile.childNodes.length;i++){
+                            list.unshift(ui.discardPile.childNodes[i]);
+                        }
+                        uiintro.addSmall([list,'card']);
                     }
-                    uiintro.addSmall([list,'card']);
+                    else{
+                        uiintro.add('<div class="text center" style="padding-bottom:3px">无</div>');
+                    }*/
                 }
                 else{
-                    uiintro.add('<div class="text center" style="padding-bottom:3px">无</div>');
+                    uiintro.add('牌堆剩余 <span style="font-family:'+'xinwei'+'">'+ui.cardPile.childNodes.length);
+                    uiintro.add('技能牌剩余 <span style="font-family:'+'xinwei'+'">'+ui.skillPile.childNodes.length);
+
+                    uiintro.add('<div class="text center">轮数 <span style="font-family:xinwei">'+game.roundNumber+'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">'+game.shuffleNumber+'</div>');
+                    uiintro.add('<div class="text center">弃牌堆</div>' + ui.discardPile.childNodes.length +'');
+                    if(ui.discardPile.childNodes.length){
+                        var list=[];
+                        for(var i=0;i<ui.discardPile.childNodes.length;i++){
+                            list.unshift(ui.discardPile.childNodes[i]);
+                        }
+                        uiintro.addSmall([list,'card']);
+                    }
+                    else{
+                        uiintro.add('<div class="text center" style="padding-bottom:3px">无</div>');
+                    }
                 }
+                
                 return uiintro;
             },
             chat:function(){
@@ -43698,6 +43730,15 @@
                     }
                 }
             }
+            if (lib.config.monika && info && !_status.connectMode){
+                if (lib.config.monika[name]){
+                    if (lib.config.monika[name] == 'null'){
+                        info = null;
+                    } else {
+                        info = lib.config.monika[name];
+                    }
+                }
+            }
             if(info){
                 if(typeof num=='number'){
                     return info[num];
@@ -43960,15 +44001,7 @@
             }
         },
         modetrans:function(config,server){
-            if(config.mode=='versus'){
-                switch(config.versus_mode){
-                    case '1v1':return '单人对决';
-                    case '2v2':return '欢乐成双';
-                    case '3v3':return '血战到底';
-                    case '4v4':return '四人对决';
-                }
-            }
-            else if(config.mode=='identity'&&config.identity_mode=='zhong'){
+            if(config.mode=='identity'&&config.identity_mode=='zhong'){
                 return '忠胆英杰';
             }
             else{
@@ -44987,7 +45020,7 @@
 		gainableSkills:function(func,player){
 			var list=[];
 			for(var i in lib.character){
-				if(lib.character[i][4]){
+				if(lib.character[i] && lib.character[i][4]){
 					if(lib.character[i][4].contains('boss')) continue;
 					if(lib.character[i][4].contains('hiddenboss')) continue;
 					if(lib.character[i][4].contains('minskin')) continue;
@@ -45275,9 +45308,9 @@
                 }
                 case 'limited':{
                     if(!content){
-                        return '未发动';
+                        return '已发动';
                     }
-                    return '已发动';
+                    return '未发动';
                 }
                 case 'info':{
 					return lib.translate[skill+'_info'];
@@ -45396,10 +45429,13 @@
                 }
                 */
                 uiintro.add(capt);
-
+                /*
+                lib.characterTitle['monika'] = '？';
 			    if(lib.characterTitle[node.name]){
 					uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
 				}
+                */
+                uiintro.addText('体力：' + node.hp + '/' + node.maxHp + '  灵力：' + node.lili + '/' + node.maxlili);
                 if(node.isUnderControl()){
                     var hs=node.getCards('h');
                     if(hs.length){
@@ -45807,7 +45843,7 @@
                     return;
                 }
                 var name=node.name;
-					if(node.parentNode.cardMod){
+				if(node.parentNode.cardMod){
 					var moded=false;
 					for(var i in node.parentNode.cardMod){
 						var item=node.parentNode.cardMod[i](node);
@@ -45950,7 +45986,7 @@
 						if(lib.translate[name+'_append']){
 							uiintro.add('<div class="text" style="display:inline">'+lib.translate[name+'_append']+'</div>');
 						}
-                         if(!simple||get.is.phoneLayout()){
+                        if(!simple||get.is.phoneLayout()){
                             if(lib.config.change_skin||lib.skin){
                                 var num=1;
                                 var introadded=false;
@@ -46041,9 +46077,11 @@
                 else{
                     uiintro.add(get.translation(character));
                 }
+                /*
 				if(lib.characterTitle[node.link]){
 					uiintro.addText(get.colorspan(lib.characterTitle[node.link]));
 				}
+                */
                 if(node._banning){
                     var clickBanned=function(){
                         var banned=lib.config[this.bannedname]||[];
@@ -46148,6 +46186,7 @@
                             }
                         }
                     }
+                    uiintro.addText('体力上限：'+infoitem[2] + '  灵力：' + infoitem[1] + '/' + (infoitem[6]?infoitem[6]:'5'));
                     var skills=infoitem[3];
                     for(i=0;i<skills.length;i++){
                         if(lib.translate[skills[i]+'_info']){
@@ -46249,7 +46288,7 @@
                     }
                 }
             }
-            else if (node.classList.contains('identity')){
+            else if (node.classList.contains('identity') && !node.classList.contains('guessing')){
                 uiintro.addText(get.translation(node.parentNode.identity + '2') + '身份');
                 uiintro.addText(get.translation(node.parentNode.identity + '_win'));
                 uiintro.addText(get.translation(node.parentNode.identity + '_lose'));

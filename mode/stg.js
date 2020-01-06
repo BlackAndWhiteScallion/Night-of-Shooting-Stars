@@ -774,13 +774,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						players[i].addTempSkill('lunadial2');
 					}
 					target.addTempSkill('mianyi');
-					console.log(event);
 					var e = event.getParent('useSkill');
-					if (e.skill == '_stg_lingji'){
+					if (e && e.skill && e.skill == '_stg_lingji'){
 						var trigger = event.getParent('damage');
 						trigger.cancel();
-						game.log('灵击：防止本回合所有伤害');
 					}
+					game.log('灵击：防止本回合所有伤害');
 				},
 				ai:{
 					basic:{

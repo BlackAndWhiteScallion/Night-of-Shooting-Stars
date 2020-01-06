@@ -415,6 +415,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'damageEnd',source:'damageEnd'},
 				filter:function(event, player){
 					if(event._notrigger.contains(event.player)||event.nature == 'thunder') return false;
+					if (player.lili < 1) return false;
 					return event.num&&event.source&&event.player&&event.player.isAlive()&&event.source.isAlive()&&event.source!=event.player;
 				},
 				check:function(event,player){

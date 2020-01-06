@@ -2433,7 +2433,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		translate:{
 			mode_boss_card_config:'魔王模式',
 			zhu:'魔王',
+			zhu2:'魔王',
+			zhu_win:'<u>胜利条件：</u>所有勇者进入重整状态',
+			zhu_lose:'<u>失败条件：</u>魔王坠机',
 			cai:'勇者',
+			cai2:'勇者',
+			cai_win:'<u>胜利条件：</u>魔王坠机',
+			cai_lose:'<u>失败条件：</u>所有勇者进入重整状态',
 			zhong:'从',
 			dianche:'废线电车',
 			_dianche:'废线电车（给牌）',

@@ -550,7 +550,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                         return target.countCards('hej');
                     }).set('ai',function(target){
-                        return -get.attitude(_status.event.player,target);
+                        return -get.attitude(event.current, target);
                     }); 
                     "step 3"
                     if(result.bool){

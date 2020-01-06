@@ -3190,7 +3190,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.loselili(num);
 					player.turnOver();
 					player.chooseTarget(get.prompt('quintette_fire'),true).set('ai',function(target){
-						return get.attitude(player,target);
+						return -get.attitude(player,target);
 					});
 					"step 1"
 					if(result.bool){
