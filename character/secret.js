@@ -201,7 +201,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             			if (result.control == '使用这张牌'){
                             player.gain(event.card);
             				player.chooseToUse('隙见：使用'+get.translation(event.card),{name:event.card.name, suit:event.card.suit, number:event.card.number},function(card,player,target){
-								return player.canUse(event.card,target);
+								return player.canUse(card,target);
                                 //return true;
 							});
             			} else if (result.control == '将这张牌交给一名角色'){

@@ -405,6 +405,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                          player.storage.qipai = [];
                          'step 1'
                          player.chooseCard('he',function(card){
+                           var player=_status.event.player;
                             return !player.storage.qipai.contains(get.type(card));
                          },'弃置3张不同种类的牌，或消耗3点灵力。');
                          'step 2'
@@ -512,11 +513,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     trigger.player.showCards(result.links[0]);
                                     trigger.player.lose(result.links[0], ui.special);
                                     trigger.player.update();
-                                    if (get.type(result.links[0]) == 'delay'){
-                                      ui.skillPile.appendChild(result.links[0]);
-                                    } else {
-                                      ui.cardPile.appendChild(result.links[0]);
-                                    }
+                                    result.links[0].fix();
+                                    event.card = result.links[0];
+                              }
+                              'step 3'
+                              if (event.card){
+                                if (get.type(event.card) == 'delay'){
+                                  ui.skillPile.appendChild(event.card);
+                                } else {
+                                  ui.cardPile.appendChild(event.card);
+                                }
                               }
                               player.storage.yinyang = false;
                         },
@@ -826,8 +832,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     group:'mitu_storage',
                     trigger:{global:'useCardToBegin'},
                     filter:function(event,player){
-                      if (!player.storage.mitu) return false;
-                      if (event.card.name != player.storage.mitu.name) return false;
+                      if (!player.storage.mitu.length) return false;
+                      if (event.card.name != player.storage.mitu[0].name) return false;
                       //if (player.hasSkill('yuangu_1')){
                         return get.distance(player,event.target,'attack')<=1;
                       //} else {
@@ -839,26 +845,26 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                       player.showCards(player.storage.mitu);
                       trigger.player.judge(function(card){
                         if (get.color(card) == 'black') return -2;
-                        return 0;
+                        return 1;
                       });
                       'step 1'
                       if (result.bool == false){
                         player.discardPlayerCard(trigger.player,'hej',true);
                         if(trigger.target == player) trigger.cancel();
                         if(!player.hasSkill('yuangu_1')) {
-                          player.storage.mitu.discard();
+                          player.storage.mitu[0].discard();
                           player.$throw(player.storage.mitu);
-                          delete player.storage.mitu;
+                          player.storage.mitu = [];
                           player.unmarkSkill('mitu');
                         }
                       }
                     },
                     check:function(event, player){
                       return get.attitude(player, event.target) > 0;
-                      },
+                    },
                     intro:{
                         mark:function(dialog,content,player){
-                          if(content){
+                          if(content && content.length){
                             if(player==game.me||player.isUnderControl()){
                               dialog.addAuto(content);
                             }
@@ -868,7 +874,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           }
                         },
                         content:function(content,player){
-                          if(content){
+                          if(content && content.length){
                             if(player==game.me||player.isUnderControl()){
                               return get.translation(content);
                             }
@@ -880,21 +886,25 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mitu_storage:{
                     audio:2,
                     trigger:{player:'phaseDiscardBegin'},
+                    init:function(player){
+                      player.storage.mitu = [];
+                    },
                     filter:function(event,player){
-                      return player.countCards('he') && !player.storage.mitu;
+                      return player.countCards('he') && !player.storage.mitu.length;
                     },
                     content:function(){
                       'step 0'
                       player.chooseCard('he','将一张牌作为“坑”放头上').set('ai',function(card){
-                          if (game.countPlayer(function(current){
+                          /*if (game.countPlayer(function(current){
                             return get.attitude(player, current) < 0 && get.distance(player,current,'attack')<=1 && current.hp == 1;  
                           }) && player.countCards('h', {name:'tao'})) return card.name == 'tao';
-                            return card.name == 'sha';
+                          */  
+                            return get.subtype(card) == 'attack' || get.subtype(card) == 'disrupt';
                           });
                       'step 1'
                       if(result.cards&&result.cards.length){
                         player.lose(result.cards,ui.special);
-                        player.storage.mitu=result.cards[0];
+                        player.storage.mitu=[result.cards[0]];
                         player.syncStorage('mitu');
                         player.markSkill('mitu');
                       }
@@ -919,7 +929,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.turnOver();
                       },
                     check:function(event,player){
-                      return (player.lili > 3 || player.hp < 2) && player.storage.mitu;
+                      return (player.lili > 3 || player.hp < 2) && player.storage.mitu.length;
                     },
                   },
                   yuangu_1:{

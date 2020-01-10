@@ -1072,6 +1072,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(event,player){
                     'step 0'
                     player.chooseCard('明置出今天演奏的东西吧……','h',function(card){
+                        var player=_status.event.player;
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){

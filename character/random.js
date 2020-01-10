@@ -48,7 +48,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			rylai:'<b>出自：dota2 设计：路人orz  画师：forest</b>',
 			jack:'同时是杀人狂和暴露狂的幼女？快收住你奇怪的想法……<br>出自：Fate/Apocrypha <b>画师：オウカ</b>',
 			yuuko:'<br>出自：神的记事本 <b>画师：岸田メル 设计：伶</b>',
-			tsubaki:'全名朱雀院椿。“这是你为我锻造的翅膀，我将用它们将尽情翱翔。”。。。椿姐赛高！<br>出自：牵绊闪耀的恋之伊吕波 <b>画师：ぺろ 设计：冰茶</b>',
+			tsubaki:'全名朱雀院椿。“这是你为我锻造的翅膀，我将用它们尽情翱翔。”。。。椿姐赛高！<br>出自：牵绊闪耀的恋之伊吕波 <b>画师：ぺろ 设计：冰茶</b>',
 			m4a1:'<br>出自：少女前线 <b>画师：怠惰姬空白 设计：Freyr</b>',	
 		},	   
 		perfectPair:{
@@ -1923,9 +1923,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     	game.log(event.target,'的一张牌置于牌堆顶');
                     	var card=result.links[0];
                     	event.target.lose(card,ui.special);
-                    	ui.cardPile.insertBefore(card,ui.cardPile.firstChild);
+						card.fix();
+						event.card = card;
                     }
                     'step 8'
+					if (event.card && event.control == '♣：将一名角色的一张牌置于牌堆顶'){
+						ui.cardPile.insertBefore(event.card,ui.cardPile.firstChild);
+					}
+					'step 9'
                 	if (player.hasSkill('mojing0')){
                 		event.list.remove(event.control);
                 		if (event.list.length) event.goto(4);

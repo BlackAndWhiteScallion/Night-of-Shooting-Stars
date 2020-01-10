@@ -21,7 +21,7 @@ window.config={
 		image_background_filter:['default','blur','gray','sepia','invert','saturate','contrast','hue','brightness'],
 	},
 
-	game:'sgs',
+	//game:'sgs',
 	duration:500,
 	hoveration:1000,
 	doubleclick_intro:true,

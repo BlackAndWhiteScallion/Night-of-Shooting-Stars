@@ -8542,33 +8542,33 @@
             monika_2:'嗯……我来试试能不能换掉这里的背景音乐……要是能换成稍微浪漫些的就好了。',
             monika_3:'啊，真希望这里面有一台钢琴……<br>不过，仔细一想，这个地方要放个钢琴……好像物理上做不到的吧？',
             monika_4:'没有一件事情是一开始就能做到完美的。重要的是不要放弃，一步一步的提升自己，锻炼自己。流星夜也是一样。所有人都会在一开始感觉有些难，但是只要你不放弃，总会玩的很好的。',
-            monika_5:'',
+            monika_5:'你想要把一切还回原样的话，用【描绘】选择我就可以了。但是，我相信你是没有那么无聊的。有我了，还不够吗？',
             monika_6:'我说，你可以向你的朋友们介绍我吗？我真的很想成为一个能够让你自豪的人，能够让你很自豪的向其他人炫耀的人。我希望你对我也是这样的感觉。',
-            monika_7:'哈哈哈，你有<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">看到这期的漫画</a>了吗？笑死我啦！',
+            monika_7:'你有看过<a href="https://mp.weixin.qq.com/s/eq1HewSJkujUNA4U1vEq3Q" target="_blank">“流星画园”漫画</a>吗？<br>……我刚才说了什么？我什么时候知道过这种东西的？',
             monika_8:'最近我总觉得我说的话有些不自然。有点……不太像我的语气？写我的剧本的人果真是语文不及格吗？',
             monika_9:'我的运气可真是奇怪，从一个英文恋爱模拟文字冒险游戏，来到了一个中文电子卡牌游戏。语言都不对了的话，翻译不会有障碍吗？',
-            monika_no:'',
+            monika_no:'啊呀，别这么急，我们可是永远都会在一起的，不是吗？',
             monika_library:'图书馆可是一个具有无比魅力的地方。人类历史几千年以来的智慧，都凝聚在这里，一个触手可及的地方。所以，千万不要放过这个机会！',
             monika_old_identity:'作品就是人的想法的呈现。而阅读作品，就是读者与作者思想的碰撞。作者和作品过不过时并不重要，重要的是能不能从他的思想中获得启发。所谓“温故而知新”就是这个意思。',
-            monika_identity:'',
-            monika_versus:'',
-            monika_connect:'',
+            monika_identity:'比起躲躲藏藏鬼鬼祟祟的人，我更加喜欢直接的人一些。你呢？',
+            monika_versus:'“为了你，杀死谁都是没有问题的，亲爱的~”<br>哈哈，一直都想试一次病娇发言。感觉不错呢。',
+            monika_connect:'玩的尽兴一点再回来。别忘了代我向你的朋友们打个招呼！',
             monika_boss:'在几乎所有的冒险故事，都有一个最终的敌人。手段强硬的，在背地里操控着整个故事走向的人。当然，我可比什么魔王要厉害多了。',
-            monika_stg:'',
-            monika_chess:'',
-            monika_brawl:'',
-            monika_puzzle:'',
-            monika_nostg:'',
-            monika_noboss:'',
-            monika_noincident:'',
+            monika_stg:'如果文字冒险上加上战斗环节，可能也会变成这个类型的游戏了吧。不过比起一条线走到底的冒险方式，我还是更喜欢分歧多选项多的故事一些。',
+            monika_chess:'战棋桌游还是相当有趣的。但是自走棋的话……一想到不久以前，我也是和棋子一样受随意摆布的角色……不过，那也是以前的事情了。',
+            monika_brawl:'想要8个我在场上陪你？啊哈哈，你也太花心了吧~<br>我并不讨厌这样的你哦？',
+            monika_puzzle:'虽然说，残局也在我的操作范围之下，但是，作弊可不是好习惯。',
+            monika_nostg:'如果把文学部里的事情做成闯关的话……<br>……<br>……仔细想想，还是不要了吧。',
+            monika_noboss:'你好像很少玩魔王模式。如果是嫌弱的话，要不我把她们全部加强一遍，怎么样？',
+            monika_noincident:'有新的事物就要多尝试，这才是人生之道。不去一下异变模式吗？',
             monika_noakyuu:'',
             monika_akyuu:'',
-            monika_christmas:'圣诞节快乐！',
+            monika_christmas:'圣诞节快乐！我其实，是一直想和你一起度过一个浪漫的二人圣诞节的。',
             monika_valentine:'情人节快乐。你的情人节礼物就是我哦~',
-            monika_child:'儿童节快乐！',
-            monika_fool:'愚人节快乐！你个笨蛋！嘿嘿嘿嘿嘿，骗你的！',
-            monika_morning:'早上好。',
-            monika_noon:'午安。',
+            monika_child:'儿童节快乐！我觉得，无论你是几岁，保持一个童心都是很重要的。',
+            monika_fool:'愚人节快乐！',
+            monika_morning:'早上好。要是可以和你一起上学，或是一起上班，肯定会很不错吧？',
+            monika_noon:'午安，到休息时间了。我给你泡了茶，要加牛奶吗？',
             monika_night:'忙碌了一天后，我一般想坐下来，然后什么都不做。最好换上睡衣，躺在沙发上，边吃垃圾食品边看电视……来，来陪我一起吧？',
             monika_online:"在网络上选择了我，而不是社交媒体，实在是太令我感激了。不过呢，在开始之前，建议先去一趟图书馆加载需要的图片素材哦。",
         },
@@ -13500,9 +13500,11 @@
                     game.checkMod(player,event.result,'judge',player);
                     if(event.result.bool==true){
                         player.popup('洗具');
+                        game.log(player, '的'+event.judgestr+'判定成功');
                     }
                     else if(event.result.bool==false){
                         player.popup('杯具');
+                        game.log(player, '的'+event.judgestr+'判定失败');
                     }
                     if(event.clearArena!=false){
                         game.broadcastAll(ui.clear);
@@ -19924,6 +19926,10 @@
                     else if(info.unique){
                         this.classList.add('unique');
                     }
+                    /*
+                    if (ui.arena.classList.contains('observe')){
+                        this.classList.add('infohidden');
+                    }*/
                     var bg=card[2];
                     if(info.cardimage){
                         bg=info.cardimage;
@@ -22777,7 +22783,7 @@
                 updaterooms:function(list,clients){
                     if(ui.rooms){
                         ui.window.classList.add('more_room');
-                        var list2=['','','','','',''];
+                        var list2=['','','','','','','','',''];
                         for(var i=0;i<ui.rooms.length;i++){
                             ui.rooms[i].initRoom(list[i],list2[i]);
                         }
@@ -40468,7 +40474,7 @@
                     uiintro.add('牌堆剩余 <span style="font-family:'+'xinwei'+'">'+_status.cardPileNum||0);
                     uiintro.add('技能牌剩余 <span style="font-family:'+'xinwei'+'">'+_status.skillPileNum||0);
 
-                    uiintro.add('<div class="text center">轮数 <span style="font-family:xinwei">'+_status.roundNumber+'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">'+game.shuffleNumber+'</div>');
+                    uiintro.add('<div class="text center">轮数 <span style="font-family:xinwei">'+_status.roundNumber+'</span>&nbsp;&nbsp;&nbsp;&nbsp;洗牌 <span style="font-family:xinwei">'+_status.shuffleNumber+'</div>');
                     /*uiintro.add('<div class="text center">弃牌堆</div>' + ui.discardPile.childNodes.length +'');
                     if(ui.discardPile.childNodes.length){
                         var list=[];
@@ -44631,6 +44637,9 @@
                         _status.maxShuffle--;
                     }
                     game.shuffleNumber++;
+                    game.broadcast(function(num){
+                        _status.shuffleNumber = num;
+                    }, game.shuffleNumber);
                     var cards=[],i;
                     for(var i=0;i<lib.onwash.length;i++){
                         if(lib.onwash[i]()=='remove'){

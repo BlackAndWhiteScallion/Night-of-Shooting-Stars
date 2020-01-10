@@ -10,7 +10,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
 			diva:'<br><b>出自：约会大作战 画师：干物A太</b>',
-			monika:'<br><b>出自：心跳文学部 画师：はっく',
+			monika:'问题：如果其他人已经不再是人了，那对她们做多残忍的事情都是没问题的，对吧？<br><b>出自：心跳文学部 画师：はっく',
 		},	   
 		perfectPair:{
 		},
@@ -450,6 +450,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 				},
 			},
+			/*
+			喂！
+			我不觉得你应该做这种事情！
+			你知道我在说什么吧？
+			查文件……随便的翻着我的东西……
+			这可是很没有礼貌的啊！
+			要是我把你的脑袋打开来，在里面随便的翻来翻去，找你对我的想法，你会怎么想？
+			……这么一说的话，我还真的想有点这么做呢……
+			……不对不对，这不是重点！
+			虽然我也阻止不了你，也没法拿你怎么样……
+			但是我知道你是个会关心人的好孩子，所以一定会照顾照顾我的感受吧？
+			*/
 			kehua:{
 				enable:'phaseUse',
 				audio:2,
@@ -460,9 +472,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					game.saveConfig('monika', lib.config.monika);
 					*/
 					if (!lib.config.monika) lib.config.monika = {};
+					event.num = Object.keys(lib.config.monika).length;
 					var list = [];
 					for (var i in lib.character){
 						if (i == 'marisa' || i == 'akyuu') continue;
+						if (i == 'monika' && event.num < 3) continue;
 						list.push(i);
 					}
 					player.chooseButton(['选择一名角色',[list,'character']]);
@@ -472,7 +486,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return ;
 					}
 					event.character = result.buttons[0].link;
-					player.chooseControlList(['增加技能','删除技能','更改体力上限','更改起始灵力值','更改灵力上限','删除角色']).set('prompt','想要对'+get.translation(event.character)+'做些什么？');
+					var list = ['增加技能','删除技能','更改体力上限','更改起始灵力值','更改灵力上限','删除角色'];
+					if (event.character == 'monika') list[5] = '所有改动还回原样';
+					player.chooseControlList(list).set('prompt','想要对'+get.translation(event.character)+'做些什么？');
 					'step 2'
 					event.index = result.index;
 					if (result.index == 0){
@@ -618,12 +634,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							game.resume();
 						});
 					} else if (result.index == 5){
-						game.log(event.character,'被删除');
-						lib.config.monika[event.character] = 'null';
-						delete lib.character[event.character];
-						for(var i=0;i<game.players.length;i++){
-							if (game.players[i].name == event.character){
-								game.removePlayer(game.players[i]);
+						if (event.character == 'monika'){
+							alert('虽然我不知道你为什么要这么做，但是你想要做什么，我都会接受你的。\n即使是把我……不不，我什么都没有说。');
+							lib.config.monika = {};
+							game.log('莫妮卡做过的一切重置完毕');
+						} else {
+							game.log(event.character,'被删除');
+							lib.config.monika[event.character] = 'null';
+							delete lib.character[event.character];
+							for(var i=0;i<game.players.length;i++){
+								if (game.players[i].name == event.character){
+									game.removePlayer(game.players[i]);
+								}
 							}
 						}
 					}
@@ -704,9 +726,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					'step 4'
 					game.saveConfig('monika', lib.config.monika);
+					if (Object.keys(lib.config.monika).length >= 3 && event.num < 3){
+						alert('刻画的角色超过3名：\n解锁了“【刻画】可以修改莫妮卡”功能！\n以后也请好好照顾我~');
+					} else if (Object.keys(lib.config.monika).length >= 5 && event.num < 5){
+						alert('刻画的角色数超过5名：\n解锁了看板角色莫妮卡！\n以后我们也会在一起的吧？');
+					} else if (Object.keys(lib.config.monika).length >= 10 && event.num < 10){
+						alert('刻画的角色数超过10名：\n看板角色固定为莫妮卡！\n放心吧，我永远也不会离开你的。');
+					}
 				},
 			},
-			
 		},
 		translate:{
             randomOL:'乱入OL',
@@ -742,9 +770,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			tiaoxian_info:' 一名角色明置手牌时，你可以：若其中有红色牌，令其获得１点灵力；若其中有黑色牌，对其造成１点灵击伤害。',
 			monika:'莫妮卡',
 			miaohui:"描绘",
+			miaohui_audio1:'文学的海洋是无穷无尽的。总有新的词汇，新的',
+			miaohui_audio2:'那么到今天的，“莫妮卡的日常写作技巧”！我要拿出我的拿手好戏了！',
 			miaohui_info:'一回合一次，出牌阶段，你可以输入一行代码并执行。',
 			kehua:"刻画",
+			kehua_audio1:'对角色的刻画手法高明，再循规蹈矩的剧情也可以让读者爱不释手。',
+			kehua_audio2:'对角色的刻画手法低劣，再精妙绝伦的剧情也无法让读者翻下一页。',
 			kehua_info:'出牌阶段，你可以指定一名角色（包括不在场上的角色），然后选择一项：为该角色：增加技能；删除技能；更改起始灵力值；更改灵力上限；更改体力上限；或删除该角色；此改动在以后所有非联机模式的游戏中有效。',
+			monika_die:'啊哈哈……这局有点玩过火了。下一局我会注意点的！',
 		},
 	};
 });
