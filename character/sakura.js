@@ -1024,7 +1024,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 ai:{
                     basic:{
                         order:10
-                    }
+                    },
+                    respondSha:'use',
                 }
             },
             kuangxiang:{

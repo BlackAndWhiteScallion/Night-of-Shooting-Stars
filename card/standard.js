@@ -723,13 +723,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return 0;
 				},
 				basic:{
-					order:7.2,
+					order:3,
 					useful:4,
-					value:5
+					value:5,
 				},
 				result:{
 					target:function(player,target){
 						if (player.lili > 2) return 1;
+						if (player.hasSha()) return 1;
 						if (player.countCards('h',{name:'sha'}) < 2) return 0;
 						return 0.5;
 					},
@@ -1724,7 +1725,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				ai:{
 					skillTagFilter:function(player){
 						return true;
-					}
+					},
+					respondSha:'use',
 				}
 		},
 		zhiyuu_skill:{

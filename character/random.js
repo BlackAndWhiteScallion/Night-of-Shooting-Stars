@@ -26,6 +26,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yuuko:['female', '1', 3, ['waimai', 'heike']],
 			tsubaki:['female', '2', 4, ['xiangyi', 'chunse']],
 			m4a1:['female', '2', 4, ['huoli', 'zhihui', 'shenyuan']],
+			tohka:['female', '3', 4, ['iphone3', 'Halvanhelev']],
 		},
 		characterIntro:{
 			illyasviel:'全名伊莉雅丝菲尔·冯·爱因兹贝伦，在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子<br>出自：Fate/kaleid liner 魔法少女☆伊莉雅 <b>画师：永恒之舞MK_2',
@@ -50,6 +51,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			yuuko:'<br>出自：神的记事本 <b>画师：岸田メル 设计：伶</b>',
 			tsubaki:'全名朱雀院椿。“这是你为我锻造的翅膀，我将用它们尽情翱翔。”。。。椿姐赛高！<br>出自：牵绊闪耀的恋之伊吕波 <b>画师：ぺろ 设计：冰茶</b>',
 			m4a1:'<br>出自：少女前线 <b>画师：怠惰姬空白 设计：Freyr</b>',	
+			tohka:'传说中的有史以来最敷衍最没有良心的技能组！<br>就跟原作的能力设置差不多。<br>出自：Date-A-Live!<b>画师：mmrailgun</b>',
 		},	   
 		perfectPair:{
 		},
@@ -606,6 +608,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					result:{
 						player:1,
 					},
+					respondSha:'use',
+					order:4,
 					skillTagFilter:function(player){
 						if(!player.countCards('he')) return false;
 					},
@@ -668,7 +672,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player:"phaseBegin",
 				},
 				filter:function(event,player){
-					return player.hp < 3 ||player.lili > lib.skill.solomon.cost;
+					return (player.hp < 3 && player.lili > 0) || player.lili > lib.skill.solomon.cost;
 				},
 				check:function(event,player){
 					return true;
@@ -1168,8 +1172,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				filter:function(event,player){
                     return player.countCards('he',function(card){
-								return get.bonus(card) > 0;	
-							});
+						return get.bonus(card) > 0;	
+					});
                 },
                 chooseButton:{
                     dialog:function(){
@@ -2189,6 +2193,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 prompt:'将一张牌当【轰！】使用',
                 check:function(card){return 4-get.value(card)},
                 ai:{
+					respondSha:'use',
                 },
                 mod:{
                   cardUsable:function(card,player,num){
@@ -2731,7 +2736,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				check:function(event,player){
 					//return player.awakenedSkills.contains('yejiang') && player.awakenSkills.contains('wulin');
-					return player.countCards('h', {name:'sha'});
+					return player.hasSha();
 				},	
 			},
 			maria_skill:{
@@ -3207,6 +3212,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			huoli:{
 				usable:1,
+				audio:1,
 				trigger:{player:'shaBefore'},
 				filter:function(event, player){
 					return player.countCards('hej');
@@ -3226,7 +3232,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			huoli_1:{
-				audio:2,
 				trigger:{source:'damageEnd'},
 				forced:true,
 				filter:function(event,player){
@@ -3237,6 +3242,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			zhihui:{
+				audio:2,
 				trigger:{global:'phaseBegin'},
 				filter:function(event, player){
 					return event.player != player && player.lili > 0;
@@ -3295,6 +3301,62 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						if(card.name=='sha'&&range[1]!=-1) range[1] = player.maxHp - player.hp;
 					},
 				},
+			},
+			iphone3:{
+				audio:2,
+				enable:['chooseToRespond','chooseToUse'],
+				filterCard:function(card,player){
+					return true;
+				},
+				selectCard:0,
+				position:'he',
+				viewAs:{name:'sha'},
+				viewAsFilter:function(player){
+					return true;
+				},
+				prompt:'视为使用或打出一张【轰！】',
+				check:function(card){return 4-get.value(card)},
+				ai:{
+					order:function(card,player){
+						if (player.countCards('h',function(card){
+							return card.name == 'sha' && get.bonus(card) > 0;	
+						})) return 2;
+						return 4;
+					},
+					skillTagFilter:function(player){
+						return true;
+					},
+					respondSha:true,
+				}
+			},
+			Halvanhelev:{
+				audio:2,
+				cost:3,
+				spell:['Halvanhelev_1'],
+				trigger:{player:'phaseBegin'},
+				filter:function(event,player){
+					return player.lili > lib.skill.Halvanhelev.cost;
+				},
+				content:function(){
+					player.loselili(lib.skill.Halvanhelev.cost);
+					player.turnOver();
+				},
+				check:function(event, player){
+					return player.lili > 3;
+				},
+			},
+			Halvanhelev_1:{
+				trigger:{source:'damageBegin'},
+				filter:function(event){
+					return true;
+				},
+				forced:true,
+				content:function(){
+					trigger.num++;
+				},
+				ai:{
+					damageBonus:true
+				}
 			},
 		},
 		translate:{
@@ -3561,12 +3623,24 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			m4a1:'M4A1',
 			huoli:'火力专注',
 			huoli_info:'一回合一次，你使用【轰！】时，可以弃置一张牌：若如此做，该【轰！】造成伤害时，对受伤角色造成1点灵击伤害。',
+			huoli_audio1:'报仇的机会！',
 			zhihui:'指挥人形',
 			zhihui_info:'一名其他角色的回合开始时，你可以消耗1点灵力，令其选择一项：摸一张牌；本回合出牌阶段可以额外使用一张【轰！】；或获得1点灵力。',
+			zhihui_audio1:'目标锁定',
+			zhihui_audio2:'找可以躲的地方！',
 			shenyuan:'申冤者印记',
 			shenyuan_info:'符卡技（2）你使用的【轰！】可以指定至多X名目标（X为你已受伤值）；你使用【轰！】指定目标后，你可以令之对目标直接造成伤害。',
+			shenyuan_audio1:'你也需要脊髓吗？',
+			shenyuan_audio2:'我已经没有什么怜悯之心了。',
 			shenyuan_1:'申冤者印记',
 			shenyuan_1_info:'你可以令该【轰！】对目标直接造成伤害',
+			m4a1_die:'唔！！就算是觉醒了的我，也不行的吗……',
+			tohka:'十香',
+			iphone3:'尘杀',
+			iphone3_info:'你可以在需要的时候，视为使用/打出了一张【轰！】。',
+			Halvanhelev:'最后之剑',
+			Halvanhelev_1:'最后之剑',
+			Halvanhelev_info:'符卡技（3）你造成伤害时，该伤害+1。',
 		},
 	};
 });

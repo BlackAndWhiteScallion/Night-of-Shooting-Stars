@@ -402,7 +402,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                           if (player.lili < 2) return -1;
                                           return 0.1;
                                     }
-                              }
+                              },
+                              respondSha:'use',
                         }
                   },
                   guihang_cost:{

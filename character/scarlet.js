@@ -209,6 +209,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     skillTagFilter:function(player){
                         return player.countCards('h',{name:'sha'})>0;
                     },
+                    respondSha:true,
                     save:true,
                 },
             },

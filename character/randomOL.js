@@ -5,11 +5,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		character:{
 			homura:['female', '2', 3, ['time3', 'time', 'homuraworld']],
 			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']],
-			monika:['female', '2', 3, ['miaohui', 'kehua']],
+			monika:['female', '2', 3, ['miaohui', 'kehua'], ['forbidai']],
 		},
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
-			diva:'<br><b>出自：约会大作战 画师：干物A太</b>',
+			diva:'<br><b>出自：Date-A-Live! 画师：干物A太</b>',
 			monika:'问题：如果其他人已经不再是人了，那对她们做多残忍的事情都是没问题的，对吧？<br><b>出自：心跳文学部 画师：はっく',
 		},	   
 		perfectPair:{

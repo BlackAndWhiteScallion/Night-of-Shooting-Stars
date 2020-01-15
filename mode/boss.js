@@ -1688,7 +1688,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					});
 				},
 				viewAs:{name:"sha"},
-				prompt:"将【钻石风暴】指定的牌名当【轰！】使用",
+				prompt:"将【钻石风暴】指定的牌名当【轰！】使用/打出",
+				ai:{
+					respondSha:true,
+				},
 			},
 			jubing:{
 				trigger:{player:'phaseBegin'},
