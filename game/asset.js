@@ -180,6 +180,7 @@ window.noname_asset_list=[
     'image/character/rinnosuke.jpg',
     'image/character/illyasviel.jpg',
     'image/character/m4a1.jpg',
+    'image/character/tohka.jpg',
     'image/character/kosuzu.jpg',
     'image/character/monika.jpg',
     'image/mode/boss/character/boss_reimu.jpg',
