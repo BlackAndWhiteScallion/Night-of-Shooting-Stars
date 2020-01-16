@@ -5665,6 +5665,7 @@
             if(_status.videoToSave){
                 game.export(lib.init.encode(JSON.stringify(_status.videoToSave)),
                 '流星夜 - 录像 - '+_status.videoToSave.name[0]+' - '+_status.videoToSave.name[1]);
+                //game.export(_status.videoToSave, '流星夜录像');
             }
         },
         init:{
@@ -12517,6 +12518,10 @@
                     }
                     // 检查手牌，然后整理手牌么？
                     "step 4"
+                    if (cards.length == 0){
+                        event.finish();
+                        return;
+                    }
                     var sort;
                     var frag1=document.createDocumentFragment();
                     var frag2=document.createDocumentFragment();
@@ -12797,7 +12802,8 @@
                     var str='受到了';
                     if(source) str+='来自<span class="bluetext">'+(source==player?'自己':get.translation(source))+'</span>的';
                     str+=get.cnNumber(num)+'点';
-                    if(event.nature) str+=get.translation(event.nature)+'属性';
+                    if(event.nature) str+=get.translation(event.nature);
+                    else str += '弹幕';
                     str+='伤害';
                     game.log(player,str);
                     if(player.stat[player.stat.length-1].damaged==undefined){
@@ -24977,6 +24983,7 @@
             draw:function(player,info){
                 if(player&&player.$draw){
                     player.$draw(info);
+                    if(player==game.me) ui.updatehl();
                 }
                 else{
                     console.log(player);
@@ -25037,6 +25044,7 @@
             gain:function(player,info){
                 if(player&&player.$gain){
                     player.$gain(info);
+                    if(player==game.me) ui.updatehl();
                 }
                 else{
                     console.log(player);
@@ -36899,7 +36907,9 @@
                                 saveButton.listen(function(){
                                     var current=this.parentNode.querySelector('.videonode.active');
                                     if(current){
-                                        game.export(lib.init.encode(JSON.stringify(current.link)),
+                                        //game.export(lib.init.encode(JSON.stringify(current.link)),
+                                        //'流星夜 - 录像 - '+current.link.name[0]+' - '+current.link.name[1]);
+                                        game.export(JSON.stringify(current.link),
                                         '流星夜 - 录像 - '+current.link.name[0]+' - '+current.link.name[1]);
                                     }
                                 });
@@ -44227,7 +44237,7 @@
         },
         infoCard:function(info){
             var card=ui.create.card();
-            if(info[0]){
+            if(info){
                 card.init(info);
             }
             return card;
