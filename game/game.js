@@ -4563,7 +4563,7 @@
                     },
                     change_choice:{
                         name:'开启换将卡',
-                        init:true,
+                        init:false,
                         onclick:function(bool){
                             game.saveConfig('change_choice',bool,this._link.config.mode);
                             if(!_status.event.getParent().showConfig&&!_status.event.showConfig) return;
@@ -4690,7 +4690,7 @@
                     },
                     choice_zhu:{
                         name:'主公候选角色数',
-                        init:'3',
+                        init:'6',
                         restart:true,
                         item:{
                             '3':'三',
@@ -9694,7 +9694,9 @@
                                     str='请选择要使用的牌';
                                 }
                                 if (!lib.config.new_tutorial){
-                                    str += '<br><br><div><div style="width:100%;text-align:center;font-size:14px">在牌上浮空或右键可以查看效果<br>在角色上浮空，右键，或双击可以查看技能</div>';
+                                    str += '<br><br><div><div style="width:100%;text-align:center;font-size:14px">在牌上浮空或右键可以查看效果<br>在角色上浮空，右键，或双击可以查看技能';
+                                    str += '<br>你的灵力值就是你的攻击范围';
+                                    if (game.me.lili == 0) str+='<br>没有灵力，无法造成伤害';
                                 }
                                 if(event.openskilldialog){
                                     event.skillDialog=ui.create.dialog(event.openskilldialog);

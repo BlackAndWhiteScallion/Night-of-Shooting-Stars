@@ -1248,7 +1248,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list.remove(game.me.name2);
 					/* 主公加血 */
 					event.list.randomSort();
-					if (!lib.config.new_tutorial) event.list[0] = 'zigui';
+					if (!lib.config.new_tutorial){
+						lib.character['zigui'][2] = 3;
+						event.list[0] = 'zigui';
+					}
 					for(var i=0;i<game.players.length;i++){
 						// 主公和玩家不选将（已经选过了）
 						//if(game.players[i]!=game.zhu&&game.players[i]!=game.me){

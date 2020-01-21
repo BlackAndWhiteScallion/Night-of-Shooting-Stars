@@ -180,7 +180,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								text = ui.create.dialog('在角色或卡牌一栏中，单击角色/卡牌可以将其禁用，在角色/卡牌上悬空或右键可以查看描述，双击角色可以查看角色简介，和切换角色皮肤。');
 								ui.controls[0].replace('这选项可真多',function(){
 										ui.click.configMenu();
-										ui.click.menuTab('其他');
+										ui.click.menuTab('其它');
 										text = ui.create.dialog('在[其他]中可以检查更新，下载素材，查看你的战绩，和观看游戏录像。');
 										ui.controls[0].replace('好了能玩了没',function(){
 											//ui.click.configMenu();
@@ -967,6 +967,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						//event.list = ['koakuma','lilywhite','cirno','keine','chen','yuuka','hetate','wriggle'];
 						//event.list.remove(game.zhu.name);
 						//event.list.randomSort();
+						lib.character['zigui'] = ['female','5',3,["shijianliushi"]];
 						event.list = ['zigui'];
 					}
 					list3.randomSort();
@@ -1022,6 +1023,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var dialog;
 					if (!lib.config.new_tutorial){
 						list = ["reimu","marisa","sakuya","youmu"];
+
 					}
 					if(event.swapnodialog){
 						dialog=ui.dialog;
