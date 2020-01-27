@@ -476,7 +476,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         group:['yinyang2'],
                         audio:2,
                         trigger:{global:'phaseEnd'},
-                        frequent:true,
+                        //frequent:true,
                         filter:function(event,player){
                               return player.storage.yinyang;
                         },

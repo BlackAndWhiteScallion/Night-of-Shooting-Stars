@@ -1664,6 +1664,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				return 8-ai.get.value(card);
 			},
 			position:'h',
+			prompt:'弃置一张攻击牌，获得1点灵力',
 			content:function(){
 				player.gainlili();
 				if (player.name == 'suika') player.say('好酒，好酒~');

@@ -5487,6 +5487,12 @@
 
                 },
             },
+            tutorial:{
+                name:'教程',
+                config:{
+
+                },
+            },
             library:{
                 name:'图鉴',
                 config:{
@@ -7764,6 +7770,8 @@
                             setDialog(lib.config.intro_character+'_chess');
                         } else if (mode.includes('brawl')){
                             setDialog(lib.config.intro_character+'_brawl');
+                        } else if (mode.includes('tutorial')){
+                            setDialog(lib.config.intro_character+'_tutorial');
                         } else if (mode.includes('puzzle')){
                             setDialog(lib.config.intro_character+'_puzzle');
                         }
@@ -7773,13 +7781,15 @@
                     }
                     var setDialog=function(text){
                         var date = new Date();
-                        if (date.getHours() > 1 && date.getHours() < 8) text = 'Zzzzzz……';
+                        if (date.getHours() > 1 && date.getHours() < 8){
+                            dialog.innerHTML = '<div><div style="width:500px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;overflow:scroll;display:block;">Zzzzzzz……</div>';
                         //text = lib.translate[text];
-                        if (!lib.translate[text]){
+                        } else if (!lib.translate[text]){
                             setDialog(lib.config.intro_character+'_'+ Math.floor(Math.random() * 9) + 1);
                             return ;
+                        } else {
+                            dialog.innerHTML = '<div><div style="width:500px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;overflow:scroll;display:block;">'+lib.translate[text]+'</div>';
                         }
-                        dialog.innerHTML = '<div><div style="width:500px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;overflow:scroll;display:block;">'+lib.translate[text]+'</div>';
                         ui.create.div('.avatar',dialog).setBackground(lib.config.intro_character,'character');
                     }
                     // 这里是开始界面
@@ -8459,6 +8469,7 @@
             marisa_stg:'这才是幻想乡的正确战斗方式！以一人之力，在杂鱼群里割草，然后与boss们展开华丽酷炫的弹幕战……啊啊啊，我手痒啦！走走走，闯关去！',
             marisa_chess:'据说这个战棋模式里面有些很神奇的东西，你可以陪我一起去吗？',
             marisa_brawl:'打牌打累了，就搞点好玩的小场景休闲一下吧，打子规可是最最最减压的事情啦！而且，还可以自己创建场景玩哟。我就做了一个呢，是不是很棒⭐。',
+            marisa_tutorial:'嗯，再打一次教程吗？我其实觉得去打一顿子规老师最方便，但是教程也是不错的学习方式啦！',
             marisa_puzzle:'必须在一回合内胜利的残局谜题——好玩挺好玩，对水平也有不小的提升……就是难的题真的好难啊！无论是制作起来还是解起来都太费脑子了！',
             marisa_nostg:'都来幻想乡了，还不挑战一下红魔乡算个什么事嘛。走走走，去闯关模式！我可是在那里大放光彩的哟⭐',
             marisa_noboss:'据说啊，幻想乡里有一些强大到不敢想象的强者。有的还是从外界来的！是不是有点跃跃欲试了？走，去魔王模式吧！',
@@ -8493,6 +8504,7 @@
             akyuu_stg:'忠实重现东方project本作的单人无双，连续打关，符卡决斗，和游戏剧情的模式。学习历史最好的方式就是亲身体验。',
             akyuu_chess:'这个战棋是继承自无名杀的战棋模式，并在之上进行了些元素重组。就规则上来说是完全颠覆了卡牌，但是玩法并不复杂。要试试看吗？',
             akyuu_brawl:'场景是一些小型场景——基于其他模式，做简单的规则改变，带来有趣和新颖游戏体验的玩法——的集合处。这里也有子规老师的[对战练习]，也有我的[稗田教室]，请多来玩玩！',
+            akyuu_tutorial:'别忘了，图鉴里有关于游戏规则和操作的资料，场景里也有与子规老师练习的场景。都是很方便的学习方式。',
             akyuu_puzzle:'残局可是项必修课。怎么说呢——抛开随机性，抛开发牌姬，在设定好的布局下，测试一下你的水平到底在哪里，并予以锻炼——呐，差不多就是这种模式。',
             akyuu_nostg:'想听听幻想乡第一次符卡战斗和第一次异变的故事吗？走，我们去闯关模式吧。',
             akyuu_noboss:'嗯，魔王有点太过恐怖了吗？虽然说不是不能理解，但是凡事不试一下，也无法知道结果呢。',
@@ -8528,6 +8540,7 @@
             cirno_chess:'棋什么的我一点也不会玩……不仅都是一样的形状，还写满了看不懂的字……但是是你的话，应该能玩的很好吧？',
             cirno_brawl:'据说这里会出现场上同时出现8个我的情况。以我这么强，是不是会造成世界毁灭呢？',
             cirno_puzzle:'这些残局什么的我每个都能解！真的！那个，我这就去找慧音老师炫耀去！才不是要问新手9要怎么解呢……',
+            cirno_tutorial:'哎？教程？只有笨蛋才会去看那种没人看得懂的东西的，对吧？',
             cirno_nostg:'都来幻想乡了，还不挑战一下红魔乡算个什么事嘛。走走走，去闯关模式！我可是在那里大放光彩的哟⭐',
             cirno_noboss:'据说啊，幻想乡里有一些强大到不敢想象的强者。有的还是从外界来的！是不是有点跃跃欲试了？走，去魔王模式吧！',
             cirno_noincident:'无聊啊……咱们去搞点异变搞事好不好……',
@@ -8562,6 +8575,7 @@
             monika_stg:'如果文字冒险上加上战斗环节，可能也会变成这个类型的游戏了吧。不过比起一条线走到底的冒险方式，我还是更喜欢分歧多选项多的故事一些。',
             monika_chess:'战棋桌游还是相当有趣的。但是自走棋的话……一想到不久以前，我也是和棋子一样受随意摆布的角色……不过，那也是以前的事情了。',
             monika_brawl:'想要8个我在场上陪你？<br>啊哈哈，你也太花心了吧~<br>不过，我并不讨厌这样的你哦？',
+            monika_tutorial:'同一本书，阅读多次，会发现第一次没有注意到的细节。这就是“温故而知新”。',
             monika_puzzle:'虽然说，残局也在我的操作范围之下，但是，作弊可不是好习惯。',
             monika_nostg:'如果把文学部里的事情做成闯关的话……<br>……<br>……仔细想想，还是不要了吧。',
             monika_noboss:'你好像很少玩魔王模式。如果是嫌弱的话，要不我把她们全部加强一遍，怎么样？',
@@ -9693,10 +9707,8 @@
                                 else{
                                     str='请选择要使用的牌';
                                 }
-                                if (!lib.config.new_tutorial){
+                                if (!lib.config.new_tutorial || get.mode() == 'tutorial'){
                                     str += '<br><br><div><div style="width:100%;text-align:center;font-size:14px">在牌上浮空或右键可以查看效果<br>在角色上浮空，右键，或双击可以查看技能';
-                                    str += '<br>你的灵力值就是你的攻击范围';
-                                    if (game.me.lili == 0) str+='<br>没有灵力，无法造成伤害';
                                 }
                                 if(event.openskilldialog){
                                     event.skillDialog=ui.create.dialog(event.openskilldialog);
@@ -19888,6 +19900,7 @@
                     this.queue(false);
                 },
             },
+            // 定义游戏牌的位置。
             card:{
                 init:function(card){
                     if(Array.isArray(card)){
@@ -26854,13 +26867,13 @@
                 }
                 var step3=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:280px;margin-left:120pxt;font-size:18px">不过不用急，先慢慢来。游戏的卡牌，模式介绍，都能在【图鉴】模式里找到。记得代我向阿求老师问个好。');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">不过不用急，先慢慢来。游戏的卡牌，模式介绍，都能在【图鉴】模式里找到。记得代我向阿求老师问个好。');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('好的老师！',step4);
                 }
                 var step4=function(){
                     clear();
-                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">如果还不太懂，欢迎来【残局】→【新手】！如果想练习角色，欢迎来【场景】→【对战练习】！如果哪个模式不熟的话，可以在那模式用自由选将召唤我！');
+                    ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">如果还不太懂，来【残局】→【新手】。如果想练习角色，来【场景】→【对战练习】。<br>放心吧，这游戏没有任何东西是练一把理解不了的！');
                     ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
                     ui.create.control('谢谢，再见！',step5);
                 }
@@ -33115,10 +33128,6 @@
                                 for(var j=0;j<lib.cardPack[lib.config.cards[i]].length;j++){
                                     var cname=lib.cardPack[lib.config.cards[i]][j];
                                     pileaddlist.push([cname,get.translation(cname)]);
-                                    if(cname=='sha'){
-                                        pileaddlist.push(['huosha','火杀']);
-                                        pileaddlist.push(['leisha','雷杀']);
-                                    }
                                 }
                             }
                             var cardpileaddname=ui.create.selectlist(pileaddlist,null,cardpileadd);
@@ -39406,8 +39415,7 @@
                         else{
                             node.node.group.style.display='none';
                         }
-                    }
-                    else{
+                    } else{
                         node.node={
                             name:ui.create.div('.name',node),
                             intro:ui.create.div('.intro',node)
@@ -44871,6 +44879,7 @@
              replace(/一回合一次/g,'<span class="greentext">一回合一次</span>').
              replace(/一回合两次/g,'<span class="greentext">一回合两次</span>').
              replace(/一回合三次/g,'<span class="greentext">一回合三次</span>').
+             replace(/一回合每项各一次/g,'<span class="greentext">一回合每项各一次</span>').
              //replace(/符卡技/g,'<span class="firetext">符卡技</span>').
              replace(/符卡技（X）/g,'<span class="firetext">符卡技（X）</span>').
              replace(/符卡技（0）/g,'<span class="firetext">符卡技（0）</span>').

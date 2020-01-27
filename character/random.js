@@ -2050,6 +2050,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			ng_wenhao2:{
 				audio:1,
+				derivation:'ClarentBloodArthur',
 				init:function(player){
 					player.storage.ng_wenhao2=false;
 				},

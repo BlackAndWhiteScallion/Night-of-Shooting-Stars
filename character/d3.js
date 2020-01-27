@@ -52,7 +52,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{global:'gameStart'},
 				global:'shijianliushi_silence',
 				filter:function(event,player){
-					return !_status.connectMode;
+					return !_status.connectMode && get.mode() != 'tutorial';
 				},
 				content:function(){
 					var clear=function(){
@@ -98,11 +98,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						} else if (get.mode() == 'old_identity'){
 							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">身份模式是三国杀同名模式复刻。</div></div>');
 						} else if (get.mode() == 'stg'){
-							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你为什么选我闯关啊！闯关模式中，玩家单人连续击坠多名角色来试图突破关卡。</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">闯关模式中，玩家单人连续击坠多名角色来试图突破关卡。所以说，你为什么选我闯关啊！</div></div>');
 						} else if (get.mode() == 'boss'){
 							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">挑战模式中，三名玩家合作挑战一名BOSS角色。</div></div>');
 						} else if (get.mode() == 'chess'){
 							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">其实……我也不知道战棋模式是什么……</div></div>');
+						} else if (get.mode() == 'tutorial'){
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">在这里，由我来教你怎么玩流星夜哟！</div></div>');	
 						}
 						ui.create.div('.avatar',ui.dialog).setBackground('zigui','character');
 						ui.create.control('这模式要怎么玩？',step3);
@@ -148,6 +150,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">盟军角色坠机后会重整：重整完毕后满血复活重整时间在右上可以查看。</div></div>');
 						} else if (get.mode() == 'chess'){
 							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">额……你自己探索吧！加油！</div></div>');
+						} else if (get.mode() == 'tutorial'){
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">放心吧，流星夜的东西只有看起来复杂。<br>没有任何东西，是试一次试不出来的。加油！</div></div>');
 						}
 						ui.create.control('知道了',step4);
 					};

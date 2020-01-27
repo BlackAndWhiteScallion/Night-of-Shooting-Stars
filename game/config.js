@@ -12,7 +12,7 @@ window.config={
 		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka','secret'],
 		sgscards:['standard','incident','skill'],
 		sgsmodes:['identity','versus','brawl','connect','library', 'puzzle'],
-		stockmode:['old_identity','identity','versus','boss','stg','chess','connect','brawl','library','puzzle'],
+		stockmode:['old_identity','identity','versus','boss','stg','chess','connect','brawl','library','tutorial','puzzle'],
 		stockextension:['boss','boss1','coin'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple'],
@@ -21,7 +21,7 @@ window.config={
 		image_background_filter:['default','blur','gray','sepia','invert','saturate','contrast','hue','brightness'],
 	},
 
-	//game:'sgs',
+	game:'sgs',
 	duration:500,
 	hoveration:1000,
 	doubleclick_intro:true,
@@ -170,7 +170,7 @@ window.config={
 	customcardpile:{},
 	addedpile:{},
 
-	mode:'old_identity',
+	mode:'tutorial',
 	mode_config:{
 		global:{
 			player_number:2,

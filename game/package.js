@@ -16,6 +16,7 @@ window.noname_package={
         standard:'标准',
         incident:'异变',
         skill:'技能',
+        random:'乱入',
     },
     play:{
         boss:'闯关角色',
@@ -25,6 +26,7 @@ window.noname_package={
     },
     mode:{
         library:'图鉴',
+        tutorial:'教程',
         old_identity:'身份',
         identity:'异变',
         versus:'对决',

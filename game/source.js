@@ -53,6 +53,7 @@ window.noname_source_list=[
     'mode/library.js',
     'mode/old_identity.js',
     'mode/puzzle.js',
+    'mode/tutorial.js',
     'extension/boss/extension.js',
     'extension/cardpile/extension.js',
     'extension/coin/extension.js',

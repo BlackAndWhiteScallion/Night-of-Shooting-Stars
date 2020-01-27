@@ -236,6 +236,7 @@ window.noname_asset_list=[
     'image/splash/versus.jpg',
     'image/splash/connect.jpg',
     'image/splash/puzzle.jpg',
+    'image/splash/tutorial.jpg',
     'audio/background/baka.mp3',
     'audio/background/death.mp3',
     'audio/background/immaterial.mp3',

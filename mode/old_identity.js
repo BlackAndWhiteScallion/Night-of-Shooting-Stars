@@ -631,6 +631,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					else{
 						if(get.config('double_character')){
 							player.init(list[0],list[1]);
+						} else if (_status.connectMode){
+							player.init(list.randomGet());
 						}
 						else{
 							player.init(list[0]);
@@ -982,7 +984,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					if(game.zhu!=game.me){
-						event.ai(game.zhu,event.list,list2)
+						event.ai(game.zhu,event.list,list2);
 						event.list.remove(game.zhu.name);
 						event.list.remove(game.zhu.name2);
 						if(_status.brawl&&_status.brawl.chooseCharacter){
@@ -1365,7 +1367,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						list=event.list.randomGets(8);
 					}
 					else{
-						list=list2.concat(list3.randomGets(3));
+						list=list2.concat(list3.randomGets(8));
 					}
 					if(lib.configOL.free_choose){
 						list = event.list;
@@ -1441,7 +1443,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							//if(game.players[i].special_identity){
 								str+='（'+get.translation(game.players[i].identity+'2')+'）';
 							//}
-							if(lib.configOL.free_choose){
+							if(lib.configOL.free_choose && game.players[i]){
 								list.push([game.players[i],[str,[event.list,'character']],selectButton,true]);
 							} else {
 								list.push([game.players[i],[str,[event.list.randomRemove(num+num3),'character']],selectButton,true]);
@@ -1460,11 +1462,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 					for(var i in result){
+						if (!lib.playerOL[i].nickname){
+							result[i] = 'ai';
+						}
 						if(result[i]=='ai'){
 							result[i]=event.list2.randomRemove(lib.configOL.double_character?2:1);
 						}
 						else{
-							result[i]=result[i].links
+							result[i]=result[i].links;
 						}
 						if(!lib.playerOL[i].name){
 							lib.playerOL[i].init(result[i][0],result[i][1]);
