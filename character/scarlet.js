@@ -147,9 +147,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 chooseButton:{
                     dialog:function(event,player){
                         var list = [];
+                        var packs = lib.config.all.cards.diff(lib.config.cards);
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if (packs){
+								var f = false;
+								for (var j = 0; j < packs.length; j ++){
+									if (lib.cardPack[packs[j]].contains(i)){
+										f = true;
+										break;
+									}
+								}
+								if (f) continue;
+							}
                             if(lib.card[i].type == 'basic'){
                                 list.add(i);
                             }
@@ -430,9 +441,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var list = [];
+                    var packs = lib.config.all.cards.diff(lib.config.cards);
                     for (var i in lib.card){
                         if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                         if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                        if (packs){
+								var f = false;
+								for (var j = 0; j < packs.length; j ++){
+									if (lib.cardPack[packs[j]].contains(i)){
+										f = true;
+										break;
+									}
+								}
+								if (f) continue;
+							}
                         if(lib.card[i].type == 'trick'){
                             list.add(i);
                         }
@@ -502,10 +524,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 chooseButton:{
                     dialog:function(){
+                        var packs = lib.config.all.cards.diff(lib.config.cards);
                         var list = [];
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if (packs){
+								var f = false;
+								for (var j = 0; j < packs.length; j ++){
+									if (lib.cardPack[packs[j]].contains(i)){
+										f = true;
+										break;
+									}
+								}
+								if (f) continue;
+							}
                             if(lib.card[i].type == 'trick'){
                                 list.add(i);
                             }

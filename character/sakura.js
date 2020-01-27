@@ -205,9 +205,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var list = [];
+                    var packs = lib.config.all.cards.diff(lib.config.cards);
                     for (var i in lib.card){
                         if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                         if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                        if (packs){
+                            var f = false;
+                            for (var j = 0; j < packs.length; j ++){
+                                if (lib.cardPack[packs[j]].contains(i)){
+                                    f = true;
+                                    break;
+                                }
+                            }
+                            if (f) continue;
+                        }
                         if(lib.card[i].type == 'basic'){
                             list.add(i);
                         }
@@ -1524,35 +1535,35 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 cost:1,
                 enable:'chooseToUse',
                 spell:['fanhundie2'],
-              filter:function(event,player){
-                 if(event.type!='dying') return false;
-                 if(player!=event.dying) return false;
-                 return player.lili > lib.skill.fanhundie.cost;
-              },
-              content:function(){
-                  player.loselili(lib.skill.fanhundie.cost);
-                  player.turnOver();
-              },
-              check:function(){
-                return true;
-              },
-              ai:{
-                order:1,
-                  skillTagFilter:function(player){
-                    if(player.hp>0) return false;
-                  },
-                  save:true,
-                  result:{
-                    player:function(player){
-                      if(player.hp==0) return 10;
-                      if(player.hp<=2&&player.countCards('he')<=1) return 10;
-                      return 0;
+                filter:function(event,player){
+                    if(event.type!='dying') return false;
+                    if(player!=event.dying) return false;
+                    return player.lili > lib.skill.fanhundie.cost;
+                },
+                content:function(){
+                    player.loselili(lib.skill.fanhundie.cost);
+                    player.turnOver();
+                },
+                check:function(){
+                    return true;
+                },
+                ai:{
+                    order:1,
+                    skillTagFilter:function(player){
+                        if(player.hp>0) return false;
+                    },
+                    save:true,
+                    result:{
+                        player:function(player){
+                            if(player.hp==0) return 10;
+                            if(player.hp<=2&&player.countCards('he')<=1) return 10;
+                            return 0;
+                        }
+                    },
+                    threaten:function(player,target){
+                        return 0.6;
                     }
-                  },
-                  threaten:function(player,target){
-                    return 0.6;
-                  }
-              },
+                },
             },
             fanhundie2:{
                 audio:2,
@@ -1595,8 +1606,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     "step 3"
                     if(result.links){
                         var num = event.target.countCards('h');
-                        if (event.target.getCards('h').contains(result.links[0]) && num == 1) event.target.loseHp();
                         event.target.discard(result.links);
+                        if (num == 1) event.target.loseHp();
                     }
                     if(event.num>1 && player.lili > 1){
                         event.num--;
@@ -1626,9 +1637,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 chooseButton:{
                     dialog:function(event,player){
                         var list = [];
+                        var packs = lib.config.all.cards.diff(lib.config.cards);
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if (packs){
+								var f = false;
+								for (var j = 0; j < packs.length; j ++){
+									if (lib.cardPack[packs[j]].contains(i)){
+										f = true;
+										break;
+									}
+								}
+								if (f) continue;
+							}
                             if(lib.card[i].type == 'trick'){
                                 list.add(i);
                             }

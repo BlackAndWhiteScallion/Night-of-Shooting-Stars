@@ -936,7 +936,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                                 }
                             }
 	                    },{marginLeft:'6px',marginRight:'12px'});
+						var packs = lib.config.all.cards.diff(lib.config.cards);
 						for (i in lib.card){
+							 if (packs){
+								var f = false;
+								for (var j = 0; j < packs.length; j ++){
+									if (lib.cardPack[packs[j]].contains(i)){
+										f = true;
+										break;
+									}
+								}
+								if (f) continue;
+							}
 							if(lib.translate[i] && lib.card[i].type != 'zhenfa' && !lib.card[i].vanish && lib.card[i].type != 'delay'){
 								var card=game.createCard(i, undefined, undefined, undefined);
 	                            dialog.add(card);

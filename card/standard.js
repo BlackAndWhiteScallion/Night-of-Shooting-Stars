@@ -2121,10 +2121,21 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		usable:1,
 			chooseButton:{
   				dialog:function(event,player){
+					  	var packs = lib.config.all.cards.diff(lib.config.cards);
     					var list = [];
     					for (var i in lib.card){
     						if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
 							if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+							if (packs){
+								var f = false;
+								for (var j = 0; j < packs.length; j ++){
+									if (lib.cardPack[packs[j]].contains(i)){
+										f = true;
+										break;
+									}
+								}
+								if (f) continue;
+							}
 							if(lib.card[i].type == 'trick' && event.filterCard({name:i},player,event)){
 								list.add(i);
 							}
@@ -2822,10 +2833,21 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			content:function(){
 				'step 0'
 				var list = [];
+				var packs = lib.config.all.cards.diff(lib.config.cards);
     			for (var i in lib.card){
     				if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
 					if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
  					//if(lib.card[i].type == 'trick' || lib.card[i].type == 'basic' || lib.card[i].type == "jinji" || lib.card[i].type == "equip"){
+					if (packs){
+						var f = false;
+						for (var j = 0; j < packs.length; j ++){
+							if (lib.cardPack[packs[j]].contains(i)){
+								f = true;
+								break;
+							}
+						}
+						if (f) continue;
+					}
 					if (lib.translate[i] && lib.card[i].type != 'delay' && lib.card[i].type != 'zhenfa'){
 						list.add(i);
 					}

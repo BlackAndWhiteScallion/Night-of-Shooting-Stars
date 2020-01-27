@@ -515,6 +515,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                     trigger.player.update();
                                     result.links[0].fix();
                                     event.card = result.links[0];
+                                    event.card.fix();
                               }
                               'step 3'
                               if (event.card){
@@ -996,10 +997,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     },
                     content:function(){
                       'step 0'
+                      var packs = lib.config.all.cards.diff(lib.config.cards);
                       var list = [];
                       for (var i in lib.card){
                           if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                           if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                          if (packs){
+                            var f = false;
+                            for (var j = 0; j < packs.length; j ++){
+                              if (lib.cardPack[packs[j]].contains(i)){
+                                f = true;
+                                break;
+                              }
+                            }
+                            if (f) continue;
+                          }
                           if(lib.card[i].subtype == 'attack' || lib.card[i].subtype == 'disrupt'){
                               list.add(i);
                           }
@@ -1073,10 +1085,21 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.finish();
                       } else {
                         event.card = result.cards[0];
+                        var packs = lib.config.all.cards.diff(lib.config.cards);
                         var list = [];
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
                             if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+                            if (packs){
+                              var f = false;
+                              for (var j = 0; j < packs.length; j ++){
+                                if (lib.cardPack[packs[j]].contains(i)){
+                                  f = true;
+                                  break;
+                                }
+                              }
+                              if (f) continue;
+                            }
                             if(lib.card[i].subtype == 'defense'){
                                 list.add(i);
                             }

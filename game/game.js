@@ -5997,6 +5997,9 @@
                     }
                     return this;
                 };
+                Array.prototype.diff = function(a) {
+                    return this.filter(function(i) {return a.indexOf(i) < 0;});
+                };
                 Array.prototype.remove=function(item){
                     if(Array.isArray(item)){
                         for(var i=0;i<item.length;i++) this.remove(item[i]);
