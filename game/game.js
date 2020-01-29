@@ -1403,6 +1403,7 @@
                             wood:'木纹',
                             music:'音乐',
                             simple:'简约',
+                            inverse:'白黑',
                             custom:'自定',
                             default:'默认',
                         },
@@ -1466,6 +1467,8 @@
                                 }
                                 case 'wood':node.setBackgroundImage('theme/woodden/wood.jpg');break;
                                 case 'music':node.style.backgroundImage='linear-gradient(#4b4b4b, #464646)';break;
+                                case 'inverse':node.style.backgroundImage='linear-gradient(#ffffff, #ffffff)';break;
+                                case 'monika':node.setBackgroundImage('theme/monika/menubg.jpg');break;
                                 case 'simple':node.style.backgroundImage='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4))';break;
                             }
                             if(link=='custom'){
@@ -1509,6 +1512,7 @@
                                 switch(layout){
                                     case 'wood':str='url("'+lib.assetURL+'theme/woodden/wood.jpg")';break;
                                     case 'music':str='linear-gradient(#4b4b4b, #464646)';break;
+                                    case 'inverse':str='linear-gradient(#ffffff, #ffffff)';break;
                                     case 'simple':str='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4))';break;
                                 }
                                 ui.css.player_stylesheet=lib.init.sheet('#window .player{background-image:'+str+'}');
@@ -1711,6 +1715,8 @@
                             wood:'木纹',
                             music:'音乐',
                             simple:'简约',
+                            inverse:'白黑',
+                            monika:'文学',
                             custom:'自定',
                             default:'默认',
                         },
@@ -1773,7 +1779,9 @@
                                     break;
                                 }
                                 case 'wood':node.setBackgroundImage('theme/woodden/wood2.png');break;
+                                case 'monika':node.setBackgroundImage('theme/monika/menubg.png');break;
                                 case 'music':node.style.backgroundImage='linear-gradient(#4b4b4b, #464646)';break;
+                                case 'inverse':node.style.backgroundImage='linear-gradient(#ffffff, #ffffff)';break;
                                 case 'simple':node.style.backgroundImage='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4))';break;
                             }
                             if(link=='custom'){
@@ -1816,7 +1824,9 @@
                                 var str='';
                                 switch(layout){
                                     case 'wood':str='url("'+lib.assetURL+'theme/woodden/wood2.png")';break;
+                                    case 'monika':str='url("'+lib.assetURL+'theme/monika/menubg.png")';break;
                                     case 'music':str='linear-gradient(#4b4b4b, #464646);color:white;text-shadow:black 0 0 2px';break;
+                                    case 'inverse':str='linear-gradient(#ffffff, #ffffff)';break;
                                     case 'simple':str='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));color:white;text-shadow:black 0 0 2px';break;
                                 }
                                 ui.css.menu_stylesheet=lib.init.sheet('html #window>.dialog.popped,html .menu,html .menubg{background-image:'+str+'}');
@@ -1831,6 +1841,7 @@
                             wood:'木纹',
                             music:'音乐',
                             simple:'简约',
+                            inverse:'白黑',
                             custom:'自定',
                             default:'默认',
                         },
@@ -1892,6 +1903,7 @@
                                 }
                                 case 'wood':node.setBackgroundImage('theme/woodden/wood.jpg');break;
                                 case 'music':node.style.backgroundImage='linear-gradient(#4b4b4b, #464646)';break;
+                                case 'inverse':node.style.backgroundImage='linear-gradient(#ffffff, #ffffff)';break;
                                 case 'simple':node.style.backgroundImage='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4))';break;
                             }
                             if(link=='custom'){
@@ -1934,6 +1946,7 @@
                                 switch(layout){
                                     case 'wood':str='url("'+lib.assetURL+'theme/woodden/wood.jpg")';break;
                                     case 'music':str='linear-gradient(#4b4b4b, #464646);color:white;text-shadow:black 0 0 2px';break;
+                                    case 'inverse':str='linear-gradient(#ffffff, #ffffff)';break;
                                     case 'simple':str='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));color:white;text-shadow:black 0 0 2px';break;
                                 }
                                 if(layout=='wood'){
@@ -6452,6 +6465,7 @@
                         switch(lib.config.player_style){
                             case 'wood':str='url("'+lib.assetURL+'theme/woodden/wood.jpg")';break;
                             case 'music':str='linear-gradient(#4b4b4b, #464646)';break;
+                            case 'inverse':str='linear-gradient(#ffffff, #ffffff)';break;
                             case 'simple':str='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4))';break;
                         }
                         ui.css.player_stylesheet=lib.init.sheet('#window .player{background-image:'+str+'}');
@@ -6471,6 +6485,7 @@
                         switch(lib.config.control_style){
                             case 'wood':str='url("'+lib.assetURL+'theme/woodden/wood.jpg")';break;
                             case 'music':str='linear-gradient(#4b4b4b, #464646);color:white;text-shadow:black 0 0 2px';break;
+                            case 'inverse':str='linear-gradient(#ffffff, #ffffff);color:black;text-shadow:white 0 0 2px';break;
                             case 'simple':str='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));color:white;text-shadow:black 0 0 2px';break;
                         }
                         if(lib.config.control_style=='wood'){
@@ -6485,6 +6500,7 @@
                         switch(lib.config.menu_style){
                             case 'wood':str='url("'+lib.assetURL+'theme/woodden/wood2.png")';break;
                             case 'music':str='linear-gradient(#4b4b4b, #464646);color:white;text-shadow:black 0 0 2px';break;
+                            case 'inverse':str='linear-gradient(#ffffff, #ffffff)';break;
                             case 'simple':str='linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));color:white;text-shadow:black 0 0 2px';break;
                         }
                         ui.css.menu_stylesheet=lib.init.sheet('html #window>.dialog.popped,html .menu,html .menubg{background-image:'+str+'}');
@@ -7843,6 +7859,7 @@
                         }(node)),i*100);
                     }
                     var dialog = ui.create.div('.avatar', document.body);
+                    dialog.classList.add('title');
                     dialog.style.height = '120px';
                     dialog.style.width = '650px';
                     dialog.style.left = 'calc(25%)';
@@ -14093,6 +14110,7 @@
                     dialog.classList.add('static');
                     dialog.add('<div class="text" style="word-break:break-all;display:inline">'+str+'</div>');
                     dialog.classList.add('popped');
+                    dialog.classList.add('chat');
                     ui.window.appendChild(dialog);
                     // 根据窗口大小来控制框的大小
                     var width=dialog.content.firstChild.firstChild.offsetWidth;
@@ -26896,7 +26914,6 @@
                 game.pause();
                 step1();
 				game.saveConfig('show_splash','always');
-                game.saveConfig('player_number','5','old_identity');
             } else {
                 var i,j,k,num,table,tr,td,dialog;
                 _status.over=true;

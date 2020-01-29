@@ -157,7 +157,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			};
 			var step5=function(){
 				clear();
-				ui.create.dialog('如果还有其它问题，在图鉴模式里可以找到更多的帮助<br>记得关注一下官方微信公众号<br>东方流星夜 大葱专线！<br>顺便，游戏中的绝大部分界面都是可以往下划的哟？');
+				ui.create.dialog('如果还有其它问题，在图鉴模式里可以找到更多的帮助<br>记得关注一下官方微信公众号<br>东方流星夜 大葱专线！');
 				ui.create.control('所以能玩了没',function(){
 					clear();
 					clear2();

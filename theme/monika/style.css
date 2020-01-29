@@ -1,0 +1,253 @@
+html{
+	color: black;
+	text-shadow: white 0 0 2px;
+	background: url('grid.png'),linear-gradient(#ffffff, #ffffff) fixed;
+}
+
+#arena:not(.long) .player.unseen .equips:not(*:empty),
+#arena.long .player.unseen2 .equips:not(*:empty),
+#arena.mobile:not(.chess) .player[data-position='0'] .equips{
+	background: linear-gradient(#ffffff, #ffffff);
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+}
+#splash>div{
+	background:url('menubg.jpg');
+	background-size: cover;
+}
+#splash>div>.splashtext {
+	color:white;
+	text-shadow:
+	-1px -1px 0 #bd78a6,  
+	 1px -1px 0 #bd78a6,
+	 -1px 1px 0 #bd78a6,
+	  1px 1px 0 #bd78a6;
+}
+#time,
+#system>div>div,.control,.avatar2,.button{
+	color:white;
+	font-size: 18px;
+	text-shadow:
+	-1px -1px 0 #bd78a6,  
+	 1px -1px 0 #bd78a6,
+	 -1px 1px 0 #bd78a6,
+	  1px 1px 0 #bd78a6;
+}
+.button.character, .card{
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+}
+#window>.dialog.popped, .playerbg{
+	background: #FFE6F4;
+	border-radius: 8px;
+	box-shadow: #FFBDE1 0 0 0 3px, #FFBDE1 0 0 0 3px;
+}
+#window>.dialog.popped{
+	border-radius: 6px;
+}
+#window>.chat{
+	background:url('chat.png');
+	background-size:cover,
+}
+.avatar{
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+}
+.title.avatar{
+	background:url('chat.png');
+	background-size:contain;
+	/*background: #FFE6F4;
+	border-radius: 8px;
+	box-shadow: #FFBDE1 0 0 0 3px, #FFBDE1 0 0 0 3px;
+	*/
+}
+#window .player.playerbg{
+	background: #FFE6F4;
+	border-radius: 8px;
+	box-shadow: #FFBDE1 0 0 0 3px, #FFBDE1 0 0 0 3px;
+}
+.menubg, #mebg, .mebg{
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+	background: url('mebg.jpg');
+	background-size: auto 100%;
+	overflow: hidden;
+	border-radius: 8px;
+}
+#arena.observe .handcards>.card{
+	background: url('menubg.jpg') !important;
+	background-size: cover;
+}
+#window>.damage.fullscreenavatar{
+	color:white;
+	text-shadow:
+	-1px -1px 0 #bd78a6,  
+	 1px -1px 0 #bd78a6,
+	 -1px 1px 0 #bd78a6,
+	  1px 1px 0 #bd78a6;
+}
+.videonode.menubutton.extension.current{
+	box-shadow: rgba(0, 0, 0, 0.4) 0 0 0 1px, rgba(0, 133, 255, 0.4) 0 2px 5px, rgba(0, 133, 255, 0.5) 0 0 12px, rgba(0, 133, 255, 0.8) 0 0 15px;
+}
+body[data-background_color_music='blue'] #system>div>div,
+body[data-background_color_music='blue'] #mebg,
+body[data-background_color_music='blue'] .control,
+body[data-background_color_music='blue'] .player,
+body[data-background_color_music='blue'] .card,
+body[data-background_color_music='blue'] .avatar,
+body[data-background_color_music='blue'] .avatar2,
+body[data-background_color_music='blue'] .button,
+body[data-background_color_music='blue'] #window>.dialog.popped,
+body[data-background_color_music='blue'] .player.unseen .equips:not(*:empty),
+body[data-background_color_music='blue'] .menu,
+body[data-background_color_music='blue'] #splash>div,
+body[data-background_color_music='blue'] #arena.mobile:not(.chess) .player[data-position='0'] .equips{
+	background-image: linear-gradient(#ffffff, #ffffff);
+}
+
+.marks>.card.fullskin>.markcount.menubutton{
+	background: url('wood3.png');
+}
+/*
+.player{
+	background: url('wood.jpg');
+	background-size: auto 50%;
+}*/
+.card,.dialog>.bar,.cardbg,
+#arena.mobile:not(.chess) .player[data-position='0'] .equips{
+	background: url('wood2.png');
+}
+#window .player.playerbg, .playerbg, .player{
+	background: url('menubg.jpg');
+	background-size: cover;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+}
+#arena:not(.chess).textequip .player[data-position='0'] .equips>.card{
+	background: url('wood2.jpg') !important;
+	color:rgb(77, 60, 51) !important;
+	text-shadow: none !important;
+	box-shadow: rgba(0,0,0,0.4) 1px 0 0 1px;
+}
+#arena:not(.chess).textequip .player[data-position='0'] .equips>.card:first-child{
+	box-shadow: rgba(0,0,0,0.4) 0 1px 0 0;
+}
+#arena:not(.chess).textequip .player[data-position='0'] .equips>.card.selected{
+	-webkit-filter: sepia(0.8) !important;
+	background-image: url('wood2.jpg') !important;
+	/*background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1)) !important;*/
+	/*color: white !important;
+	box-shadow: rgba(0,0,0,0.4) 1px 0 0 1px !important;*/
+}
+
+/*.player.current_action{
+	background-image: linear-gradient(rgba(57, 123, 4,1), rgb(48, 103, 3));
+}*/
+.control,#system>div>div,.judges>div,.marks>div,
+#arena:not(.long) .player.unseen .equips:not(*:empty),
+#arena.long .player.unseen2 .equips:not(*:empty){
+	border-radius:4px;
+	overflow: hidden;
+}
+#arena:not(.long).mobile:not(.oldlayout) .player.unseen:not([data-position="0"]) .equips:not(*:empty),
+#arena:not(.long):not(.mobile):not(.oldlayout) .player.unseen .equips:not(*:empty),
+#arena.long.mobile:not(.oldlayout) .player.unseen2:not([data-position="0"]) .equips:not(*:empty),
+#arena.long:not(.mobile):not(.oldlayout) .player.unseen2 .equips:not(*:empty){
+	/*background: url('wood.jpg');*/
+	background-size: auto 100%;
+	border-radius:4px;
+	overflow: hidden;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 2px 10px;
+}
+#arena:not(.long).mobile:not(.oldlayout) .player.unseen:not([data-position="0"]) .equips:not(*:empty)>.card,
+#arena:not(.long):not(.mobile):not(.oldlayout) .player.unseen .equips:not(*:empty)>.card:not(.selected),
+#arena.long.mobile:not(.oldlayout) .player.unseen2:not([data-position="0"]) .equips:not(*:empty)>.card,
+#arena.long:not(.mobile):not(.oldlayout) .player.unseen2 .equips:not(*:empty)>.card:not(.selected){
+	background: none !important;
+}
+
+.card{
+	color:black;
+}
+.cardbg{
+	background-size: initial !important;
+}
+.card:not(*:empty),.cardbg{
+	color:rgb(0, 0, 0);
+	text-shadow:none;
+	background: url('card.png');
+}
+.dialog.scroll1,
+.dialog.scroll2,
+.dialog.withbg{
+	background: #FFE6F4;
+	border-radius: 8px;
+	box-shadow: #FFBDE1 0 0 0 3px, #FFBDE1 0 0 0 3px;
+	min-height:300px;
+}
+.marks>.card:not(.fullskin){
+	color: black;
+	text-shadow: white 0 0 2px;
+	background: linear-gradient(#ffffff, #ffffff);
+}
+.menubutton{
+	color:white;
+	font-size: 18px;
+	text-shadow:
+	-1px -1px 0 #bd78a6,  
+	 1px -1px 0 #bd78a6,
+	 -1px 1px 0 #bd78a6,
+	  1px 1px 0 #bd78a6;
+	background: none;
+}
+.menu.main>.menu-tab>div:not(.active):not(*:hover),
+.menu.main>.menu-tab>.disabled{
+	color:rgba(0, 0, 0, 0.6);
+}
+.menu.main,
+#window>.menu,.menubg{
+	/*background: linear-gradient(#ffffff, #ffffff) !important;*/
+	background: url('menubg.jpg');
+	background-size: cover;
+	color:rgba(77, 60, 51,0.8);
+	text-shadow:none;
+}
+#me>div>div>.card,#arena>.card:not(*:empty){
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 3px 10px;
+}
+
+#system>div>.glow {
+    background-image: linear-gradient(rgb(0, 132, 255), rgb(0, 136, 255));
+	box-shadow: rgba(250, 250, 250, 0.4) 0 0 0 1px, rgba(255, 255, 255, 0.2) 0 3px 10px !important;
+}
+
+.fire{
+	color: rgb(255,119,63);
+}
+.thunder{
+	color: rgb(117,186,255);
+}
+.poison{
+	color: rgb(104,221,127);
+}
+.brown{
+	color: rgb(195,161,223);
+}
+.config.toggle.on>div{
+	background-color: transparent;
+}
+.cardbg.button{
+	background: url('card.png');
+}
+.config.toggle.on>div::before{
+	content:'开';
+	position: absolute;
+	left: 13px;
+	opacity: 0.5;
+	font-size: 14px;
+	line-height: 26px;
+	font-family: 'xinwei'
+}
+#roundmenu.clock>div:nth-of-type(15){
+	background: linear-gradient(#ffffff, #ffffff);
+	box-shadow: rgba(0,0,0,0.6) 0 0 5px inset;
+}
+
+#arena:not(.chess) .player[data-position='0']>.equips>.equip5>.image{
+	background-position: -6px -6px;
+}

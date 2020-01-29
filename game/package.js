@@ -80,5 +80,7 @@ window.noname_package={
         woodden:'木纹',
         music:'音乐',
         simple:'简约',
+        inverse:'白黑',
+        monika:'文学',
     }
 };

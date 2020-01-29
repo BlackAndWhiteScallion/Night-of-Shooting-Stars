@@ -660,6 +660,16 @@
 .themebutton.music>div>div{
 	background: linear-gradient(#4b4b4b, #464646);
 }
+.themebutton.inverse{
+	background:url('../../theme/inverse/grid.png'),linear-gradient(#333333, #222222) fixed;
+}
+.themebutton.inverse>div:not(*:first-child){
+	background: linear-gradient(#ffffff, #ffffff);
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
+}
+.themebutton.inverse>div>div{
+	background: linear-gradient(#ffffff, #ffffff);
+}
 .themebutton.ol{
 	background:url('../../image/background/ol_bg.jpg');
 	background-size: cover;
