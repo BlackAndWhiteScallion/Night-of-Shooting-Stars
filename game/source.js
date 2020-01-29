@@ -73,6 +73,8 @@ window.noname_source_list=[
     'theme/woodden/wood.png',
     'theme/woodden/wood2.jpg',
     'theme/woodden/wood2.png',
+    'theme/monika/style.css',
+    'theme/inverse/style.css',
     'theme/style/card/custom.css',
     'theme/style/card/default.css',
     'theme/style/card/music.css',
