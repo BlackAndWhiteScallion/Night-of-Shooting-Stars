@@ -1112,6 +1112,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 usable:1,
                 discard:false,
                 prepare:'give',
+                position:'hej',
                 filterTarget:function(card,player,target){
                     return player!=target;
                 },

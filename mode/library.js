@@ -832,6 +832,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
+						var puzzle=ui.create.node('button','残局模式',line2,function(){
+	        				var i = ['<u><b>残局模式：</u></b> 游戏人数：1人',
+				        		'取出一个预先布置好的场面，然后在一回合内获得胜利！',
+								'',
+								'<u>规则：</u>',
+								'1. 胜利条件和普通牌局的胜利条件一样。一般都是击坠所有与你不同阵营的角色。',
+								'2. 游戏从你的回合开始，从准备阶段开始进行。当前回合结束时，判定你为游戏失败。',
+								'3. 所有角色的手牌，装备，和技能牌，都是固定的。',
+								'4. 牌堆是固定的，且不包括多余的牌。洗牌不会回到正常的牌堆。技能牌堆同样',
+							];
+	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
+	                    },{marginLeft:'6px'});
 	        		}
 	        	},
 	        },

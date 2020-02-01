@@ -2332,14 +2332,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					'step 0'
-					var control = ['获得【潜行】并暗置', '获得【雨至】一次', '使用攻击牌指定目标后，对目标造成1点灵击伤害，直到其回合结束'];
+					var control = [ '获得【雨至】一次', '获得【潜行】并暗置', '使用攻击牌指定目标后，对目标造成1点灵击伤害，直到其回合结束'];
 					if (player.storage.chongzou.contains(1)) control.remove('获得【潜行】并暗置');
 					if (player.storage.chongzou.contains(2)) control.remove('获得【雨至】一次');
 					if (player.storage.chongzou.contains(3)) control.remove('使用攻击牌指定目标后，对目标造成1点灵击伤害，直到其回合结束');
 					if (control.length == 0) event.finish();
 					event.controlList = control;
 					player.chooseControlList(control, function(event, player){
-						return '获得【雨至】一次';
+						if (target.hp <= 1 && control.contains('获得【潜行】并暗置')) return control.indexOf('获得【潜行】并暗置');
+						if (target.countCards('h', {name:'sha'}) && control.contains('使用攻击牌指定目标后，对目标造成1点灵击伤害，直到其回合结束')) 
+							return control.indexOf('使用攻击牌指定目标后，对目标造成1点灵击伤害，直到其回合结束');
+						if (!target.hasSkill('kc_yuzhi')) return 0;
+						return control.length - 1;
 					}).set('prompt','重奏：为'+get.translation(target)+'选择一项效果：');
 					'step 1'
 					if (result.control){
@@ -2363,7 +2367,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							target.addTempSkill('chongzou_3',{player:'phaseAfter'});
 							player.storage.chongzou.push(3);
 						}
+						game.log(player, '令', target, '获得了以下效果：'+event.controlList[result.index]);
 					}
+				},
+				ai:{
+					order:4,
+					result:{
+						target:function(player,target){
+							if(get.attitude(player,target)>0){
+								if (player.lili <= 2) return 0; 
+								return 2;
+							}
+							return 0;
+						}
+					},
 				},
 			},
 			chongzou_1:{
@@ -2411,7 +2428,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					list.push('摸一张牌，交给'+get.translation(trigger.player)+'一张牌');
 					player.chooseControl(list,function(event,player){
-						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return get.translation(trigger.player)+'恢复灵力';
+						if (!_status.currentPhase.isTurnedOver() && _status.currentPhase.lili < 3) return get.translation(trigger.player)+'获得灵力';
 						return '摸一张牌，交给'+get.translation(trigger.player)+'一张牌';
 					});
 					'step 1'

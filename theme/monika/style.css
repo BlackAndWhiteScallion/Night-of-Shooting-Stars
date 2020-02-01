@@ -45,7 +45,7 @@ html{
 }
 #window>.chat{
 	background:url('chat.png');
-	background-size:cover,
+	background-size:cover;
 }
 .avatar{
 	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px;
@@ -176,6 +176,7 @@ body[data-background_color_music='blue'] #arena.mobile:not(.chess) .player[data-
 .dialog.scroll2,
 .dialog.withbg{
 	background: #FFE6F4;
+	background-image: none;
 	border-radius: 8px;
 	box-shadow: #FFBDE1 0 0 0 3px, #FFBDE1 0 0 0 3px;
 	min-height:300px;
@@ -202,7 +203,7 @@ body[data-background_color_music='blue'] #arena.mobile:not(.chess) .player[data-
 .menu.main,
 #window>.menu,.menubg{
 	/*background: linear-gradient(#ffffff, #ffffff) !important;*/
-	background: url('menubg.jpg');
+	background: url('menubg.jpg') !important; 
 	background-size: cover;
 	color:rgba(77, 60, 51,0.8);
 	text-shadow:none;

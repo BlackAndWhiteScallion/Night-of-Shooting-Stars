@@ -21894,20 +21894,20 @@
 					effect:{
 						// 目前习性：不会被伤害牌。
 						target:function(card,player,target,current){
-                            if (game.players.length > 2 && player != target) return [1,-10];
+                            if (get.type(card) != 'equip' && get.type(card) != 'support') return 'zeroplayertarget';
 						},
 					},
 					threaten:-1000,
 				},
                 mod:{
                     cardEnabled:function(card,player){
-                        if (player != game.me && get.type(card) != 'equip') return false;
+                        if (player != game.me && get.type(card) != 'equip' && get.type(card) != 'support') return false;
                     },
                     cardUsable:function(card,player){
-                        if (player != game.me && get.type(card) != 'equip') return false;
+                        if (player != game.me && get.type(card) != 'equip' && get.type(card) != 'support') return false;
                     },
                     cardSavable:function(card,player){
-                        if (player != game.me && get.type(card) != 'equip') return false;
+                        if (player != game.me && get.type(card) != 'equip' && get.type(card) != 'support') return false;
                     }
                 },
 			},
@@ -45490,6 +45490,7 @@
 					uiintro.addText(get.colorspan(lib.characterTitle[node.name]));
 				}
                 */
+                
                 uiintro.addText('体力：' + node.hp + '/' + node.maxHp + '  灵力：' + node.lili + '/' + node.maxlili);
                 if(node.isUnderControl()){
                     var hs=node.getCards('h');
@@ -46241,7 +46242,11 @@
                             }
                         }
                     }
-                    uiintro.addText('体力上限：'+infoitem[2] + '  灵力：' + infoitem[1] + '/' + (infoitem[6]?infoitem[6]:'5'));
+                    if (infoitem[6] == '0'){
+                        uiintro.addText('体力上限：'+infoitem[2]);
+                    } else {
+                        uiintro.addText('体力上限：'+infoitem[2] + '  灵力：' + infoitem[1] + '/' + (infoitem[6]?infoitem[6]:'5'));
+                    }
                     var skills=infoitem[3];
                     for(i=0;i<skills.length;i++){
                         if(lib.translate[skills[i]+'_info']){

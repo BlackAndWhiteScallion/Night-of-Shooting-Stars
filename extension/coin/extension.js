@@ -33,11 +33,11 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					},
 					content:function(){
 						'step 0'
-						event.list = ['30金币: 手牌上限+1'];
+						event.list = ['30金币: 手牌上限+1 (当前为+'+player.storage.chaoneng1+')'];
 						if (lib.config.coin >= 50) event.list.push('50金币：灵力上限+1');
 						if (lib.config.coin >= 70) event.list.push('70金币：体力上限+1');
-						if (lib.config.coin >= 100) event.list.push('100金币：摸牌数+1');
-						if (lib.config.coin >= 150) event.list.push ('150金币：【轰！】伤害+1');
+						if (lib.config.coin >= 100) event.list.push('100金币：摸牌数+1 (当前为+'+player.storage.chaoneng2+')');
+						if (lib.config.coin >= 150) event.list.push ('150金币：【轰！】伤害+1 (当前为+'+player.storage.chaoneng3+')');
 						player.chooseControlList(event.list, '想要买哪一个外挂？');
 						'step 1'
 						if (result.index == 0){
@@ -291,7 +291,8 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 						order:1,
 						result:{
 							player:function(player,target){
-								return (Math.random() < 0.01)?1:-1;
+								if (player.countCards('h') > 2) return -1;
+								return Math.random() < 0.01?1:-1;
 							},
 						},
 					},
