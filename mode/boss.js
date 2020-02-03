@@ -403,6 +403,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				game.addRecentCharacter(game.me.name);
 			}
 			event.trigger('gameStart');
+			_status.roundStart=game.boss;
 			game.gameDraw(game.boss,game.bossinfo.gameDraw||4);
 			game.bossPhaseLoop();
 			setTimeout(function(){
@@ -777,7 +778,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					if (boss.hasSkill('boss_damagecount') && _status.damageCount > data[name][0]){
 						data[name][0] = _status.damageCount;
-					} else if (boss.hasSkill('boss_turncount') && game.roundNumber) {
+					} else if (boss.hasSkill('boss_turncount') && game.roundNumber > data[name][0]) {
 						data[name][0] = game.roundNumber;
 					} else {
 						if(bool){
@@ -857,9 +858,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss.directgain(get.cards(4));
 			},
 			checkResult:function(){
-				if (game.boss.hasSkill('boss_turncount')){
-					game.over();
-				} else if(game.boss==game.me){
+				if(game.boss==game.me){
 					game.over(game.boss.isAlive());
 				}
 				else{
@@ -984,7 +983,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							// 如果当前玩家已死亡（BOSS死亡会自动游戏结束，所以只检测盟军方），改为进入下一个盟军的回合。
 							if (player.isDead()){
 								event.player = player.nextSeat;
-								if (player.nextSeat == game.boss) event.player = game.boss.nextSeat;
+								if (player.nextSeat == game.boss){
+									event.player = game.boss.nextSeat;
+									delete _status.roundStart;
+								}
 							} else {
 								_status.last=player;
 								event.player=game.boss;

@@ -27486,7 +27486,7 @@
                 }
                 if(!_status.brawl){
                     if(lib.config.mode=='boss'){
-                        ui.create.control('再战',function(){
+                        ui.restart = ui.create.control('再战',function(){
                             var pointer=game.boss;
                             var map={boss:game.me==game.boss,links:[]};
                             for(var iwhile=0;iwhile<10;iwhile++){
@@ -27506,7 +27506,7 @@
                     }
                     else if(lib.config.mode=='versus'){
                         if(_status.mode=='standard'||_status.mode=='three'){
-                            ui.create.control('再战',function(){
+                            ui.restart = ui.create.control('再战',function(){
                                 game.saveConfig('continue_name_versus'+(_status.mode=='three'?'_three':''),{
                                     friend:_status.friendBackup,
                                     enemy:_status.enemyBackup,
