@@ -652,6 +652,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 enable:'chooseToUse',
                 usable:1,
                 audio:1,
+                hiddenCard:function(player,name){
+                    return name == 'shan';
+                },
                 filter:function(event,player){
                     if (player.countCards('h','sha')== 0) return false;
                     return game.hasPlayer(function(target){
@@ -717,6 +720,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         }
                     },
                     threaten:1.6,
+                    respondSha:true,
+                    save:true,
                 }
             },
             zhenhun:{
@@ -1078,22 +1083,16 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 group:'mingjian2',
                 enable:'phaseUse',
                 usable:1,
+                filterCard:true,
+                selectCard:1,
+                discard:false,
+                lose:false,
                 filter:function(event,player){
                     return player.getCards('h');
                 },
                 content:function(event,player){
                     'step 0'
-                    player.chooseCard('明置出今天演奏的东西吧……','h',function(card){
-                        var player=_status.event.player;
-                        if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
-                        else return true;
-                    }).set('ai',function(card){
-                        return get.useful(card);
-                    });
-                    'step 1'
-                    if (result.bool){
-                        player.mingzhiCard(result.cards[0]);
-                    }
+                    player.mingzhiCard(cards[0]);
                 },
                 ai:{
                     order:10,
@@ -2251,7 +2250,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             shenxuan:'神弦',
             shenxuan_audio1:'（🎻）',
             shenxuan_audio2:'仔细的聆听吧，这神魂飘荡的旋律。',
-            shenxuan_info:'一回合一次，出牌阶段，你可以明置一张手牌；每名角色一回合一次，其可以将一张【轰！】当作与你一张非装备明置手牌同名的牌使用/打出。',
+            shenxuan_info:'一回合一次，出牌阶段，你可以明置一张手牌；你攻击范围内的每名角色一回合一次，其可以将一张【轰！】当作与你一张非装备明置手牌同名的牌使用/打出。',
             shenxuan_viewAs:'神弦（转化）',
             zhenhun:'镇魂',
             zhenhun_info:'一名角色的结束阶段，你可以选择一项：1. 获得其本回合因弃置而进入弃牌堆的一张牌，并明置之；2. 交给一名其一张明置牌。',
@@ -2263,7 +2262,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             mingguan_audio1:'（🎺）',
             mingguan_audio2:'♪(´ε｀ )',
             mingguan_viewAs:'冥管（转化）', 
-            mingguan_info:'一回合一次，出牌阶段，你可以明置一张手牌；你攻击范围内的角色的与你的明置手牌同名的手牌均视为【轰！】。',
+            mingguan_info:'一回合一次，出牌阶段，你可以明置一张手牌；你攻击范围内的角色的手牌中，与你的明置手牌同名的牌均视为【轰！】。',
             kuangxiang:'狂想',
             kuangxiang_audio1:'这就是献给你的狂想曲~！',
             kuangxiang_audio2:'ヽ(ﾟ∀ﾟ*)ﾉ━━━ｩ♪',

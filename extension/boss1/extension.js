@@ -21,7 +21,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					lib.characterPack.mode_extension_boss1.boss_nianshou = ['female','0',10000,['boss_qixiang','boss_nianrui'],[],'shu','10000'];
 				}
 				if (lib.config.gameRecord.boss.data['boss_saitama'] && lib.config.gameRecord.boss.data['boss_saitama'][0] >= 5){
-					lib.characterPack.mode_extension_boss1.boss_saitama = ['male','0',Infinity,['punch'],[],'shen','1'];
+					lib.characterPack.mode_extension_boss1.boss_saitama = ['male','0',Infinity,['punch'],[],'shen'];
 				}
 				if (lib.config.gameRecord.boss.data['boss_fapaiji'] && lib.config.gameRecord.boss.data['boss_fapaiji'][0] >= 5){
 					lib.characterPack.mode_extension_boss1.boss_fapaiji = ['female','5', 3,['huanri', 'toutian'],[],'shen'];

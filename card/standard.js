@@ -362,14 +362,14 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'disrupt',
 			enable:true,
 			selectTarget:1,
-			range:{attack:1},
+			//range:{attack:1},
 			/*
 			postAi:function(targets){
 				return targets.length==1&&targets[0].num('j');
 			},
 			*/
 			filterTarget:function(card,player,target){
-				return (target.num('hej') != 0);
+				return (target.num('hej') != 0) && (get.distance(player, target,'attack')<=1 || target.storage._mubiao);
 			},
 			content:function(){
 				if (player.name == 'marisa'){
