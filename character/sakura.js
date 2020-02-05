@@ -1120,7 +1120,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     target.gain(cards,player);
-                    target.mingzhiCard(cards[0]);
+                    if (get.type(cards[0]) != 'delay') target.mingzhiCard(cards[0]);
                     if (target.name == 'merlin'){
                         game.trySkillAudio('mingjian',player,true,4);
                     }
