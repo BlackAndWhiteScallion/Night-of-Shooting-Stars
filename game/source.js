@@ -2,6 +2,7 @@ window.noname_source_list=[
     'card/incident.js',
     'card/skill.js',
     'card/standard.js',
+    'card/random.js',
     'character/phantasmagoria.js',
     'character/scarlet.js',
     'character/imperishable.js',
