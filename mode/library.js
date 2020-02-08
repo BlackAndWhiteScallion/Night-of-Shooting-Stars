@@ -492,8 +492,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        			var incident=ui.create.node('button','电脑端下载',line2,function(){
 	        			var i = ['下载链接：',
 								'国外镜像：<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip">https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip</a>',
-								'国内镜像：<a href = https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master>https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master</a>',
-								'',
+								'国内镜像1：<a href = https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master>https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master</a>',
+								'国内镜像2：<a href = https://gitee.com/b_2/noss/repository/archive/master.zip>https://gitee.com/b_2/noss/repository/archive/master.zip</a>',
 								'国内镜像因神奇腾讯有可能炸了，还请大家注意。',
 	    					];
 	        			dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
@@ -541,8 +541,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        			var incident=ui.create.node('button','更新方式',line2,function(){
 	        			var i = ['更新方式有三种:',
 	    				'1: 下载更新程序包',
-	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://dev.tencent.com/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像下载</a>',
+	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://dev.tencent.com/u/BWS/p/NOSS-Extensions/git/archive/master">国内镜像1下载</a <a href = "https://gitee.com/b_2/Night-of-Shooting-Stars-Extensions/repository/archive/master.zip">国内镜像2下载</a>>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
+						'国内镜像1下载到的文件如果大小只以kb计的话就是炸了，需要改用国内镜像2，注意一下。',
 	    				'手机端也可以使用这个更新方式，安卓手机所需要拖到的文件夹在：<b>(默认SD卡)/android/data/com.widget.noname1</b>',
 	    				'覆盖完毕后，需要重启流星夜程序！',
 	    				'',
@@ -552,7 +553,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	    				'检查素材更新在电脑和手机端都可以进行。',
 	    				'',
 	    				'3. 手机端更新，可以在<b>[选项—选项—文件—重新下载游戏]</b>来进行更新。',
-	    				'这样会保留所有的设置，但是并不会更新素材。素材需要另外进行更新。'];
+	    				'这样会保留所有的设置，但是并不会更新素材。',
+						'如果缺了图片的话，通过<b>[选项-其他-更新-检查素材更新]</b>来进行素材更新。',];
 	        			dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
 	                    var identity=ui.create.node('button','更新注释',line2,function(){

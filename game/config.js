@@ -68,8 +68,10 @@ window.config={
 		bingyu:1,
 		juedou:1,
 		caifang:1,
-		pantsu:1,},
-		{sha:2,
+		pantsu:1,
+		},
+		{
+		sha:2,
 		shan:2,
 		tao:1,
 		guohe:2,
@@ -82,7 +84,8 @@ window.config={
 		juedou:2,
 		caifang:1,
 		pantsu:2,
-		jingxia:1},
+		jingxia:1
+		},
 	],
 	gameRecord:{},
 	extensionInfo:{},
@@ -94,7 +97,7 @@ window.config={
 	hiddenBackgroundPack:[],
 	customBackgroundPack:[],
 	favouriteCharacter:['marisa'],
-	recentIP:['318sgs.6655.la', '47.100.162.52', '123.56.166.105'],
+	recentIP:['47.100.162.52', '123.56.166.105'],
 	vintageSkills:[],
 	alteredSkills:[],
 	brokenFile:[],
@@ -173,7 +176,7 @@ window.config={
 	mode:'tutorial',
 	mode_config:{
 		global:{
-			player_number:2,
+			player_number:7,
 			auto_identity:'off',
 			double_character:false,
 			save_progress:true,

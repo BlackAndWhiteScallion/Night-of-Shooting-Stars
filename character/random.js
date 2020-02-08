@@ -3294,7 +3294,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					return event.card&&event.card.name=='sha';
 				},
 				content:function(){
-					player.line(target.player,'green');
+					player.line(trigger.player,'green');
 					trigger.player.damage('thunder');
 				}
 			},
@@ -3307,7 +3307,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					'step 0'
 					player.loselili();
-					player.line(target.player,'green');
+					player.line(trigger.player,'green');
 					trigger.player.chooseControl(['摸一张牌','多出一张轰','获得1点灵力'], true).set('ai',function(){
 						if (trigger.player.countCards('h', {name:'sha'}) > 1) return '多出一张轰';
 						if (trigger.player.lili < 2) return '获得1点灵力';

@@ -87,7 +87,7 @@
                 name:'游戏',
                 config:{
                     low_performance:{
-                        name:'流畅模式',
+                        name:'低配模式',
                         init:false,
                         intro:'减少部分游戏特效，提高游戏速度',
                         onclick:function(bool){
@@ -114,60 +114,6 @@
                             }
                         }
                     },
-                    confirm_exit:{
-                        name:'确认退出',
-                        init:false,
-                        unfrequent:true,
-                        intro:'离开游戏前弹出确认对话框',
-                    },
-                    auto_restart:{
-                        name:'自动重新开始',
-                        init:false,
-                        intro:'一局游戏结束后，自动重新开始游戏',
-                        onclick:function(bool){
-                            game.saveConfig('show_splash', bool?'off':'always');
-                        }
-                    },
-                    auto_auto:{
-                        name:'自动托管',
-                        init:false,
-                        intro:'一局游戏开始时，玩家自动托管',
-                    },
-                    auto_confirm:{
-                        name:'自动确认',
-                        init:true,
-                        unfrequent:true,
-                        intro:'当候选目标只有1个时，点击目标后无需再点击确认',
-                    },
-                    auto_discard:{
-                        name:'自动弃牌',
-                        init:true,
-                        unfrequent:true,
-                        intro:'对方只有未知牌（只有暗置手牌）时，弃置和获得牌不选择牌，自动获得',
-                    },
-                    wuxie_self:{
-                        name:'不住口自己',
-                        init:true,
-                        unfrequent:true,
-                        intro:'不对自己使用的单目标普通法术询问“请你住口！”',
-                    },
-                    tao_enemy:{
-                        name:'不对敌方出葱',
-                        init:false,
-                        intro:'双方阵营明确的模式中（如对决），敌方角色濒死时不询问出葱',
-                        unfrequent:true,
-                    },
-                    touchscreen:{
-                        name:'触屏模式',
-                        init:false,
-                        restart:true,
-                        unfrequent:true,
-                        intro:'开启后可使触屏设备反应更快，但无法使用鼠标操作',
-                        onclick:function(bool){
-                            if(get.is.nomenu('touchscreen',bool)) return false;
-                            game.saveConfig('touchscreen',bool);
-                        }
-                    },
                     game_speed:{
                         name:'游戏速度',
                         init:'slow',
@@ -182,11 +128,6 @@
                         },
                         intro:'设置不同游戏操作间的时间间隔'
                     },
-                    sync_speed:{
-                        name:'限制结算速度',
-                        intro:'在动画结算完成前不执行下一步操作，开启后游戏操作的间隔更长但画面更浏畅，在游戏较卡时建议开启',
-                        init:true
-                    },
                     video:{
                         name:'保存录像',
                         init:'20',
@@ -197,9 +138,56 @@
                             '10':'十局',
                             '20':'二十局',
                             '50':'五十局',
-                            '10000':'无限',
+                            '10000':'无限制',
                         },
                         unfrequent:true,
+                    },
+                    auto_confirm:{
+                        name:'选择后确认',
+                        init:true,
+                        unfrequent:true,
+                        intro:'选择牌/目标后，需要先确认再执行',
+                    },
+                    wuxie_self:{
+                        name:'不住口自己',
+                        init:true,
+                        unfrequent:true,
+                        intro:'不对自己使用的单目标普通法术询问“请你住口！”',
+                    },
+                    tao_enemy:{
+                        name:'不对敌方出葱',
+                        init:false,
+                        intro:'双方阵营明确的模式中（如对决），敌方角色决死时不询问你出葱',
+                        unfrequent:true,
+                    },
+                    touchscreen:{
+                        name:'触屏模式',
+                        init:false,
+                        restart:true,
+                        unfrequent:true,
+                        intro:'开启后可使触屏设备反应更快，但无法使用鼠标操作',
+                        onclick:function(bool){
+                            if(get.is.nomenu('touchscreen',bool)) return false;
+                            game.saveConfig('touchscreen',bool);
+                        }
+                    },
+                    auto_restart:{
+                        name:'自动重新开始',
+                        init:false,
+                        intro:'一局游戏结束后，自动重新开始游戏',
+                        onclick:function(bool){
+                            game.saveConfig('show_splash', bool?'off':'always');
+                        }
+                    },
+                    auto_auto:{
+                        name:'自动托管',
+                        init:false,
+                        intro:'一局游戏开始时，玩家自动托管',
+                    },
+                    sync_speed:{
+                        name:'限制结算速度',
+                        intro:'在动画结算完成前不执行下一步操作，开启后游戏操作的间隔更长但画面更浏畅，在游戏较卡时建议开启',
+                        init:true
                     },
                     max_loadtime:{
                         name:'最长载入时间',
@@ -222,24 +210,20 @@
                             }
                         }
                     },
+                    /*
                     auto_check_update:{
                         name:'自动检查游戏更新',
                         intro:'进入游戏时检查更新',
                         init:false,
                         unfrequent:false
                     },
+                    */
                     update:function(config,map){
                         if('ontouchstart' in document){
                             map.touchscreen.show();
                         }
                         else{
                             map.touchscreen.hide();
-                        }
-                        if(!lib.node&&lib.device!='ios'){
-                            map.confirm_exit.show();
-                        }
-                        else{
-                            map.confirm_exit.hide();
                         }
                     }
                 }
@@ -655,17 +639,9 @@
                             lib.init.background();
                             ui.background.delete();
                             ui.background=ui.create.div('.background');
-
-                            if(lib.config.image_background_blur){
-                                ui.background.style.filter='blur(4px)';
-                                ui.background.style.webkitFilter='blur(4px)';
-                                ui.background.style.transform='scale(1.05)';
-                            }
-                            else{
-                                ui.background.style.filter='';
-                                ui.background.style.webkitFilter='';
-                                ui.background.style.transform='';
-                            }
+                            ui.background.style.filter='';
+                            ui.background.style.webkitFilter='';
+                            ui.background.style.transform='';
 
                             document.body.insertBefore(ui.background,document.body.firstChild);
                             if(animate) ui.background.animate('start');
@@ -700,23 +676,6 @@
                             lib.init.background();
                         }
                     },
-                    image_background_blur:{
-                        name:'背景模糊',
-                        init:false,
-                        onclick:function(bool){
-                            game.saveConfig('image_background_blur',bool);
-                            if(lib.config.image_background_blur){
-                                ui.background.style.filter='blur(4px)';
-                                ui.background.style.webkitFilter='blur(4px)';
-                                ui.background.style.transform='scale(1.05)';
-                            }
-                            else{
-                                ui.background.style.filter='';
-                                ui.background.style.webkitFilter='';
-                                ui.background.style.transform='';
-                            }
-                        },
-                    },
                     intro_character:{
                         name:'看板角色',
                         init:'marisa',
@@ -728,6 +687,36 @@
                         intro:'菜单界面做介绍的看板娘',
                         onclick:function(item){
                             game.saveConfig('intro_character',item);
+                        }
+                    },
+                    ui_zoom:{
+                        name:'界面缩放',
+                        unfrequent:true,
+                        init:'normal',
+                        item:{
+                            esmall:'80%',
+                            vsmall:'90%',
+                            small:'95%',
+                            normal:'100%',
+                            big:'105%',
+                            vbig:'110%',
+                            ebig:'120%',
+                            biggest:'绯想天则',
+                        },
+                        onclick:function(zoom){
+                            game.saveConfig('ui_zoom',zoom);
+                            switch(zoom){
+                                case 'esmall':zoom=0.8;break;
+                                case 'vsmall':zoom=0.9;break;
+                                case 'small':zoom=0.95;break;
+                                case 'big':zoom=1.05;break;
+                                case 'vbig':zoom=1.1;break;
+                                case 'ebig':zoom=1.2;break;
+                                case 'biggest': zoom = 2; break;
+                                default:zoom=1;
+                            }
+                            game.documentZoom=game.deviceZoom*zoom;
+                            document.documentElement.style.zoom=game.documentZoom;
                         }
                     },
                     player_height:{
@@ -768,36 +757,6 @@
 							// }
 						}
                     },
-                    ui_zoom:{
-                        name:'界面缩放',
-                        unfrequent:true,
-                        init:'normal',
-                        item:{
-                            esmall:'80%',
-                            vsmall:'90%',
-                            small:'95%',
-                            normal:'100%',
-                            big:'105%',
-                            vbig:'110%',
-                            ebig:'120%',
-                            biggest:'绯想天则',
-                        },
-                        onclick:function(zoom){
-                            game.saveConfig('ui_zoom',zoom);
-                            switch(zoom){
-                                case 'esmall':zoom=0.8;break;
-                                case 'vsmall':zoom=0.9;break;
-                                case 'small':zoom=0.95;break;
-                                case 'big':zoom=1.05;break;
-                                case 'vbig':zoom=1.1;break;
-                                case 'ebig':zoom=1.2;break;
-                                case 'biggest': zoom = 2; break;
-                                default:zoom=1;
-                            }
-                            game.documentZoom=game.deviceZoom*zoom;
-                            document.documentElement.style.zoom=game.documentZoom;
-                        }
-                    },
                     phonelayout:{
                         name:'触屏布局',
                         init:false,
@@ -814,32 +773,8 @@
                             }
                         }
                     },
-                    change_skin:{
-                        name:'开启换肤',
-                        init:true,
-                        intro:'在角色的右键菜单中换肤，皮肤可在选项-文件-图片文件-皮肤图片中添加'
-                    },
-                    change_skin_auto:{
-                        name:'自动换肤',
-                        init:'off',
-                        item:{
-                            'off':'关闭',
-                            '30000':'半分钟',
-                            '60000':'一分钟',
-                            '120000':'两分钟',
-                            '300000':'五分钟',
-                        },
-                        intro:'游戏每进行一段时间自动为一个随机角色更换皮肤',
-                        onclick:function(item){
-                            game.saveConfig('change_skin_auto',item);
-                            clearTimeout(_status.skintimeout);
-                            if(item!='off'){
-                                _status.skintimeout=setTimeout(ui.click.autoskin,parseInt(item));
-                            }
-                        }
-                    },
                     card_style:{
-                        name:'卡牌样式',
+                        name:'卡牌图片',
                         init:'simple',
                         intro:'设置正面朝上的卡牌的样式',
                         item:{
@@ -961,7 +896,7 @@
                         unfrequent:true,
                     },
                     cardback_style:{
-                        name:'卡背样式',
+                        name:'卡背图片',
                         intro:'设置背面朝上的卡牌的样式',
                         init:'default',
                         item:{
@@ -1107,6 +1042,46 @@
                             }
                         },
                         unfrequent:true,
+                    },
+                    cardshape:{
+                        name:'手牌形状',
+                        intro:'将手牌设置为正方形或长方形',
+                        init:'oblong',
+                        //unfrequent:true,
+                        item:{
+                            default:'正方形',
+                            oblong:'长方型',
+                        },
+                        onclick:function(item){
+                            game.saveConfig('cardshape',item);
+                            if(item=='oblong'&&(game.layout=='long'||game.layout=='mobile'||game.layout=='long2'||game.layout=='nova')){
+                                ui.arena.classList.add('oblongcard');
+                                ui.window.classList.add('oblongcard');
+                            }
+                            else{
+                                ui.arena.classList.remove('oblongcard');
+                                ui.window.classList.remove('oblongcard');
+                            }
+
+                        }
+                    },
+                    textequip:{
+                        name:'装备显示',
+                        init:'text',
+                        unfrequent:true,
+                        item:{
+                            image:'图片',
+                            text:'文字',
+                        },
+                        onclick:function(item){
+                            game.saveConfig('textequip',item);
+                            if(item=='text'&&(game.layout=='long'||game.layout=='mobile')){
+                                ui.arena.classList.add('textequip');
+                            }
+                            else{
+                                ui.arena.classList.remove('textequip');
+                            }
+                        }
                     },
                     hp_style:{
                         name:'体力条样式',
@@ -1395,6 +1370,209 @@
                         },
                         unfrequent:true,
                     },
+                    border_style:{
+                        name:'角色边框图片',
+                        init:'default',
+                        intro:'设置角色边框的样式。<br>当设为自动时，样式将随击坠角色数改变',
+                        item:{
+                            gold:'金框',
+                            silver:'银框',
+                            bronze:'铜框',
+                            dragon_gold:'金龙',
+                            dragon_silver:'银龙',
+                            dragon_bronze:'玉龙',
+                            shen:'神',
+                            custom:'自定',
+                            auto:'击坠角色数',
+                            default:'默认',
+                        },
+                        visualBar:function(node,item,create,switcher){
+                            if(node.created){
+                                return;
+                            }
+                            var button;
+                            for(var i=0;i<node.parentNode.childElementCount;i++){
+                                if(node.parentNode.childNodes[i]._link=='custom'){
+                                    button=node.parentNode.childNodes[i];
+                                }
+                            }
+                            if(!button){
+                                return;
+                            }
+                            node.created=true;
+                            var deletepic;
+                            ui.create.filediv('.menubutton','添加图片',node,function(file){
+                                if(file){
+                                    game.putDB('image','border_style',file,function(){
+                                        game.getDB('image','border_style',function(fileToLoad){
+                                            if(!fileToLoad) return;
+                                            var fileReader = new FileReader();
+                                            fileReader.onload = function(fileLoadedEvent)
+                                            {
+                                                var data = fileLoadedEvent.target.result;
+                                                button.style.backgroundImage='url('+data+')';
+                                                button.className='button character';
+                                                button.style.backgroundSize='100% 100%';
+                                                node.classList.add('showdelete');
+                                            };
+                                            fileReader.readAsDataURL(fileToLoad, "UTF-8");
+                                        });
+                                    });
+                                }
+                            }).inputNode.accept='image/jpeg,image/png';
+                            deletepic=ui.create.div('.menubutton.deletebutton','删除图片',node,function(){
+                                if(confirm('确定删除自定义图片？（此操作不可撤销）')){
+                                    game.deleteDB('image','border_style');
+                                    button.style.backgroundImage='none';
+                                    button.className='button character dashedmenubutton';
+                                    node.classList.remove('showdelete');
+                                    if(lib.config.border_style=='custom'){
+                                        lib.configMenu.appearence.config.border_style.onclick('default');
+                                        switcher.lastChild.innerHTML='默认';
+                                    }
+                                    button.classList.add('transparent');
+                                }
+                            });
+                        },
+                        visualMenu:function(node,link,name,config){
+                            node.className='button character';
+                            node.style.backgroundSize='';
+                            node.style.height='108px';
+                            node.dataset.decoration='';
+                            if(link=='default'||link=='custom'||link=='auto'){
+                                node.style.backgroundImage='none';
+                                node.className='button character dashedmenubutton';
+                            }
+                            else{
+                                if(link.indexOf('dragon_')==0){
+                                    link=link.slice(7);
+                                    node.dataset.decoration=link;
+                                }
+                                node.setBackgroundImage('theme/style/player/'+link+'1.png');
+                                node.style.backgroundSize='100% 100%';
+                            }
+                            if(link=='custom'){
+                                node.classList.add('transparent');
+                                game.getDB('image','border_style',function(fileToLoad){
+                                    if(!fileToLoad) return;
+                                    var fileReader = new FileReader();
+                                    fileReader.onload = function(fileLoadedEvent)
+                                    {
+                                        var data = fileLoadedEvent.target.result;
+                                        node.style.backgroundImage='url('+data+')';
+                                        node.className='button character';
+                                        node.parentNode.lastChild.classList.add('showdelete');
+                                        node.style.backgroundSize='100% 100%';
+                                    };
+                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
+                                });
+                            }
+                        },
+                        onclick:function(layout){
+                            game.saveConfig('border_style',layout);
+                            if(ui.css.border_stylesheet){
+                                ui.css.border_stylesheet.remove();
+                                delete ui.css.border_stylesheet;
+                            }
+                            if(layout=='custom'){
+                                game.getDB('image','border_style',function(fileToLoad){
+                                    if(!fileToLoad) return;
+                                    var fileReader = new FileReader();
+                                    fileReader.onload = function(fileLoadedEvent){
+                                        if(ui.css.border_stylesheet){
+                                            ui.css.border_stylesheet.remove();
+                                        }
+                                        ui.css.border_stylesheet=lib.init.sheet();
+                                        ui.css.border_stylesheet.sheet.insertRule('#window .player>.framebg{display:block;background-image:url("'+fileLoadedEvent.target.result+'")}',0);
+                                        ui.css.border_stylesheet.sheet.insertRule('.player>.count{z-index: 3 !important;border-radius: 2px !important;text-align: center !important;}',0);
+                                    };
+                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
+                                });
+                            }
+                            else if(layout!='default'&&layout!='auto'){
+                                ui.css.border_stylesheet=lib.init.sheet();
+                                if(layout.indexOf('dragon_')==0){
+                                    layout=layout.slice(7);
+                                    ui.arena.dataset.framedecoration=layout;
+                                }
+                                else{
+                                    ui.arena.dataset.framedecoration='';
+                                }
+                                ui.css.border_stylesheet.sheet.insertRule('#window .player>.framebg,#window #arena.long.mobile:not(.fewplayer) .player[data-position="0"]>.framebg{display:block;background-image:url("'+lib.assetURL+'theme/style/player/'+layout+'1.png")}',0);
+                                ui.css.border_stylesheet.sheet.insertRule('#window #arena.long:not(.fewplayer) .player>.framebg, #arena.oldlayout .player>.framebg{background-image:url("'+lib.assetURL+'theme/style/player/'+layout+'3.png")}',0);
+                                ui.css.border_stylesheet.sheet.insertRule('.player>.count{z-index: 3 !important;border-radius: 2px !important;text-align: center !important;}',0);
+                            }
+                        },
+                        unfrequent:true,
+                    },
+                    player_border:{
+                        name:'边框宽度',
+                        init:'normal',
+                        intro:'设置角色的边框宽度',
+                        unfrequent:true,
+                        item:{
+                            slim:'窄',
+                            normal:'中',
+                            wide:'宽'
+                        },
+                        onclick:function(item){
+                            game.saveConfig('player_border',item);
+                            if(item!='wide'||game.layout=='long'||game.layout=='long2'){
+                                ui.arena.classList.add('slim_player');
+                            }
+                            else{
+                                ui.arena.classList.remove('slim_player');
+                            }
+                            if(item=='slim'){
+                                ui.arena.classList.add('uslim_player');
+                            }
+                            else{
+                                ui.arena.classList.remove('uslim_player');
+                            }
+                            if(item=='normal'&&lib.config.mode!='brawl'&&(game.layout=='long'||game.layout=='long2')){
+                                ui.arena.classList.add('lslim_player');
+                            }
+                            else{
+                                ui.arena.classList.remove('lslim_player');
+                            }
+                            ui.window.dataset.player_border=item;
+                        }
+                    },
+                    glow_phase:{
+                        name:'当前回合角色高亮颜色',
+                        unfrequent:true,
+                        init:'purple',
+                        intro:'设置当前回合角色的边框颜色',
+                        item:{
+                            none:'无',
+                            yellow:'黄色',
+                            green:'绿色',
+                            purple:'紫色',
+                        },
+                        onclick:function(bool){
+                            game.saveConfig('glow_phase',bool);
+                            lib.init.cssstyles();
+                        }
+                    },
+                    global_font:{
+                        name:'界面字体',
+                        init:'default',
+                        unfrequent:true,
+                        item:{},
+                        textMenu:function(node,link){
+                            if(link!='default'){
+                                node.style.fontFamily=link;
+                            }
+                            else{
+                                node.style.fontFamily="'STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei',Helvetica,Arial,sans-serif";
+                            }
+                            node.style.fontSize='20px';
+                        },
+                        onclick:function(font){
+                            game.saveConfig('global_font',font);
+                            lib.init.cssstyles();
+                        }
+                    },
                     player_style:{
                         name:'角色背景',
                         init:'default',
@@ -1519,194 +1697,6 @@
                             }
                         },
                         unfrequent:true,
-                    },
-                    border_style:{
-                        name:'角色边框',
-                        init:'default',
-                        intro:'设置角色边框的样式，当设为自动时，样式将随着一局游戏中伤害或击杀的数量自动改变',
-                        item:{
-                            gold:'金框',
-                            silver:'银框',
-                            bronze:'铜框',
-                            dragon_gold:'金龙',
-                            dragon_silver:'银龙',
-                            dragon_bronze:'玉龙',
-                            custom:'自定',
-                            auto:'自动',
-                            default:'默认',
-                        },
-                        visualBar:function(node,item,create,switcher){
-                            if(node.created){
-                                return;
-                            }
-                            var button;
-                            for(var i=0;i<node.parentNode.childElementCount;i++){
-                                if(node.parentNode.childNodes[i]._link=='custom'){
-                                    button=node.parentNode.childNodes[i];
-                                }
-                            }
-                            if(!button){
-                                return;
-                            }
-                            node.created=true;
-                            var deletepic;
-                            ui.create.filediv('.menubutton','添加图片',node,function(file){
-                                if(file){
-                                    game.putDB('image','border_style',file,function(){
-                                        game.getDB('image','border_style',function(fileToLoad){
-                                            if(!fileToLoad) return;
-                                            var fileReader = new FileReader();
-                                            fileReader.onload = function(fileLoadedEvent)
-                                            {
-                                                var data = fileLoadedEvent.target.result;
-                                                button.style.backgroundImage='url('+data+')';
-                                                button.className='button character';
-                                                button.style.backgroundSize='100% 100%';
-                                                node.classList.add('showdelete');
-                                            };
-                                            fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                        });
-                                    });
-                                }
-                            }).inputNode.accept='image/jpeg,image/png';
-                            deletepic=ui.create.div('.menubutton.deletebutton','删除图片',node,function(){
-                                if(confirm('确定删除自定义图片？（此操作不可撤销）')){
-                                    game.deleteDB('image','border_style');
-                                    button.style.backgroundImage='none';
-                                    button.className='button character dashedmenubutton';
-                                    node.classList.remove('showdelete');
-                                    if(lib.config.border_style=='custom'){
-                                        lib.configMenu.appearence.config.border_style.onclick('default');
-                                        switcher.lastChild.innerHTML='默认';
-                                    }
-                                    button.classList.add('transparent');
-                                }
-                            });
-                        },
-                        visualMenu:function(node,link,name,config){
-                            node.className='button character';
-                            node.style.backgroundSize='';
-                            node.style.height='108px';
-                            node.dataset.decoration='';
-                            if(link=='default'||link=='custom'||link=='auto'){
-                                node.style.backgroundImage='none';
-                                node.className='button character dashedmenubutton';
-                            }
-                            else{
-                                if(link.indexOf('dragon_')==0){
-                                    link=link.slice(7);
-                                    node.dataset.decoration=link;
-                                }
-                                node.setBackgroundImage('theme/style/player/'+link+'1.png');
-                                node.style.backgroundSize='100% 100%';
-                            }
-                            if(link=='custom'){
-                                node.classList.add('transparent');
-                                game.getDB('image','border_style',function(fileToLoad){
-                                    if(!fileToLoad) return;
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent)
-                                    {
-                                        var data = fileLoadedEvent.target.result;
-                                        node.style.backgroundImage='url('+data+')';
-                                        node.className='button character';
-                                        node.parentNode.lastChild.classList.add('showdelete');
-                                        node.style.backgroundSize='100% 100%';
-                                    };
-                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                });
-                            }
-                        },
-                        onclick:function(layout){
-                            game.saveConfig('border_style',layout);
-                            if(ui.css.border_stylesheet){
-                                ui.css.border_stylesheet.remove();
-                                delete ui.css.border_stylesheet;
-                            }
-                            if(layout=='custom'){
-                                game.getDB('image','border_style',function(fileToLoad){
-                                    if(!fileToLoad) return;
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent){
-                                        if(ui.css.border_stylesheet){
-                                            ui.css.border_stylesheet.remove();
-                                        }
-                                        ui.css.border_stylesheet=lib.init.sheet();
-                                        ui.css.border_stylesheet.sheet.insertRule('#window .player>.framebg{display:block;background-image:url("'+fileLoadedEvent.target.result+'")}',0);
-                                        ui.css.border_stylesheet.sheet.insertRule('.player>.count{z-index: 3 !important;border-radius: 2px !important;text-align: center !important;}',0);
-                                    };
-                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                });
-                            }
-                            else if(layout!='default'&&layout!='auto'){
-                                ui.css.border_stylesheet=lib.init.sheet();
-                                if(layout.indexOf('dragon_')==0){
-                                    layout=layout.slice(7);
-                                    ui.arena.dataset.framedecoration=layout;
-                                }
-                                else{
-                                    ui.arena.dataset.framedecoration='';
-                                }
-                                ui.css.border_stylesheet.sheet.insertRule('#window .player>.framebg,#window #arena.long.mobile:not(.fewplayer) .player[data-position="0"]>.framebg{display:block;background-image:url("'+lib.assetURL+'theme/style/player/'+layout+'1.png")}',0);
-                                ui.css.border_stylesheet.sheet.insertRule('#window #arena.long:not(.fewplayer) .player>.framebg, #arena.oldlayout .player>.framebg{background-image:url("'+lib.assetURL+'theme/style/player/'+layout+'3.png")}',0);
-                                ui.css.border_stylesheet.sheet.insertRule('.player>.count{z-index: 3 !important;border-radius: 2px !important;text-align: center !important;}',0);
-                            }
-                        },
-                        unfrequent:true,
-                    },
-                    autoborder_count:{
-                        name:'边框升级方式',
-                        intro:'<strong>击杀</strong> 每击杀一人，边框提升两级<br><strong>伤害</strong> 每造成两点伤害，边框提升一级<br><strong>混合</strong> 击杀量决定边框颜色，伤害量决定边框装饰',
-                        init:'kill',
-                        item:{
-                            kill:'击杀',
-                            damage:'伤害',
-                            mix:'混合',
-                        },
-                        unfrequent:true,
-                    },
-                    autoborder_start:{
-                        name:'基础边框颜色',
-                        init:'bronze',
-                        item:{
-                            bronze:'铜',
-                            silver:'银',
-                            gold:'金'
-                        },
-                        unfrequent:true
-                    },
-                    player_border:{
-                        name:'边框宽度',
-                        init:'normal',
-                        intro:'设置角色的边框宽度',
-                        unfrequent:true,
-                        item:{
-                            slim:'窄',
-                            normal:'中',
-                            wide:'宽'
-                        },
-                        onclick:function(item){
-                            game.saveConfig('player_border',item);
-                            if(item!='wide'||game.layout=='long'||game.layout=='long2'){
-                                ui.arena.classList.add('slim_player');
-                            }
-                            else{
-                                ui.arena.classList.remove('slim_player');
-                            }
-                            if(item=='slim'){
-                                ui.arena.classList.add('uslim_player');
-                            }
-                            else{
-                                ui.arena.classList.remove('uslim_player');
-                            }
-                            if(item=='normal'&&lib.config.mode!='brawl'&&(game.layout=='long'||game.layout=='long2')){
-                                ui.arena.classList.add('lslim_player');
-                            }
-                            else{
-                                ui.arena.classList.remove('lslim_player');
-                            }
-                            ui.window.dataset.player_border=item;
-                        }
                     },
                     menu_style:{
                         name:'菜单背景',
@@ -2096,190 +2086,6 @@
                             ui.window.dataset.radius_size=item;
                         }
                     },
-                    glow_phase:{
-                        name:'当前回合角色高亮',
-                        unfrequent:true,
-                        init:'purple',
-                        intro:'设置当前回合角色的边框颜色',
-                        item:{
-                            none:'无',
-                            yellow:'黄色',
-                            green:'绿色',
-                            purple:'紫色',
-                        },
-                        onclick:function(bool){
-                            game.saveConfig('glow_phase',bool);
-                            lib.init.cssstyles();
-                        }
-                    },
-                    fold_card:{
-                        name:'折叠手牌',
-                        init:true,
-                        unfrequent:true,
-                    },
-                    fold_mode:{
-                        name:'折叠模式菜单',
-                        intro:'关闭后模式菜单中“更多”内的项目将直接展开',
-                        init:false,
-                        unfrequent:false,
-                    },
-                    seperate_control:{
-                        name:'分离选项条',
-                        init:true,
-                        unfrequent:true,
-                        intro:'开启后玩家在进行选择时不同的选项将分开，而不是连在一起',
-                    },
-                    blur_ui:{
-                        name:'暂停时模糊背景',
-                        intro:'在暂停或打开菜单时开启模糊效果',
-                        init:false,
-                        unfrequent:true,
-                        onclick:function(bool){
-                            game.saveConfig('blur_ui',bool);
-                            if(bool){
-                                ui.window.classList.add('blur_ui');
-                            }
-                            else{
-                                ui.window.classList.remove('blur_ui');
-                            }
-                        }
-                    },
-                    cardshape:{
-                        name:'手牌显示',
-                        intro:'将手牌设置为正方形或长方形',
-                        init:'oblong',
-                        //unfrequent:true,
-                        item:{
-                            default:'默认',
-                            oblong:'长方',
-                        },
-                        onclick:function(item){
-                            game.saveConfig('cardshape',item);
-                            if(item=='oblong'&&(game.layout=='long'||game.layout=='mobile'||game.layout=='long2'||game.layout=='nova')){
-                                ui.arena.classList.add('oblongcard');
-                                ui.window.classList.add('oblongcard');
-                            }
-                            else{
-                                ui.arena.classList.remove('oblongcard');
-                                ui.window.classList.remove('oblongcard');
-                            }
-
-                        }
-                    },
-                    textequip:{
-                        name:'装备显示',
-                        init:'text',
-                        unfrequent:true,
-                        item:{
-                            image:'图片',
-                            text:'文字',
-                        },
-                        onclick:function(item){
-                            game.saveConfig('textequip',item);
-                            if(item=='text'&&(game.layout=='long'||game.layout=='mobile')){
-                                ui.arena.classList.add('textequip');
-                            }
-                            else{
-                                ui.arena.classList.remove('textequip');
-                            }
-                        }
-                    },
-                    buttoncharacter_style:{
-                        name:'选将样式',
-                        init:'default',
-                        item:{
-                            default:'默认',
-                            simple:'精简',
-                            old:'旧版'
-                        },
-                        unfrequent:true,
-                    },
-                    cursor_style:{
-                        name:'鼠标指针',
-                        init:'auto',
-                        intro:'设置为固定后鼠标指针将不随移动到的区域而变化',
-                        unfrequent:true,
-                        item:{
-                            auto:'自动',
-                            pointer:'固定'
-                        },
-                        onclick:function(item){
-                            game.saveConfig('cursor_style',item);
-                            if(item=='pointer'){
-                                ui.window.classList.add('nopointer');
-                            }
-                            else{
-                                ui.window.classList.remove('nopointer');
-                            }
-                        }
-                    },
-                    global_font:{
-                        name:'界面字体',
-                        init:'default',
-                        unfrequent:true,
-                        item:{},
-                        textMenu:function(node,link){
-                            if(link!='default'){
-                                node.style.fontFamily=link;
-                            }
-                            else{
-                                node.style.fontFamily="'STHeiti','SimHei','Microsoft JhengHei','Microsoft YaHei','WenQuanYi Micro Hei',Helvetica,Arial,sans-serif";
-                            }
-                            node.style.fontSize='20px';
-                        },
-                        onclick:function(font){
-                            game.saveConfig('global_font',font);
-                            lib.init.cssstyles();
-                        }
-                    },
-                    name_font:{
-                        name:'人名字体',
-                        init:'xinwei',
-                        unfrequent:true,
-                        item:{},
-                        textMenu:function(node,link){
-                            if(link!='default'){
-                                node.style.fontFamily=link;
-                            }
-                            node.style.fontSize='20px';
-                        },
-                        onclick:function(font){
-                            game.saveConfig('name_font',font);
-                            lib.init.cssstyles();
-                        }
-                    },
-                    identity_font:{
-                        name:'身份字体',
-                        init:'huangcao',
-                        unfrequent:true,
-                        item:{},
-                        textMenu:function(node,link){
-                            if(link!='default'){
-                                node.style.fontFamily=link;
-                            }
-                            node.style.fontSize='20px';
-                        },
-                        onclick:function(font){
-                            game.saveConfig('identity_font',font);
-                            lib.init.cssstyles();
-                        }
-                    },
-                    cardtext_font:{
-                        name:'卡牌字体',
-                        init:'default',
-                        unfrequent:true,
-                        item:{},
-                        textMenu:function(node,link){
-                            if(link!='default'){
-                                node.style.fontFamily=link;
-                            }
-                            node.style.fontSize='20px';
-                        },
-                        onclick:function(font){
-                            game.saveConfig('cardtext_font',font);
-                            lib.init.cssstyles();
-                        }
-                    },
                     update:function(config,map){
                         if(lib.config.custom_button){
                             map.custom_button_system_top.show();
@@ -2293,25 +2099,12 @@
                             map.custom_button_control_top.hide();
                             map.custom_button_control_bottom.hide();
                         }
-                        if(lib.config.change_skin){
-                            map.change_skin_auto.show();
-                        }
-                        else{
-                            map.change_skin_auto.hide();
-                        }
                         if(lib.config.image_background_random){
-                            map.image_background_blur.show();
                             map.image_background.hide();
                             // map.import_background.hide();
                         }
                         else{
                             map.image_background.show();
-                            if(lib.config.image_background=='default'){
-                                map.image_background_blur.hide();
-                            }
-                            else{
-                                map.image_background_blur.show();
-                            }
                             // if(lib.config.image_background=='custom'&&lib.db){
                             //  map.import_background.show();
                             // }
@@ -2354,20 +2147,6 @@
 						else{
 							map.player_height_nova.hide();
 						}
-                        if(lib.config.touchscreen){
-                            map.cursor_style.hide();
-                        }
-                        else{
-                            map.cursor_style.show();
-                        }
-                        if(lib.config.border_style=='auto'){
-                            map.autoborder_count.show();
-                            map.autoborder_start.show();
-                        }
-                        else{
-                            map.autoborder_count.hide();
-                            map.autoborder_start.hide();
-                        }
                     },
                 }
             },
@@ -6266,13 +6045,9 @@
                     if(pack.font){
                         ui.css.fontsheet=lib.init.sheet();
                         for(i in pack.font){
-                            lib.configMenu.appearence.config.name_font.item[i]=pack.font[i];
-                            lib.configMenu.appearence.config.identity_font.item[i]=pack.font[i];
-                            lib.configMenu.appearence.config.cardtext_font.item[i]=pack.font[i];
                             lib.configMenu.appearence.config.global_font.item[i]=pack.font[i];
                             ui.css.fontsheet.sheet.insertRule("@font-face {font-family: '"+i+"';src: url('"+lib.assetURL+"font/"+i+".ttf');}",0);
                         }
-                        lib.configMenu.appearence.config.cardtext_font.item.default='默认';
                         lib.configMenu.appearence.config.global_font.item.default='默认';
                     }
 
@@ -6282,9 +6057,7 @@
                             game.saveConfig('totouched',true);
                             if(lib.device){
                                 game.saveConfig('low_performance',true);
-                                game.saveConfig('confirm_exit',true);
                                 game.saveConfig('touchscreen',true);
-                                game.saveConfig('fold_mode',false);
                                 if(ua.indexOf('ipad')==-1){
                                     game.saveConfig('phonelayout',true);
                                 }
@@ -6561,19 +6334,6 @@
 									else{
 										ui.click.configMenu();
 									}
-								}
-								else if(lib.config.confirm_exit){
-									navigator.notification.confirm(
-										'是否退出游戏？',
-										function(index){
-											switch(index){
-												case 2:game.saveConfig('null');game.reload();break;
-												case 3:navigator.app.exitApp();break;
-											}
-										},
-										'确认退出',
-										['取消','重新开始','退出']
-									);
 								}
 								else{
 									navigator.app.exitApp();
@@ -6887,12 +6647,7 @@
 				}
 				else{
 					window.onbeforeunload=function(){
-						if(lib.config.confirm_exit&&!_status.reloading){
-							return '是否离开游戏？'
-						}
-						else{
-							return null;
-						}
+						return null;
 					}
 				}
 
@@ -7074,11 +6829,6 @@
                 ui.background.style.backgroundPosition='50% 50%';
                 if(lib.config.image_background&&lib.config.image_background!='default'&&lib.config.image_background.indexOf('custom_')!=0){
                     ui.background.setBackgroundImage('image/background/'+lib.config.image_background+'.jpg');
-                    if(lib.config.image_background_blur){
-                        ui.background.style.filter='blur(4px)';
-                        ui.background.style.webkitFilter='blur(4px)';
-                        ui.background.style.transform='scale(1.05)';
-                    }
                 }
                 document.documentElement.style.backgroundImage='';
                 document.documentElement.style.backgroundSize='';
@@ -7109,11 +6859,6 @@
                         {
                             var data = fileLoadedEvent.target.result;
                             ui.background.style.backgroundImage='url('+data+')';
-                            if(lib.config.image_background_blur){
-                                ui.background.style.filter='blur(4px)';
-                                ui.background.style.webkitFilter='blur(4px)';
-                                ui.background.style.transform='scale(1.05)';
-                            }
                         };
                         fileReader.readAsDataURL(fileToLoad, "UTF-8");
                     });
@@ -8110,12 +7855,9 @@
                     ui.css.styles.remove();
                 }
                 ui.css.styles=lib.init.sheet();
-                ui.css.styles.sheet.insertRule('#arena .player>.name,#arena .button.character>.name {font-family: '+(lib.config.name_font||'xinwei')+',xinwei}',0);
-                ui.css.styles.sheet.insertRule('#arena .player .identity>div {font-family: '+(lib.config.identity_font||'huangcao')+',xinwei}',0);
-                ui.css.styles.sheet.insertRule('.button.character.newstyle>.identity {font-family: '+(lib.config.identity_font||'huangcao')+',xinwei}',0);
-                if(lib.config.cardtext_font&&lib.config.cardtext_font!='default'){
-                    ui.css.styles.sheet.insertRule('.card div:not(.info):not(.background) {font-family: '+lib.config.cardtext_font+';}',0);
-                }
+                ui.css.styles.sheet.insertRule('#arena .player>.name,#arena .button.character>.name {font-family:xinwei, xinwei}',0);
+                ui.css.styles.sheet.insertRule('#arena .player .identity>div {font-family: huangcao, xinwei}',0);
+                ui.css.styles.sheet.insertRule('.button.character.newstyle>.identity {font-family: huangcao ,xinwei}',0);
                 if(lib.config.global_font&&lib.config.global_font!='default'){
                     ui.css.styles.sheet.insertRule('#window {font-family: '+lib.config.global_font+',xinwei}',0);
                     ui.css.styles.sheet.insertRule('#window #control{font-family: STHeiti,SimHei,Microsoft JhengHei,Microsoft YaHei,WenQuanYi Micro Hei,Helvetica,Arial,sans-serif}',0);
@@ -10807,14 +10549,9 @@
                             event.dialog.open();
                         }
                         else{
-                            if(event.seperate||lib.config.seperate_control){
-                                event.controlbars=[];
-                                for(var i=0;i<event.controls.length;i++){
-                                    event.controlbars.push(ui.create.control([event.controls[i]]));
-                                }
-                            }
-                            else{
-                                event.controlbar=ui.create.control(event.controls);
+                            event.controlbars=[];
+                            for(var i=0;i<event.controls.length;i++){
+                                event.controlbars.push(ui.create.control([event.controls[i]]));
                             }
                             if(event.dialog){
                                 if(Array.isArray(event.dialog)){
@@ -10927,8 +10664,7 @@
                     else{
                         event.dialog.add('选择'+get.translation(target)+'的一张牌');
                     }
-                    var directh=true;
-                    if (!lib.config.auto_discard) directh = false;
+                    var directh = false;
                     for(var i=0;i<event.position.length;i++){
                         if(event.position[i]=='h'&&target.countCards('h')){
                             event.dialog.addText('手牌区');
@@ -11047,8 +10783,7 @@
                     if(event.prompt){
                         event.dialog.add(event.prompt);
                     }
-                    var directh=true;
-                    if (!lib.config.auto_discard) directh = false;
+                    var directh = false;
                     for(var i=0;i<event.position.length;i++){
                        	if(event.position[i]=='h'){
 							var hs=target.getDiscardableCards(player,'h');
@@ -11198,8 +10933,7 @@
                     if(event.prompt){
                         event.dialog.add(event.prompt);
                     }
-                    var directh=true;
-                    if (!lib.config.auto_discard) directh = false;
+                    var directh = false;
                     for(var i=0;i<event.position.length;i++){
                         if(event.position[i]=='h'){
 							var hs=target.getGainableCards(player,'h');
@@ -12897,46 +12631,6 @@
                         game.delayx();
                         player.dying(event);
                     }
-                    if(source&&lib.config.border_style=='auto'){
-                        var dnum=0;
-                        for(var j=0;j<source.stat.length;j++){
-                            if(source.stat[j].damage!=undefined) dnum+=source.stat[j].damage;
-                        }
-                        if(dnum>=2){
-                            if(lib.config.autoborder_start=='silver'){
-                                dnum+=4;
-                            }
-                            else if(lib.config.autoborder_start=='gold'){
-                                dnum+=8;
-                            }
-                        }
-                        if(lib.config.autoborder_count=='damage'){
-                            source.node.framebg.dataset.decoration='';
-                            if(dnum>=10){
-                                source.node.framebg.dataset.auto='gold';
-                                if(dnum>=12) source.node.framebg.dataset.decoration='gold';
-                            }
-                            else if(dnum>=6){
-                                source.node.framebg.dataset.auto='silver';
-                                if(dnum>=8) source.node.framebg.dataset.decoration='silver';
-                            }
-                            else if(dnum>=2){
-                                source.node.framebg.dataset.auto='bronze';
-                                if(dnum>=4) source.node.framebg.dataset.decoration='bronze';
-                            }
-                            if(dnum>=2){
-                                source.classList.add('topcount');
-                            }
-                        }
-                        else if(lib.config.autoborder_count=='mix'){
-                            source.node.framebg.dataset.decoration='';
-                            switch(source.node.framebg.dataset.auto){
-                                case 'bronze':if(dnum>=4) source.node.framebg.dataset.decoration='bronze';break;
-                                case 'silver':if(dnum>=8) source.node.framebg.dataset.decoration='silver';break;
-                                case 'gold':if(dnum>=12) source.node.framebg.dataset.decoration='gold';break;
-                            }
-                        }
-                    }
                 },
                 recover:function(){
                     if(lib.config.background_audio){
@@ -13291,27 +12985,13 @@
                             _status.coin+=10;
                         }
                     }
-                    if(source&&lib.config.border_style=='auto'&&(lib.config.autoborder_count=='kill'||lib.config.autoborder_count=='mix')){
+                    if(source&&lib.config.border_style=='auto'){
                         switch(source.node.framebg.dataset.auto){
                             case 'gold':case 'silver':source.node.framebg.dataset.auto='gold';break;
                             case 'bronze':source.node.framebg.dataset.auto='silver';break;
-                            default:source.node.framebg.dataset.auto=lib.config.autoborder_start||'bronze';
+                            default:source.node.framebg.dataset.auto='bronze';
                         }
-                        if(lib.config.autoborder_count=='kill'){
-                            source.node.framebg.dataset.decoration=source.node.framebg.dataset.auto;
-                        }
-                        else{
-                            var dnum=0;
-                            for(var j=0;j<source.stat.length;j++){
-                                if(source.stat[j].damage!=undefined) dnum+=source.stat[j].damage;
-                            }
-                            source.node.framebg.dataset.decoration='';
-                            switch(source.node.framebg.dataset.auto){
-                                case 'bronze':if(dnum>=4) source.node.framebg.dataset.decoration='bronze';break;
-                                case 'silver':if(dnum>=8) source.node.framebg.dataset.decoration='silver';break;
-                                case 'gold':if(dnum>=12) source.node.framebg.dataset.decoration='gold';break;
-                            }
-                        }
+                        source.node.framebg.dataset.decoration=source.node.framebg.dataset.auto;
                         source.classList.add('topcount');
                     }
                 },
@@ -31423,30 +31103,9 @@
                             var expanded=false;
                             var hasexpand=true;
                             if(hiddenNodes.length){
-                                if(lib.config.fold_mode){
-                                    var clickmore=function(type){
-                                        if(type==='expand'&&expanded) return;
-                                        if(type==='unexpand'&&!expanded) return;
-                                        if(expanded){
-                                            this.classList.remove('on');
-                                            this.parentNode.classList.remove('expanded');
-                                        }
-                                        else{
-                                            this.classList.add('on');
-                                            this.parentNode.classList.add('expanded');
-                                        }
-                                        expanded=!expanded;
-                                    };
-                                    var morenodes=ui.create.div('.config.more','更多 <div>&gt;</div>',page);
-                                    morenodes.listen(clickmore);
-                                    morenodes._onclick=clickmore;
-                                    page.morenodes=morenodes;
-                                }
-                                else{
-                                    page.classList.add('expanded');
-                                    if(!connectMenu){
-                                        page.classList.add('expanded2');
-                                    }
+                                page.classList.add('expanded');
+                                if(!connectMenu){
+                                    page.classList.add('expanded2');
                                 }
                                 for(var k=0;k<hiddenNodes.length;k++){
                                     page.appendChild(hiddenNodes[k]);
@@ -31520,19 +31179,6 @@
                         active.classList.add('active');
                     }
                     rightPane.appendChild(active.link);
-                    if(lib.config.fold_mode){
-                        rightPane.addEventListener('mousewheel',function(e){
-                            var morenodes=this.firstChild.morenodes;
-                            if(morenodes){
-                                if(e.wheelDelta<0){
-                                    morenodes._onclick.call(morenodes,'expand');
-                                }
-                                else if(this.scrollTop==0){
-                                    morenodes._onclick.call(morenodes,'unexpand');
-                                }
-                            }
-                        },{passive:true});
-                    }
                 }());
 
                 (function(){
@@ -38699,9 +38345,7 @@
                         ui.arena.classList.add('oblongcard');
                     }
                 }
-                if(lib.config.blur_ui){
-                    ui.window.classList.add('blur_ui');
-                }
+                ui.window.classList.add('blur_ui');
                 if(lib.config.custom_button){
                     lib.configMenu.appearence.config.custom_button.onclick('skip');
                 }
@@ -38725,9 +38369,6 @@
                 ui.backgroundMusic.loop=true;
                 //ui.backgroundMusic.addEventListener('ended',game.playBackgroundMusic);
                 ui.window.appendChild(ui.backgroundMusic);
-                if(lib.config.cursor_style=='pointer'){
-                    ui.window.classList.add('nopointer');
-                }
                 if(lib.config.turned_style==false){
                     ui.arena.classList.add('hide_turned');
                 }
@@ -38736,9 +38377,6 @@
                 }
                 if(lib.config.show_name==false){
                     ui.arena.classList.add('hide_name');
-                }
-                if(lib.config.change_skin_auto!='off'){
-                    _status.skintimeout=setTimeout(ui.click.autoskin,parseInt(lib.config.change_skin_auto));
                 }
                 if(lib.config.border_style&&lib.config.border_style.indexOf('dragon_')==0){
                     ui.arena.dataset.framedecoration=lib.config.border_style.slice(7);
@@ -39356,71 +38994,50 @@
                             }
                         }
                         node.node.name.innerHTML=get.slimName(item);
-                        if(lib.config.buttoncharacter_style=='default'||lib.config.buttoncharacter_style=='simple'){
-                            if(lib.config.buttoncharacter_style=='simple'){
-                                node.node.group.style.display='none';
-                            }
-                            
-                            node.node.name.dataset.nature=get.groupnature(infoitem[1]);
-                            //node.node.group.dataset.nature=get.groupnature(infoitem[1],'raw');
-                            node.classList.add('newstyle');
-                            ui.create.div(node.node.hp);
-                            var textnode=ui.create.div('.text',get.numStr(infoitem[2]),node.node.hp);
-                            if(infoitem[2]==0){
-                                node.node.hp.hide();
-                            }
-                            else if(infoitem[2]<=2){
-                                node.node.hp.dataset.condition='mid';
-                            }
-                            else{
-                                node.node.hp.dataset.condition='high';
-                            }
-
-                            // 追加灵力标注的地方
-                            node.node.lili.style.left = '-20px';
-                            node.node.lili.style.bottom = '5px';
-                            ui.create.div(node.node.lili);
-                            if (infoitem[1] && parseInt(infoitem[1])){
-                                var textlili=ui.create.div('.text',get.numStr(parseInt(infoitem[1])),node.node.lili);
-                            } else if (parseInt(infoitem[1]) == 0) {
-                                if (infoitem[6] && parseInt(infoitem[6]) == 0) node.node.lili.hide();
-                                else var textlili=ui.create.div('.text','0',node.node.lili);
-                            } else {
-                                var textlili=ui.create.div('.text','2',node.node.lili);
-                            }
-                            node.node.lili.condition='high';
-                            /*
-                            if(infoitem[5]==0){
-                                node.node.hp.hide();
-                            }
-                            else if(infoitem[2]<=2){
-                                node.node.hp.dataset.condition='mid';
-                            }
-                            else{
-                                node.node.hp.dataset.condition='high';
-                            }
-                            */
+                        node.node.name.dataset.nature=get.groupnature(infoitem[1]);
+                        //node.node.group.dataset.nature=get.groupnature(infoitem[1],'raw');
+                        node.classList.add('newstyle');
+                        ui.create.div(node.node.hp);
+                        var textnode=ui.create.div('.text',get.numStr(infoitem[2]),node.node.hp);
+                        if(infoitem[2]==0){
+                            node.node.hp.hide();
+                        }
+                        else if(infoitem[2]<=2){
+                            node.node.hp.dataset.condition='mid';
                         }
                         else{
-                            if(infoitem[2]>14){
-                                node.node.hp.innerHTML=get.numStr(infoitem[2]);
-                                node.node.hp.classList.add('text');
-                            }
-                            else{
-                                for(var i=0;i<infoitem[2];i++){
-                                    ui.create.div('',node.node.hp);
-                                }
-                            }
+                            node.node.hp.dataset.condition='high';
                         }
+
+                        // 追加灵力标注的地方
+                        node.node.lili.style.left = '-20px';
+                        node.node.lili.style.bottom = '5px';
+                        ui.create.div(node.node.lili);
+                        if (infoitem[1] && parseInt(infoitem[1])){
+                            var textlili=ui.create.div('.text',get.numStr(parseInt(infoitem[1])),node.node.lili);
+                        } else if (parseInt(infoitem[1]) == 0) {
+                            if (infoitem[6] && parseInt(infoitem[6]) == 0) node.node.lili.hide();
+                            else var textlili=ui.create.div('.text','0',node.node.lili);
+                        } else {
+                            var textlili=ui.create.div('.text','2',node.node.lili);
+                        }
+                        node.node.lili.condition='high';
+                        /*
+                        if(infoitem[5]==0){
+                            node.node.hp.hide();
+                        }
+                        else if(infoitem[2]<=2){
+                            node.node.hp.dataset.condition='mid';
+                        }
+                        else{
+                            node.node.hp.dataset.condition='high';
+                        }
+                        */
                         if(node.node.hp.childNodes.length==0){
                             node.node.name.style.top='8px';
                         }
                         if(node.node.name.querySelectorAll('br').length>=4){
                             node.node.name.classList.add('long');
-                            if(lib.config.buttoncharacter_style=='old'){
-                                node.addEventListener('mouseenter',ui.click.buttonnameenter);
-                                node.addEventListener('mouseleave',ui.click.buttonnameleave);
-                            }
                         }
                         node.node.intro.innerHTML=lib.config.intro;
                         if(!noclick){
@@ -40092,59 +39709,6 @@
                         }
                     };
                 }
-            },
-            autoskin:function(){
-                if(!lib.config.change_skin) return;
-                var players=game.filterPlayer();
-                var change=function(player,num,callback){
-                    if(num=='1'){
-                        ui.click.skin(player.node.avatar,player.name,callback);
-                    }
-                    else{
-                        ui.click.skin(player.node.avatar2,player.name2,callback);
-                    }
-                };
-                var finish=function(){
-                    if(lib.config.change_skin_auto!='off'){
-                        _status.skintimeout=setTimeout(ui.click.autoskin,parseInt(lib.config.change_skin_auto));
-                    }
-                };
-                var autoskin=function(){
-                    if(players.length){
-                        var player=players.randomRemove();
-                        var list=[];
-                        if(player.name&&!player.isUnseen(0)){
-                            list.push('1');
-                        }
-                        if(player.name2&&!player.isUnseen(1)){
-                            list.push('2');
-                        }
-                        if(list.length){
-                            change(player,list.randomRemove(),function(bool){
-                                if(bool){
-                                    finish();
-                                }
-                                else if(list.length){
-                                    change(player,list[0],function(bool){
-                                        if(bool){
-                                            finish();
-                                        }
-                                        else{
-                                            autoskin();
-                                        }
-                                    });
-                                }
-                                else{
-                                    autoskin();
-                                }
-                            });
-                        }
-                        else{
-                            autoskin();
-                        }
-                    }
-                }
-                autoskin();
             },
             skin:function(avatar,name,callback){
                 var num=1;
@@ -42392,11 +41956,9 @@
                     ui.window.classList.add('systempaused');
                     ui.menuContainer.classList.add('transparent2');
                 }
-                if(lib.config.blur_ui){
-                    ui.arena.classList.add('blur');
-                    ui.system.classList.add('blur');
-                    ui.menuContainer.classList.add('blur');
-                }
+                ui.arena.classList.add('blur');
+                ui.system.classList.add('blur');
+                ui.menuContainer.classList.add('blur');
                 var layer=ui.create.div('.popup-container');
                 var clicklayer=function(e){
                     if(_status.touchpopping) return;
@@ -42482,22 +42044,12 @@
                             }
                             img.src=lib.assetURL+'image/skin/'+nameskin+'/'+num+'.jpg';
                         }
-                        if(lib.config.change_skin){
-                            loadImage();
-                        }
-                        else{
-                            createButtons(lib.skin[nameskin]);
-                        }
+                        loadImage();
                     };
                 };
-                if(lib.config.change_skin){
-                    var img=new Image();
-                    img.onload=changeskin;
-                    img.src=lib.assetURL+'image/skin/'+nameskin+'/1.jpg';
-                }
-                else if(lib.config.debug&&lib.skin[nameskin]){
-                    changeskin();
-                }
+                var img=new Image();
+                img.onload=changeskin;
+                img.src=lib.assetURL+'image/skin/'+nameskin+'/1.jpg';
                 var ban=ui.create.div('.menubutton.large.ban.character',uiintro,'禁用',function(e){
                     if(this.classList.contains('unselectable')) return;
                     if(typeof noedit=='string'){
@@ -43339,19 +42891,13 @@
                 }
             }
             var offset1,offset12=0;
-            if(!lib.config.fold_card){
-                offset1=112;
+            offset1=Math.min(112,(ui.handcards1Container.offsetWidth-128)/(hs1.length-1));
+            if(hs1.length>1&&offset1<32){
+                offset1=32;
                 ui.handcards1Container.classList.add('scrollh');
             }
             else{
-                offset1=Math.min(112,(ui.handcards1Container.offsetWidth-128)/(hs1.length-1));
-                if(hs1.length>1&&offset1<32){
-                    offset1=32;
-                    ui.handcards1Container.classList.add('scrollh');
-                }
-                else{
-                    ui.handcards1Container.classList.remove('scrollh');
-                }
+                ui.handcards1Container.classList.remove('scrollh');
             }
             if(offset1<100){
                 offset12=100-offset1;
@@ -43383,19 +42929,13 @@
             ui.handcards1Container.firstChild.style.width=(offset1*(hs1.length-1)+118)+'px';
 
             var offset2,offset22=0;
-            if(!lib.config.fold_card){
-                offset2=112;
+            offset2=Math.min(112,(ui.handcards2Container.offsetWidth-128)/(hs2.length-1));
+            if(hs2.length>1&&offset2<32){
+                offset2=32;
                 ui.handcards2Container.classList.add('scrollh');
             }
             else{
-                offset2=Math.min(112,(ui.handcards2Container.offsetWidth-128)/(hs2.length-1));
-                if(hs2.length>1&&offset2<32){
-                    offset2=32;
-                    ui.handcards2Container.classList.add('scrollh');
-                }
-                else{
-                    ui.handcards2Container.classList.remove('scrollh');
-                }
+                ui.handcards2Container.classList.remove('scrollh');
             }
             if(offset2<100){
                 offset22=100-offset2;
@@ -45723,7 +45263,7 @@
                     uiintro.add(addFavourite);
                 }
                 if(!simple||get.is.phoneLayout()){
-                    if((lib.config.change_skin||lib.skin)&&!node.isUnseen()){
+                    if(!node.isUnseen()){
                         var num=1;
                         var introadded=false;
                         var createButtons=function(num,avatar2){
@@ -45795,31 +45335,11 @@
                             }
                             img.src=lib.assetURL+'image/skin/'+nameskin+'/'+num+'.jpg';
                         }
-                        if(lib.config.change_skin){
-                            if(!node.isUnseen(0)){
-                                loadImage();
-                            }
-                            else{
-                                loadImage(true);
-                            }
+                        if(!node.isUnseen(0)){
+                            loadImage();
                         }
                         else{
-                            setTimeout(function(){
-                                var nameskin1=node.name;
-                                var nameskin2=node.name2;
-                                if(nameskin1&&nameskin1.indexOf('gz_')==0){
-                                    nameskin1=nameskin1.slice(3);
-                                }
-                                if(nameskin2&&nameskin2.indexOf('gz_')==0){
-                                    nameskin2=nameskin2.slice(3);
-                                }
-                                if(!node.isUnseen(0)&&lib.skin[nameskin1]){
-                                    createButtons(lib.skin[nameskin1]);
-                                }
-                                if(!node.isUnseen(1)&&lib.skin[nameskin2]){
-                                    createButtons(lib.skin[nameskin2],true);
-                                }
-                            });
+                            loadImage(true);
                         }
                     }
                 }
@@ -46043,7 +45563,7 @@
 							uiintro.add('<div class="text" style="display:inline">'+lib.translate[name+'_append']+'</div>');
 						}
                         if(!simple||get.is.phoneLayout()){
-                            if(lib.config.change_skin||lib.skin){
+                            if(true){
                                 var num=1;
                                 var introadded=false;
                                 var createButtons=function(num,avatar2){
@@ -46098,17 +45618,7 @@
                                     var nameskin=node.name;
                                     img.src=lib.assetURL+'image/skin/'+nameskin+'/'+num+'.png';
                                 }
-                                if(lib.config.change_skin){
-                                    loadImage();
-                                }
-                                else{
-                                    setTimeout(function(){
-                                        var nameskin1=node.name;
-                                        if(lib.skin[nameskin1]){
-                                            createButtons(lib.skin[nameskin1]);
-                                        }
-                                    });
-                                }
+                                loadImage();
                             }
                         }
                     }
@@ -46285,7 +45795,7 @@
                         addskin=!lib.config.show_charactercard;
                     }
                     else{
-                        addskin=lib.config.change_skin||lib.skin;
+                        addskin=true;
                     }
                     if(addskin&&(!simple||get.is.phoneLayout())){
                         var num=1;
@@ -46337,14 +45847,7 @@
                             }
                             img.src=lib.assetURL+'image/skin/'+nameskin+'/'+num+'.jpg';
                         }
-                        if(lib.config.change_skin){
-                            loadImage();
-                        }
-                        else{
-                            setTimeout(function(){
-                                createButtons(lib.skin[nameskin]);
-                            });
-                        }
+                        loadImage();
                     }
                 }
             }
