@@ -22,7 +22,7 @@
         configprefix:'star_1.9_',
         versionOL:27,
         //updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
-        updateURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
+        updateURL:'https://bws.coding.net/p/Night-of-Shooting-Stars/d/Night-of-Shooting-Stars/git/raw',
         extensionURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/master/',
         mirrorURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
         //mirrorURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
@@ -23668,7 +23668,7 @@
             else{
                 var url = lib.assetURL;
                 if (location.hostname && location.hostname.includes('coding')){
-                    url = 'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw/master/';
+                    url = 'https://bws.coding.net/p/Night-of-Shooting-Stars/d/Night-of-Shooting-Stars/git/raw/master/';
                 }
                 if (!music) music = lib.config.background_music;
                 else lib.config.background_music = music;
