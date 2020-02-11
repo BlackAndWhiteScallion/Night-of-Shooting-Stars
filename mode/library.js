@@ -502,8 +502,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        				var i = [
 								'手机端目前只支持安卓系统。为您带来的不便表达万分歉意。',
 								'',
-								'百度网盘链接：<a href = "https://pan.baidu.com/s/1oZRuEzNt2TYx2-8aDVs58Q">https://pan.baidu.com/s/1oZRuEzNt2TYx2-8aDVs58Q</a>',
-								'直接下载链接：<a href = "https://dev.tencent.com/api/project/4566234/files/5506886/download">https://dev.tencent.com/api/project/4566234/files/5506886/download</a>',
+								'百度网盘链接：<a href = "https://pan.baidu.com/s/14ogm9-RAdDuuXUGTZYC_qA">链接: https://pan.baidu.com/s/14ogm9-RAdDuuXUGTZYC_qA 提取码: e6nf</a>',
+								'直接下载链接：<a href = "https://BWS.coding.net/s/19055702-1f41-42d3-8aa0-e1d7f4066d76">https://BWS.coding.net/s/19055702-1f41-42d3-8aa0-e1d7f4066d76</a>',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
