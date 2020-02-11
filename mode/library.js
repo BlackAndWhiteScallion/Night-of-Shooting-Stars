@@ -492,9 +492,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        			var incident=ui.create.node('button','电脑端下载',line2,function(){
 	        			var i = ['下载链接：',
 								'国外镜像：<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip">https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip</a>',
-								'国内镜像1：<a href = https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master>https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/archive/master</a>',
+								'国内镜像1：<a href = https://bws.coding.net/api/share/download/bcf9e902-4fd3-4919-9fc9-f681388b0523>https://bws.coding.net/api/share/download/bcf9e902-4fd3-4919-9fc9-f681388b0523</a>',
 								'国内镜像2：<a href = https://gitee.com/b_2/noss/repository/archive/master.zip>https://gitee.com/b_2/noss/repository/archive/master.zip</a>',
-								'国内镜像因神奇腾讯有可能炸了，还请大家注意。',
+								'国内镜像2因神奇腾讯有可能炸了，还请大家注意。',
 	    					];
 	        			dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
