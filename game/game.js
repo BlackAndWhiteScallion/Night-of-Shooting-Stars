@@ -690,7 +690,7 @@
                         }
                     },
                     ui_zoom:{
-                        name:'界面缩放',
+                        name:'<u>界面缩放</u>',
                         unfrequent:true,
                         init:'normal',
                         item:{
