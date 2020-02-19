@@ -301,7 +301,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    lib.characterIntro['akyuu']='全名稗田阿求，将毕生奉献于记载幻想乡的历史的稗田家的现任家主。持有过目不忘的记忆能力。<br><b>画师：渡瀬　玲<br></b><br>现因一些原因，被赋予了幻想乡的管理员权限。不过依然是和平常一样做着记录屋的工作。';
 				        lib.skill['mengji'] = {};
 				        lib.translate['mengji'] = '隐藏';
-				        lib.translate['mengji_info'] = '达成多次异变胜利的话，可以解锁这个角色哟？';
+				        lib.translate['mengji_info'] = '达成多次异变牌胜利的话，可以解锁这个角色哟？';
 	                    player.init('akyuu');
 	                    player.node.avatar.show();
 	                    //player.style.left='calc(50% - 75px)';
@@ -365,7 +365,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 										list.push(i);
 			                        }
 								}
-								dialog.addText('<div><div style="display:block;top:500px;text-align:left;font-size:16px">距离阿求下一次出场还有'+num+'次异变胜利。');
+								dialog.addText('<div><div style="display:block;top:500px;text-align:left;font-size:16px">距离阿求下一次出场还有'+num+'次异变牌胜利。');
 								list.push('library');
 								for (var i = 0; i < list.length; i ++){
 									if (!lib.config.gameRecord.incident.data[list[i]]) continue;
@@ -443,14 +443,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							'1. 使用刷新键（f5）可以重置游戏。',
 							'2.左上的[选项]可以更改很多游戏相关的设置，包括并不限于：',
 							'<t>游戏模式的人数和身份分配（[选项-开始-异变]）',
-							'牌局的布局，卡牌的样式 ([选项-选项-外观-布局]和[选项-选项-外观-卡牌样式/卡背样式])，',
+							'牌局的布局，界面的样式 ([选项-选项-外观-布局]和[选项-选项-外观-主题])，',
 							'和游戏录像。([选项-其他-录像])',
 							'记得多多探索一下，没准有奇怪的东西！',
+							'<b>2.1 如果觉得界面太小或者太挤的话，在[选项-选项-外观-界面缩放]可以调整整个游戏的大小！</b>',
 							'3. 在牌局中双击角色可以查看角色简介，也可以换皮肤和听配音（如果有配音的话）。',
 							'3.1 在左上的[选项-角色]里双击角色牌也可以看到简介。',
-							'4. 快捷键：按A托管，按space可以暂停，按W可以切换“不询问【请你住口！】”按钮',
-							'5. 如果你在游戏过程中，看到让你选择发动个什么字母+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
-							'<b>6. 其实，点击我是可以跟我说话的啦。就上方那个。</b>',
+							'4. 如果你在游戏过程中，看到让你选择发动个什么拼音+数字的技能，随便点一个就行了，这些是后台计数技能，人畜无害的。',
+							'<b>5. 其实，点击我是可以跟我说话的啦。就上方那个。</b>',
 	    				]; 
 						if (!game.layout=='nova'){
 							dialog.addText('<div><div style="display:block;left:180px;text-align:left;font-size:16px">'+i.join('<br>'));

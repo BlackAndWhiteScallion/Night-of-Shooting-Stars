@@ -26407,7 +26407,7 @@
                 nature = null;
                 bonus = null;
             }
-            card.storage.vanish=true;
+            //card.storage.vanish=true;
             return card.init([suit,number,name,nature,bonus]);
         },
         forceOver:function(bool,callback){
@@ -44238,6 +44238,7 @@
                         var currentcard=ui.discardPile.childNodes[i];
                         currentcard.vanishtag.length=0;
                         if(get.info(currentcard).vanish||currentcard.storage.vanish){
+                            console.log(get.info(currentcard));
                             currentcard.remove();
                             continue;
                         }

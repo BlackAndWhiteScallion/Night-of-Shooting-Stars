@@ -561,12 +561,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 2"
 					if (event.bool){
 						event.target.removeSkill('sliver_arrow_3');
-					//player.skip('phaseUse');
 						player.skip('phaseDiscard');
 						trigger.cancel();
 					}
 				},
-				prompt:'是否发动【白银之箭】跳过出牌阶段？',				
+				prompt:'是否发动【白银之箭】跳过出牌阶段？',			
 				check:function(){
 					return true;	
 				}
