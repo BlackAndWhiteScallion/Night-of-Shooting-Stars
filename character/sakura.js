@@ -629,6 +629,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(event,player){
                     'step 0'
                     player.chooseCard('选择今天的乐谱明置吧？','h',function(card){
+                        var player=_status.event.player;
                         if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
                         else return true;
                     }).set('ai',function(card){
@@ -923,6 +924,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             event.finish();
                         } else if (result.control == '追加目标'){
                             player.chooseTarget('棱镜把【轰！】反射给一到两名角色',[1,2],function(card,player,target){
+                                var trigger=_status.event.getTrigger();
                                 return trigger.player.canUse('sha',target);
                             }).set('ai',function(target){
                                 var att=get.attitude(_status.event.player,target);

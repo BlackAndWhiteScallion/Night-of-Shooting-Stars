@@ -292,7 +292,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           content:function(){
                             "step 0"
                             player.chooseTarget('午夜中的合唱指挥：你可以将'+get.translation(trigger.card)+'转移给一名其他角色',function(card, player, target){
-                              return trigger.player.canUse(trigger.card, target);
+                                var trigger =_status.event.getTrigger();
+                                return trigger.player.canUse(trigger.card, target);
                             }).ai=function(target){
                                 return -get.attitude(player, target);
                             };
@@ -1020,7 +1021,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           var card = {name:result.links[0][2]};
                           event.fakecard=card;
                           player.chooseTarget(function(card,player,target){
-                              return player.canUse(event.fakecard,target,true) && !target.hasSkill('huanshi_3');
+                             // var event = _status.event;
+                              return player.canUse(card,target,true) && !target.hasSkill('huanshi_3');
                           },true,'选择'+get.translation(card.name)+'的目标').set('ai',function(target){
                               return get.effect(target,event.fakecard,_status.event.player);
                           });
