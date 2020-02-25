@@ -4,9 +4,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		name:'tutorial',
 		start:function(){
 			"step 0"
+			/*
 			if(!lib.config.new_tutorial){
 				ui.arena.classList.add('only_dialog');
-			}
+			}*/
 			"step 1"
 			var playback=localStorage.getItem(lib.configprefix+'playback');
 			if(playback){
@@ -29,6 +30,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			else{
 				game.prepareArena(2);
+				if (lib.device){
+					lib.init.layout('long2');
+				}
 				if(!lib.config.new_tutorial){
 					game.delay();
 				}
@@ -85,30 +89,26 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				});
 				ui.create.control('是的',step2);
 			}
-			var step2=function(){
-				if(!lib.config.phonelayout){
-					clear();
-					ui.create.dialog('如果你在使用手机，可能会觉得按钮有点小'+
-					'，将布局改成移动可以使按钮变大');
-					ui.dialog.add('<div class="text center">此设置可以随时在选项-外观-布局中变更。');
-					var lcontrol=ui.create.control('使用移动布局',function(){
-						if(lib.config.phonelayout){
-							ui.control.firstChild.firstChild.innerHTML='使用移动布局';
-							game.saveConfig('phonelayout',false);
-							lib.init.layout('mobile');
-						}
-						else{
-							ui.control.firstChild.firstChild.innerHTML='使用默认布局';
-							game.saveConfig('phonelayout',true);
-							lib.init.layout('mobile');
-						}
-					});
-					ui.create.control('就这样吧！',step3);
+			var step2 = function(){
+				clear();
+				if (!lib.device){
+					ui.create.dialog('首先，最重要的是，左上角的[选项]可以进入游戏选项。游戏的设置，牌局的设置，都在这里看。');
+				} else if (lib.device){
+					ui.create.dialog('屏幕中的（:三）就是游戏菜单了。按一下就可以查看菜单，右上的功能栏，左上的【选项】就是游戏设置了。');
 				}
-				else{
-					step3();
-				}
+				ui.create.control('了解',step13);
 			};
+			var step13 = function(){
+				clear();
+				ui.create.dialog('现在是游戏外观的调整。<br>[界面缩放]可以调整界面大小。<br>[主题]可以更换界面的颜色。<br>[布局]可以更换界面的位置和形状。<br>[游戏背景]可以更换游戏背景图片。');
+				var lcontrol=ui.create.control('进入菜单修改',function(){
+					ui.click.configMenu();
+					ui.click.menuTab('选项');
+					ui.click.menuMode('外观');
+				});
+				ui.create.control('就这样吧',step4);
+			};
+			/*
 			var step3=function(){
 				if(lib.config.touchscreen){
 					clear();
@@ -120,30 +120,41 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					step4();
 				}
 			};
+			*/
 			var step4=function(){
 				clear();
 				//ui.window.classList.add('noclick_important');
-				ui.click.configMenu();
 				ui.control.classList.add('noclick_click_important');
-				ui.control.style.top='calc(100% - 105px)';
-				var text = ui.create.dialog('在菜单中，可以调整各种各样的设置。<br> 模式设置，体系设置，角色皮肤，禁止角色，游戏布局，应有尽有的哟！');
-				ui.create.control('按这里继续哟',function(){
-					ui.click.configMenu();
-					ui.click.menuTab('选项');
-					text = ui.create.dialog('如果你感到游戏较卡，可以开启流畅模式，或者下降游戏速度。<br> 在[特效]选项中也可以选择游戏中表现哪些特效。');
-					ui.controls[0].replace('知道了',function(){
+				//ui.control.style.top='calc(100% - 105px)';
+				var text = ui.create.dialog('在菜单中，可以调整各种各样的设置。<br>我来介绍一下比较重要的几个。');
+				var conti = ui.create.control('继续',function(){
+					text = ui.create.dialog('开始菜单中，可以对每一个模式进行各自的设置。人数，双将，手气卡，等等。');
+					var lcontrol=ui.create.control('查看菜单',function(){
 						ui.click.configMenu();
-						ui.click.menuTab('选项');
-						text = ui.create.dialog('在[外观]中可以设置游戏的背景图，配色主题，和布局。<br>在[界面]中可以选择游戏界面中显示哪些按键和信息。<br>在[音效]中可以调整音量大小和角色及卡牌的音效。');
-						ui.controls[0].replace('知道了知道了',function(){
+						ui.click.menuTab('开始');
+						ui.click.menuMode('异变');
+					});
+					conti.replace('知道了',function(){				
+						text = ui.create.dialog('如果你感到游戏较卡，可以开启低配模式，或者下降游戏速度。<br> 在[特效]选项中也可以选择游戏中表现哪些特效。');
+						lcontrol.replace('查看菜单',function(){
 							ui.click.configMenu();
-							ui.click.menuTab('角色');
-							text = ui.create.dialog('在角色或卡牌一栏中，单击角色/卡牌可以将其禁用，在角色/卡牌上悬空或右键可以查看描述，双击角色可以查看角色简介，和切换角色皮肤。');
-							ui.controls[0].replace('这选项可真多',function(){
-									ui.click.configMenu();
-									ui.click.menuTab('其它');
-									text = ui.create.dialog('在[其他]中可以检查更新，下载素材，查看你的战绩，和观看游戏录像。');
-									ui.controls[0].replace('好了能玩了没',function(){
+							ui.click.menuTab('选项');
+							ui.click.menuMode('游戏');
+						});
+						conti.replace('知道了',function(){
+							text = ui.create.dialog('[外观]中除了之前的以外，还可以选择卡背图片，体力和灵力条图片，以及菜单背景图片。');
+							lcontrol.replace('查看菜单',function(){
+								ui.click.configMenu();
+								ui.click.menuTab('选项');
+								ui.click.menuMode('外观');
+							});
+							conti.replace('知道了',function(){
+									text = ui.create.dialog('在[其他]中可以检查更新，下载素材，和观看游戏录像。');
+									lcontrol.replace('查看菜单',function(){
+										ui.click.configMenu();
+										ui.click.menuTab('其它');
+									});
+									conti.replace('很好，了解了',function(){
 										//ui.click.configMenu();
 										ui.window.classList.remove('noclick_important');
 										ui.control.classList.remove('noclick_click_important');
@@ -158,7 +169,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			var step5=function(){
 				clear();
 				ui.create.dialog('如果还有其它问题，在图鉴模式里可以找到更多的帮助<br>记得关注一下官方微信公众号<br>东方流星夜 大葱专线！');
-				ui.create.control('所以能玩了没',function(){
+				ui.create.control('知道了，谢谢！',function(){
 					clear();
 					clear2();
 					ui.create.dialog('那么就到此了！<br>祝你在幻想乡游玩愉快！');

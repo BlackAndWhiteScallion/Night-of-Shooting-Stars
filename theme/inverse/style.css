@@ -181,3 +181,23 @@ body[data-background_color_music='blue'] #arena.mobile:not(.chess) .player[data-
 #arena:not(.chess) .player[data-position='0']>.equips>.equip5>.image{
 	background-position: -6px -6px;
 }
+
+.player:not([data-position='0']) .equips>.card,
+#arena.chess .player .equips>.card{
+	position:relative;
+	width:100%;
+	height:22px;
+	line-height:22px;
+	margin-top:0;
+	margin-bottom:0;
+	animation: card_start2x 0.5s;
+	-webkit-animation: card_start2x 0.5s;
+	display:block;
+	left:0;
+	top:0;
+	transition:all 0.5s;
+
+	color:white;
+	border-radius:0;
+	text-shadow:black 0 0 2px;
+}

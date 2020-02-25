@@ -701,7 +701,7 @@
                             big:'105%',
                             vbig:'110%',
                             ebig:'120%',
-                            biggest:'绯想天则',
+                            biggest:'不要选这个',
                         },
                         onclick:function(zoom){
                             game.saveConfig('ui_zoom',zoom);
@@ -30961,6 +30961,7 @@
                     });
                     if (lib.device) startButton.classList.add('mobile');
 
+                    var leftPane = start.firstChild;
                     var clickMode=function(){
                         if(this.classList.contains('unselectable')) return;
                         var active=this.parentNode.querySelector('.active');
@@ -30977,7 +30978,14 @@
                             if(updateActiveCard) updateActiveCard();
                         }
                     };
-
+                    ui.click.menuMode=function(tab){
+                        for(var i=0;i<leftPane.childNodes.length;i++){
+                            if(leftPane.childNodes[i].innerHTML==tab){
+                                clickMode.call(leftPane.childNodes[i]);
+                                return;
+                            }
+                        }
+                    };
                     var createModeConfig=function(mode,position){
                         var info=lib.mode[mode];
                         var page=ui.create.div('');
@@ -31114,6 +31122,7 @@
                             else{
                                 hasexpand=false;
                             }
+                            /*
                             if(!connectMenu){
                                 var hidemode=ui.create.div('.config.pointerspan','<span>隐藏此模式</span>',page,function(){
                                     if(this.firstChild.innerHTML=='隐藏此模式'){
@@ -31133,7 +31142,7 @@
                                 if(hasexpand){
                                     hidemode.classList.add('auto-hide');
                                 }
-                            }
+                            }*/
                             if(infoconfig.update){
                                 infoconfig.update(config,map);
                                 node.update=function(){
@@ -31184,8 +31193,8 @@
                 (function(){
                     if(connectMenu) return;
                     var start=menuxpages.shift();
-                    var rightPane=start.lastChild;
-
+                    var rightPane = start.lastChild;
+                    var leftPane = start.firstChild;
                     var clickMode=function(){
                         var active=this.parentNode.querySelector('.active');
                         if(active===this){
@@ -31198,6 +31207,15 @@
                         rightPane.appendChild(this.link);
                     };
 
+                    ui.click.menuMode=function(tab){
+                        for(var i=0;i<leftPane.childNodes.length;i++){
+                            if(leftPane.childNodes[i].innerHTML==tab){
+                                clickMode.call(leftPane.childNodes[i]);
+                                return;
+                            }
+                        }
+                    };
+                    
                     var clickAutoSkill=function(bool){
                         var name=this._link.config._name;
                         var list=lib.config.autoskilllist;
@@ -42840,13 +42858,13 @@
                 if(i<start){
                     node.style.transform='';
                 }
-                else if(node.classList.contains('removing')){
+                else if(node.classList.contains('removing') || node == nodes.firstChild){
                     start++;
                 }
                 else{
                     ui.refresh(node);
                     node.classList.remove('drawinghidden');
-                    node._transform=str+((i-start)*28)+'px)';
+                    node._transform=str+((i-start)*45)+'px)';
                     node.style.transform=node._transform;
                 }
             }

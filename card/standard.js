@@ -656,7 +656,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				target.chooseControl(controls,function(event,player){
 					if (controls.contains('展示手牌并明置身份')) return '展示手牌并明置身份';
-					if(controls.contains('明置身份')) return '明置身份';
+					if (controls.contains('明置身份')) return '明置身份';
 					return '展示手牌';
 				});
 				"step 1"

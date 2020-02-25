@@ -53,9 +53,9 @@
 	top:0;
 	transition:all 0.5s;
 
-	color:white;
+	/*color:white;
 	border-radius:0;
-	text-shadow:black 0 0 2px;
+	text-shadow:black 0 0 2px;*/
 }
 .player:not([data-position='0']) .equips>.card,
 #arena.chess .player .equips>.card{
@@ -134,7 +134,8 @@
 	margin-left:5px;
 }
 #arena.oblongcard:not(.chess).textequip .player[data-position='0'] .equips>.card>.name2{
-	line-height: 29px;
+	line-height: 40px;
+	font-size:20px;
 }
 #arena:not(.chess).textequip .player[data-position='0'] .equips>.card>div,
 .player:not([data-position='0']) .equips>.card>div,
@@ -174,7 +175,7 @@
 	top:0 !important;
 	bottom: auto !important;
 	position: relative !important;
-	height: 20% !important;
+	height: 25% !important;
 
 	background:none !important;
 	box-shadow: rgba(0,0,0,0.4) 0 1px 0 0;

@@ -570,6 +570,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								'4. 观看录像时，技能牌的图标不显示，且技能牌弃置有错误。',
 								'5. 联机模式下异变胜利后的战果显示有错误',
 								'6. [挑战角色]和[闯关角色]扩展同时打开会导致其中一个不能使用。',
+								'6.1. [挑战角色]火[闯关角色]扩展打开，会导致[残局]模式使用[下一关]会卡死。',
 								'7. 观看录像时，无法查看自己的手牌。',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
@@ -582,8 +583,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	mode:'',
 	        	intro:[
 	        		'虽然新规则看起来有点太复杂，很麻烦，但是不用担心，规则比看起来的要容易理解多了！',
-	        		'无论是我，还是子规老师，还是主人，都是会全力帮助你的，所以一定不要泄气！加油！',
-	        		'',      		
+	        		'无论是我，还是子规老师，还是主人，都是会全力帮助你的，所以一定不要泄气！加油！',	
 	        		],
 	        	showcase:function(init){
 	        		if (init){
