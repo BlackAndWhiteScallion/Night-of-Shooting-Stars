@@ -149,17 +149,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								ui.click.menuMode('外观');
 							});
 							conti.replace('知道了',function(){
-									text = ui.create.dialog('在[其他]中可以检查更新，下载素材，和观看游戏录像。');
+									text = ui.create.dialog('在[音效]中可以设置背景音乐，开关角色台词，和调整音量。');
+									if (lib.device){
+										ui.dialog.add('注意的是，手机默认不下载音效素材。想要下载音乐，需要使用[检查素材更新]，下一个就会介绍。');
+									}
 									lcontrol.replace('查看菜单',function(){
 										ui.click.configMenu();
-										ui.click.menuTab('其它');
+										ui.click.menuTab('选项');
+										ui.click.menuMode('音效');
 									});
-									conti.replace('很好，了解了',function(){
-										//ui.click.configMenu();
-										ui.window.classList.remove('noclick_important');
-										ui.control.classList.remove('noclick_click_important');
-										ui.control.style.top='';
-										step5();
+									conti.replace('好的',function(){
+										text = ui.create.dialog('在[其他]中可以检查更新，下载素材，和观看游戏录像。');
+										lcontrol.replace('查看菜单',function(){
+											ui.click.configMenu();
+											ui.click.menuTab('其它');
+										});
+										conti.replace('很好，了解了',function(){
+											//ui.click.configMenu();
+											ui.window.classList.remove('noclick_important');
+											ui.control.classList.remove('noclick_click_important');
+											ui.control.style.top='';
+											step5();
+										});
 									});
 								});
 							});
@@ -172,8 +183,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				ui.create.control('知道了，谢谢！',function(){
 					clear();
 					clear2();
-					ui.create.dialog('那么就到此了！<br>祝你在幻想乡游玩愉快！');
-					ui.dialog.add('<div class="text center">你可以在左上角的选项-其它中重置新手向导');
+					ui.create.dialog('那么系统设置就到此了！<br>祝你在幻想乡游玩愉快！');
 					setTimeout(function(){
 						game.resume();
 					}, 2500);

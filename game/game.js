@@ -42843,7 +42843,7 @@
                 start=0;
             }
             var str;
-            if(get.is.mobileMe(player)||game.layout=='default'){
+            if(get.is.mobileMe(player)||game.layout=='default'||(player.dataset.position==0 && nodes == player.node.judges)){
                 str='translateX(';
                 if(inv){
                     str+='-';
@@ -42851,6 +42851,7 @@
             }
             else{
                 str='translateY(';
+                //str = 'translateX(';
             }
             var num=0;
             for(var i=0;i<nodes.childElementCount;i++){
@@ -42858,7 +42859,7 @@
                 if(i<start){
                     node.style.transform='';
                 }
-                else if(node.classList.contains('removing') || node == nodes.firstChild){
+                else if(node.classList.contains('removing') || (node.classList.contains('mark') && node == nodes.firstChild)){
                     start++;
                 }
                 else{

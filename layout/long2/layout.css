@@ -221,9 +221,14 @@
     left: -15px;
 }
 #arena>.player:not(.minskin)>.judges{
-    right: -27px;
+    right: -36px;
 }
-
+/*
+#arena>.player[data-position='0']>.judges{
+	left:900px;
+	top:70px;
+}
+*/
 #arena.lslim_player .player .equips{
     left: 5px;
 }
@@ -249,7 +254,6 @@
     height: 180px !important;
 }
 #arena>.player:not(.minskin)>.equips{
-    transform: scale(0.8);
     transform-origin: bottom left;
 }
 #arena>.player:not(.minskin)>.avatar,
@@ -388,6 +392,9 @@
 }
 #arena>.player:not(.minskin)>.hp:not(.actcount){
     left: 93px;
+}
+#arena>.player:not(.minskin)>.hp.actcount{
+    left: 5px;
 }
 /*#arena>.player:not(.minskin)>.hp:not(.actcount).text{
     left: 89px;

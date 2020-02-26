@@ -349,3 +349,8 @@
 #arena>.player:not(.minskin)>.avatar2{
     background-position: 50% 0 !important;
 }
+
+#arena>.player[data-position='0']>.marks,
+#arena>.player[data-position='0']>.judges{
+	top:14px;
+}

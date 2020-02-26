@@ -1,6 +1,6 @@
 html{
 	color: white;
-	text-shadow: black 0 0 2px;
+	/*text-shadow: black 0 0 2px;*/
 	background: url('grid.png'),linear-gradient(#6c7989, #434b55) fixed;
 }
 #system>div>div,#mebg,.control,.player,.card,.avatar,.avatar2,.button,.dialog>.bar,.menu,#splash>div,
@@ -19,10 +19,12 @@ html{
 	box-shadow: rgba(27, 63, 95, 0.8) 0 0 0 1px, rgba(0, 0, 0, 0.2) 0 3px 10px !important;
 	background-image: linear-gradient(rgba(47,101,150,1), rgba(43, 90, 132,1));
 }
+.avatar.title,
+#arena>.dialog,
 .dialog.scroll1,
 .dialog.scroll2,
 .dialog.withbg{
-	color:rgb(0,0,0,1);
+	color:rgba(77, 60, 51,0.8);
 	background-image:url('wood2.png');
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
 	/*min-height:200px;*/
