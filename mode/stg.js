@@ -3202,6 +3202,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					trigger.num--;
+					player.removeSkill('silent_negate');
 				},
 			},
 			royal:{

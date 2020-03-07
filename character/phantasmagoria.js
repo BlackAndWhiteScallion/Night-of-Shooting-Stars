@@ -353,7 +353,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   guihang:{
                         group:['guihang_cost'],
                         audio:2,
-                        enable:['phaseUse'],
+                        enable:'phaseUse',
                         mod:{
                               targetInRange:function(card){
                                     if(_status.event.skill=='guihang') return true;

@@ -151,7 +151,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							conti.replace('知道了',function(){
 									text = ui.create.dialog('在[音效]中可以设置背景音乐，开关角色台词，和调整音量。');
 									if (lib.device){
-										ui.dialog.add('注意的是，手机默认不下载音效素材。想要下载音乐，需要使用[检查素材更新]，下一个就会介绍。');
+										text.add('注意的是，手机默认不下载音效素材。想要下载音乐，需要使用[检查素材更新]，下一个就会介绍。');
 									}
 									lcontrol.replace('查看菜单',function(){
 										ui.click.configMenu();

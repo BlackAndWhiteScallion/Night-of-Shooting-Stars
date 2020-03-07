@@ -219,12 +219,6 @@
                     },
                     */
                     update:function(config,map){
-                        if('ontouchstart' in document){
-                            map.touchscreen.show();
-                        }
-                        else{
-                            map.touchscreen.hide();
-                        }
                     }
                 }
             },
@@ -21863,7 +21857,7 @@
                                 for (var i = 0; i < info.spell.length; i ++){
                                     player.addSkill(info.spell[i]);
                                 }
-                                player.removeSkillTrigger(skillname);
+                                //player.removeSkillTrigger(skillname);
                             }
                             player.storage.spell = skillname;
                         }

@@ -1998,9 +1998,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     player.loselili(lib.skill.mojing.cost);
-                    player.useCard({name:'simen'},game.filterPlayer().remove(player));
                     player.addSkill('mojing0');
 					player.turnOver();
+                    player.useCard({name:'simen'},game.filterPlayer().remove(player));
                 },
 			},
 			mojing0:{
@@ -2560,6 +2560,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.loselili(lib.skill.chaoyue.cost - player.storage.chaoyue);
 					player.turnOver();
 					player.storage.chaoyue = 0;
+					player.syncStorage('chaoyue');
 					player.unmarkSkill('chaoyue');
 				},
 				check:function(event,player){

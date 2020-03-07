@@ -623,31 +623,27 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 enable:'phaseUse',
                 usable:1,
                 audio:2,
+                filterCard:function(card, player){
+                    return !player.storage.mingzhi || !player.storage.mingzhi.contains(card);
+                },
+                selectCard:1,
+                discard:false,
+                lose:false,
                 filter:function(event,player){
                     return player.getCards('h');
                 },
                 content:function(event,player){
                     'step 0'
-                    player.chooseCard('选择今天的乐谱明置吧？','h',function(card){
-                        var player=_status.event.player;
-                        if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
-                        else return true;
-                    }).set('ai',function(card){
-                        return get.value(card);
-                    });
-                    'step 1'
-                    if (result.bool){
-                        player.mingzhiCard(result.cards[0]); 
-                    }
+                    player.mingzhiCard(cards[0]);
                 },
                 ai:{
-                    order:5,
+                    order:1,
                     result:{
                         player:function(player,target){
-                            return 1;
+                            return 0.5;
                         }
                     }
-                },
+                }
             },
             shenxuan_viewAs:{
                 enable:'chooseToUse',
@@ -950,21 +946,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 enable:'phaseUse',
                 audio:2,
                 usable:1,
+                filterCard:function(card, player){
+                    return !player.storage.mingzhi || !player.storage.mingzhi.contains(card);
+                },
+                selectCard:1,
+                discard:false,
+                lose:false,
                 filter:function(event,player){
                     return player.getCards('h');
                 },
                 content:function(event,player){
                     'step 0'
-                    player.chooseCard('把演奏的曲目明置出来吧？','h',function(card){
-                        if (player.storage.mingzhi) return !player.storage.mingzhi.contains(card);
-                        else return true;
-                    }).set('ai',function(card){
-                        return get.value(card);
-                    });
-                    'step 1'
-                    if (result.bool){
-                        player.mingzhiCard(result.cards[0]);
-                    }
+                    player.mingzhiCard(cards[0]);
                 },
                 ai:{
                     order:1,
@@ -1085,7 +1078,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 group:'mingjian2',
                 enable:'phaseUse',
                 usable:1,
-                filterCard:true,
+                filterCard:function(card, player){
+                    return !player.storage.mingzhi || !player.storage.mingzhi.contains(card);
+                },
                 selectCard:1,
                 discard:false,
                 lose:false,
