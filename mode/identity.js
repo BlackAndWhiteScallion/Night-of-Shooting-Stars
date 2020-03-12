@@ -2290,9 +2290,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.saveConfig('gameRecord',lib.config.gameRecord);
 					player.update();
 					game.pause();
+					if (trigger.source) event.target = trigger.source;
+					else if (_status.currentPhase) event.target = _status.currentPhase;
+					else event.target = game.me;
 					player.say('居然击坠了管理员，你也是挺有勇气的呢。');
 					setTimeout(function(){
-                        if (game.me.name != 'marisa'){
+                        if (event.target.name != 'marisa'){
 	                        player.say('我，有必要给你一些惩罚呢。 下次不要这么做了哟。');
 	                        setTimeout(function(){
 		                        game.resume();
@@ -2306,11 +2309,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     	}
                     },2500);
 					"step 1"
-					if (game.me.name != 'marisa'){
-						game.me.damage(Infinity);
+					if (event.target.name != 'marisa'){
+						event.target.damage(Infinity);
 					}
 					"step 2"
-					if (game.me.isAlive()){
+					if (event.target.isAlive()){
 						game.pause();
 						player.say('挺厉害的嘛，那这次就先放过你了吧。');
 						setTimeout(function(){

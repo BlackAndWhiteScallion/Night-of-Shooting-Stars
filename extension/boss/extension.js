@@ -3,43 +3,50 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'boss',
 		init:function(){
-			lib.characterPack.mode_extension_stg_scarlet={
-			};
-			if ((lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 0)
-			 || lib.config.connect_nickname == '路人Orz'){
-				lib.characterPack.mode_extension_stg_scarlet['stg_remilia']=['female','5',4,['mingyun','gungirs'],[]],
-				lib.characterPack.mode_extension_stg_scarlet['stg_bookshelf']=['female','3',5,['juguang'],[]],
-				lib.characterIntro['stg_remilia']='众所周知，什么神枪魔枪都是有好多把，可以随便召唤跟回手，而且还可以变成各种奇怪的形状的。<br>画师：ふゆき(七原冬雪)';
-				lib.characterIntro['stg_bookshelf']='链接: <a href = "https://pan.baidu.com/s/1MkevcTpTKWDl_IFqHGvXew" target="_blank">https://pan.baidu.com/s/1MkevcTpTKWDl_IFqHGvXew</a> 提取码: 2333';
-			}
-			if (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 0){
-				lib.characterPack.mode_extension_stg_scarlet['stg_patchouli']=['female','2',3,['qiyao','riyin','royal'],[]],
-				lib.characterIntro['stg_patchouli']='“喂，帕琪，你就算自己能做一个假太阳，不代表你就可以成天躲着不晒太阳了啊？”<br>“无路赛。”<br>画师：60枚';
-			}
-			for(var i in lib.characterPack.mode_extension_stg_scarlet){
-				lib.characterPack.mode_extension_stg_scarlet[i][4].push('mode:stg');
-				lib.character[i]=lib.characterPack.mode_extension_stg_scarlet[i];
-				if(!lib.config.boss_enableai_playpackconfig){
-					lib.config.forbidai.push(i);
+			lib.characterIntro['boss_zhaoyun'] = '幻想乡是一切皆有可能的地方。<br>即使是原本不可能打得过的人物……！';
+			if (lib.config.gameRecord.boss){
+				lib.characterPack.mode_extension_boss={
+					yuri:['female', '3', 3, ['chongzou', 'moxin1'], []],
+				};
+				if (lib.config.gameRecord.boss.data['boss_reimu2']){
+					lib.characterPack.mode_extension_boss.boss_reimu = ['female','5',4,['lingji','mengxiangtiansheng'], [], 'shu'];
 				}
-			}
-			var list={
-				stg_remilia:'蕾米莉亚',
-				stg_patchouli:'帕秋莉',
-
-				stg_bookshelf:'魔导书塔',
-				juguang_info:'游戏开始时，你装备5种魔导书；你可以跳过你的所有阶段，并消耗1点灵力，视为使用一张【轰！】；锁定技，你的装备区上限+2。',
-				mode_extension_stg_scarlet_character_config:'闯关角色',
-			};
-			if(get.mode()!='stg'){
-				for(var i in list){
-					lib.translate[i]=lib.translate[i]||list[i];
+				if (lib.config.gameRecord.boss.data['boss_cirno2']){
+					lib.characterPack.mode_extension_boss.boss_cirno = ['female', '9', 4, ['jiqiang','zuanshi','jubing'], [], 'wei', '9'];
+				} 
+				if (lib.config.gameRecord.boss.data['boss_zhaoyun']){
+					lib.characterPack.mode_extension_boss.boss_zhaoyun = ['male','0',1,['boss_juejing','longhun'],[], 'shen'];
+				}
+				if (lib.config.gameRecord.boss.data['boss_nianshou'] && lib.config.gameRecord.boss.data['boss_nianshou'][0] >= 50){
+					lib.characterPack.mode_extension_boss.boss_nianshou = ['female','0',10000,['boss_qixiang','boss_nianrui'],[],'shu','10000'];
+				}
+				if (lib.config.gameRecord.boss.data['boss_saitama'] && lib.config.gameRecord.boss.data['boss_saitama'][0] >= 5){
+					lib.characterPack.mode_extension_boss.boss_saitama = ['male','0',Infinity,['punch'],[],'shen'];
+				}
+				if (lib.config.gameRecord.boss.data['boss_fapaiji'] && lib.config.gameRecord.boss.data['boss_fapaiji'][0] >= 5){
+					lib.characterPack.mode_extension_boss.boss_fapaiji = ['female','5', 3,['huanri', 'toutian'],[],'shen'];
+				}
+				for(var i in lib.characterPack.mode_extension_boss){
+					lib.characterPack.mode_extension_boss[i][4].push('mode:boss');
+					lib.character[i]=lib.characterPack.mode_extension_boss[i];
+					if(!lib.config.boss_enableai_playpackconfig){
+						lib.config.forbidai.push(i);
+					}
+				}
+				var list={
+					mode_extension_boss_character_config:'大魔王！',
+				};
+				if(get.mode()!='boss'){
+					for(var i in list){
+						lib.translate[i]=lib.translate[i]||list[i];
+					}
 				}
 			}
 		},
 		arenaReady:function(){
-			if(get.mode()=='stg') return;
-			game.loadModeAsync('stg',function(mode){
+			
+			if (get.mode() == 'boss' || get.mode() == 'puzzle') return;
+			game.loadModeAsync('boss',function(mode){
 				for(var i in mode.translate){
 					lib.translate[i]=lib.translate[i]||mode.translate[i];
 					//lib.translate[i]=mode.translate[i];
@@ -49,9 +56,6 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 					//console.log(i);
 					lib.skill[i]=mode.skill[i];
 					game.finishSkill(i);
-				}
-				if(get.mode()!='stg'){
-					lib.skill['juguang'].forced = false;
 				}
 				for(var i in mode.card){
 					if(lib.card[i]) console.log(i);

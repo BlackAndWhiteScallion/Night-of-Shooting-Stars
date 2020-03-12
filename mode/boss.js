@@ -1072,31 +1072,34 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list=list;
 					for(i in lib.character){
 						if(lib.character[i][4].contains('minskin')) continue;
-						if(lib.character[i][4].contains('boss')) continue;
+						if(lib.character[i][4].contains('boss')){
+							if (!lib.config.gameRecord.boss.data[i]) continue;
+						}
 						if(lib.character[i][4].contains('hiddenboss')) continue;
-						if(lib.character[i][4]&&lib.character[i][4].contains('forbidai')) continue;
+						//if(lib.character[i][4]&&lib.character[i][4].contains('forbidai')) continue;
 						if(lib.config.forbidboss.contains(i)) continue;
 						if(lib.filter.characterDisabled(i)) continue;
 						list.push(i);
 					}
 					list.randomSort();
-					var dialog=ui.create.dialog('选择3名参战角色','hidden');
+					var dialog=ui.create.dialog('选择3名勇者角色','hidden');
 					dialog.classList.add('fixed');
 					ui.window.appendChild(dialog);
 					dialog.classList.add('bosscharacter');
 					dialog.classList.add('withbg');
-					// dialog.add('0/3');
+					//dialog.add('0/3');
 					dialog.add([list.slice(0,20),'character']);
 					dialog.noopen=true;
 					var next=game.me.chooseButton(dialog,true).set('onfree',true);
 					next._triggered=null;
 					next.custom.replace.target=event.customreplacetarget;
 					next.selectButton=[3,3];
-					// next.custom.add.button=function(){
-					// 	if(ui.cheat2&&ui.cheat2.backup) return;
-					// 	_status.event.dialog.content.childNodes[1].innerHTML=
-					// 	ui.selected.buttons.length+'/3';
-					// };
+					/*
+					next.custom.add.button=function(){
+						if(ui.cheat2&&ui.cheat2.backup) return;
+					 	_status.event.dialog.content.childNodes[1].innerHTML= ui.selected.buttons.length+'/3';
+					 };
+					 */
 					event.changeDialog=function(){
 						if(ui.cheat2&&ui.cheat2.dialog==_status.event.dialog){
 							return;

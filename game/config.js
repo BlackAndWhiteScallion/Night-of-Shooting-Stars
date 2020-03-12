@@ -13,7 +13,7 @@ window.config={
 		sgscards:['standard','incident','skill'],
 		sgsmodes:['identity','versus','brawl','connect','library', 'puzzle'],
 		stockmode:['old_identity','identity','versus','boss','stg','chess','connect','brawl','library','tutorial','puzzle'],
-		stockextension:['boss','boss1','coin'],
+		stockextension:['boss','stg','coin'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple','inverse', 'monika'],
 		card_font:['xiaozhuan','huangcao','caoshu','xingshu'],

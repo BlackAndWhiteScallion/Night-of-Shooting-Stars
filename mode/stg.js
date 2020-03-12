@@ -2564,7 +2564,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					var players = game.filterPlayer();
 					for (var i = 0; i < players.length; i ++){
-						players[i].draw(players[i].maxHandcard() - players[i].countCards('h'));
+						players[i].draw(players[i].getHandcardLimit() - players[i].countCards('h'));
 					}
 				},
 			},

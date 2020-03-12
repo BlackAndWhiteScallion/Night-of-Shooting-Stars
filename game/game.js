@@ -3437,14 +3437,14 @@
             }
         },
         extensionMenu:{
-            boss:{
+            stg:{
                 enable:{
                     name:'开启',
                     init:true,
                     restart:true,
 					onswitch:function(bool){
 						if(bool){
-							var storage={boss:{},versus:{},translate:{}};
+							var storage={stg:{},versus:{},translate:{}};
 							game.loadModeAsync('stg',function(mode){
 								for(var i in mode.translate){
 									storage.translate[i]=mode.translate[i];
@@ -3459,7 +3459,7 @@
 							});
 						}
 						else{
-							localStorage.removeItem('boss_storage_playpackconfig');
+							localStorage.removeItem('stg_storage_playpackconfig');
 						}
 					}
 				},
@@ -3492,14 +3492,14 @@
                     }
                 },
             },
-            boss1:{
+            boss:{
                 enable:{
                     name:'开启',
                     init:true,
                     restart:true,
                     onswitch:function(bool){
                         if(bool){
-                            var storage={boss1:{},versus:{},translate:{}};
+                            var storage={boss:{},versus:{},translate:{}};
                             game.loadModeAsync('boss',function(mode){
                                 for(var i in mode.translate){
                                     storage.translate[i]=mode.translate[i];
@@ -3514,7 +3514,7 @@
                             });
                         }
                         else{
-                            localStorage.removeItem('boss1_storage_playpackconfig');
+                            localStorage.removeItem('boss_storage_playpackconfig');
                         }
                     }
                 },
@@ -3533,7 +3533,7 @@
                     onclick:function(){
                         if(this.firstChild.innerHTML=='隐藏此扩展'){
                             this.firstChild.innerHTML='此扩展将在重启后隐藏';
-                            lib.config.hiddenPlayPack.add('boss1');
+                            lib.config.hiddenPlayPack.add('stg');
                             if(!lib.config.prompt_hidepack){
                                 alert('隐藏的扩展包可通过选项-其它-重置隐藏内容恢复');
                                 game.saveConfig('prompt_hidepack',true);
@@ -3541,7 +3541,7 @@
                         }
                         else{
                             this.firstChild.innerHTML='隐藏此扩展';
-                            lib.config.hiddenPlayPack.remove('boss1');
+                            lib.config.hiddenPlayPack.remove('stg');
                         }
                         game.saveConfig('hiddenPlayPack',lib.config.hiddenPlayPack);
                     }
@@ -19279,6 +19279,7 @@
                     },avatar?0:300);
                 },
                 $effect:function(name, frame, left, top){
+                    /*
                     if(lib.config.animation&&!lib.config.low_performance){
                         var Animation = ui.create.div();
                         Animation.style["z-index"] = 20;
@@ -19320,7 +19321,7 @@
                             Animation.setBackgroundImage(SRC);
                             zhen ++;
                         },200);
-                    }
+                    }*/
                 },
                 $thunder:function(){
                     game.addVideo('flame',this,'thunder');
@@ -21563,7 +21564,6 @@
     				player.addIncident(game.createCard('library','zhenfa',''));
     				lib.config.backgroundchange = 'off';
 				},
-                
 				ai:{
 					effect:{
 						// 目前习性：不会被伤害牌。
@@ -36077,11 +36077,13 @@
                                                 }
                                             }
                                         }
+                                        /*
                                         for(var i in animes){
                                             for(var j=0;j<=animes[i];j++){
                                                 updates.push('image/effect/'+i+'/'+j+'.png');
                                             }
                                         }
+                                        */
                                     }
                                     if(!ui.arena.classList.contains('menupaused')){
                                         ui.click.configMenu();
