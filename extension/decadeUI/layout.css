@@ -1,0 +1,410 @@
+html {
+    background: rgb(60, 60, 60);
+}
+
+body>.background {
+    animation: anime-opacity 1s ease-in-out;
+}
+
+@keyframes anime-opacity {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#arena {
+	left: 2%;
+	right: 2%;
+	top: 10%;
+	bottom: 1%;
+	width: auto;
+	height: auto;
+	transition-property: opacity;
+}
+
+#arena.phone {
+    top: 2%;
+}
+
+#arena[data-anti-jitter='on'] div {
+	backface-visibility: hidden;
+}
+
+.info-box {
+	left: 30%;
+	top: 45%;
+	right: 30%;
+	bottom: 30%;
+	max-height: 40px;
+	padding: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 10%, rgba(0,0,0,0.4) 90%, transparent 100%);
+}
+
+.info-text {
+	font-size: 20px;
+}
+
+#arena:not(.chess).decadeUI>#mebg {
+    display: none;
+}
+
+.hand-zone, .hand-back {
+    width: 100%;
+    height: 150px;
+    bottom: 1%;
+	transition: none;
+}
+
+.discard-zone {
+	width: 100%;
+    height: 10%;
+}
+
+.hand-zone>.fakeme.avatar {
+    left: -128px;
+    top: auto;
+    right: auto;
+    bottom: 0;
+	width: 120px;
+	height: 120px;
+	border-radius: 0;
+	background-size: cover;
+}
+
+.hand-cards {
+	width: 100%;
+	height: 100%;
+	transition: none !important;
+}
+
+.hand-cards>.handcards {
+	padding: 0px;
+	width: 100%;
+	height: 100%;
+	transition: none;
+}
+
+.hand-cards>.handcards>.card {
+	margin: 0px;
+	width: 108px;
+    height: 150px;
+	position: absolute;
+	transition-property: transform, opacity, left, top;
+}
+
+.hand-cards>.handcards>.card.selected {
+    boder-radius: 2px;
+    /*transition-timing-function: linear;*/
+}
+
+.hand-cards>.handcards>.card.selectable {
+    boder-radius: 2px;
+	cursor: pointer;
+}
+
+.hand-cards>.handcards>.card::before {
+    opacity: 0;
+    border-radius: inherit !important;
+    box-shadow: 0px -1px 2px yellow, 0px -1px 5px yellow, 0px 0px 15px yellow;
+    transition: opacity 0.5s;
+}
+
+.hand-cards>.handcards>.card.selected::before {
+    opacity: 1;
+}
+
+.hand-cards>.handcards>.card::after,
+.hand-cards>.handcards>.card.selected::after,
+.hand-cards>.handcards>.card.selectable::after {
+    display: none;
+}
+
+#arena>.card, 
+#arena.oblongcard:not(.chess)>.card,
+#arena.oblongcard:not(.chess) .handcards>.card {
+	width: 108px;
+    height: 150px;
+}
+
+.button.card {
+	width: 108px;
+    height: 150px;
+	background-size: 100% 100%;
+}
+
+
+.card,
+#window:not(*[data-radius_size='']) .card {
+    border-radius: 2px;
+}
+
+.card.newcard {
+	width: 108px;
+    height: 150px;
+	box-shadow: 0 1px 4px black;
+	border-radius: 2px;
+	background-image: none;
+	background-repeat: no-repeat !important;
+	background-size: 100% 100% !important;
+	-moz-background-size: 100% 100% !important;
+}
+
+.mobile-phone .card {
+   box-shadow: 0 1px 2px black;
+}
+
+.card.newcard:not(*:empty) {
+	background: none;
+}
+
+.card.newcard.infohidden {
+	background-image: url('../../theme/style/cardback/image/liusha2.png') !important;
+}
+
+.card>.name,
+.card.fullskin>.name,
+.card.fullskin>.name.long,
+.dialog .buttons>.card>.name.long {
+	top: auto;
+	bottom: 5px;
+	line-height: 16px;
+	color: black;
+	font-size: 16px;
+	font-weight: bold;
+	text-shadow: 0 0 1px white, 0 0 3px white;
+	border: 1px solid black;
+	border-radius: 2px;
+}
+
+.card.newcard:not(*[data-card-type='basic'])>.name {
+    bottom: 20px;
+}
+
+#arena[data-card-Secondary-name-visible='off'] .card>.name {
+    display: none;
+}
+.card[data-card-type='jinji']>.top-name,
+.card[data-card-type='jinji']>.suit-num {
+    color: white;
+}
+.card>.top-name {
+    /*left: 14px;
+    top: 10px;
+    width: calc(100% - 15px);
+	color: black;
+	font-size: 20px;
+	font-family: shousha;
+    text-align: center;*/
+    top: 10px;
+    right: 5px;
+    width: calc(100% - 15px);
+	color: black;
+	font-size: 15px;
+	text-align: right;
+}
+
+.card.newcard>.top-name {
+    display: none;
+}
+
+.card.newcard>.image {
+	display: none;
+	visibility: hidden !important;
+}
+
+
+.card>.image,
+#arena:not(.chess)>.card>.image,
+#arena:not(.chess) .handcards>.card>.image,
+#arena.oblongcard:not(.chess)>.card>.image,
+#arena.oblongcard:not(.chess) .handcards>.card>.image{
+    position: absolute;
+    width: 108px;
+    height: 108px;
+    left:  0;
+    top: auto;
+    right: 0;
+    bottom: 8%;
+    background-position-x: 0;
+}
+
+
+.card>.suit-num {
+	font-size: 25px;
+    color: black;
+    text-align: center;
+	top: 10px;
+    left: 5px;
+	width: 25px;
+	height: auto;
+	line-height: 20px;
+	text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff;
+    letter-spacing: -1px;
+    transform-origin: 0 0;
+}
+
+body:not(*[data-version='low']) .mobile-phone .card>.suit-num>span:last-child {
+    font-size: 1rem;
+}
+
+.card[data-suit='heart']>.suit-num,
+.card[data-suit='diamond']>.suit-num {
+	color: red;
+}
+
+.card[data-suit='spade']>.suit-num,
+.card[data-suit='club']>.suit-num {
+	color: black;
+}
+
+.buttons .card.button>.info {
+    /*
+    left: 4px;
+    top: calc(50% - 12px);
+    right: 4px;
+    width: auto;
+    color: #181818;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 24px;
+    text-align: center;
+    text-shadow: none;
+	white-space: normal;
+    background: rgba(228, 207, 166, 0.8);
+    border-radius: 2px;
+    border: 1px solid black;
+    */
+    display: none;
+}
+
+.buttons .card.button>.info:empty {
+	display: none;
+}
+
+.card>.range {
+    right: 5px;
+    bottom: 5px;
+	line-height: 14px;
+	color: black;
+	font-size: 14px;
+	font-weight: bold;
+	font-family: shousha;
+	text-shadow: 0 0 1px white, 0 0 3px white;
+	border: 1px solid black;
+	border-radius: 2px;
+}
+
+.card>.range:empty {
+    display: none;
+}
+
+
+.card>.used-info {
+    opacity: 0;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 18px;
+	width: 100%;
+	height: 33%;
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: center;
+	font-family: 'STHeiti', 'SimHei', 'Microsoft JhengHei', 'Microsoft YaHei', 'WenQuanYi Micro Hei', Helvetica,Arial, sans-serif !important;
+}
+
+
+.card.thrown:not(.drawingcard):not(.movingcard)>.used-info {
+	opacity: 1;
+}
+
+.card>.card-mask {
+	opacity: 0;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+	border-radius: inherit;
+	transition: none;
+}
+
+.card.invalided>.card-mask,
+#arena.selecting:not(.video) .handcards>.card:not(.selectable)>.card-mask,
+#arena.thrownhighlight>.card.thrown:not(.thrownhighlight):not(.drawingcard),
+#arena.thrownhighlight>.card.thrown:not(.thrownhighlight):not(.drawingcard)>.card-mask {
+	opacity: 1;
+}
+
+
+.transition-none {
+	transition: none !important;
+}
+
+/*牌堆剩余牌数*/
+.mobile-phone>.touchinfo.right {
+    color: rgb(250, 250, 200);
+    right: calc(1% + 8px);
+    text-shadow: rgb(51,51,51) 1px 0 0, rgb(51,51,51) 0 1px 0, rgb(51,51,51) -1px 0 0, rgb(51,51,51) 0 -1px 0;
+    background: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 20%, rgba(0,0,0,0.2) 80%, transparent 100%);
+}
+
+
+#arena.decadeUI>.dialog.nobutton {
+    position: absolute;
+    left: 20%;
+    top: auto !important;
+    right: 20%;
+    bottom: 30% !important;
+    width: auto;
+    background: none;
+    transition-duration: 0.3s;
+}
+
+#arena.decadeUI.phone>.dialog.nobutton {
+    bottom: 25% !important;
+}
+
+#arena.decadeUI>.dialog.nobutton>.content-container>.content>.caption {
+    bottom: 0;
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    color: rgb(250, 250, 200);
+    background: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.2) 10%, rgba(0,0,0,0.2) 90%, transparent 100%);
+    text-shadow: rgb(51,51,51) 1px 0 0, rgb(51,51,51) 0 1px 0, rgb(51,51,51) -1px 0 0, rgb(51,51,51) 0 -1px 0;
+}
+
+#arena.decadeUI>.dialog.nobutton>.bar.bottom {
+    display: none;
+}
+
+#arena.decadeUI:not(.chess):not(.choose-character) #control {
+    position: absolute;
+    top: auto;
+    bottom: calc(15% + 28px);
+}
+
+#arena.decadeUI.phone:not(.chess):not(.choose-character) #control,
+#arena.decadeUI.oblongcard.phone:not(.chess):not(.choose-character) #control {
+    position: absolute;
+    top: auto;
+    bottom: calc(25% + 34px);
+}
+
+/*暂停记录栏*/
+.pausedbg>#sidebar {
+    width: auto;
+}
+

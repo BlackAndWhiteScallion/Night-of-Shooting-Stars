@@ -23,6 +23,7 @@ window.noname_package={
         boss:'挑战角色',
         cardpile:'牌堆补充',
         coin:'金币系统',
+        decadeUI:'UI升级',
     },
     mode:{
         library:'图鉴',

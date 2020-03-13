@@ -491,6 +491,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						this.hide();
 						game.addVideo('hidePlayer',this);
 						game.players.remove(this);
+						console.log(game.players);
 						this.delete();
 					}
 					if (this==game.boss){
@@ -775,7 +776,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					target.addTempSkill('mianyi');
 					var e = event.getParent('useSkill');
-					if (e && e.skill && e.skill == '_stg_lingji'){
+					if (e && e.skill && e.skill == 'stg_lingji'){
 						var trigger = event.getParent('damage');
 						trigger.cancel();
 					}
@@ -3181,6 +3182,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                      });
                      'step 1'
                      if (result.bool && result.targets){
+						player.line(result.targets, 'green');
                         event.target = result.targets[0];
                         event.target.chooseControl('受到1点弹幕伤害','下一次对'+get.translation(player)+'造成的伤害-1').set('ai',function(){
                             return '下一次对'+get.translation(player)+'造成的伤害-1';

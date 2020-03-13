@@ -44,7 +44,6 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		arenaReady:function(){
-			
 			if (get.mode() == 'boss' || get.mode() == 'puzzle') return;
 			game.loadModeAsync('boss',function(mode){
 				for(var i in mode.translate){
