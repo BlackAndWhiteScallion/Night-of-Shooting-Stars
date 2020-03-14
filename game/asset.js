@@ -363,6 +363,9 @@ window.noname_asset_list=[
     'theme/card.png',
     'theme/zhenfa.png',
     'theme/spell.gif',
+    'extension/decadeUI/image/decoration/border_camp.png',
+    'extension/decadeUI/image/decoration/border_hp.png',
+    'extension/decadeUI/image/decoration/card_count.png',
 ];
 window.noname_skin_list={
     sha:2,
