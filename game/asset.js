@@ -443,6 +443,7 @@ window.noname_skin_list={
     diva:1,
 };
 window.noname_animate_list={
+    /*
     jinu_skill:11,
     louguan_skill:5,
     qianxing_skill:6,
@@ -455,4 +456,5 @@ window.noname_animate_list={
     ziheng_skill:11,
     qusan_skill:18,
     shengdun_skill:17,
+    */
 };

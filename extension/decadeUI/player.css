@@ -621,7 +621,6 @@
     left: 0;
     top: auto;
     right: 0;
-    bottom: 0;
     width: 100%;
     margin: 0;
     text-align: center;
@@ -666,7 +665,7 @@
 	align-items: center;
 	align-content: center;
 	justify-content: center;
-	background: rgba(228, 207, 166, 0.8) !important;
+	background: rgba(255, 255, 255, 0.8) !important;
 	border: 1px solid rgb(95, 55, 45);
 	border-image: none !important;
 	box-sizing: border-box;
@@ -698,9 +697,8 @@
 .player>.equips>.card>.name2 {
 	color: #181818;
 	font-size: 13px;
-	font-weight: bold;
-	font-family: shousha, xinwei, xinkai !important;
-	margin-left: 0px;
+	font-family: xinwei, xinkai !important;
+	margin-left: 5px;
 	margin-top: 0px;
 	margin-right: 0px;
 	margin-bottom: 0px;
@@ -709,7 +707,7 @@
 
 .player>.equips>.card>.name2>span[data-suit='heart'],
 .player>.equips>.card>.name2>span[data-suit='diamond'] {
-	color: #8B0000;
+	color: rgb(255, 0, 0);
 }
 
 /*玩家标记显示*/

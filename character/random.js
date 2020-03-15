@@ -485,7 +485,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.storage.huanrao.add(trigger.cards[i]);
 					}
 					player.showCards(trigger.cards);
-					player.removeSkill('huanrao_3');
+					if (trigger.parent.name != 'drawSkill'){
+						player.removeSkill('huanrao_3');
+					}
 				}
 			},
 			huanrao_4:{
