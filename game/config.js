@@ -165,7 +165,7 @@ window.config={
 	connect_characters:[],
 	connect_cards:[],
 	plays:[],
-	extensions:[],
+	extensions:['decadeUI'],
 	banned:[],
 	bannedcards:[],
 	forbidlist:[],

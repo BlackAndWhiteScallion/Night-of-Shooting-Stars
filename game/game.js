@@ -330,12 +330,11 @@
                             if(!node.created){
                                 node.created=true;
                                 node.style.overflow='hidden';
-                                node.firstChild.style.display='none';
-                                // node.firstChild.classList.add('shadowed');
-                                // node.firstChild.style.width='16px';
-                                // node.firstChild.style.height='auto';
-                                // node.firstChild.style.padding='2px';
-                                // node.firstChild.style.textAlign='center';
+                                node.firstChild.classList.add('shadowed');
+                                node.firstChild.style.width='16px';
+                                node.firstChild.style.height='auto';
+                                node.firstChild.style.padding='2px';
+                                node.firstChild.style.textAlign='center';
                                 var me=ui.create.div(node);
                                 me.style.top='auto';
                                 if(link=='default'||link=='newlayout'){
@@ -6121,6 +6120,11 @@
 
                     if(!lib.config.gameRecord){
                         lib.config.gameRecord={};
+                    }
+                    if (lib.config.extension_手机UI升级_enable == null && lib.device){
+                        lib.config.extension_手机UI升级_enable = true;
+                    } else {
+                        lib.config.extension_手机UI升级_enable = false;
                     }
                     for(i in pack.mode){
                         if(lib.config.hiddenModePack.indexOf(i)==-1){
