@@ -2984,7 +2984,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		yinyangyu_skill:'阴阳玉',
 		yinyangyu_skill_1:'阴阳玉（躲～）',
 		yinyangyu_skill_2:'阴阳玉（轰！）',
-		yinyangyu_info:'你可以将一张红色牌当做【躲～】使用/打出; 你可以将一张黑色牌当做【轰！】使用/打出',
+		yinyangyu_info:'你可以将一张红色牌当做【躲～】使用/打出; 你可以将一张黑色牌当做【轰！】使用/打出。',
 		zhiyuu:'净颇梨之镜',
 		zhiyuu_skill:'亮胖次！',
 		zhiyuu_info:'一回合一次，出牌阶段，你可以令一名角色展示一张手牌；然后你可以弃置一张与展示的牌相同花色的手牌，对其造成1点灵击伤害。',

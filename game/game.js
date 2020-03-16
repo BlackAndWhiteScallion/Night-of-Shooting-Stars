@@ -45145,6 +45145,7 @@
         // 描述框的显示
         nodeintro:function(node,simple,evt){
             console.log(node);
+            alert(node.classList);
             var uiintro=ui.create.dialog('hidden','notouchscroll');
             if(node.classList.contains('player')&&!node.name){
                 return uiintro;
