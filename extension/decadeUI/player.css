@@ -191,7 +191,7 @@
 	opacity: 1;
 	border-radius: 0px;
 	box-shadow: none;
-	z-index: auto;
+	z-index: 5;
 }
 
 .equips-zone>.equips>div.selected {
