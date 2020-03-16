@@ -105,7 +105,7 @@
     right: -1%;
     bottom: 1%;
     min-height: 150px;
-    min-width: 156px;
+    min-width: 200px;
 }
 
 .equips-zone>.equips-back{
@@ -137,7 +137,7 @@
 .equips-zone>.equips-back>div {
 	left: 3px;
 	right: 3px;
-	height: 27px;
+	height: 35px;
     width: calc(100% - 6px);
 	position: absolute;
 	box-shadow: 0 0 6px rgb(200, 150, 80) inset;
@@ -150,7 +150,7 @@
 .equips-zone>.equips>div{
 	left: 3px;
 	right: 3px;
-	height: 27px;
+	height: 35px;
     width: calc(100% - 6px);
 	position: absolute;
 	box-shadow: none;
@@ -163,10 +163,12 @@
 }
 
 .equips-zone>.equips>div::before {
+    /*
 	background:
 		linear-gradient(180deg, rgb(250, 230, 150) 2px, transparent 2px, transparent calc(100% - 2px), rgb(250, 230, 150) 2px),
 		linear-gradient(090deg, rgb(250, 230, 150) 2px, transparent 2px, transparent calc(100% - 2px), rgb(250, 230, 150) 2px);
-	opacity: 1;
+    */
+    opacity: 1;
 	border-radius: 0px;
 	box-shadow: none;
 	z-index: auto;
@@ -174,6 +176,7 @@
 
 
 .equips-zone>.equips>div::after {
+    /*
 	background: 
 		linear-gradient(to left, yellow, yellow) left top no-repeat, 
 		linear-gradient(to bottom, yellow, yellow) left top no-repeat, 
@@ -183,7 +186,8 @@
 		linear-gradient(to bottom, yellow, yellow) left bottom no-repeat,
 		linear-gradient(to left, yellow, yellow) right bottom no-repeat,
 		linear-gradient(to left, yellow, yellow) right bottom no-repeat !important;
-	background-size: 2px 8px, 10px 2px, 2px 8px, 10px 2px !important;
+    */
+    background-size: 2px 8px, 10px 2px, 2px 8px, 10px 2px !important;
 	opacity: 1;
 	border-radius: 0px;
 	box-shadow: none;
@@ -191,7 +195,7 @@
 }
 
 .equips-zone>.equips>div.selected {
-	box-shadow: 0 0 10px yellow;
+	box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 133, 255, 0.5) 0 0 5px, rgba(0, 133, 255, 0.6) 0 0 12px, rgba(0, 133, 255, 0.8) 0 0 15px;
 }
 
 .equips-zone>.equips>div.selectable {
@@ -200,7 +204,7 @@
 }
 
 .mobile-phone .equips-zone>.equips>div.selected {
-    box-shadow: 0 0 2px yellow, 0 0 4px yellow, 0 0 8px yellow;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 133, 255, 0.5) 0 0 5px, rgba(0, 133, 255, 0.6) 0 0 12px, rgba(0, 133, 255, 0.8) 0 0 15px;
 }
 
 .equips-zone .equips>div[data-card-subype='equip5'] .equips-zone>.equips-back>div.equip0 {
@@ -213,23 +217,23 @@
 
 .equips-zone>.equips-back>div.equip0,
 .equips-zone>.equips>div.equip5{
-	top: 3px;
+	top: 0px;
 }
 
 .equips-zone>.equips-back>div.equip1,
 .equips-zone>.equips>div.equip1{
-	top: 33px;
+	top: 39px;
 }
 
 .equips-zone>.equips-back>div.equip2,
 .equips-zone>.equips>div.equip2{
-	top: 63px;
+	top: 77px;
 }
 
 .equips-zone>.equips-back>div.equip3,
 .equips-zone>.equips>div.equip3,
 .equips-zone>.equips>div.equip6 {
-	top: 93px;
+	top:115px;
 }
 
 .equips-zone>.equips-back>div.equip4{
@@ -261,7 +265,7 @@
 	border: 1px solid rgb(90, 50, 33);
 	border-radius: 0px;
 	box-sizing: border-box;
-	font-weight: bold;
+	font-size:larger;
 	pointer-events: none;
 	z-index: 1;
 }
@@ -287,7 +291,7 @@
 	left: 3px;
     top: 3px;
     bottom: 3px;
-	width: 21px;
+	width: 30px;
     height: calc(100% - 6px);
     position: absolute;
 	visibility: visible !important;

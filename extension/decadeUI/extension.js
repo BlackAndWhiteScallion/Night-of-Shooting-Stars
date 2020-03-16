@@ -9,15 +9,6 @@ content:function(config, pack){
 	if (lib.device){
 		lib.config.layout = 'nova';
 	}
-	/*
-    switch(lib.config.layout){
-        case 'long2':
-        case 'nova':
-            break;
-        default:
-            //alert('十周年UI提醒您，请更换<手杀>、<新版>布局以获得良好体验（在选项-外观-布局）。');
-            break;
-    }*/
 
 	console.time(extensionName);
 	window.decadeUI = {
@@ -2067,7 +2058,7 @@ content:function(config, pack){
 					ui.me.style.width = 'auto';
 				}
 				
-				ui.me.style.height = Math.round(decadeUI.getHandCardSize().height * decadeUI.getCardBestScale()) + 'px';
+				ui.me.style.height = Math.round(decadeUI.getHandCardSize().height * decadeUI.getCardBestScale()) + 100 + 'px';
 				if (handStyle){
 				    handStyle.left = ui.me.style.left;
 					handStyle.right = ui.me.style.right;

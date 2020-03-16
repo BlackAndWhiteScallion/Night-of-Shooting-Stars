@@ -124,13 +124,13 @@ body>.background {
 #arena>.card, 
 #arena.oblongcard:not(.chess)>.card,
 #arena.oblongcard:not(.chess) .handcards>.card {
-	width: 108px;
-    height: 150px;
+    width: 108px;
+    height:125px;
 }
 
 .button.card {
 	width: 108px;
-    height: 150px;
+    height: 125px;
 	background-size: 100% 100%;
 }
 
@@ -175,7 +175,8 @@ body>.background {
 	font-weight: bold;
 	text-shadow: 0 0 1px white, 0 0 3px white;
 	border: 1px solid black;
-	border-radius: 2px;
+    border-radius: 2px;
+    display: none;
 }
 
 .card.newcard:not(*[data-card-type='basic'])>.name {
@@ -226,7 +227,7 @@ body>.background {
     left:  0;
     top: auto;
     right: 0;
-    bottom: 8%;
+    bottom: 0%;
     background-position-x: 0;
 }
 
@@ -364,7 +365,7 @@ body:not(*[data-version='low']) .mobile-phone .card>.suit-num>span:last-child {
     left: 20%;
     top: auto !important;
     right: 20%;
-    bottom: 30% !important;
+    bottom: 40% !important;
     width: auto;
     background: none;
     transition-duration: 0.3s;

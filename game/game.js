@@ -6123,7 +6123,7 @@
                     }
                     if (lib.config.extension_手机UI升级_enable == null && lib.device){
                         lib.config.extension_手机UI升级_enable = true;
-                    } else {
+                    } else if (lib.config.extension_手机UI升级_enable == null){
                         lib.config.extension_手机UI升级_enable = false;
                     }
                     for(i in pack.mode){
