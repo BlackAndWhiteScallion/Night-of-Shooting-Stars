@@ -372,7 +372,7 @@ body:not(*[data-version='low']) .mobile-phone .card>.suit-num>span:last-child {
 }
 
 #arena.decadeUI.phone>.dialog.nobutton {
-    bottom: 25% !important;
+    bottom: 40% !important;
 }
 
 #arena.decadeUI>.dialog.nobutton>.content-container>.content>.caption {

@@ -45791,7 +45791,7 @@
                 uiintro.addText('手牌数：' + node.innerHTML);
                 uiintro.addText('手牌上限：' + node.parentNode.getHandcardLimit());
             }
-            else if (node.id == 'handcards1'){
+            else if (node.id == 'handcards1' && !lib.device){
                 uiintro.addText('手牌区');
                 uiintro.addText('手牌数：' + game.me.countCards('h'));
                 uiintro.addText('手牌上限：' + game.me.getHandcardLimit());
@@ -46071,15 +46071,15 @@
 					},300);
 				}());
 			}
-            else if (node.classList.contains('equips')){
+            else if (node.classList.contains('equips') && !lib.device){
                 uiintro.addText('装备区');
                 uiintro.addText('放装备牌的地方。任何装备都可以装。');
-                uiintro.addText('装备牌上限：'+node.parentNode.maxequip+'张');
+                uiintro.addText('装备牌上限：'+game.me.maxequip+'张');
             }
-            else if (node.classList.contains('judges')){
+            else if (node.classList.contains('judges') && !lib.device){
                 uiintro.addText('技能牌区');
                 uiintro.addText('放技能牌的地方。');
-                uiintro.addText('技能牌上限：'+node.parentNode.maxjudge+'张');
+                uiintro.addText('技能牌上限：'+game.me.maxjudge+'张');
             }
             else if(node.parentNode==ui.historybar){
                 if(node.dead){
