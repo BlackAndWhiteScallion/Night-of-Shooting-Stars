@@ -13615,10 +13615,10 @@
 							this._inits[i](this);
 						}
 					}
-                    lib.setIntro(this.node.count);
-                    lib.setIntro(this.node.hp);
-                    lib.setIntro(this.node.lili);
                     if (!lib.device){
+                        lib.setIntro(this.node.count);
+                        lib.setIntro(this.node.hp);
+                        lib.setIntro(this.node.lili);
                         lib.setIntro(this.node.equips);
                         lib.setIntro(this.node.judges);
                     }
@@ -45137,7 +45137,6 @@
         // 描述框的显示
         nodeintro:function(node,simple,evt){
             console.log(node);
-            alert(node.classList);
             var uiintro=ui.create.dialog('hidden','notouchscroll');
             if(node.classList.contains('player')&&!node.name){
                 return uiintro;
