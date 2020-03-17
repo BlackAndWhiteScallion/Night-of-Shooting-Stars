@@ -685,7 +685,7 @@
                     ui_zoom:{
                         name:'<u>界面缩放</u>',
                         unfrequent:true,
-                        init:'normal',
+                        init:false,
                         item:{
                             esmall:'80%',
                             vsmall:'90%',
@@ -6121,6 +6121,13 @@
                     if(!lib.config.gameRecord){
                         lib.config.gameRecord={};
                     }
+                    if (!lib.config.ui_zoom){
+                        if (lib.device){
+                            lib.config.ui_zoom = '90%';
+                        } else {
+                            lib.config.ui_zoom = '100%';
+                        }
+                    }
                     if (lib.config.extension_手机UI升级_enable == null && lib.device){
                         lib.config.extension_手机UI升级_enable = true;
                     } else if (lib.config.extension_手机UI升级_enable == null){
@@ -6133,7 +6140,7 @@
                             if(!lib.config.gameRecord[i]){
                                 lib.config.gameRecord[i]={data:{}};
                             }
-                        }
+                        }   
                     }
                     if(lib.config.all.mode.length==0){
                         lib.config.all.mode.push('identity');
@@ -13611,8 +13618,10 @@
                     lib.setIntro(this.node.count);
                     lib.setIntro(this.node.hp);
                     lib.setIntro(this.node.lili);
-                    lib.setIntro(this.node.equips);
-                    lib.setIntro(this.node.judges);
+                    if (!lib.device){
+                        lib.setIntro(this.node.equips);
+                        lib.setIntro(this.node.judges);
+                    }
                     this.update();
                     return this;
                 },
@@ -29527,10 +29536,6 @@
                     else if(!player.isUnseen(1)){
                         avatar=player.node.avatar2.cloneNode();
                     }
-                    else if(get.mode()=='guozhan'&&player.node&&player.node.name_seat){
-                        avatar=ui.create.div('.avatar.cardbg');
-                        avatar.innerHTML=player.node.name_seat.innerHTML[0];
-                    }
                     else{
                         return;
                     }
@@ -29571,10 +29576,6 @@
                 }
                 else if(!player.isUnseen(1)){
                     avatar=player.node.avatar2.cloneNode();
-                }
-                else if(get.mode()=='guozhan'&&player.node&&player.node.name_seat){
-                    avatar=ui.create.div('.avatar.cardbg');
-                    avatar.innerHTML=player.node.name_seat.innerHTML[0];
                 }
                 else{
                     return;
@@ -43327,15 +43328,6 @@
                 return select[0]==1&&select[1]==1;
             },
             jun:function(name){
-                if(get.mode()=='guozhan'){
-                    if(name&&typeof name=='object'){
-						if(name.isUnseen&&name.isUnseen(0)) return false;
-                        name=name.name1;
-                    }
-                    if(typeof name=='string'&&name.indexOf('gz_jun_')==0){
-                        return true;
-                    }
-                }
                 return false;
             },
             versus:function(){

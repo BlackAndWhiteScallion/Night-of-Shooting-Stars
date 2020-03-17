@@ -160,7 +160,7 @@
 	align-items: center;
 	align-content: center;
     justify-content: center;
-    z-index:9999;
+    z-index:15;
 }
 
 .equips-zone>.equips>div::before {
@@ -172,7 +172,7 @@
     opacity: 1;
 	border-radius: 0px;
 	box-shadow: none;
-	z-index: 9999;
+	z-index: auto;
 }
 
 
@@ -192,7 +192,7 @@
 	opacity: 1;
 	border-radius: 0px;
 	box-shadow: none;
-	z-index: 9999;
+	z-index: 5;
 }
 
 .equips-zone>.equips>div.selected {
