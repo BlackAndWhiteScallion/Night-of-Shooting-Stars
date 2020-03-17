@@ -2073,7 +2073,6 @@ content:function(config, pack){
 			}
 		},
 		isMobile:function(){
-			return true;
 		    return (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|OperaMini/i.test(navigator.userAgent));
 		},
 		delay:function(milliseconds){

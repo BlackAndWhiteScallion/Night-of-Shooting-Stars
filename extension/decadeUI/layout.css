@@ -148,7 +148,7 @@ body>.background {
 	background-image: none;
 	background-repeat: no-repeat !important;
 	background-size: 100% 100% !important;
-	-moz-background-size: 100% 100% !important;
+    -moz-background-size: 100% 100% !important;
 }
 
 .mobile-phone .card {

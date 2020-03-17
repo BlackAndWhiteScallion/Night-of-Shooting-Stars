@@ -14158,9 +14158,9 @@
                     }
                     else if(get.is.newLayout()&&
                     (
-                        this.maxlili>8||
+                        this.maxlili>5||
                         (this.maxlili>5&&this.classList.contains('minskin'))||
-                        ((game.layout=='mobile'||game.layout=='long')&&this.dataset.position==0&&this.maxlili>7)
+                        ((game.layout=='mobile'||game.layout=='long')&&this.dataset.position==0&&this.maxlili>5)
                     )){
                         lili.innerHTML=this.lili+'/'+this.maxlili+'<div></div>';
                         if(this.lili==0){
