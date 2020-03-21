@@ -867,7 +867,7 @@ content:function(config, pack){
 					// dieIdentityNode.style.transform = '';
 				// }
 			};
-			
+			/*
 			lib.element.player.$throwordered2 = function(card, nosource){
 				if (_status.connectMode) ui.todiscard = [];
 				
@@ -896,7 +896,6 @@ content:function(config, pack){
 					x = ((this.offsetWidth - card.offsetWidth) / 2 + this.offsetLeft) + 'px';
 					y = ((this.offsetHeight - card.offsetHeight) / 2 + this.offsetTop) + 'px';
 				}
-
 				card.style.transform = 'translate(' + x + ', ' + y + ')' + 'scale(' + decadeUI.getCardBestScale() + ')';
 				ui.refresh(card);
 				card.classList.remove('transition-none');
@@ -991,7 +990,7 @@ content:function(config, pack){
 				usedInfo.innerHTML = get.translation(this) + eventName;
 				return card;
 			};
-			
+			*/
 			lib.element.card.init = function(param){
 				var card = cardInitFunction.call(this, param);
 				if (decadeUI.resources.cardNames[card.name] && decadeUI.config.cardReplace){
@@ -1046,7 +1045,7 @@ content:function(config, pack){
 			};
 			
 			
-			
+			/*
 			lib.element.card.moveTo = function(player){
                 if (!player) return;
                 
@@ -1064,7 +1063,7 @@ content:function(config, pack){
 				this.fixed = true;
 				this.moving = true;
 				if(!this._listeningEnd || this._transitionEnded){
-					this.moveTo(player);
+					//this.moveTo(player);
 					if (!handUpdate && ui.thrown.indexOf(this) != -1){
 					    decadeUI.layout.invalidateDiscard();
 					}
@@ -1077,7 +1076,7 @@ content:function(config, pack){
 					this._onEndMoveDelete = player;
 				}
 			};
-			
+			*/
 			
 			lib.element.player.$draw= function(num, init, config){
                 if (game.chess) return playerDrawFunction.call(this, num, init, config);
@@ -1870,7 +1869,7 @@ content:function(config, pack){
 					if (!discards[i].scaled){
 					    discards[i].classList.add('transition-none');
 					    x = ((parent.offsetWidth - discards[i].offsetWidth) / 2 - parent.offsetWidth * 0.08) + 'px';
-					    discards[i].style.transform = 'translate(' + x + ',' + y + ')scale(' + scale + ')';
+					    //discards[i].style.transform = 'translate(' + x + ',' + y + ')scale(' + scale + ')';
 					    ui.refresh(discards[i]);
 					    discards[i].scaled = true;
 					    discards[i].classList.remove('transition-none');
@@ -1882,7 +1881,7 @@ content:function(config, pack){
 					}else{
 						x = Math.round((offset + i * cardWidth + margin - scaleOffset)) + 'px';
 					}
-					discards[i].style.transform = 'translate(' + x + ',' + y + ') scale(' + scale + ')';
+					//discards[i].style.transform = 'translate(' + x + ',' + y + ') scale(' + scale + ')';
 					discards[i]._transthrown = null;
 				}
 			},
@@ -1957,7 +1956,7 @@ content:function(config, pack){
 					
 					card = null;
 					decadeUI.layout.invalidateDiscard();
-				}, 2333, card);
+				}, 200, card);
 			},
 			delayClear:function(){
 			    var timestamp = 500;
@@ -2321,8 +2320,8 @@ config:{
         init: true,
     },*/
 	playerKillEffect:{
-		name: '玩家击杀特效',
-        init: true,
+		name: '玩家击坠特效',
+        init: false,
 		onclick:function(value){
             game.saveConfig('extension_十周年UI_playerKillEffect', value);
             if (decadeUI) decadeUI.config.playerKillEffect = value;
@@ -2330,7 +2329,7 @@ config:{
 	},
 	playerDieEffect:{
 		name: '玩家阵亡特效',
-        init: true,
+        init: false,
 		onclick:function(value){
             game.saveConfig('extension_十周年UI_playerDieEffect', value);
 			if (decadeUI) decadeUI.config.playerDieEffect = value;
