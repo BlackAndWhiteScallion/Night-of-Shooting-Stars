@@ -278,8 +278,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 								break;
 							}
 						}
-    					trigger.cancel();
+						trigger.cancel();
     					trigger.finish();
+						event.str=get.translation(player.name)+'的【圣盾】取消了'+get.translation(trigger.card);
+						game.notify(event.str);
     				}
     			},
     			ai:{
@@ -328,6 +330,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						}
     					trigger.cancel();
     					trigger.finish();
+    					event.str=get.translation(player.name)+'的【驱散】取消了'+get.translation(trigger.card);
+						game.notify(event.str);
     				}
     			},
     			ai:{
@@ -345,13 +349,15 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			content:function(){
     				"step 0"
     				var cards = player.getCards('j');
-						for (var i = 0; i <= cards.length; i ++){
-							if(cards[i]&&cards[i].name == 'shenyou'){
-								player.discard(cards[i]);
-								break;
-							}
+					for (var i = 0; i <= cards.length; i ++){
+						if(cards[i]&&cards[i].name == 'shenyou'){
+							player.discard(cards[i]);
+							break;
 						}
+					}
 					trigger.cancel();
+					event.str=get.translation(player.name)+'的【神佑】防止了伤害';
+					game.notify(event.str);
     			},
 			},
 			shenyou_skill_2:{
@@ -373,6 +379,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						}
 					}
     				game.log('神佑：',trigger.player,'的判定牌的花色改为'+get.translation("heart"));
+					event.str=get.translation(player.name)+'的【神佑】将判定牌改为了红桃花色';
+					game.notify(event.str);
     			},
 			},
 			jinu_skill:{
@@ -402,7 +410,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					return !player.hasSkill('qianxing_skill2');
 				},
 				content:function(){
+					'step 0'
 					player.addSkill('qianxing_skill2');
+					game.notify(get.translation(player)+'发动了【潜行】');
 				},
 				onremove:function(player){
 					player.removeSkill('qianxing_skill2');

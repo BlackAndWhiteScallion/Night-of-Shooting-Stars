@@ -7,8 +7,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			//zigui:['female','5',5,["always_win"]],
 			zigui:['female','5',5,["shijianliushi"]],
 			zither:['female','2',3,["zhisibuyu","chenshihuanxiang"]],
-			actress:['female','3',3,["ye’sbian","schrÖdinger"]],
-			bullygang:['male','1',3,["huanshu","zuanqu","aidoulu"]],
+			ling:['female', '3', 3, ['mengyan', 'zhaqu']],
+			haocao:['female', '1', 3, ['huanshu', 'jihuo', 'juechang']],
 			yukizakura:['female','3',3,["fenxue","ys_luoying"]],
 			hemerocalliscitrinabaroni:['female','3',3,["yinyangliuzhuan","daofaziran"]],
 			wingedtiger:['female','1',4,["wt_zongqing","wt_sacrifice","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
@@ -414,62 +414,110 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 			},
-			"ye’sbian":{
+			mengyan:{
 				audio:2,
-				trigger:{player:'damageEnd',source:'damageEnd'},
-				filter:function(event, player){
-					if(event._notrigger.contains(event.player)||event.nature == 'thunder') return false;
-					if (player.lili < 1) return false;
-					return event.num&&event.source&&event.player&&event.player.isAlive()&&event.source.isAlive()&&event.source!=event.player;
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.lili>0;
 				},
-				check:function(event,player){
-					if(event.player==player) return -get.attitude(player,event.source);
-					return -get.attitude(player,event.player);
+				filterTarget:function(card,player,target){
+					return target.countCards('h');
 				},
+				selectTarget:1,
 				content:function(){
 					"step 0"
-					event.target = trigger.player;
-					if(trigger.player==player) event.target = trigger.source;
-					player.loselili();
+					if (player.lili > 0) player.loselili();
+					event.videoId=lib.status.videoId++;
+					var cards=target.getCards('h');
+					if(player.isOnline2()){
+						player.send(function(cards,id){
+							ui.create.dialog('梦魇',cards).videoId=id;
+						},cards,event.videoId);
+					}
+					event.dialog=ui.create.dialog('梦魇',cards);
+					event.dialog.videoId=event.videoId;
+					if(player != game.me || target != game.me){
+						event.dialog.style.display='none';
+					}
+					player.chooseButton().set('filterButton',function(button){
+						return true;
+					}).set('dialog',event.videoId).set('selectButton', [1, Infinity]);
 					"step 1"
-					event.target.showHandcards();
+					if(result.bool){
+						event.card=result.links;
+						var func=function(card,id){
+							var dialog=get.idDialog(id);
+							if(dialog){
+								for(var i=0;i<dialog.buttons.length;i++){
+									if(card.contains(dialog.buttons[i].link)){
+										dialog.buttons[i].classList.add('selectedx');
+									}
+									else{
+										dialog.buttons[i].classList.add('unselectable');
+									}
+								}
+							}
+						}
+						if(player.isOnline2()){
+							player.send(func,event.card,event.videoId);
+						}
+						else if(event.isMine()){
+							func(event.card,event.videoId);
+						}
+						target.chooseControl('弃置被选择的牌','弃置没被选择的牌').ai=function(){
+                       		if (event.card.length > target.countCards('h')/2){
+								return '弃置没被选择的牌';
+							}
+							return '弃置被选择的牌';
+                    	};
+					}
+					else{
+						if(player.isOnline2()){
+							player.send('closeDialog',event.videoId);
+						}
+						event.dialog.close();
+						event.finish();
+					}
 					"step 2"
-					player.gain(target.getCards('he',{color:'black'}),target,true);
-					"step 3"
-					game.delay();
+					if(player.isOnline2()){
+						player.send('closeDialog',event.videoId);
+					}
+					event.dialog.close();
+					var card=event.card;
+					if(result.control=='弃置被选择的牌'){
+						target.discard(card);
+					}
+					else{
+						var cards = target.getCards('h');
+						for (var i = 0; i < cards.length; i ++){
+							if (card.contains(cards[i])){
+								cards.remove(cards[i]);
+								i = 0;
+							}
+						}
+						target.discard(cards);
+					}
 				},
 				ai:{
-					maixie:true,
-					maixie_hp:true
+					order:7,
+					result:{
+						target:function(player,target){
+							return -target.countCards('h');
+						}
+					},
 				}
 			},
-			"schrÖdinger":{
+			zhaqu:{
 				audio:2,
-				trigger:{
-					player:'dieBegin',
-				},
+				trigger:{source:'damageEnd'},
 				forced:true,
-				content:function(){
-					"step 0"
-					var players=game.filterPlayer();
-					for(var i=0;i<players.length;i++){
-						if(players[i]==player)continue;
-						players[i].showHandcards();
-						if(players[i].countCards('he',{name:'tao'}))players[i].addSkill('schrÖdinger_2');
-					}
-				}
-			},
-			"schrÖdinger_2":{
-				audio:2,
-				trigger:{
-					global:'dieAfter',
+				filter:function(event, player){
+					return event.nature != 'thunder';
 				},
-				forced:true,
 				content:function(){
-					"step 0"
-					player.die();
-					game.trySkillAudio('schrÖdinger',player,true,Math.ceil(2*Math.random()));
-					player.removeSkill('schrÖdinger_2');
+					player.gainlili();
+					trigger.player.damage('thunder');
 				}
 			},
 			huanshu:{
@@ -491,7 +539,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							}
 							if (f) continue;
 						}
-                        if(lib.card[i].type == 'basic'){
+                        if(lib.card[i].subtype == 'support' || lib.card[i].subtype == 'defense'){
                             list.add(i);
                         }
                     }
@@ -734,68 +782,45 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					},
 				},
 			},
-			zuanqu:{
+			jihuo:{
 				audio:2,
-				unique:true,
-				trigger:{player:'gainAfter'},
-				direct:true,
-				usable:4,
+				trigger:{player:'phaseEnd'},
 				forced:true,
-				filter:function(event,player){
-					if(event.parent.parent.name=='phaseUse') return false;
-					return event.cards&&event.cards.length>0
+				filter:function(event, player){
+					return player.countCards('e');
 				},
 				content:function(){
-					"step 0"
-					event.cards=trigger.cards.slice(0);
-					"step 1"
-					player.gainlili();
+					player.gainlili(player.countCards('e'));
 				},
 			},
-			aidoulu:{
-				spell:["aidoulu_2"],
-				cost:4,
+			juechang:{
 				audio:2,
-				priority:5,
+				cost:2,
+				spell:['juechang_skill'],
 				roundi:true,
 				trigger:{player:'phaseBeginStart'},
 				filter:function(event,player){
-					return player.lili > lib.skill.aidoulu.cost;
-				},
-				check:function(event,player){
-					return false;
+					return player.lili > lib.skill.juechang.cost;
 				},
 				content:function(){
-					player.loselili(lib.skill.aidoulu.cost);
+					player.loselili(lib.skill.juechang.cost);
 					player.turnOver();
 				},
-			},
-			aidoulu_2:{
-				audio:2,
-				trigger:{global:'phaseBegin'},
 				check:function(event,player){
-					return game.hasPlayer(function(current){
-						return get.attitude(player,current)<0;
-					});
-				},
-				content:function(){
-					trigger.player.addTempSkill('aidoulu_3');
-					trigger.player.recover();
-				},
-				prompt2:'令当前回合角色回复1点体力，且其本回合使用【轰】造成的伤害+1',
+					return true;
+				},	
 			},
-			aidoulu_3:{
-				trigger:{source:'damageBegin'},
-				filter:function(event){
-					return event.card&&event.card.name=='sha';
-				},
-				forced:true,
+			juechang_skill:{
+				trigger:{global:'phaseBegin'},
 				content:function(){
-					trigger.num++;
+					player.line(trigger.player);
+					trigger.player.recover();
+					trigger.player.gainlili();
+					trigger.player.useCard({name:'huazhi'}, trigger.player);
 				},
-				ai:{
-					damageBonus:true
-				},
+				check:function(event,player){
+					return get.attitude(player, event.player);
+				},	
 			},
 			fenxue:{
 				audio:2,
@@ -1001,7 +1026,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},   
 			},
-
 			ys_luoying_3:{
 				trigger:{player:'discardAfter'},
 				/*init:function(player){
@@ -1413,10 +1437,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			zigui_die:'太过分了！太过分了！',
 			zither:'听琴',
 			zither_die:'一丝遗憾，未灭……',
-			actress:'伶',
 			wingedtiger:'飞虎',
-			bullygang:'豪曹',
-			bullygang_die:'草草草摄像头忘关了，完了完了',
 			
 			yukizakura:'雪樱',
 			yukizakura_die:'樱花，继续飘落……',
@@ -1454,31 +1475,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			chenshihuanxiang_audio1:'谁都别想逃，谁都逃不掉！',
 			chenshihuanxiang_audio2:'一切，终将，归我所有！',
 
-			"ye’sbian":"夜之彼岸",
-			"ye’sbian_info":"当你造成或受到弹幕伤害后，你可以消耗1点灵力：展示受伤角色或伤害来源的所有手牌，获得其所有黑色牌。",
-			"schrÖdinger":"活猫心脏",
-			"schrÖdinger_info":"锁定技，你坠机时，展示所有其他角色的手牌：若有角色有【葱】，该角色坠机。",
-			"ye’sbian_audio1":'亡鸦不渡寒潭。',
-			"ye’sbian_audio2":'永不复还。',
-			"schrÖdinger_audio1":'合拢的嘴，泄密的心……',
-			"schrÖdinger_audio2":'它还在楼上跳个不停。',
+			ling:'伶',
+			mengyan:'梦魇',
+			mengyan_info:'出牌阶段限一次，你失去1点灵力，然后选择一名其他角色，观看其所有手牌并分为两部分，其选择一部分弃置。',
+			mengyan_audio1:'请务必舍弃执念…♡',
+			mengyan_audio2:'别紧张～放轻松嘛…',
+			zhaqu:'榨取',
+			zhaqu_info:'锁定技，当你造成弹幕伤害后，受到伤害的角色失去1点灵力，你回复1点灵力。',
+			zhaqu_audio1:'多谢款待♡',
+			zhaqu_audio2:'嗝～',
+			
+			haocao:'豪曹',
+			haocao_die:'什么，虚拟偶像？开玩笑，我是正牌货啊！',
 			huanshu:'幻术',
-			huanshu_info:'你可以交换场上两张装备牌或两张技能牌的位置，视为你使用/打出了一张基本牌；然后，此技能无效，直到你的回合开始。',
-			huanshu_audio1:'啊啦啊啦，还真是心急呢～',
-			huanshu_audio2:'嘛嘛，我觉得两位换一下位置更好哦？',
+			huanshu_info:'你可以交换场上两张装备牌或两张技能牌的位置，视为你使用/打出了一张防御牌或支援牌；然后，此技能无效，直到你的回合开始。',
+			huanshu_audio1:'你这个人怎么回事呐，我好心救了你你却连衣服都不肯脱吗？',
+			huanshu_audio2:'天灵灵地灵灵～博丽灵梦快显灵～',
 			huanshu2:'幻术',
 			huanshu_use:'幻术',
-			zuanqu:'赚取',
-			zuanqu_audio1:'哎呀哎呀，真是可爱的孩子～',
-			zuanqu_audio2:'唔～多谢款待★',
-			zuanqu_info:'锁定技，当你于出牌阶段外获得牌后，你获得1点灵力。',
-			aidoulu:'偶像',
-			aidoulu_2:'偶像（贴效果）',
-			aidoulu_audio1:'让我来讲述一个网络偶像的故事吧？',
-			aidoulu_audio2:'Guardian·of·Avalon！变身！',
-			aidoulu_2_audio1:'下一代的偶像就是你咯～',
-			aidoulu_2_audio2:'别害羞嘛，穿暴露一点又没关系的★',
-			aidoulu_info:'符卡技（4）<永续>一名角色的回合开始时，你可以令其回复1点体力，且直到回合结束，该角色使用【轰】造成的伤害+1。',
+			jihuo:'激活',
+			jihuo_info:'锁定技，结束阶段你获得X点灵力（X为你装备区内的牌数）。',
+			jihuo_audio1:'你等着，等到我有5点灵力值的时候！',
+			jihuo_audio2:'德鲁伊传统艺能·终极赖皮！…什么，撕卡是不允许的吗？',
+			juechang:'绝唱·永世隔绝之庭',
+			juechang_info:'符卡技（2）<永续>，一名角色的回合开始时，你可以消耗1点灵力，令其回复1点体力，获得1点灵力并视为其使用一张【花之祝福】。',
+			juechang_skill:'绝唱·永世隔绝之庭',
+			juechang_audio1:'让我来讲述一个王的故事吧——',
+			juechang_audio2:'绽放之庭，星之内海，纯洁之泉，开启——阿瓦隆的花园！',
+
 			fenxue:"纷雪",
 			fenxue_info:"一回合一次，出牌阶段，你可以依次弃置至多X名角色与你的各一张牌，以此法弃置红桃牌的角色各摸一张牌（X为场上牌的花色数且至少为1）",
 			ys_luoying:"落樱",

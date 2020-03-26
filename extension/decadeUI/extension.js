@@ -2323,16 +2323,14 @@ config:{
 		name: '玩家击坠特效',
         init: false,
 		onclick:function(value){
-            game.saveConfig('extension_十周年UI_playerKillEffect', value);
-            if (decadeUI) decadeUI.config.playerKillEffect = value;
+            game.saveConfig('extension_手机UI升级_playerKillEffect', value);
         },
 	},
 	playerDieEffect:{
 		name: '玩家阵亡特效',
         init: false,
 		onclick:function(value){
-            game.saveConfig('extension_十周年UI_playerDieEffect', value);
-			if (decadeUI) decadeUI.config.playerDieEffect = value;
+            game.saveConfig('extension_手机UI升级_playerDieEffect', value);
         },
 	},
     skillMarkColor:{
@@ -2343,8 +2341,7 @@ config:{
 			red:'红色',
         },
         onclick:function(value){
-			game.saveConfig('extension_十周年UI_skillMarkColor', value);
-			if (decadeUI) ui.arena.dataset.skillMarkColor = value;
+			game.saveConfig('extension_手机UI升级_skillMarkColor', value);
 		},
     },
 },

@@ -520,6 +520,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.$skill('神灵复苏',null,null,true);
 					targets[0].lili = 1;
 					targets[0].revive(1);
+					if (targets[0].node.dieidentity){
+						targets[0].node.dieidentity.hide();
+						delete targets[0].node.dieidentity;
+					}
 				},
 				content:function(){
 					'step 0'
@@ -535,6 +539,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},
 					result:{
 						target:function(player,target){
+							if (player == game.boss) return 1000;
 							if (game.countPlayer(function(current){
 								if (get.attitude(target, current) >= 0 && target != current) return 1;
 								return 0;
@@ -721,11 +726,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				boss_reimu:['female','0',8,['lingji','bianshen_reimu'],['boss'], 'shu'],
 				boss_reimu2:['female','0',4,['lingji','mengxiangtiansheng'],['hiddenboss'], 'shu'],
 				boss_zhaoyun:['male','0',1,['boss_juejing','longhun'],['shu','boss','bossallowed'],'shen'],
+				//boss_test:['male','2',8,[],['shu','boss','bossallowed'],'shen'],
 				boss_nianshou:['male','0',10000,['boss_nianrui','boss_qixiang','skipfirst','boss_damagecount'],['boss'],'shu','10000'],
 				//boss_saitama:['male','0',Infinity,['punch','serious','skipfirst','boss_turncount'],['boss'],'shen','1'],
 				boss_saitama:['male','0',Infinity,['punch','skipfirst','boss_turncount'],['boss'],'shen'],
 				boss_fapaiji:['female', '5', 3, ['huanri', 'toutian', 'boss_turncount'], ['boss'], 'shen'],
 				yuri:['female', '3', 3, ['chongzou', 'moxin1'], []],
+				priestress:['female', '3', 3, ['xiaoyu', 'jinhua', 'shengbi'], [], '', '3'],
 			},
 		},
 		characterIntro:{
@@ -921,6 +928,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								players[i].node.count.show();
 								players[i].update();
 								if(players[i].storage.boss_chongzheng<=0){
+									players[i].node.dieidentity.hide();
+									delete players[i].node.dieidentity;
+									delete players[i].storage.boss_chongzheng;
 									players[i].revive(players[i].hp);
 								}
 							}
@@ -1072,9 +1082,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					event.list=list;
 					for(i in lib.character){
 						if(lib.character[i][4].contains('minskin')) continue;
+						/*
 						if(lib.character[i][4].contains('boss')){
-							if (!lib.config.gameRecord.boss.data[i]) continue;
+							if (!lib.config.gameRecord.boss.data[i] || !lib.config.boss_enable_playpackconfig) continue;
 						}
+						*/
+						if(lib.character[i][4].contains('boss')) continue;
 						if(lib.character[i][4].contains('hiddenboss')) continue;
 						//if(lib.character[i][4]&&lib.character[i][4].contains('forbidai')) continue;
 						if(lib.config.forbidboss.contains(i)) continue;
@@ -1320,6 +1333,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_patchy2:{
 				loopType:1,
 			},
+			boss_test:{
+				loopType:2,
+				chongzheng:5,
+			},
 			boss_zhaoyun:{
 				loopType:1,
 				init:function(){
@@ -1461,13 +1478,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				"step 0"
     				player.judge(function(card){
 						return get.color(card)=='red'?1:-1;
-    				});;
+    				});
     				"step 1"
+					player.gain(result.card, 'draw2');
     				if(result.bool){
     					player.gainlili();
-    				}
-    				else{
-    					player.gain(result.card, 'draw2');
     				}
     			}
     		},
@@ -1827,7 +1842,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			longhun:{
-			group:['longhun1','longhun2','longhun3','longhun4'],
+				group:['longhun1','longhun2','longhun3','longhun4'],
 				ai:{
 					skillTagFilter:function(player,tag){
 						switch(tag){
@@ -2454,6 +2469,96 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			xiaoyu:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.lili>0;
+				},
+				filterTarget:function(card,player,target){
+					if(target.hp>=target.maxHp) return false;
+					return true;
+				},
+				selectTarget:1,
+				content:function(){
+					if (player.lili > 0) player.loselili();
+					target.recover();
+				},
+				ai:{
+					order:7,
+					result:{
+						target:function(player,target){
+							if(get.attitude(player,target)>0){
+								return get.recoverEffect(target,player,player)+1;
+							}
+							return 0;
+						}
+					},
+					threaten:2
+				}
+			},
+			jinhua:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return player.lili>0;
+				},
+				filterTarget:function(card,player,target){
+					return target.countCards('hej');
+				},
+				selectTarget:1,
+				content:function(){
+					"step 0"
+					if (player.lili > 0) player.loselili();
+					target.chooseCard('hej','净化：你可以重铸任意张牌', [1, Infinity]).set('ai',function(card){
+						return -get.value(card);
+					});
+					"step 1"
+					if (result.bool&&result.cards.length){
+						target.recast(result.cards);
+					}
+				},
+				ai:{
+					order:1,
+					result:{
+						target:function(player,target){
+							return target.countCards('h') - 3;
+						}
+					},
+				}
+			},
+			shengbi:{
+				audio:2,
+				trigger:{global:'phaseBegin'},
+				filter:function(event, player){
+					if (get.mode() == 'boss' && event.player != game.boss) return false;
+					return player.lili > 0;
+				},
+				content:function(){
+					"step 0"
+					player.loselili();
+					player.chooseTarget('圣壁：指定一名角色，该角色本回合受到的第一次伤害-1。').set('ai',function(target){
+						return get.attitude(_status.event.player,target);
+					});
+					'step 1'
+					if (result.bool){
+						player.logSkill('shengbi',result.targets);
+						game.notify('圣壁发动');
+						result.targets[0].addTempSkill('shengbi_skill');
+						
+					}
+				},
+			},
+			shengbi_skill:{
+				trigger:{player:'damageBegin'},
+				forced:true,
+				content:function(){
+					player.removeSkill('shengbi_skill');
+					trigger.num--;
+				}
+			},
 		},
 		translate:{
 			mode_boss_card_config:'魔王模式',
@@ -2479,7 +2584,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',
 			lingji:'灵击',
-			lingji_info:'锁定技，你造成或受到弹幕伤害后，须判定；若为红色，你获得1点灵力；否则，你获得判定牌。',
+			lingji_info:'锁定技，你造成或受到弹幕伤害后，须判定，并获得判定牌：若为红色，你获得1点灵力。',
 			bianshen_reimu:'二阶段转换',
 			bianshen_reimu_info:'体力值变为4时，或灵力值变为5时。',
 			mengxiangtiansheng:'梦想天生',
@@ -2527,7 +2632,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_saitama_die:'啊……就是这种感觉……',
 			boss_fapaiji:'发牌姬',
 			toutian:'偷天',
-			toutian_info:'一回合一次，出牌阶段，你可以消耗１点灵力，创建一张牌（可以是其他模式的牌）并获得之。',
+			toutian_info:'一回合一次，出牌阶段，你可以消耗1点灵力，创建一张牌（可以是其他模式的牌）并获得之。',
 			huanri:'换日',
 			huanri_judge:'换日',
 			huanri_info:'一名角色摸一张牌时，或判定时，你可以观看牌堆，将其中一张牌置于牌堆顶。',
@@ -2543,6 +2648,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			chongzou_info:'一回合每项各一次，出牌阶段，你可以消耗1点灵力，令一名角色：获得一张【潜行】并暗置之；获得【雨至】，该技能发动后失去；直到其回合结束，其使用攻击牌指定目标时，对目标造成1点灵击伤害。',
 			moxin1:'齐心',
 			moxin1_info:'一名角色的结束阶段，若其本回合造成过伤害，你可以令其获得一点灵力，或摸一张牌然后交给其一张牌。',
+			priestress:'女神官',
+			xiaoyu:'小愈',
+			xiaoyu_info:'一回合一次，出牌阶段，你可以消耗1点灵力，令一名角色回复1点体力。',
+			jinhua:'净化',
+			jinhua_info:'一回合一次，出牌阶段，你可以消耗1点灵力，令一名角色可以重铸任意张牌。',
+			shengbi:'圣壁',
+			shengbi_info:'魔王的回合开始时，你可以消耗1点灵力并指定一名角色：其本回合第一次受到伤害时，该伤害-1。',
+
 		},
 		get:{
 			rawAttitude:function(from,to){

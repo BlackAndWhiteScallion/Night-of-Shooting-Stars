@@ -482,7 +482,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               return player.storage.yinyang;
                         },
                         check:function(event,player){
-                              if (player.getCards('h').length <= (player.maxHp - player.hp) && event.player.getCards('hej').length) return get.attitude(_status.event.player,trigger.target)<0;
+                              if (player.getCards('h').length <= (player.maxHp - player.hp) && event.player.getCards('hej').length) return get.attitude(player, event.player)<0;
                               return true;
                         },
                         content:function(){

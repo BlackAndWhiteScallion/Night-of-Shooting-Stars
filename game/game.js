@@ -17181,6 +17181,7 @@
                 canUse:function(card,target,distance,includecard){
 					if(typeof card=='string') card={name:card};
 					var info=get.info(card);
+                    if (!info) return false;
 					if(info.multicheck&&!info.multicheck(card,this)) return false;
 					if(includecard!=false&&!lib.filter.cardEnabled(card,this)) return false;
 					if(includecard&&!lib.filter.cardUsable(card,this)) return false;
@@ -29374,6 +29375,21 @@
                 delete ui.connectClients;
                 delete ui.connectClientsCount;
             }
+        },
+        notify:function(str){
+            var dialog=ui.create.dialog(str);
+            dialog.videoId=lib.status.videoId++;
+        
+            game.broadcast(function(str,id){
+                var dialog=ui.create.dialog(str);
+                dialog.videoId=id;
+            },str,dialog.videoId);
+            game.pause();
+            setTimeout(function(){
+                game.broadcast('closeDialog',dialog.videoId);
+                dialog.close();
+                game.resume();
+            },get.delayx(1000,2000));
         },
         log:function(){
             var str='',logvid=null;

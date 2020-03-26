@@ -1925,8 +1925,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if(result.color){
 					if(result.color==get.color(trigger.card)){
 						trigger.cancel();
-						player.$effect('shengdun_skill', 17);
 						game.log('八咫镜：'+get.translation(trigger.card)+'对'+get.translation(player)+'无效。');
+						event.str=get.translation(player.name)+'的【八咫镜】取消了'+get.translation(trigger.card);
+						game.notify(event.str);
 					}
 				}
 			},
@@ -2080,8 +2081,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				"step 1"
 				if(result.bool){
 					game.log('人魂灯：',trigger.card, '对',player,'无效');
-					player.$effect('shengdun_skill', 17);
 					trigger.cancel();
+					event.str=get.translation(player.name)+'的【人魂灯】无效了'+get.translation(trigger.card);
+					game.notify(event.str);
 				}
 			},
 		},
@@ -2103,9 +2105,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (player.name == 'alice'){
 					game.trySkillAudio('hourai_skill',player,true,Math.ceil(2*Math.random()));
 				}
-				player.$effect('shengdun_skill', 17);
 				trigger.untrigger();
 				trigger.finish();
+				event.str=get.translation(player.name)+'的【替身人形】无效了'+get.translation(trigger.card);
+				game.notify(event.str);
 			},
 			check:function(){
 				return true;
@@ -2263,6 +2266,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		content:function(){
     			trigger.untrigger();
     			trigger.finish();
+				event.str='【冰域之宴】防止所有伤害';
+				game.notify(event.str);
     		},
     		ai:{
     			nofire:true,
