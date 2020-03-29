@@ -11,7 +11,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			haocao:['female', '1', 3, ['huanshu', 'jihuo', 'juechang']],
 			yukizakura:['female','3',3,["fenxue","ys_luoying"]],
 			hemerocalliscitrinabaroni:['female','3',3,["yinyangliuzhuan","daofaziran"]],
-			wingedtiger:['female','1',4,["wt_zongqing","wt_sacrifice","wt_feihu"],["des:ＲＢＱＲＢＱ"]],
+			wingedtiger:['female','1',4,["wt_zongqing","wt_sacrifice","wt_feihu"]],
 			pear:['female','3',4,['guaiqiao','aaaaa']],
 			icetea:['female', '0', 5, ['chouka', 'kejing', 'renli'],[],[],'11'],
 		},

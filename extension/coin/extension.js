@@ -102,7 +102,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 						},
 					}
 				},
-				liyu:{
+				sliyu:{
 					audio:2,
 					enable:'phaseUse',
 					usable:1,
@@ -130,12 +130,12 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 								random = 0.1;
 							}
 							if (target.name == 'reimu') random = 0;
-							if (Math.random() > random) target.addSkill('liyu_buff');
+							if (Math.random() > random) target.addSkill('sliyu_buff');
 							else game.log('利驭失败啦！');
 						}
 					},
 				},
-				liyu_buff:{
+				sliyu_buff:{
 					trigger:{player:'phaseEnd'},
 					direct:true,
 					group:'mad',
@@ -143,7 +143,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 						return true;
 					},
 					content:function(){
-						player.removeSkill('liyu_buff');
+						player.removeSkill('sliyu_buff');
 						player.removeSkill('mad');
 						player.unmarkSkill('mad');
 					}
@@ -313,10 +313,10 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				chaoli_info:'出牌阶段，你可以支付250金币，对一名角色造成1点弹幕伤害。',
 				chaoli_audio1:'给，打自己一个耳光吧？',
 				chaoli_audio2:'金币当作炮弹意外的效果不错呢~',
-				liyu:'利驭',
-				liyu_info:'一回合一次，你可以支付200，300，或400金币，并指定一名角色；该角色有几率攻击其队友一回合。',
-				liyu_audio1:'任何人都有一个价格。',
-				liyu_audio2:'这么多钱够吧？够吧？',
+				sliyu:'利驭',
+				sliyu_info:'一回合一次，你可以支付200，300，或400金币，并指定一名角色；该角色有几率攻击其队友一回合。',
+				sliyu_audio1:'任何人都有一个价格。',
+				sliyu_audio2:'这么多钱够吧？够吧？',
 				kejinji_die:'你钱太少了吧！',
 				hero:'勇者',
 				weituo:'委托',

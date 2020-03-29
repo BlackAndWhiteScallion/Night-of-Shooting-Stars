@@ -293,6 +293,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     }
                     "step 2"
                     game.log(trigger.card,'转移给了',player);
+                    game.notify(get.translation(trigger.card)+'转移给了'+get.translation(player));
                     trigger.untrigger();
                     trigger.trigger('useCardToBefore');
                     trigger.trigger('shaBefore');

@@ -239,6 +239,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.markSkill('mingdong');
                         lib.skill.mingdong2.viewAs = {name:name};
                         game.log(player,'选择了',lib.translate[name]);
+                        game.notify(get.translation(player)+'选择了'+lib.translate[name]);
                     }
                 },
             },
@@ -1061,6 +1062,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         player.logSkill(event.name,result.targets);
                         if (!trigger.targets.contains(player)){
                             game.log('对',trigger.target,'使用的',trigger.card,'转移给了',player);
+                            game.notify('对'+get.translation(trigger.target)+'使用的'+get.translation(trigger.card)+'转移给了'+get.translation(player));
                             trigger.targets.remove(trigger.target);
                             trigger.target=player;
                             trigger.targets.push(player);

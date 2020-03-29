@@ -7,13 +7,18 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			if (lib.config.gameRecord.boss){
 				lib.characterPack.mode_extension_boss={
 					yuri:['female', '3', 3, ['chongzou', 'moxin1'], []],
+					priestress:['female', '3', 3, ['xiaoyu', 'jinhua', 'shengbi'], [], '', '3'],
+					tamamo:['female', '2', 3, ['liyu', 'zhoufa', 'shuitian'], []],
 				};
 				if (lib.config.gameRecord.boss.data['boss_reimu2']){
-					lib.characterPack.mode_extension_boss.boss_reimu = ['female','5',4,['lingji','mengxiangtiansheng'], [], 'shu'];
+					lib.characterPack.mode_extension_boss.boss_reimu2 = ['female','5',4,['lingji','mengxiangtiansheng'], [], 'shu'];
 				}
 				if (lib.config.gameRecord.boss.data['boss_cirno2']){
-					lib.characterPack.mode_extension_boss.boss_cirno = ['female', '9', 4, ['jiqiang','zuanshi','jubing'], [], 'wei', '9'];
-				} 
+					lib.characterPack.mode_extension_boss.boss_cirno2 = ['female', '9', 4, ['jiqiang','zuanshi','jubing'], [], 'wei', '9'];
+				}
+				if (lib.config.gameRecord.boss.data['boss_mokou2']){
+					lib.characterPack.mode_extension_boss.boss_mokou2 = ['female', '5', 8, ['huoniao2', 'businiao_boss'],[], 'shu'];
+				}  
 				if (lib.config.gameRecord.boss.data['boss_zhaoyun']){
 					lib.characterPack.mode_extension_boss.boss_zhaoyun = ['male','0',1,['boss_juejing','longhun'],[], 'shen'];
 				}
@@ -41,6 +46,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 						lib.translate[i]=lib.translate[i]||list[i];
 					}
 				}
+				lib.translate['shengbi_info'] = '一名角色的回合开始时，你可以消耗1点灵力并指定一名角色：其本回合第一次受到伤害时，该伤害-1。';
 			}
 		},
 		arenaReady:function(){

@@ -746,6 +746,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'defense',
 			//enhance:1,
 			ai:{
+				wuxie:function(target,card,player,viewer){
+					if(get.attitude(viewer,player)>0) return 0;
+					return 1;
+				},
 				basic:{
 					useful:[6,4],
 					value:[6,4],
@@ -758,7 +762,12 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (player.name == 'patchouli'){
 					game.trySkillAudio('riyin2',player,true,Math.ceil(2*Math.random()));
 				}
-				event.result='wuxied';	// 效果无效（抵消）
+				var evt=event.getParent();
+					event.result={
+						wuxied:true,
+						directHit:evt.directHit||[],
+						nowuxie:evt.nowuxie,
+					};
 				if(player.isOnline()){
 					player.send(function(player){
 						if(ui.tempnowuxie&&!player.hasWuxie()){
@@ -2323,6 +2332,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			popup:false,
 			forced:true,
 			filter:function(event,player){
+				if(event.card.storage&&event.card.storage.nowuxie) return false;
+				if(event.getParent().nowuxie) return false;
 				var info=get.info(event.card);
 				if(!event.target){
 					if(info.wuxieable) return true;
@@ -2425,6 +2436,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				event.list=list;
 				event.id=get.id();
 				for(var i=0;i<game.players.length;i++){
+					if(event.nowuxie) return false;
 					if(game.players[i].hasWuxie()){
 						list.push(game.players[i]);
 					}
@@ -2530,7 +2542,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				}
 				'step 9'
 				if(event.wuxieresult){
-					if(result=='wuxied'){
+					if(result.wuxied){
+						event.nowuxie=result.nowuxie;
+						event.directHit=result.directHit;
+						if(!event.stateplayer&&event.wuxieresult)event.stateplayer=event.wuxieresult;
+						if(event.wuxieresult2&&event.wuxieresult2.used){
+							event.statecard=event.wuxieresult2.used;
+						}
+						else{
+							event.statecard=true;
+						}
 						event.state=!event.state;
 					}
 					event.goto(1);

@@ -5356,6 +5356,7 @@
             brawl:{
                 name:'场景',
                 config:{
+                    /*
                     practise:{
                         name:'对战练习',
                         init:true,
@@ -5406,6 +5407,7 @@
                         init:true,
                         frequent:true
                     }
+                    */
                 }
             },
             puzzle:{
@@ -7239,6 +7241,7 @@
                         if(character[i].character){
                             lib.characterPack[i]=character[i].character
                         }
+                        console.log(character);
                         // character里的每一个属性判定：
                         for(j in character[i]){
                             if(j=='mode'||j=='forbid') continue;
@@ -15899,7 +15902,9 @@
                         else if(typeof arguments[i]=='string'){
                             if(arguments[i]=='noai'){
                                 next.noai=true;
-                            }
+                            } else if(arguments[i]=='nowuxie'){
+								next.nowuxie=true;
+							}
                             else{
                                 next.skill=arguments[i];
                             }
@@ -16681,6 +16686,7 @@
                 skip:function(name){
                     this.skipList.add(name);
                     game.log(get.translation(this)+'跳过了'+get.translation(name));
+                    game.notify(get.translation(this)+'跳过了'+get.translation(name));
                 },
                 wait:function(callback){
                     if(lib.node){
@@ -21848,7 +21854,8 @@
                 },
                 content:function(){
                     player.loselili(lib.card[trigger.card.name].enhance);
-                    game.log(get.translation(player)+'强化了'+get.translation(trigger.card.name)+'。');
+                    game.log(player, '强化了',trigger.card,'。');
+                    game.notify(get.translation(player)+'强化了'+get.translation(trigger.card)+'。');
                     if (!player.storage._enhance){
                         player.storage._enhance = 1;
                     } else {
@@ -29384,11 +29391,9 @@
                 var dialog=ui.create.dialog(str);
                 dialog.videoId=id;
             },str,dialog.videoId);
-            game.pause();
             setTimeout(function(){
                 game.broadcast('closeDialog',dialog.videoId);
                 dialog.close();
-                game.resume();
             },get.delayx(1000,2000));
         },
         log:function(){
