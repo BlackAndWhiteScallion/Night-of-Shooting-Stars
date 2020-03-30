@@ -225,6 +225,62 @@
             game:{
                 name:'体系',
                 config:{
+                    game_draw:{
+                        name:'游戏开始时摸牌数',
+                        init:'1',
+                        intro:'游戏开始时，每名角色分发的手牌数。',
+                        item:{
+                            1:'1',
+                            2:'2',
+                            3:'3',
+                            4:'4',
+                            5:'5',
+                            6:'6',
+                            7:'7',
+                            8:'8',
+                        },
+                    },
+                    turn_draw:{
+                        name:'摸牌阶段摸牌数',
+                        init:'2',
+                        intro:'每名角色在摸牌阶段摸的牌数量',
+                        item:{
+                            1:'1',
+                            2:'2',
+                            3:'3',
+                            4:'4',
+                            5:'5',
+                            6:'6',
+                            7:'7',
+                            8:'8',
+                        },
+                    },
+                    maxcard:{
+                        name:'手牌上限数',
+                        init:'hp',
+                        intro:'每名角色的手牌上限的计算方式',
+                        item:{
+                            hp:'体力值',
+                            maxhp:'体力上限',
+                            lili:'灵力值',
+                            maxlili:'灵力上限',
+                            infinite:'无限',
+                        }
+                    },
+                    /*
+                    shacount:{
+                        name:'出牌阶段【轰！】上限数',
+                        init:'1',
+                        intro:'在出牌阶段里，最多可以使用多少张【轰！】',
+                        item:{
+                            1:'1',
+                            2:'2',
+                            3:'3',
+                            4:'4',
+                            infinite:'无限',
+                        },
+                    },
+                    */
                     compare_discard:{
                         name:'拼点后摸一张',
                         init:true,
@@ -3518,7 +3574,7 @@
                     }
                 },
                 intro:{
-                    name:'将一些挑战模式的角色追加到其他模式中。<br> 默认添加由理。<br>追加卡牌：废线电车，神灵复苏，例大祭（改），坦诚相待<br>魔王解锁条件：<br> 琪露诺：击败琪露诺 <br> 灵梦：击败灵梦 <br> 高达一号：击败高达一号 <br>年兽：一次游戏中对年兽造成至少50点伤害<br>斗篷光头：一次游戏中与斗篷光头对战至少5轮<br>发牌姬：一次游戏中与发牌姬对战至少5轮',
+                    name:'将一些挑战模式的角色追加到其他模式中。<br> 默认添加由理，女神官，玉藻前。<br>追加卡牌：废线电车，神灵复苏，例大祭（改），坦诚相待<br>魔王解锁条件：<br> 琪露诺：击败琪露诺 <br> 灵梦：击败灵梦 <br> 妹红：击败妹红<br>高达一号：击败高达一号 <br>年兽：一次游戏中对年兽造成至少50点伤害<br>斗篷光头：一次游戏中与斗篷光头对战至少5轮<br>发牌姬：一次游戏中与发牌姬对战至少5轮',
                     clear:true,
                     nopointer:true,
                 },
@@ -8341,6 +8397,7 @@
             ten:'十',
             _chongzhu:'重铸',
             _enhance:'强化',
+            _tanpai:'异变',
             qianxing:'潜行',
             mianyi:'免疫',
             mianyi_info:'锁定技，你受到伤害时，防止该伤害。',
@@ -14980,6 +15037,7 @@
                         this.addSkill(get.info(card).skills[i]);
                     }
                     game.log(this,'明置了异变牌',card);
+                    game.notify(get.translation(this) + '明置了异变牌'+get.translation(card));
 
                     // 将异变牌加入记录（阿求不加）
                     if (this.name == 'akyuu') return ;
@@ -15013,7 +15071,7 @@
                 phaseDraw:function(){
                     var next=game.createEvent('phaseDraw');
                     next.player=this;
-                    next.num=2;
+                    next.num=parseInt(lib.config.turn_draw);
                     next.setContent('phaseDraw');
                     return next;
                 },
@@ -17913,7 +17971,17 @@
                     return (range);
                 },
                 getHandcardLimit:function(){
-                    return Math.max(0,game.checkMod(this,this.hp,'maxHandcard',this));
+                    var number = this.hp;
+                    if (lib.config.maxcard == 'maxhp'){
+                        number = this.maxHp;
+                    } else if (lib.config.maxcard == 'lili'){
+                        number = this.lili;
+                    } else if (lib.config.maxcard == 'maxlili'){
+                        number = this.maxlili;
+                    } else if (lib.config.maxcard == 'infinite'){
+                        return Infinity;
+                    }
+                    return Math.max(0,game.checkMod(this,number,'maxHandcard',this));
                 },
                 getEnemies:function(func){
                     var player=this;
@@ -28467,7 +28535,7 @@
         gameDraw:function(player,num){
             var next=game.createEvent('gameDraw');
             next.player=player||game.me;
-            if(num==undefined) next.num=4;
+            if(num==undefined) next.num=parseInt(lib.config.game_draw);
             else next.num=num;
             next.setContent('gameDraw');
         },

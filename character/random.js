@@ -2566,7 +2566,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.unmarkSkill('chaoyue');
 				},
 				check:function(event,player){
-					return true;
+					return player.storage.chaoyue > 5;
 				},	
 			},
 			chaoyue_skill:{

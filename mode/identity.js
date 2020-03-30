@@ -2436,6 +2436,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.node.identity.classList.remove('guessing');
 					}, player, player.identity);
 					game.log(player,'的身份是','#g'+get.translation(player.identity+'2'));
+					game.notify(get.translation(player)+'的身份是#g'+get.translation(player.identity+'2'));
 					player.disableSkill('_tanpai');
 					player.removeSkill('_tanpai');
 					/*
@@ -2479,6 +2480,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				if (result.bool){
     					if (result.targets != ''){
     						if (player.identity == 'fan'){
+								game.log(player, '对', result.targets[0],'发动了“自机”身份明置效果');
 	    						player.line(result.targets[0],'green');
 	    						var list = ['discard'];
 	    						event.target=result.targets[0];
@@ -2488,6 +2490,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									return 'discard';
 								});
     						} else if (player.identity == 'zhong'){
+								game.log(player, '对', result.targets[0],'发动了“异变”身份明置效果');
     							player.line(result.targets[0],'green');
     							result.targets[0].draw();
     						}
@@ -2595,10 +2598,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 		},
 		help:{
-			'身份模式':'<div style="margin:10px">选项</div><ul style="margin-top:0"><li>加强主公<br>反贼人数多于2时主公会额外增加一个技能（每个主公的额外技能固定，非常备主公增加天命）<li>特殊身份<br><ul style="padding-left:20px;padding-top:5px"><li>军师：忠臣身份。只要军师存活，主公在准备阶段开始时，可以观看牌堆顶的三张牌，然后将这些牌以任意顺序置于牌堆顶或牌堆底<li>大将：忠臣身份。只要大将存活，主公手牌上限+1<li>贼首：反贼身份，只要贼首存活，主公手牌上限-1</ul></ul>'+
-			'<div style="margin:10px">明忠</div><ul style="margin-top:0"><li>本模式需要8名玩家进行游戏，使用的身份牌为：1主公、2忠臣、4反贼和1内奸。游戏开始时，每名玩家随机获得一个身份，由系统随机选择一名忠臣身份的玩家亮出身份（将忠臣牌正面朝上放在面前），其他身份（包括主公）的玩家不亮出身份。<li>'+
-			'首先由亮出身份的忠臣玩家随机获得六张武将牌，挑选一名角色，并将选好的武将牌展示给其他玩家。之后其余每名玩家随机获得三张武将牌，各自从其中挑选一张同时亮出<li>'+
-			'亮出身份牌的忠臣增加1点体力上限。角色濒死和死亡的结算及胜利条件与普通身份局相同。',
+			'',
 		}
 	};
 });

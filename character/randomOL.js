@@ -179,9 +179,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				hiddenCard:function(player,name){
                     return name == 'shan' || name == 'wuxie';
                 },
+				check:function(){
+					return true;
+				},
                 ai:{
                 	save:true,
-                    order:2,
+                    order:5,
                     result:{
                         player:function(player){
                             return 1;
