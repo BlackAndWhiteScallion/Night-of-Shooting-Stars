@@ -170,6 +170,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			}
 			"step 2"
 			// 换掉牌堆里的冰域和令避
+			lib.card.list = lib.card.list.concat([[null,0,'boss_sansi'],[null,0,'boss_sansi'],[null,0,'boss_gushou'],[null,0,'boss_gushou'],[null,0,'boss_poxian'],[null,0,'boss_poxian']]);
 			ui.create.cardsAsync();
 			game.finishCards();
 			game.addGlobalSkill('autoswap');
@@ -186,13 +187,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				else lib.card[list[i]].forbid.push('boss');
 				game.removeCard(list[i], map[list[i]]);
 			}
+
 			lib.skill['saiqian_skill3'].viewAs = {name:'reidaisai2'};
 			game.bossinfo=lib.boss.global;
 			for(var i in lib.boss[event.current.name]){
 				game.bossinfo[i]=lib.boss[event.current.name][i];
 			}
 			delete lib.boss;
-
 			setTimeout(function(){
 				ui.control.classList.remove('bosslist');
 			},500);
@@ -714,6 +715,69 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			boss_sansi:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				ai:{
+					basic:{
+						useful:5,
+						value:5,
+					},
+					result:{target:1},
+				},
+				skills:['boss_sansi_skill']
+			},
+			boss_gushou:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				ai:{
+					basic:{
+						useful:5,
+						value:5,
+					},
+					result:{target:1},
+				},
+				skills:['boss_gushou_skill']
+			},
+			boss_poxian:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				ai:{
+					basic:{
+						useful:5,
+						value:5,
+					},
+					result:{target:1},
+				},
+				skills:['boss_poxian_skill']
+			},
 		},
 		characterPack:{
 			mode_boss:{
@@ -748,7 +812,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			yuri:'全名仲村由理，死后世界的学校中，死后世界战线的领导者，旨在与神，与神的天使对抗。<br>出自：angel beats! 画师：戦-G',
 		},
 		cardPack:{
-			mode_boss:['dianche', 'shenlin', 'reidaisai2', 'tancheng'],
+			mode_boss:['dianche', 'shenlin', 'reidaisai2', 'tancheng', 'boss_poxian', 'boss_gushou', 'boss_sansi'],
 		},
 		init:function(){
 			/*
@@ -2826,7 +2890,93 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 				},
-			}
+			},
+			boss_sansi_skill:{
+				global:'boss_sansi2',
+			},
+			boss_sansi2:{
+				audio:2,
+				enable:'phaseUse',
+				usable:1,
+				filter:function(event,player){
+					return game.hasPlayer(function(target){
+						return target.identity == player.identity&&target.hasSkill('boss_sansi');
+					});
+				},
+				position:'hej',
+				filterCard:true,
+				selectCard:function(){
+					var player=_status.event.player;
+					var num = game.countPlayer(function(current){
+						return current.identity != player.identity;
+					});
+					return [1,num];
+				},
+				prompt:'重铸至多X张牌，X为与你不同阵营的角色数',
+				check:function(card){
+					return 6-get.value(card)
+				},
+				discard:false,
+				content:function(){
+					player.recast(cards);
+				},
+				ai:{
+					order:1,
+					result:{
+						player:1
+					},
+					threaten:1.5
+				},
+			},
+			boss_gushou_skill:{
+				global:'boss_gushou2',
+			},
+			boss_gushou2:{
+				mod:{
+					maxHandcard:function(player,num){
+						return num + 2 * game.countPlayer(function(current){
+							return current.identity == player.identity && current.hasSkill('boss_gushou');
+						});
+					},
+				}
+			},
+			boss_poxian_skill:{
+				forced:true,
+				trigger:{global:['dieAfter', 'revive']},
+				init:function(player){
+					player.useSkill('boss_poxian');
+				},
+				onremove:function(player){
+					if (!player.countCards('j', 'lianji')){
+						player.removeSkill('lianji_skill');
+					}
+					if (!player.countCards('j', 'ziheng')){
+						player.removeSkill('ziheng_skill');
+					}
+					if (!player.countCards('j', 'jinu')){
+						player.removeSkill('jinu_skill');
+					}
+				},
+				content:function(){
+					if (game.countPlayer(function(current){
+						return current.identity == player.identity; 
+					}) == 1){
+						player.addSkill('lianji_skill');
+						player.addSkill('jinu_skill');
+						player.addSkill('ziheng_skill');
+					} else {
+						if (!player.countCards('j', 'lianji')){
+						player.removeSkill('lianji_skill');
+					}
+					if (!player.countCards('j', 'ziheng')){
+						player.removeSkill('ziheng_skill');
+					}
+					if (!player.countCards('j', 'jinu')){
+						player.removeSkill('jinu_skill');
+					}
+					}
+				},
+			},
 		},
 		translate:{
 			mode_boss_card_config:'魔王模式',
@@ -2849,6 +2999,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			reidaisai2_info:'出牌阶段，对任意名与你身份不同的角色使用；目标摸一张牌，你摸X张牌（X为目标数+1），然后你可以将任意张牌交给任意名其他角色。',
 			tancheng:'坦诚相待',
 			tancheng_info:'出牌阶段，对所有其他角色使用；目标展示所有手牌，然后你可以用一张牌交换其中一张与之不同类型的牌。',
+			boss_sansi:'三思',
+			boss_sansi_info:'一回合一次，与你相同阵营的角色的出牌阶段，其可以重铸X张牌（X为与其不同阵营的角色数）。',
+			boss_poxian:'破限',
+			boss_poxian_info:'锁定技，若没有其他与你相同阵营的角色，你视为持有【连击】，【激怒】，【制衡】。',
+			boss_gushou:'固守',
+			boss_gushou_info:'锁定技，与你相同阵营的角色的手牌上限+2。',
 			boss_reimu:'灵梦',
 			boss_reimu2:'灵梦',
 			lingji:'灵击',

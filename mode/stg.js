@@ -486,7 +486,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if(this!=game.boss && this!= game.me){
 						if (source){
 							source.draw();
-							source.gainlili();
+							if (get.config('die_lili')){
+								source.gainlili();
+							}
 						}
 						this.hide();
 						game.addVideo('hidePlayer',this);
@@ -902,6 +904,90 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			stg_zhuanzhu:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				skills:['stg_zhuanzhu_skill'],
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				ai:{
+					basic:{
+						value:8,
+					},
+					result:{target:1},
+					expose:0.2
+				},
+			},
+			stg_chongci:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				skills:['stg_chongci_skill'],
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				ai:{
+					basic:{
+						value:5,
+					},
+					result:{target:1},
+					expose:0.2
+				},
+			},
+			stg_juedi:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				skills:['stg_juedi_skill'],
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				ai:{
+					basic:{
+						value:12,
+					},
+					result:{target:1},
+					expose:0.2
+				},
+			},
+			stg_chongzhen:{
+				audio:true,
+				fullskin:true,
+				type:'delay',
+				skills:['stg_chongzhen_skill'],
+				filterTarget:function(card,player,target){
+					return true;
+				},
+				judge:function(card){
+					return 0;
+				},
+				effect:function(){
+				},
+				ai:{
+					basic:{
+						value:9,
+					},
+					result:{target:1},
+					expose:0.2
+				},
+			},
 		},
 		characterPack:{
 			mode_stg:{
@@ -918,7 +1004,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		cardPack:{
 			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle','stg_deck','stg_watch',
 			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook', 'stg_mingyun', 'stg_bawu', 'stg_lingji',
-			'stg_fengyin', 'stg_pohuai'],
+			'stg_fengyin', 'stg_pohuai', 'stg_chongzhen', 'stg_juedi', 'stg_chongci', 'stg_zhuanzhu'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -2851,6 +2937,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			missile_ready:{
+			},
+			stg_chongci_skill:{
+
+			},
+			stg_chongzhen_skill:{
+
+			},
+			stg_zhuanzhu:{
+
+			},
+			stg_juedi_skill:{
+
 			},
 			stg_deck_skill:{
 				init:function(player){

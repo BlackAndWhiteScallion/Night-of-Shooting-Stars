@@ -46,6 +46,7 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 						lib.translate[i]=lib.translate[i]||list[i];
 					}
 				}
+				lib.card.list = lib.card.list.concat([[null,0,'boss_sansi'],[null,0,'boss_sansi'],[null,0,'boss_gushou'],[null,0,'boss_gushou'],[null,0,'boss_poxian'],[null,0,'boss_poxian']]);
 				lib.translate['shengbi_info'] = '一名角色的回合开始时，你可以消耗1点灵力并指定一名角色：其本回合第一次受到伤害时，该伤害-1。';
 			}
 		},

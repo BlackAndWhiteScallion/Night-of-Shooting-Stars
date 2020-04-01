@@ -5225,6 +5225,13 @@
                             }
                         }
                     },
+                    die_lili:{
+                        name:'击坠角色后，来源获得1点灵力',
+                        init:false,
+                        onclick:function(bool){
+                            game.saveConfig('die_lili',bool,this._link.config.mode);
+                        }
+                    },
                 }
             },
             chess:{
@@ -5876,7 +5883,8 @@
                     }
                     this.setBackgroundImage(src);
                     this.style.backgroundSize="cover";
-                    if (lib.card[name] && lib.card[name].type == 'delay' && !lib.config.skin[name]) this.style.backgroundSize = "115%";
+                    if (lib.card[name] && lib.card[name].type == 'delay' && lib.config.skin[name] == 2) this.style.backgroundSize = "115%";
+                     if (lib.card[name] && lib.card[name].type == 'delay' && !lib.config.skin[name]) this.classList.add('fullimage');
                     return this;
                 };
                 HTMLDivElement.prototype.setBackgroundDB=function(img){
@@ -16562,7 +16570,7 @@
                     return next;
                 },
                 revive:function(hp,log){
-                    if(log!==false) game.log(this,'复活');
+                    if(log!==false) game.log(this,'重新加入游戏');
                     if(this.maxHp<1) this.maxHp=1;
                     if(hp) this.hp=hp;
                     else{
@@ -16613,6 +16621,7 @@
                             delete ui.continue_game;
                         }
                     }
+                    _status.event.trigger('revive');
                 },
                 // 增加身份表现性 （注：只有身份模式的明忠模式下使用了这个东西）。因为还算复杂且影响不明，所以还是不删了。
                 addExpose:function(num){
@@ -39191,7 +39200,7 @@
                     node.link=item;
                     if(item.style.backgroundImage){
                         node.style.backgroundImage=item.style.backgroundImage;
-                        node.style.backgroundSize='cover';
+                        //node.style.backgroundSize='cover';
                     }
                     if(item.style.color){
                         node.style.color=item.style.color;

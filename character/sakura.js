@@ -1828,7 +1828,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 trigger:{player:'loseliliBefore'},
                 filter:function(event,player){
-                    if (event.getParent().name == 'shiqu2') return false;
+                    if (event.getParent('useSkill') && event.getParent('useSkill').skill == 'shiqu2') return false;
                     var players = game.filterPlayer();
                     for (var i = 0; i < players.length; i ++){
                         if (players[i].hasSkill('shiqu2') && players[i] != player) return true;
@@ -1837,13 +1837,14 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 },
                 content:function(){
                     'step 0'
-                    player.chooseTarget('让蓝帮你支付灵力？',1,function(card,player,target){
+                    player.chooseTarget('让一名“式取”的角色帮你支付灵力',1,function(card,player,target){
                             return target != player && target.hasSkill('shiqu2');
                         }).set('ai',function(target){
                             return get.attitude(_status.event.player,target) && target.lili > _status.event.player.lili;
                         });
                     'step 1'
                     if (result.bool && result.targets.length){
+                        player.line(result.targets[0], 'green');
                         result.targets[0].removeSkill('shiqu2');
                         result.targets[0].loselili(trigger.num);
                         result.targets[0].addTempSkill('shiqu2',{player:'phaseBegin'});

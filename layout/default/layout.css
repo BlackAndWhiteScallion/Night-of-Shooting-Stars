@@ -2283,8 +2283,8 @@ div:not(.handcards)>.card>.info>span,
 	height: 120%;
 	left: -20%;
 	top: -20%;*/
-	background-size: 115%;
-    background-position: -3px -3px;
+	background-size: 115% !important;
+    background-position: -4px -3px;
     background-repeat: no-repeat;
 }
 
