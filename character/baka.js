@@ -200,8 +200,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         },
                         filterTarget:function(card,player,target){
                               if(target.hp>=target.maxHp) return false;
-                              if(player.hp>target.hp) return false;
-                              return true;
+                              return player.hp>=target.hp;
                         },
                         selectTarget:function(){
                               var player=_status.event.player;

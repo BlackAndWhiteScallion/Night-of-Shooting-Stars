@@ -652,7 +652,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								}
 								if (f) continue;
 							}
-                            if(lib.card[i].type == 'basic'){
+                            if(lib.card[i].subtype == 'defense' || lib.card[i].subtype == 'support'){
                                 list.add(i);
                             }
                         }

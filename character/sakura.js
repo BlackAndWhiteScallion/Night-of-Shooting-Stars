@@ -1918,7 +1918,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (get.type(card) == 'equip' || get.subtype(card) == 'support') return get.attitude(player,event.player) > 0;
                     */
                     if (!card) return false;
-                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name}, player, player) > 0;
+                    if (player.canUse(card,event.player)) return get.effect(event.player,{name:card.name}, player);
                     return false;
                 },
                 content:function(){
