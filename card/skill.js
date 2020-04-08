@@ -202,7 +202,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 							if (player.lili > 1) return 4;
 							else return 100;
 						},
-						equipValue:10;
+						equipValue:10,
 					},
 					result:{target:1},
 				},
