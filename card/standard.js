@@ -516,11 +516,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				target.draw(2);
 			},
 			ai:{
-				/*
-				wuxie:function(){
-					return 1;
-				},
-				*/
 				basic:{
 					order:7.2,
 					useful:4,
