@@ -64,7 +64,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             	filterCard:function(){
             		return true;
             	},
-                position:'hej',
+				position:'hej',
+				check:function(card){
+					return card.name != 'lingyong';
+				},
             	prompt:'选择一张牌发动【似幻】？',
             	discard:false,
                 lose:false,

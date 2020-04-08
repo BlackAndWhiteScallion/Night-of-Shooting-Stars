@@ -148,6 +148,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},400);
 			_status.bosschoice = event.current;
 			ui.create.div(bosslist);
+			lib.card.list = lib.card.list.concat([[null,0,'stg_chongci'],[null,0,'stg_chongci'],[null,0,'stg_juedi'],[null,0,'stg_juedi'],[null,0,'stg_zhuanzhu'],[null,0,'stg_zhuanzhu']]);
 			ui.create.cardsAsync();
 			game.finishCards();
 			//game.addGlobalSkill('autoswap');
@@ -2948,7 +2949,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 			},
 			stg_juedi_skill:{
-
+				forced:true,
+				trigger:{player:'damageBefore'},
+				filter:function(event, player){
+					return !player.storage.fuhuo;
+				},
+				content:function(){
+					trigger.cancel();
+					event.str=get.translation(player.name)+'的【绝地】防止了伤害';
+					game.notify(event.str);
+				},
+				mod:{
+					maxHandcard:function(player, num){
+						if (player.hp == 1) return Infinity;
+					}
+				}
 			},
 			stg_deck_skill:{
 				init:function(player){
@@ -3600,6 +3615,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_pohuai_info:'出牌阶段，对一名角色使用；目标将手牌数和灵力值调整至X（X为目标本局游戏击坠的角色数）。<br><u>追加效果：你可以将此牌当作【弹幕狂欢】使用。</u>',
 			stg_fengyin:'封印解除',
 			stg_fengyin_info:'出牌阶段，对自己使用；目标创建并获得一张禁忌牌。',
+			stg_chongci:'冲刺',
+			stg_chongci_skill:'',
+			stg_juedi:'绝地',
+			stg_juedi_skill:'锁定技，若你的体力值为1，你的手牌上限视为无限；若你的残机数为0，防止你受到的所有伤害。',
+			stg_zhuanzhu:'专注',
+			stg_zhuanzhu_skill:'',
+			stg_chongzhen:'',
+			stg_chongzhen_skill:'',
 
 			mercury:'金＆水符「水银之毒」',
 			mercury_audio1:'金＆水符「水银之毒」。',

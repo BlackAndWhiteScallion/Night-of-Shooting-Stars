@@ -199,9 +199,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					basic:{
 						useful:3,
 						value:function(card, player){
-							if (player.lili > 2) return 2;
-							else return 8;
+							if (player.lili > 1) return 4;
+							else return 100;
 						},
+						equipValue:10;
 					},
 					result:{target:1},
 				},
