@@ -6,6 +6,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			homura:['female', '2', 3, ['time3', 'time', 'homuraworld']],
 			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']],
 			monika:['female', '2', 3, ['miaohui', 'kehua'], ['forbidai']],
+			aliceWLD:['female', '0', 3, [], []],
 		},
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
