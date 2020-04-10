@@ -442,7 +442,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					player.chooseButton().set('filterButton',function(button){
 						return true;
-					}).set('dialog',event.videoId).set('selectButton', [1, Infinity]);
+					}).set('dialog',event.videoId).set('selectButton', [1, Infinity]).set('ai',function(button){
+						return get.value(button.link,_status.event.target)-5;
+					});
 					"step 1"
 					if(result.bool){
 						event.card=result.links;

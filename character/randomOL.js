@@ -92,7 +92,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					player.markSkill('time');
 				},
 				ai:{
-					order:10,
+					order:5,
 					result:{
 						player:1,
 					}
@@ -150,8 +150,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return true;
 					},
                     check:function(button){
-                        var player=_status.event.player;
-                        return get.value({name:button.link[2]}) >= 6;
+                       // var player=_status.event.player;
+                        return true;
                     },
                     backup:function(links,player){
                         return {

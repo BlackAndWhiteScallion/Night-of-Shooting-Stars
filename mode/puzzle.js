@@ -839,8 +839,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                                target.$equip(createCard(info.equips[j]));
 	                            }
 	                            for(var j=0;j<info.judges.length;j++){
-	                                //target.node.judges.appendChild(createCard(info.judges[j]));
-	                            	target.addJudge(createCard(info.judges[j]));
+									//target.node.judges.appendChild(createCard(info.judges[j]));
+									var card = createCard(info.judges[j]);
+									target.addJudge(card);
+									for (var k = 0; k < get.info(card).skills.length; k ++){
+										target.addSkill(get.info(card).skills[k]);
+									}
+									console.log(target.skills);
 								}
 	                            target=target.next;
 	                        }
