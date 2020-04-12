@@ -227,7 +227,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			},
 			},
 			ziheng_skill:{
-				cardAnimation:11,
     			trigger:{player:'phaseDrawEnd'},
     			content:function(){
     				"step 0"

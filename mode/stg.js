@@ -328,7 +328,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			}
 			ui.create.me();
-			ui.fakeme=ui.create.div('.avatar',ui.me);
+			if (!ui.arena.classList.contains('decadeUI')){
+				ui.fakeme=ui.create.div('.avatar',ui.me);
+			}
 			if(game.me!==boss){
 				//game.singleHandcard=true;
 				//ui.arena.classList.add('single-handcard');
@@ -968,27 +970,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					expose:0.2
 				},
 			},
-			stg_chongzhen:{
-				audio:true,
-				fullskin:true,
-				type:'delay',
-				skills:['stg_chongzhen_skill'],
-				filterTarget:function(card,player,target){
-					return true;
-				},
-				judge:function(card){
-					return 0;
-				},
-				effect:function(){
-				},
-				ai:{
-					basic:{
-						value:9,
-					},
-					result:{target:1},
-					expose:0.2
-				},
-			},
 		},
 		characterPack:{
 			mode_stg:{
@@ -1005,7 +986,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		cardPack:{
 			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle','stg_deck','stg_watch',
 			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook', 'stg_mingyun', 'stg_bawu', 'stg_lingji',
-			'stg_fengyin', 'stg_pohuai', 'stg_chongzhen', 'stg_juedi', 'stg_chongci', 'stg_zhuanzhu'],
+			'stg_fengyin', 'stg_pohuai', 'stg_juedi', 'stg_chongci', 'stg_zhuanzhu'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -2940,13 +2921,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			missile_ready:{
 			},
 			stg_chongci_skill:{
-
+				forced:true,
+				trigger:{source:'damageBegin'},
+				filter:function(){
+					return player.countUsed() == 1;
+				},
+				content:function(){
+					trigger.num ++;
+				},
 			},
-			stg_chongzhen_skill:{
-
-			},
-			stg_zhuanzhu:{
-
+			stg_zhuanzhu_skill:{
+				trigger:{target:'shaBegin'},
+				filter:function(){
+					return player.countCards('hej');
+				},
+				content:function(){
+					'step 0'
+    				player.chooseCard('hej', [1,3]);
+    				"step 1"
+    				if(result.bool){
+    					player.recast(result.cards);
+    				}
+				}
 			},
 			stg_juedi_skill:{
 				forced:true,
@@ -3616,13 +3612,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_fengyin:'封印解除',
 			stg_fengyin_info:'出牌阶段，对自己使用；目标创建并获得一张禁忌牌。',
 			stg_chongci:'冲刺',
-			stg_chongci_skill:'',
+			stg_chongci_skill:'冲刺',
+			stg_chongci_info:'锁定技，出牌阶段，你使用的第一张牌造成的伤害+1。',
 			stg_juedi:'绝地',
-			stg_juedi_skill:'锁定技，若你的体力值为1，你的手牌上限视为无限；若你的残机数为0，防止你受到的所有伤害。',
+			stg_juedi_skill:'冲刺',
+			stg_juedi_info:'锁定技，若你的体力值为1，你的手牌上限视为无限；若你的残机数为0，防止你受到的所有伤害。',
 			stg_zhuanzhu:'专注',
-			stg_zhuanzhu_skill:'',
-			stg_chongzhen:'',
-			stg_chongzhen_skill:'',
+			stg_zhuanzhu_skill:'专注',
+			stg_zhuanzhu_info:'一回合一次，你成为【轰！】的目标时，你可以重铸至多3张牌。',
 
 			mercury:'金＆水符「水银之毒」',
 			mercury_audio1:'金＆水符「水银之毒」。',

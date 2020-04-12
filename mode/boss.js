@@ -2900,7 +2900,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				usable:1,
 				filter:function(event,player){
 					return game.hasPlayer(function(target){
-						return target.identity == player.identity&&target.hasSkill('boss_sansi');
+						return target.identity == player.identity&&target.hasSkill('boss_sansi_skill');
 					});
 				},
 				position:'hej',
@@ -2944,7 +2944,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				trigger:{global:['dieAfter', 'revive']},
 				init:function(player){
-					player.useSkill('boss_poxian');
+					player.useSkill('boss_poxian_skill');
 				},
 				onremove:function(player){
 					if (!player.countCards('j', 'lianji')){
@@ -3000,8 +3000,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			tancheng:'坦诚相待',
 			tancheng_info:'出牌阶段，对所有其他角色使用；目标展示所有手牌，然后你可以用一张牌交换其中一张与之不同类型的牌。',
 			boss_sansi:'三思',
+			boss_sansi2:'三思',
 			boss_sansi_info:'一回合一次，与你相同阵营的角色的出牌阶段，其可以重铸X张牌（X为与其不同阵营的角色数）。',
 			boss_poxian:'破限',
+			boss_poxian_skill:'破限',
 			boss_poxian_info:'锁定技，若没有其他与你相同阵营的角色，你视为持有【连击】，【激怒】，【制衡】。',
 			boss_gushou:'固守',
 			boss_gushou_info:'锁定技，与你相同阵营的角色的手牌上限+2。',
