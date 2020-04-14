@@ -18160,6 +18160,18 @@
                     }
                     return true;
                 },
+                isMinlili:function(equal){
+                    for(var i=0;i<game.players.length;i++){
+                        if(game.players[i].isOut()||game.players[i]==this) continue;
+                        if(equal){
+                            if(game.players[i].lili<=this.lili) return false;
+                        }
+                        else{
+                            if(game.players[i].lili<this.lili) return false;
+                        }
+                    }
+                    return true;
+                },
                 isMaxCard:function(equal){
                     var nh=this.countCards('he');
                     for(var i=0;i<game.players.length;i++){

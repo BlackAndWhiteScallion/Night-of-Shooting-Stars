@@ -527,7 +527,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     content:function(){
                         'step 0'
                         if (trigger.player.getStat('damage')>0){
-                          var neg=get.attitude(player,trigger.player)<=0;
+                            var neg=get.attitude(player,trigger.player)<=0;
                             player.choosePlayerCard('hej',trigger.player,true).set('ai',function(button){
                                 if(_status.event.neg){
                                   return get.buttonValue(button);

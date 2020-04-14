@@ -27,6 +27,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			tsubaki:['female', '2', 4, ['xiangyi', 'chunse']],
 			m4a1:['female', '2', 4, ['huoli', 'zhihui', 'shenyuan']],
 			tohka:['female', '3', 4, ['iphone3', 'Halvanhelev']],
+			nurseryrhyme:['female', '3', 3, ['lvtu', 'mengjin', 'weimo']],
 		},
 		characterIntro:{
 			illyasviel:'全名伊莉雅丝菲尔·冯·爱因兹贝伦，在日本的动漫中十分常见的那种使用特殊能力帮助他人或对抗恶役的女孩子<br>出自：Fate/kaleid liner 魔法少女☆伊莉雅 <b>画师：永恒之舞MK_2',
@@ -52,6 +53,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			tsubaki:'全名朱雀院椿。“这是你为我锻造的翅膀，我将用它们尽情翱翔。”。。。椿姐赛高！<br>出自：牵绊闪耀的恋之伊吕波 <b>画师：ぺろ 设计：冰茶</b>',
 			m4a1:'<br>出自：少女前线 <b>画师：怠惰姬空白 设计：Freyr</b>',	
 			tohka:'传说中的有史以来最敷衍最没有良心的技能组！<br>就跟原作的能力设置差不多。<br>出自：Date-A-Live!<b>画师：mmrailgun</b>',
+			nurseryrhyme:'<br>出自：Fate/Extra <b>画师：十八三</b>',
 		},	   
 		perfectPair:{
 		},
@@ -3418,6 +3420,192 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					damageBonus:true
 				}
 			},
+			lvtu:{
+				audio:2,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					'step 0'
+					event.num = [player.maxHp, player.lili, player.countCards('h'), player.countCards('j')];
+					var choices = ['体力上限', '灵力值', '手牌数', '技能牌数'];
+					var low = Math.min.apply(null, event.num);
+					for (var i = 0; i < choices.length; i ++){
+						if (event.num[i] == low){
+							choices.remove(choices[i]);
+							i = 0;
+						}
+					}
+					choices.remove(event.num.indexOf(low));
+					event.low = low;
+					var str = "选择一项，将该项调整为与最少的一项相同（最少的一项为"+low+"）";
+					player.chooseControl(event.choices).set('prompt', str);
+					'step 1'
+					if (result.control){
+						event.choices = ['体力上限', '灵力值', '手牌数', '技能牌数'];
+						event.choices.remove(result.control);
+						if (result.control == '体力上限'){
+							player.loseMaxHp(player.maxHp - event.low);
+						} else if (result.control == '灵力值'){
+							player.loselili(player.lili - event.low);
+						} else if (result.control == "手牌数"){
+							player.chooseToDiscard('h', true, [player.countCards('h') - event.low]);
+						} else if (result.control == "技能牌数"){
+							player.chooseToDiscard('j', true, [player.countCards('j') - event.low]);
+						}
+					}
+					'step 2'
+					if (event.choices){
+						event.num = [player.maxHp, player.lili, player.countCards('h'), player.countCards('j')];
+						event.high = Math.max.apply(null, event.num);
+						var str = "选择一项，将该项调整为与最多的一项相同（最多的一项为"+high+"）";
+						player.chooseControl(event.choices).set('prompt', str);
+					}
+					'step 3'
+					if (result.control){
+						if (result.control == '体力上限'){
+							player.gainMaxHp(event.high - player.maxHp);
+						} else if (result.control == '灵力值'){
+							player.gainlili(event.high - player.lili);
+						} else if (result.control == "手牌数"){
+							player.draw(event.high - player.countCards('h'));
+						} else if (result.control == "技能牌数"){
+							player.drawSkill(event.high - player.countCards('j'));
+						}
+					}
+				},
+				check:function(){
+					return false;
+				}
+			},
+			mengjin:{
+				enable:'phaseUse',
+				group:'mengjin_unmark',
+				usable:1,
+				intro:{
+					content:function (storage){
+						return '已发动【梦镜】，决死时重置';
+					},
+				},
+				filter:function(event, player){
+					return !player.storage.mengjin;
+				},
+				content:function(){
+					'step 0'
+					var num = player.maxHp - player.hp;
+					if (num > player.hp){
+						player.recover(num - player.hp);
+					} else if (num < player.hp){
+						player.loseHp(player.hp - num);
+					}
+					'step 1'
+					var num = 3 - player.countCards('h');
+					if (num < 0) num = 0;
+					if (num > player.countCards('h')){
+						player.draw(num - player.countCards('h'));
+					} else if (num < player.countCards('h')){
+						player.chooseToDiscard('h', true, [player.countCards('h') - num, player.countCards('h') - num]);
+					}
+					'step 2'
+					var num = 5 - player.lili;
+					if (num > player.lili){
+						player.gainlili(num - player.lili);
+					} else if (num < player.lili){
+						player.loselili(player.lili - num);
+					}
+					player.storage.mengjin = 1;
+					player.markSkill('mengjin');
+				},
+				ai:{
+					threaten:-1,
+					order:1,
+					result:{
+						player:function(card, player, target){
+							return 0;
+						}
+					}
+				}
+			},
+			mengjin_unmark:{
+				direct:true,
+				trigger:{player:'dyingBegin'},
+				content:function(){
+					delete player.storage.mengjin;
+					player.unmarkSkill('mengjin');
+				},
+			},
+			weimo:{
+				audio:2,
+				cost:1,
+				spell:['weimo_1'],
+				trigger:{player:'phaseBegin'},
+				roundi:true,
+				filter:function(event,player){
+					return player.lili > lib.skill.weimo.cost;
+				},
+				content:function(){
+					player.loselili(lib.skill.weimo.cost);
+					player.turnOver();
+				},
+				check:function(event, player){
+					return player.hp < 2;
+				},
+			},
+			weimo_1:{
+				global:['weimo_2', 'weimo_3', 'weimo_4'],
+			},
+			weimo_2:{
+				mod:{
+					maxHandcard:function(player,num){
+						return num - 2 * game.countPlayer(function(current){
+							return current.hasSkill('weimo_1') && current.isMinHandCard();
+						});
+					}
+				}
+			},
+			weimo_3:{
+				trigger:{player:'damageBegin'},
+				forced:true,
+				filter:function(event, player){
+					return game.countPlayer(function(current){
+						return current.hasSkill('weimo_1') && current.isMinHp();
+					});
+				},
+				content:function(){
+					trigger.num ++;
+				}
+			},
+			weimo_4:{
+				init:function(player,skill){
+					if (!game.hasPlayer(function(current){
+						return current.hasSkill('weimo_1') && current.isMinlili();
+					})) return;
+                    var skills=player.getSkills(true,false);
+                    for(var i=0;i<skills.length;i++){
+                        if(get.is.locked(skills[i])){
+                            skills.splice(i--,1);
+                        }
+                    }
+                    player.disableSkill(skill,skills);
+                },
+                onremove:function(player,skill){
+                    player.enableSkill(skill);
+				},
+				trigger:{global:['loseliliAfter', 'gainliliAfter']},
+				content:function(){
+					if (!game.hasPlayer(function(current){
+						return current.hasSkill('weimo_1') && current.isMinlili();
+					})){
+						player.enableSkill(skill);
+					} else {
+						var skills=player.getSkills(true,false);
+						for(var i=0;i<skills.length;i++){
+							if(get.is.locked(skills[i])){
+								skills.splice(i--,1);
+							}
+						}
+						player.disableSkill(skill,skills);
+					}
+				}
+			},
 		},
 		translate:{
 			kanade:'奏',
@@ -3701,6 +3889,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			Halvanhelev:'最后之剑',
 			Halvanhelev_1:'最后之剑',
 			Halvanhelev_info:'符卡技（3）你造成伤害时，该伤害+1。',
+			nurseryrhyme:'童谣',
+			lvtu:'旅兔',
+			lvtu_info:'准备阶段，你可以将体力上限，灵力值，手牌数，技能牌数中不为最少的一项调整至与其中最少相同；然后，将另一项调整至与其中最多相同。',
+			mengjin:'梦镜',
+			mengjin_info:'一回合一次，出牌阶段，你可以将体力值调整至已受伤值，手牌数调整至（3-手牌数，至少为0），灵力值调整至（5-灵力值）；然后，此技能无效，直到你进入决死状态。',
+			weimo:'为某人所写的故事',
+			weimo_info:'符卡技（1）<永续>你每有以下一项为全场最低（或之一），所有该项大于你的其他角色获得对应效果：<u>体力：</u>受到伤害时，伤害+1；<u>灵力：</u>非符卡效果无效；<u>手牌数：</u>手牌上限-2。',
 		},
 	};
 });
