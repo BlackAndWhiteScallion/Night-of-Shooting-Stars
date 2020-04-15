@@ -6,7 +6,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			homura:['female', '2', 3, ['time3', 'time', 'homuraworld']],
 			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']],
 			monika:['female', '2', 3, ['miaohui', 'kehua'], ['forbidai']],
-			aliceWLD:['female', '0', 3, [], []],
+			aliceWLD:['female', '0', 3, ['WLD1', 'WLD2'], []],
 		},
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
@@ -739,11 +739,41 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
-			:{
-
+			WLD1:{
+				enable:'phaseUse',
+				usable:1,
+				position:'hej',
+				filterCard:true,
+				selectCard:[0,Infinity],
+				content:function(){
+					'step 0'
+					var list = [];
+					for (var i = 0; i <= player.lili; i ++){
+							list.push(i);
+					}
+					player.chooseControl(list,function(){
+						return '2';
+				  	}).set('prompt','消耗任意点灵力');
+					'step 1'
+					for (var i = 0; i < cards.length; i ++){
+						player.gain(game.createCard(lib.cardPack['random'].randomGet()));
+					}
+				},
+				prompt:'弃置任意张牌，摸等量其他游戏的牌',
 			},
-			:{
+			WLD2:{
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					'step 0'
+					player.useCard({name:'huanxiang'}, player);
+					'step 1'
+					player.chooseControl();
+					'step 2'
+					if (result.control){
 
+					}
+				},
 			},
 		},
 		translate:{
@@ -788,6 +818,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			kehua_audio2:'对角色的刻画手法低劣，再精妙绝伦的剧情也无法让读者翻下一页。',
 			kehua_info:'出牌阶段，你可以指定一名角色（包括不在场上的角色），然后选择一项：为该角色：增加技能；删除技能；更改起始灵力值；更改灵力上限；更改体力上限；或删除该角色；此改动在以后所有非联机模式的游戏中有效。',
 			monika_die:'啊哈哈……这局有点玩过火了。下一局我会注意点的！',
+			aliceWLD:'爱丽丝',
+			WLD1:'',
+			WLD1_info:'',
+			WLD2:'',
+			WLD2_info:'',
 		},
 	};
 });

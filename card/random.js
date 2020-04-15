@@ -488,6 +488,69 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     }
                 }
             },
+            bianda:{
+                audio:true,
+                fullskin:true,
+                type:'basic',
+                subtype:'support',
+                enable:true,
+                enhance:1,
+                selectTarget:-1,
+                filterTarget:function(card,player,target){
+                    return target==player;
+                },
+                modTarget:true,
+                content:function(){
+                    player.gainMaxHp();
+                    if (player.storage._enhance){
+                        player.recover(player.storage._enhance);
+                    }
+                },
+                ai:{
+                    basic:{
+                        order:7.2,
+                        useful:4,
+                        value:9.2
+                    },
+                    result:{
+                        target:2,
+                    },
+                    tag:{
+                        recover:1,
+                    }
+                }
+            },
+            bianxiao:{
+                audio:true,
+                fullskin:true,
+                type:'basic',
+                subtype:'attack',
+                enable:true,
+                enhance:2,
+                selectTarget:1,
+                range:{attack:1},
+                filterTarget:function(card,player,target){
+                    return (target.num('hej')>0);
+                },
+                content:function(){
+                    target.loseMaxHp();
+                    if (player.storage._enhance){
+                        target.loseHp(player.storage._enhance);
+                    }
+                },
+                ai:{
+                    basic:{
+                        order:9,
+                        useful:2,
+                        value:5,
+                    },
+                    result:{
+                        target:function(player,target){
+                            return -1.5;
+                        },
+                    },
+                }
+            },
         },
         skill:{
             skipfirst:{
@@ -649,6 +712,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
             yugioh_megamorph_info:'锁定技，你对一名角色造成伤害时，若你的体力值小于其，该伤害+1；若你的体力值大于其，该伤害-1。',
             yugioh_mirror:'反射镜力',
             yugioh_mirror_info:'你成为【轰！】的目标时，令该【轰！】无效，并弃置来源所有手牌。',
+            bianda:'变大',
+            bianda_info:'出牌阶段，对你使用；目标增加1点体力上限；<br><u>强化(-1)：目标回复1点体力。</u>',
+            bianxiao:'变小',
+            bianxiao_info:'出牌阶段，对一名角色使用；目标扣减1点体力上限：<br><u>强化(-2)：目标失去1点体力。</u>',
         },
 		list:[
 		],
