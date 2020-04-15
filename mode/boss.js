@@ -719,6 +719,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				fullskin:true,
 				type:'delay',
+				modeimage:'boss',
 				filterTarget:function(card,player,target){
 					return true;
 				},
@@ -740,6 +741,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				fullskin:true,
 				type:'delay',
+				modeimage:'boss',
 				filterTarget:function(card,player,target){
 					return true;
 				},
@@ -761,6 +763,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:true,
 				fullskin:true,
 				type:'delay',
+				modeimage:'boss',
 				filterTarget:function(card,player,target){
 					return true;
 				},
