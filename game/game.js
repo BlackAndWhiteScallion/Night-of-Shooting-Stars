@@ -13100,6 +13100,9 @@
                         if(info.temp){
                             player.removeSkill(skills[i]);
                         }
+                        if(info.spell){
+                            player.removeSkill(info.spell);
+                        }
                         if(info.global){
                             if(typeof info.global=='string'){
                                 game.removeGlobalSkill(info.global);
@@ -21672,9 +21675,6 @@
             qianxing:{
                 mark:true,
                 nopop:true,
-                init:function(player){
-                    game.log(player,'获得了','【潜行】');
-                },
                 intro:{
                     content:'锁定技，你不能成为其他角色的卡牌的目标'
                 },
@@ -21689,9 +21689,6 @@
                 trigger:{player:'damageBefore'},
                 mark:true,
                 forced:true,
-                init:function(player){
-                    game.log(player,'获得了','【免疫】');
-                },
                 content:function(){
 					trigger.cancel();
                 },

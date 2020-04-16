@@ -3061,7 +3061,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			boss_saitama_die:'啊……就是这种感觉……',
 			boss_fapaiji:'发牌姬',
 			toutian:'偷天',
-			toutian_info:'一回合一次，出牌阶段，你可以消耗1点灵力，创建一张牌（可以是其他模式的牌）并获得之。',
+			toutian_info:'一回合一次，出牌阶段，你可以消耗1点灵力，创建一张牌（可以是其他模式或其他游戏的牌）并获得之。',
 			huanri:'换日',
 			huanri_judge:'换日',
 			huanri_info:'一名角色摸一张牌时，或判定时，你可以观看牌堆，将其中一张牌置于牌堆顶。',

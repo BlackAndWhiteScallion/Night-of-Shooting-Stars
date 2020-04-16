@@ -3428,16 +3428,17 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					event.num = [player.maxHp, player.lili, player.countCards('h'), player.countCards('j')];
 					var choices = ['体力上限', '灵力值', '手牌数', '技能牌数'];
 					var low = Math.min.apply(null, event.num);
-					for (var i = 0; i < choices.length; i ++){
+					for (var i = 0; i < event.num.length; i ++){
 						if (event.num[i] == low){
+							event.num.remove(event.num[i]);
 							choices.remove(choices[i]);
 							i = 0;
 						}
 					}
-					choices.remove(event.num.indexOf(low));
+					//choices.remove(event.num.indexOf(low));
 					event.low = low;
 					var str = "选择一项，将该项调整为与最少的一项相同（最少的一项为"+low+"）";
-					player.chooseControl(event.choices).set('prompt', str);
+					player.chooseControl(choices).set('prompt', str);
 					'step 1'
 					if (result.control){
 						event.choices = ['体力上限', '灵力值', '手牌数', '技能牌数'];
@@ -3456,7 +3457,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if (event.choices){
 						event.num = [player.maxHp, player.lili, player.countCards('h'), player.countCards('j')];
 						event.high = Math.max.apply(null, event.num);
-						var str = "选择一项，将该项调整为与最多的一项相同（最多的一项为"+high+"）";
+						var str = "选择一项，将该项调整为与最多的一项相同（最多的一项为"+event.high+"）";
 						player.chooseControl(event.choices).set('prompt', str);
 					}
 					'step 3'
@@ -3519,6 +3520,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					order:1,
 					result:{
 						player:function(card, player, target){
+							if ((player.maxHp - player.hp) > 1){
+								return 2;
+							}
 							return 0;
 						}
 					}
