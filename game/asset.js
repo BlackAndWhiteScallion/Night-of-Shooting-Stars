@@ -425,7 +425,7 @@ window.noname_skin_list={
     daiyousei:2,
     letty:1,
     chen:2,
-    lilywhite:2,
+    lilywhite:3,
     lilyblack:1,
     alice:5,
     lunasa:2,
@@ -461,8 +461,9 @@ window.noname_skin_list={
     nero:1,
     shigure:1,
     kurumi:2,
-    miku:1,
+    miku:2,
     diva:1,
+    jack:1,
 };
 window.noname_animate_list={
     /*

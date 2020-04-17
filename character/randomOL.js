@@ -12,6 +12,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
 			diva:'1. 进入男主的一群萌妹的后宫<br>2. 亮出自己百合的身份<br>3. ???<br>4. 发了发了！<br><b>出自：Date-A-Live! 画师：干物A太</b>',
 			monika:'问题：如果其他人已经不再是人了，那对她们做多残忍的事情都是没问题的，对吧？<br><b>出自：心跳文学部 画师：はっく',
+			aliceWLD:'<br><b>出自：爱丽丝漫游仙境 画师：夕凪セシナ<>',
 		},	   
 		perfectPair:{
 		},
