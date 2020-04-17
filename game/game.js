@@ -227,7 +227,7 @@
                 config:{
                     game_draw:{
                         name:'游戏开始时摸牌数',
-                        init:'1',
+                        init:'4',
                         intro:'游戏开始时，每名角色分发的手牌数。',
                         item:{
                             1:'1',
