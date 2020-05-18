@@ -646,7 +646,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				if (player.storage.enhance){
 					controls.push('展示手牌并明置身份');
 				} else {
-					if(target.identityShown != true && get.mode()=='identity') controls.push('明置身份');	
+					if(get.mode()=='identity' && target.identityShown != true) controls.push('明置身份');	
 					controls.push('展示手牌');				
 				}
 				target.chooseControl(controls,function(event,player){
@@ -662,7 +662,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						player.draw();
 					}
 					if(result.control!='展示手牌') {
-						if (target.identityShown != true && get.mode()=='identity') target.useSkill('_tanpai');
+						if (get.mode()=='identity' && target.identityShown != true) target.useSkill('_tanpai');
 					}
 				}
 			},

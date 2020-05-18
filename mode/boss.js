@@ -2696,6 +2696,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						
 					}
 				},
+				check:function(event, player){
+					return get.attitude(player, event.player) && player.lili > 2; 
+				},
 			},
 			shengbi_skill:{
 				trigger:{player:'damageBegin'},
@@ -2753,6 +2756,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 					}
 				},
+				check:function(event, player){
+					return true;
+				}
 			},
 			zhoufa:{
 				audio:2,
@@ -2784,7 +2790,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					"step 1"
 					if(result.targets){
 						player.discard(result.cards[0]);
-						player.line(result.targets[0],'green');
+						player.line(result.targets[0], 'green');
 						event.target = result.targets[0];
 						event.target.chooseControl(['摸牌阶段','出牌阶段'], true).set('prompt','选择一个阶段执行');
 					}
@@ -2793,6 +2799,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						event.target.addSkill('zhoufa_phase');
 						event.target.storage.zhoufa = result.control;
 					}
+				},		
+				check:function(event, player){
+					return true;
 				},
 			},
 			zhoufa_phase:{

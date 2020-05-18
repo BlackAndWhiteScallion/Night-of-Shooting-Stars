@@ -492,9 +492,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        			var incident=ui.create.node('button','电脑端下载',line2,function(){
 	        			var i = ['下载链接：',
 								'国外镜像：<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip">https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars/archive/master.zip</a>',
-								'国内镜像1：<a href = https://bws.coding.net/api/share/download/bcf9e902-4fd3-4919-9fc9-f681388b0523>https://bws.coding.net/api/share/download/bcf9e902-4fd3-4919-9fc9-f681388b0523</a>',
-								'国内镜像2：<a href = https://gitee.com/b_2/noss/repository/archive/master.zip>https://gitee.com/b_2/noss/repository/archive/master.zip</a>',
-								'国内镜像2因神奇腾讯有可能炸了，还请大家注意。',
+								'国内镜像1：<a href = http://b_2.gitee.io/web/features.html> http://b_2.gitee.io/web/features.html </a>',
 	    					];
 	        			dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
@@ -503,7 +501,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								'手机端目前只支持安卓系统。为您带来的不便表达万分歉意。',
 								'',
 								'百度网盘链接：<a href = "https://pan.baidu.com/s/14ogm9-RAdDuuXUGTZYC_qA">链接: https://pan.baidu.com/s/14ogm9-RAdDuuXUGTZYC_qA 提取码: e6nf</a>',
-								'直接下载链接：<a href = "https://BWS.coding.net/s/19055702-1f41-42d3-8aa0-e1d7f4066d76">https://BWS.coding.net/s/19055702-1f41-42d3-8aa0-e1d7f4066d76</a>',
+								'直接下载链接：<a href = "http://b_2.gitee.io/web/features.html">http://b_2.gitee.io/web/features.html</a>',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
 	                    },{marginLeft:'6px'});
@@ -541,7 +539,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        			var incident=ui.create.node('button','更新方式',line2,function(){
 	        			var i = ['更新方式有三种:',
 	    				'1: 下载更新程序包',
-	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "https://bws.coding.net/p/NOSS-Extensions/d/NOSS-Extensions/git/raw/master/%E4%B8%9C%E6%96%B9%E6%B5%81%E6%98%9F%E5%A4%9C%E6%9B%B4%E6%96%B0.exe">国内镜像下载</a>',
+	    				'更新下载链接→<a href = "https://github.com/BlackAndWhiteScallion/Night-of-Shooting-Stars-Extensions/archive/master.zip">国外镜像下载</a> <a href = "http://b_2.gitee.io/web/about.html">国内镜像下载</a>',
 	    				'下载完毕后，在浏览器的默认下载文件夹里可以找到，然后解压到流星夜所在的文件夹里，并全部覆盖就OK啦。',
 	    				'手机端也可以使用这个更新方式，安卓手机所需要拖到的文件夹在：<b>(默认SD卡)/android/data/com.widget.noname1</b>',
 	    				'覆盖完毕后，需要重启流星夜程序！',
@@ -570,7 +568,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								'4. 观看录像时，技能牌的图标不显示，且技能牌弃置有错误。',
 								'5. 联机模式下异变胜利后的战果显示有错误',
 								'6. [挑战角色]和[闯关角色]扩展同时打开会导致其中一个不能使用。',
-								'6.1. [挑战角色]火[闯关角色]扩展打开，会导致[残局]模式使用[下一关]会卡死。',
+								'6.1. [挑战角色]或[闯关角色]扩展打开，会导致[残局]模式使用[下一关]会卡死。',
 								'7. 观看录像时，无法查看自己的手牌。',
 				        		];
 	        				dialog.setCaption('<div><div style="text-align:left;font-size:16px">'+i.join('<br>'));
@@ -1130,7 +1128,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	name:'联系我们',
 	        	intro:[
 	        		'你玩流星夜觉得开心吗？觉得不开心吗？觉得制作组是傻逼吗？自己也想要做吗？那么…………',
-	                '欢迎大家光临雾雨魔法店！',
+					'欢迎大家光临雾雨魔法店！',
+					'官方网站：<a href = "http://b_2.gitee.io/web" target = "_blank">东方流星夜</a>',
 					'官方微信公众号：<a href="https://mp.weixin.qq.com/s/PC6a3Y8Y8bslqgsVWqcTqw" target="_blank">东方流星夜 大葱专线</a>',
 	                '官方QQ群：<a href = "https://jq.qq.com/?_wv=1027&k=570nlJG target="_blank">东方流星夜 总会</a>',
 	                '实卡淘宝链接：<a href = "https://item.taobao.com/item.htm?spm=a2126o.11854294.0.0.19cf4831lNX5xr&id=586815026235" target="_blank">游家桌游店</a>',

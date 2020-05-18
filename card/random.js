@@ -265,7 +265,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                 },
                 modTarget:true,
                 content:function(){
-                    target.addSkill('chaoyue_skill');
+                    target.addTempSkill('chaoyue_skill');
                 },
                 ai:{
                     basic:{
@@ -321,7 +321,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                     }
                 },
                 cost:-1,
-                skills:['harvest_skill']
+                skills:['harvest_skill'],
             },
             yugioh_megamorph:{
                 fullimage:true,
@@ -332,7 +332,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                         equipValue:4
                     }
                 },
-                skills:['megamorph_skill']
+                skills:['yugioh_megamorph']
             },
             yugioh_mirror:{
                 audio:true,
@@ -587,7 +587,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					});
                 }
             },
-            sv_harvest:{
+            harvest_skill:{
                 forced:true,
                 trigger:{
 					player:"phaseEnd",

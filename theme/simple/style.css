@@ -51,6 +51,10 @@ body{
 #window>.dialog.popped{
 	border-radius: 6px;
 }
+#window:not(.nopointer) .player .judges>.card, #window:not(.nopointer) .player .marks>.card{
+	cursor: context-menu;
+	color:black;
+}
 .control,#system>div>div,.judges>div,.marks>div,
 #arena:not(.long) .player.unseen .equips:not(*:empty),
 #arena.long .player.unseen2 .equips:not(*:empty){
@@ -96,7 +100,6 @@ body{
 	color:white;
 }
 .card:not(*:empty),.cardbg{
-	color:rgb(77, 60, 51);
 	text-shadow:none;
 	background: url('card.png');
 	background-size:100% 100%;

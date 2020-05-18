@@ -3,10 +3,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 		name:'randomOL',
 		connect:true,
 		character:{
-			homura:['female', '2', 3, ['time3', 'time', 'homuraworld']],
+			homura:['female', '2', 3, ['time3', 'time', 'homuraworld'], ['forbidai']],
 			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']],
 			monika:['female', '2', 3, ['miaohui', 'kehua'], ['forbidai']],
 			aliceWLD:['female', '0', 3, ['WLD2', 'WLD1'], []],
+			haruhi:['female', '2', 3, [], ['forbidai']],
 		},
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
@@ -779,6 +780,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.addSkill('mengjin');
 						}
 					}
+					player.removeSkill('WLD2');
 				},
 			},
 			WLD3:{
@@ -838,12 +840,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			monika_die:'啊哈哈……这局有点玩过火了。下一局我会注意点的！',
 			aliceWLD:'爱丽丝',
 			WLD1:'追梦',
-			WLD1_info:'一回合一次，出牌阶段，你可以弃置任意张牌，消耗任意点灵力，随机创建并获得等量张其他游戏的牌。',
+			WLD1_info:'一回合一次，出牌阶段，你可以弃置任意张牌，并消耗任意点灵力，随机创建并获得等量张其他游戏的牌。',
 			WLD2:'世外',
 			WLD2_info:'你的第一个准备阶段，视为对自己使用了一张【幻想之扉】，并获得【奇缘】或【梦镜】。',
 			WLD3:'奇缘',
-			WLD_info:'锁定技，准备阶段，你随机创建并获得一张牌（包括其他模式，其他游戏，技能牌，和异变牌）。',
+			WLD3_info:'锁定技，准备阶段，你随机创建并获得一张牌（包括其他模式，其他游戏，技能牌，和异变牌）。',
 			haruhi:'春日',
+			
 		},
 	};
 });

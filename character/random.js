@@ -3473,9 +3473,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						}
 					}
 				},
-				check:function(){
+				check:function(event, player){
 					return false;
-				}
+				},
 			},
 			mengjin:{
 				enable:'phaseUse',
@@ -3523,7 +3523,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							if ((player.maxHp - player.hp) > 1){
 								return 2;
 							}
-							return 0;
+							return -1;
 						}
 					}
 				}
@@ -3759,7 +3759,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			ng_pinjian_audio2:'无路赛！',
 			ng_wenhao_info:'你使用攻击牌指定目标后，或成为攻击牌的目标后，可以与另一方拼点：赢的一方弃置没赢的一方一张牌；你选择拼点牌前，可以消耗1点灵力，弃置与你进行拼点的角色一张牌。',
 			niguang:'逆光',
-			niguang_info:'你使用攻击牌指定目标后，或成为攻击牌的目标后，可以与另一方拼点：赢的一方弃置没赢的一方一张牌；你选择拼点牌前，可以消耗1点灵力，弃置与你进行拼点的角色一张牌。',
+			niguang_info:'你使用攻击牌指定目标后，或成为攻击牌的目标后，可以与另一方拼点：赢的一方弃置没赢的一方一张牌；你选择拼点牌前，可以消耗1点灵力，弃置与你进行拼点的角色���张牌。',
 			ng_pinjian:'？',
 			ng_pinjian3:'？',
 			ng_wenhao2:'？',
