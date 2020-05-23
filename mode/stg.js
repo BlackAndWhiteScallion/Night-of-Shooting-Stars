@@ -2926,7 +2926,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_chongci_skill:{
 				forced:true,
 				trigger:{source:'damageBegin'},
-				filter:function(){
+				filter:function(event, player){
 					return player.countUsed() == 1;
 				},
 				content:function(){
@@ -2935,7 +2935,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			stg_zhuanzhu_skill:{
 				trigger:{target:'shaBegin'},
-				filter:function(){
+				filter:function(event, player){
 					return player.countCards('hej');
 				},
 				content:function(){
@@ -2983,7 +2983,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				forced:true,
 				trigger:{source:'damageEnd'},
-				filter:function(){
+				filter:function(event, player){
 					return true;
 				},
 				content:function(){

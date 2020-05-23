@@ -2697,7 +2697,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				},
 				check:function(event, player){
-					return get.attitude(player, event.player) && player.lili > 2; 
+					return -get.attitude(player, event.player) && player.lili > 2; 
 				},
 			},
 			shengbi_skill:{
