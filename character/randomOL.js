@@ -757,7 +757,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return '2';
 				  	}).set('prompt','消耗任意点灵力');
 					'step 1'
-					for (var i = 0; i < cards.length; i ++){
+					var num = cards.length;
+					if (result.control){
+						player.loselili(result.control);
+						num += result.control;
+					}
+					for (var i = 0; i < num; i ++){
 						player.gain(game.createCard(lib.cardPack['random'].randomGet()));
 					}
 				},

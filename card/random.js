@@ -627,7 +627,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				}
             },
-            yugioh_goldsarc:{
+            gold_sarc:{
                 trigger:{player:'phaseBegin',player:'dieBegin'},
 				forced:true,
 				audio:false,

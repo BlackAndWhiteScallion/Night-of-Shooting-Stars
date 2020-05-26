@@ -2744,7 +2744,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			forced:true,
 			content:function(){
 				var num = player.getStat('damage');
-				if (num != 0) player.draw(num * player.countUsed('huazhi'));
+				var num1 = player.countUsed('huazhi');
+				if (!num1) num1 = 1;
+				if (num != 0) player.draw(num * num1);
 				player.removeSkill('huazhi_skill');
 			},
 		},
