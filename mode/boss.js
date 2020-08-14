@@ -2920,7 +2920,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				selectCard:function(){
 					var player=_status.event.player;
 					var num = game.countPlayer(function(current){
-						return current.identity != player.identity;
+						return current.isEnemyOf(player);
 					});
 					return [1,num];
 				},
@@ -2947,7 +2947,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				mod:{
 					maxHandcard:function(player,num){
 						return num + 2 * game.countPlayer(function(current){
-							return current.identity == player.identity && current.hasSkill('boss_gushou');
+							return current.isFriendOf(player) && current.hasSkill('boss_gushou');
 						});
 					},
 				}
@@ -2971,7 +2971,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					if (game.countPlayer(function(current){
-						return current.identity == player.identity; 
+						return current.isFriendOf(player);
 					}) == 1){
 						player.addSkill('lianji_skill');
 						player.addSkill('jinu_skill');

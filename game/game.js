@@ -8819,8 +8819,9 @@
                             numx=num(player);
                         }
                         player.directgain(get.cards(numx));
-                        if(player.singleHp===true&&get.mode()!='guozhan'){
+                        if(player.singleHp===true){
                             player.doubleDraw();
+                            delete player.singleHp;
                         }
                         player=player.next;
                     }
@@ -12935,7 +12936,7 @@
                 },
                 doubleDraw:function(){
                     "step 0"
-                    player.chooseBool('你的主副将体力上限之和是奇数，是否摸一张牌？');
+                    player.chooseBool('你的主副将体力上限之和是奇数g，是否摸一张牌？');
                     "step 1"
                     if(result.bool){
                         player.draw();
@@ -12944,62 +12945,18 @@
                 loseMaxHp:function(){
                     "step 0"
                     game.log(player,'减少了'+get.cnNumber(num)+'点体力上限');
-                    if(!event.forced&&typeof player.singleHp==='boolean'){
-                        if(num%2==1){
-                            if(player.singleHp){
-                                player.singleHp=false;
-                                player.maxHp-=(num-1)/2;
-                            }
-                            else{
-                                player.singleHp=true;
-                                player.maxHp-=(num+1)/2;
-                                event.changed=true;
-                            }
-                        }
-                        else{
-                            player.maxHp-=num/2;
-                        }
-                    }
-                    else{
-                        player.maxHp-=num;
-                    }
+                    player.maxHp-=num;
                     player.update();
                     "step 1"
                     if(player.maxHp<=0){
                         player.die();
                     }
-                    "step 2"
-                    if(!event.forced&&event.changed&&!player.isUnseen(2)){
-                        player.doubleDraw();
-                    }
                 },
                 gainMaxHp:function(){
                     "step 0"
                     game.log(player,'增加了'+get.cnNumber(num)+'点体力上限');
-                    if(!event.forced&&typeof player.singleHp==='boolean'){
-                        if(num%2==1){
-                            if(player.singleHp){
-                                player.singleHp=false;
-                                player.maxHp+=(num+1)/2;
-                            }
-                            else{
-                                player.singleHp=true;
-                                player.maxHp+=(num-1)/2;
-                                event.changed=true;
-                            }
-                        }
-                        else{
-                            player.maxHp+=num/2;
-                        }
-                    }
-                    else{
-                        player.maxHp+=num;
-                    }
+                    player.maxHp+=num;
                     player.update();
-                    "step 1"
-                    if(!event.forced&&event.changed&&!player.isUnseen(2)){
-                        player.doubleDraw();
-                    }
                 },
                 gainMaxlili:function(){
                     "step 0"
@@ -18095,8 +18052,7 @@
                     return !this.isFriendOf.apply(this,arguments);
                 },
                 isFriendOf:function(player){
-                    if(get.mode()=='guozhan'){
-                        if(this==player) return true;
+                    if(this.identity){
                         if(this.identity=='unknown'||this.identity=='ye') return false;
                         if(player.identity=='unknown'||player.identity=='ye') return false;
                         return this.identity==player.identity;

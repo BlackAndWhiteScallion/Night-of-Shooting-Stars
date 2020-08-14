@@ -751,7 +751,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					var list = [];
 					for (var i = 0; i <= player.lili; i ++){
-							list.push(i);
+						list.push(i);
 					}
 					player.chooseControl(list,function(){
 						return '2';
@@ -763,7 +763,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						num += result.control;
 					}
 					for (var i = 0; i < num; i ++){
-						player.gain(game.createCard(lib.cardPack['random'].randomGet()));
+						player.gain(game.createCard(lib.cardPack['random'].randomGet()), 'gain2');
 					}
 				},
 				prompt:'弃置任意张牌，摸等量其他游戏的牌',

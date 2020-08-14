@@ -1172,11 +1172,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     attackFrom:function(from,to,distance){
                         return distance-3*game.countPlayer(function(current){
                             if(current.hasSkill('feise2')) return true;
-                            if (!from.identityShown) return false;
-                            if (!current.identityShown) return false;
-                            if(current.identity=='unknown'||current.identity=='ye') return false;
-                            if (current.identity=='zhu'&&from.identity=='zhong') return true;
-                            if(current.identity!=from.identity) return false;
+                            return current.isFriendOf(from);
                         });
                     }
                 },
