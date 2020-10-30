@@ -479,7 +479,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         trigger:{global:'phaseEnd'},
                         //frequent:true,
                         filter:function(event,player){
-                              return player.storage.yinyang;
+                              return player.storage.yinyang && !_status.currentPhase.isDead();
                         },
                         check:function(event,player){
                               if (player.getCards('h').length <= (player.maxHp - player.hp) && event.player.getCards('hej').length) return get.attitude(player, event.player)<0;
