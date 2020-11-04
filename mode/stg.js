@@ -201,6 +201,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						}
 						delete _status.createControl;
 					}
+					var list=[];
+					for (var j = 0; j < lib.forbidstg.length; j ++){
+						if (lib.forbidstg[j][0] == target.name){
+							list = lib.forbidstg[j].slice(1);
+						}
+					}
+					var dialog = document.getElementById("choosecharacter");
+					var r = dialog.getElementsByClassName("button");
+					for (var i = r.length - 1; i >= 0; --i){
+						r[i].delete();
+					}
+					dialog.add([list,'character']);
+					var b = dialog.getElementsByClassName("button");
+					for (var f = b.length - 1; f >= 0; --f){
+						b[f].classList.add('selectable');
+					}
 				});
 			}
 			if(lib.config.test_game){
@@ -478,6 +494,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				game.addRecentCharacter(game.me.name);
 			}
 			var musicloop = function(){
+				if (lib.config.currentMusic == lib.config.musiccchange.length) return;
 				if (lib.config.musiccchange[lib.config.currentMusic][0] != lib.config.musiccchange[lib.config.currentMusic+1][0]) return;
 				if (ui.backgroundMusic.currentTime >= lib.config.musiccchange[lib.config.currentMusic+1][1]){
 					game.swapMusic();
@@ -1095,7 +1112,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		cardPack:{
 			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle','stg_deck','stg_watch',
 			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook', 'stg_mingyun', 'stg_bawu', 'stg_lingji',
-			'stg_fengyin', 'stg_pohuai', 'stg_juedi', 'stg_chongci', 'stg_zhuanzhu', 'stg_sidie', 'stg_louxie'],
+			'stg_fengyin', 'stg_pohuai', 'stg_juedi', 'stg_chongci', 'stg_zhuanzhu', 'stg_sidie', 'stg_louxie',
+			'stg_jiejie'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -1290,27 +1308,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					console.log(_status.bosschoice.name);
 					// 这里应该是选角色页面
 					// 要怎么做，才能获得当前BOSS呢？
-					var i;
 					var list=[];
 					event.list=list;
-					for(i in lib.character){
-						//if(lib.character[i][4].contains('minskin')) continue;
-						if(lib.character[i][4].contains('boss')) continue;
-						if(lib.character[i][4].contains('hiddenboss')) continue;
-						//if(lib.character[i][4]&&lib.character[i][4].contains('forbidai')) continue;
-						//if(lib.config.forbidboss.contains(i)) continue;
-						if(lib.filter.characterDisabled(i)) continue;
-						for (var j = 0; j < lib.forbidstg.length; j ++){
-							if (lib.forbidstg[j].contains(_status.bosschoice.name)){
-								if (lib.forbidstg[j].contains(i)){
-									list.push(i);
-								}
-							}
+					for (var j = 0; j < lib.forbidstg.length; j ++){
+						if (lib.forbidstg[j][0] == _status.bosschoice.name){
+							list = lib.forbidstg[j].slice(1);
 						}
-						//list.push(i);
 					}
 					//list.randomSort();
 					var dialog=ui.create.dialog('选择自机角色','hidden');
+					dialog.id = 'choosecharacter';
 					dialog.classList.add('fixed');
 					ui.window.appendChild(dialog);
 					dialog.classList.add('bosscharacter');
@@ -1504,6 +1511,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						['music_default', 3980],
 					];
 					lib.config.currentMusic = 0;
+					for (i in lib.config.skinSet[1]){
+						if (lib.config.skinSet[1][i] == 0){
+							delete lib.config.skin[i];
+						} else {
+							lib.config.skin[i] = lib.config.skinSet[i];
+						}
+					}
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
 					if (lib.config.connect_nickname == '黑白葱') game.me.addSkill('finalspark');
@@ -1576,6 +1590,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.config.currentMusic=0;
 					game.playBackgroundMusic('magicalgirl');
 					ui.backgroundMusic.play();
+					//ui.backgroundMusic.removeEventListener("timeupdate", swapMusic, true);
 					if (lib.config.connect_nickname == '黑白葱')  game.me.addSkill('finalspark');
 					game.me.addSkill('handcard_max');
 				},
@@ -1612,9 +1627,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return 500;
 					}
 					ui.background.setBackgroundImage('image/background/baka.jpg');
-					game.playBackgroundMusic('music_default');
-					ui.backgroundMusic.currentTime=137;
-					ui.backgroundMusic.play();
 
 					lib.character['cirno'] = ['female', '2', 2, ['jidong', 'bingbi']];
 					game.me.storage.reinforce = ['stg_yousei','cirno','stg_yousei', 'letty'];
@@ -1639,8 +1651,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.fuhuo = 1;
 					game.me.storage.unskill = ['yuezhi'];
 					lib.config.musiccchange=[
-						['music_cherry', 224],
-						['music_cherry', 567],
+						['music_cherry', 447],
+						['music_cherry', 562],
 						['music_cherry', 730],
 						['music_cherry', 928],
 						['music_cherry', 1080],
@@ -1655,6 +1667,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						['music_cherry', 3548],
 					];
 					lib.config.currentMusic = 0;
+					game.swapMusic();
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
 					if (lib.config.connect_nickname == '黑白葱') game.me.addSkill('finalspark');
