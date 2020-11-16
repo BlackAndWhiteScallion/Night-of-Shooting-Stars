@@ -2621,20 +2621,24 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		},
 		_tianguo2:{
 			skillAnimation:true,
-			trigger:{player:'drawAfter'},
+			trigger:{player:'drawEnd'},
 			filter:function(event,player){
-				if (event.result.length) {
-					for(var i=0;i<event.result.length;i++){
-    					if(event.result[i].name == 'tianguo'){
-    						return true;
-    					}
-    				}
-    			}
-    			return false;
+				for (var i = 0; i < event.num; i ++){
+					if (player.countCards('h') < i){
+						return false;
+					}
+					if (player.getCards('h')[i].name == 'tianguo'){
+						return true;
+					}
+				}
+				return false;
 			},
 			content:function(){
-				for(var i=0;i<trigger.result.length;i++){
-    				if(trigger.result[i].name == 'tianguo'){
+				for(var i=0;i<trigger.num;i++){
+					if (player.countCards('h') < i){
+						return false;
+					}
+    				if(player.getCards('h')[i].name == 'tianguo'){
     					game.log('天国之阶启动：所有角色回复1点体力。');
     					var players=game.filterPlayer();
     					for (var j=0;j<players.length;j++){

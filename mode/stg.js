@@ -953,7 +953,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				modTarget:true,
 				content:function(){
-					
+					player.gain(game.createCard('stg_jiejie'));
 				},
 				ai:{
 					basic:{
@@ -1438,9 +1438,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				setTimeout(function(){
 					game.playBackgroundMusic(lib.config.musiccchange[lib.config.currentMusic][0], false, true);
 					ui.backgroundMusic.currentTime=lib.config.musiccchange[lib.config.currentMusic][1];
-					console.log(lib.config.currentMusic);
-					console.log(game.me.storage.musicchange);
-				}, 500);
+				}, 0);
 			},
 		},
 		boss:{
@@ -1633,25 +1631,31 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					//game.me.storage.reinforce = ['rumia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu','好舒服呢','因为每次白天出来妖怪都很少这次才试着在夜里出来的……','不过该往哪边走都搞不清楚了这么暗',
-								'但是……夜里的境内还真够浪漫呢','','呃，你谁啊？','','人类在一片漆黑的地方本来就看不到东西啊(刚刚见过吗？)',''
-								,'那种人你就算抓来吃了也无所谓啊','','不过，你很碍事呢','','良药苦口这句话你有听过吗？','end'],
-							['rumia','就是说啊～还会出现妖怪，真是受不了啊','','刚刚不是见过了吗你难不成是夜盲症吗？','','是吗？我好像也看到过只在夜里才活动的人呢'
-							,'','是——这样吗？','','在我眼前的就是吃了也没关系的人类？','']
+							['reimu','真冷~','真希望老天能注意点啊','要是平常，现在早就是睡觉的季节了',
+								'','不管是不是，对于你们来说不都是永眠吗？','','虽然也有人这么做，不过不是我','','啊～啊、春眠也没办法让自己暖和起来啊'
+								,'','闭嘴，像你这种人睡着了，天气就能稍微暖和点了！','end'],
+							['letty','春眠不觉晓、是吗？','','不过说起来，人类不冬眠吗？分明是哺乳类','','那就让我来赐你一眠。安详的春眠'
+							,'','变暖和的话就会睡着这一点上和我们一样的。还有，马醉木的花也差不多','']
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
-							['marisa','这种心情，是要怎么说来着……？','要是那家伙呢肯定会说“感觉真不错呢”','我可是不喜欢夜晚，只有奇怪的家伙而已','',
-							'谁也没有说是你啊。','','不过，干嘛把手伸得这么直啊。','','看上去像是“人类采用了十进制”','end'],
-							['rumia','你说谁是奇怪的家伙啊','','那个嘛，当然。','','看上去像不像是“圣人被钉在十字架上”？',''],
+							['marisa','为什么，我会在这种地方？','冬天里在雪山上很容易遇难的','','因为冬天里没有山是不积雪的。',
+							'','我是很普通的','','是啊。本来这个时候，应该是人类们在樱花树下沉眠的季节了','','振作点，在这寒冷的地方睡着是会冻死的','end'],
+							['letty','为什么会容易遇难，你知道吗？','','果然，你也是遇难者？','','可怜的人啊，已经被冻得神志不清了','','今年的冬季很长啊。我也差不多想要去春眠了呢',''],
+						];
+					} else if (game.me.name == 'sakuya'){
+						game.me.storage.dialog = [
+						['sakuya','啊啊真是的，就算打倒再多这样的杂鱼也没任何意义！还是尽快让黑幕登场才好','','你就是黑幕啊<br>那么，快点','',
+							'在这种地方的话黑幕也好普通也好<br>都关系不大了的说～说起来，现在什么不普通你知道么？','','哎呀没错','','没错。<br>果然，你这家伙就是黑幕啊','end'],
+							['letty','黑幕～','','先稍微等一下！虽然我是黑幕不过是普通的','','比起历年来，雪的结晶都要大不少大概３倍左右','','还有一件事就是脑子不好使的女仆在空中飞',''],
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_chiyan2x';
+					game.me.storage.stage = 'boss_cherry2';
 					game.me.storage.fuhuo = 1;
-					game.me.storage.unskill = ['yuezhi'];
+					game.me.storage.unskill = ['baofengxue'];
 					lib.config.musiccchange=[
-						['music_cherry', 447],
+						['music_cherry', 223],
 						['music_cherry', 562],
 						['music_cherry', 730],
 						['music_cherry', 928],
@@ -1690,11 +1694,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'drawAfter'},
 				filter:function(event,player){
 					if (!_status.event.getParent('phaseDraw')) return false;
-					if (event.result.length) {
-						for(var i=0;i<event.result.length;i++){
-							if(event.result[i].name == 'stg_mingyun'){
-								return true;
-							}
+					for (var i = 0; i < event.num; i ++){
+						if (player.countCards('h') < i){
+							return false;
+						}
+						if (player.getCards('h')[i].name == 'stg_mingyun'){
+							return true;
 						}
 					}
 					return false;
@@ -2081,9 +2086,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+						line = '也没有变得多暖和呢<br>刚才要是再稍微攻击得激烈一点就好了';
 					} else if (game.me.name == 'marisa'){
-						line = '难道说，除了人类以外都不是十指吗';
+						line = '就算是这样的家伙<br>打倒了的话春度也应该能增加一点吧？';
+					} else if (game.me.name == 'sakuya'){
+						line = '黑幕，好弱啊。得赶快去找下一个黑幕了～';
 					}
 					var dialog = ui.create.dialog();
 					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
@@ -2097,7 +2104,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 2'
-					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
+					var dialog=ui.create.dialog("第二关<br><br>迷途之家的黑猫");
 					dialog.open();
 	                game.pause();
 	                var control=ui.create.control('走起！',function(){
@@ -2745,6 +2752,441 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                lib.init.onfree();
 				},
 			},
+			boss_cherry2:{
+				trigger:{global:'dieAfter'},
+				forced:true,
+				priority:-10,
+				//fixed:true,
+				//globalFixed:true,
+				unique:true,
+				filter:function(event){
+					if(lib.config.mode!='stg') return false;
+					return event.player==game.boss;
+				},
+				content:function(){
+					'step 0'
+					game.boss.hide();
+					game.addVideo('hidePlayer',game.boss);
+					game.delay();
+					'step 1'
+					var line;
+					if (game.me.name == 'reimu'){
+						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+					} else if (game.me.name == 'marisa'){
+						line = '难道说，除了人类以外都不是十指吗';
+					}
+					var dialog = ui.create.dialog();
+					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('下一关',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 2'
+					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('走起！',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 3'
+					game.addBossFellow(3,'stg_yousei',1);
+					game.addBossFellow(5,'stg_maoyu',2);
+					'step 4'
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.me.storage.tongguan ++; 
+					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.stage = 'boss_cherry3';
+					if (game.me.name == 'reimu'){
+						game.me.storage.dialog = [
+							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
+								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
+							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
+							,'end'],
+						];
+					} else if (game.me.name == 'marisa'){
+						game.me.storage.dialog = [
+							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
+							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
+							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
+							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
+							],
+						];
+					}
+					game.me.removeSkill('boss_cherry2');
+					game.me.storage.unskill = ['perfect'];
+					ui.background.setBackgroundImage('image/background/baka.jpg');
+					lib.character['daiyousei'][1] = '2';
+					game.resetSkills();
+					_status.paused=false;
+					_status.event.player=game.me;
+					_status.event.step=0;
+					_status.roundStart=game.me;
+					ui.backgroundMusic.play();
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+					}
+				}
+			},
+			boss_cherry3:{
+				trigger:{global:'dieAfter'},
+				forced:true,
+				priority:-10,
+				//fixed:true,
+				//globalFixed:true,
+				unique:true,
+				filter:function(event){
+					if(lib.config.mode!='stg') return false;
+					return event.player==game.boss;
+				},
+				content:function(){
+					'step 0'
+					game.boss.hide();
+					game.addVideo('hidePlayer',game.boss);
+					game.delay();
+					'step 1'
+					var line;
+					if (game.me.name == 'reimu'){
+						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+					} else if (game.me.name == 'marisa'){
+						line = '难道说，除了人类以外都不是十指吗';
+					}
+					var dialog = ui.create.dialog();
+					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('下一关',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 2'
+					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('走起！',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 3'
+					game.addBossFellow(3,'stg_yousei',1);
+					game.addBossFellow(5,'stg_maoyu',2);
+					'step 4'
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.me.storage.tongguan ++; 
+					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.stage = 'boss_cherry3';
+					if (game.me.name == 'reimu'){
+						game.me.storage.dialog = [
+							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
+								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
+							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
+							,'end'],
+						];
+					} else if (game.me.name == 'marisa'){
+						game.me.storage.dialog = [
+							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
+							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
+							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
+							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
+							],
+						];
+					}
+					game.me.removeSkill('boss_cherry2');
+					game.me.storage.unskill = ['perfect'];
+					ui.background.setBackgroundImage('image/background/baka.jpg');
+					lib.character['daiyousei'][1] = '2';
+					game.resetSkills();
+					_status.paused=false;
+					_status.event.player=game.me;
+					_status.event.step=0;
+					_status.roundStart=game.me;
+					ui.backgroundMusic.play();
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+					}
+				}
+			},
+			boss_cherry4:{
+				trigger:{global:'dieAfter'},
+				forced:true,
+				priority:-10,
+				//fixed:true,
+				//globalFixed:true,
+				unique:true,
+				filter:function(event){
+					if(lib.config.mode!='stg') return false;
+					return event.player==game.boss;
+				},
+				content:function(){
+					'step 0'
+					game.boss.hide();
+					game.addVideo('hidePlayer',game.boss);
+					game.delay();
+					'step 1'
+					var line;
+					if (game.me.name == 'reimu'){
+						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+					} else if (game.me.name == 'marisa'){
+						line = '难道说，除了人类以外都不是十指吗';
+					}
+					var dialog = ui.create.dialog();
+					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('下一关',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 2'
+					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('走起！',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 3'
+					game.addBossFellow(3,'stg_yousei',1);
+					game.addBossFellow(5,'stg_maoyu',2);
+					'step 4'
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.me.storage.tongguan ++; 
+					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.stage = 'boss_cherry3';
+					if (game.me.name == 'reimu'){
+						game.me.storage.dialog = [
+							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
+								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
+							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
+							,'end'],
+						];
+					} else if (game.me.name == 'marisa'){
+						game.me.storage.dialog = [
+							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
+							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
+							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
+							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
+							],
+						];
+					}
+					game.me.removeSkill('boss_cherry2');
+					game.me.storage.unskill = ['perfect'];
+					ui.background.setBackgroundImage('image/background/baka.jpg');
+					lib.character['daiyousei'][1] = '2';
+					game.resetSkills();
+					_status.paused=false;
+					_status.event.player=game.me;
+					_status.event.step=0;
+					_status.roundStart=game.me;
+					ui.backgroundMusic.play();
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+					}
+				}
+			},
+			boss_cherry5:{
+				trigger:{global:'dieAfter'},
+				forced:true,
+				priority:-10,
+				//fixed:true,
+				//globalFixed:true,
+				unique:true,
+				filter:function(event){
+					if(lib.config.mode!='stg') return false;
+					return event.player==game.boss;
+				},
+				content:function(){
+					'step 0'
+					game.boss.hide();
+					game.addVideo('hidePlayer',game.boss);
+					game.delay();
+					'step 1'
+					var line;
+					if (game.me.name == 'reimu'){
+						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+					} else if (game.me.name == 'marisa'){
+						line = '难道说，除了人类以外都不是十指吗';
+					}
+					var dialog = ui.create.dialog();
+					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('下一关',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 2'
+					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('走起！',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 3'
+					game.addBossFellow(3,'stg_yousei',1);
+					game.addBossFellow(5,'stg_maoyu',2);
+					'step 4'
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.me.storage.tongguan ++; 
+					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.stage = 'boss_cherry3';
+					if (game.me.name == 'reimu'){
+						game.me.storage.dialog = [
+							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
+								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
+							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
+							,'end'],
+						];
+					} else if (game.me.name == 'marisa'){
+						game.me.storage.dialog = [
+							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
+							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
+							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
+							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
+							],
+						];
+					}
+					game.me.removeSkill('boss_cherry2');
+					game.me.storage.unskill = ['perfect'];
+					ui.background.setBackgroundImage('image/background/baka.jpg');
+					lib.character['daiyousei'][1] = '2';
+					game.resetSkills();
+					_status.paused=false;
+					_status.event.player=game.me;
+					_status.event.step=0;
+					_status.roundStart=game.me;
+					ui.backgroundMusic.play();
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+					}
+				}
+			},
+			boss_cherry6:{
+				trigger:{global:'dieAfter'},
+				forced:true,
+				priority:-10,
+				//fixed:true,
+				//globalFixed:true,
+				unique:true,
+				filter:function(event){
+					if(lib.config.mode!='stg') return false;
+					return event.player==game.boss;
+				},
+				content:function(){
+					'step 0'
+					game.boss.hide();
+					game.addVideo('hidePlayer',game.boss);
+					game.delay();
+					'step 1'
+					var line;
+					if (game.me.name == 'reimu'){
+						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+					} else if (game.me.name == 'marisa'){
+						line = '难道说，除了人类以外都不是十指吗';
+					}
+					var dialog = ui.create.dialog();
+					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('下一关',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 2'
+					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
+					dialog.open();
+	                game.pause();
+	                var control=ui.create.control('走起！',function(){
+	                    dialog.close();
+	                    control.close();
+	                    game.resume();
+	                });
+	                lib.init.onfree();
+	                'step 3'
+					game.addBossFellow(3,'stg_yousei',1);
+					game.addBossFellow(5,'stg_maoyu',2);
+					'step 4'
+					while(_status.event.name!='phaseLoop'){
+						_status.event=_status.event.parent;
+					}
+					game.me.storage.tongguan ++; 
+					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.stage = 'boss_cherry3';
+					if (game.me.name == 'reimu'){
+						game.me.storage.dialog = [
+							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
+								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
+							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
+							,'end'],
+						];
+					} else if (game.me.name == 'marisa'){
+						game.me.storage.dialog = [
+							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
+							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
+							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
+							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
+							],
+						];
+					}
+					game.me.removeSkill('boss_cherry2');
+					game.me.storage.unskill = ['perfect'];
+					ui.background.setBackgroundImage('image/background/baka.jpg');
+					lib.character['daiyousei'][1] = '2';
+					game.resetSkills();
+					_status.paused=false;
+					_status.event.player=game.me;
+					_status.event.step=0;
+					_status.roundStart=game.me;
+					ui.backgroundMusic.play();
+					//game.phaseNumber=0;
+					//game.roundNumber=0;
+					if(game.bossinfo){
+						game.bossinfo.loopType=1;
+					}
+				}
+			},
 			/////////////////////////////// 这里开始是正经的角色技能 ////////////////////////////////////////////////////
 			shogon:{
 				init:function(event,character){
@@ -3221,7 +3663,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				trigger:{player:'damageBefore'},
 				filter:function(event, player){
-					return !player.storage.fuhuo;
+					return !player.storage.fuhuo && player == game.me;
 				},
 				content:function(){
 					trigger.cancel();
@@ -3252,7 +3694,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if (player.identity != 'zhu') player.addSkill('privateSquare');
 				},
 				forced:true,
-				trigger:{source:'damageEnd'},
+				trigger:{source:'damageAfter'},
 				filter:function(event, player){
 					return true;
 				},
@@ -3262,11 +3704,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			stg_watch_stop:{
 				direct:true,
-				trigger:{player:['changelili','changeHp']},
+				trigger:{player:['damageBefore','loseHpBefore','loseliliBefore']},
 				filter:function(event,player){
-					return event.num < 0;
+					return event.num > 0;
 				},
 				content:function(){
+					this.trigger.num = 0;
 					trigger.cancel();
 				},
 			},
@@ -3797,11 +4240,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			stg_cherry_effect:{
+				forced:true,
 				trigger:{source:'damageAfter'},
 				filter:function(event, player){
+					if (player.countCards('j', {name:'stg_jiejie'}) > 0) return false;
 					var data = 0;
-					for(j=0;j<game.me.stat.length;j++){
-						if(game.me.stat[j].damage != undefined) data += game.me.stat[j].damage;
+					for(var j=0;j<player.stat.length;j++){
+						if(player.stat[j].damage != undefined) data += player.stat[j].damage;
 					}
 					var og = data - event.num;
 					return event.num > 0 && og != 0 && Math.floor(data/10) > Math.floor(og/10);
@@ -3822,6 +4267,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			stg_jiejie_skill:{
 				group:'stg_jiejie_skill2',
+				forced:true,
 				trigger:{player:'damageBefore'},
 				filter:function(event, player){
 					return event.num > 0;
@@ -3842,6 +4288,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			stg_jiejie_skill2:{
 				trigger:{player:'phaseBegin'},
+				forced:true,
 				filter:function(event, player){
 					return true;
 				},
@@ -4035,6 +4482,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 			stg_jiejie:'森罗结界',
 			stg_jiejie_info:'锁定技，你受到伤害时，弃置此牌，防止该伤害；准备阶段，弃置此牌，摸两张牌。',
+			stg_jiejie_skill2:'森罗结界（摸牌）',
 		},
 		get:{
 			rawAttitude:function(from,to){

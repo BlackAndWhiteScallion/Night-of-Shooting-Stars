@@ -12128,6 +12128,7 @@
                     else{
                         cards=[];
                     }
+                    event.result=cards;
                     if(event.animate!=false){
                         if(event.visible){
                             player.gain(cards,'gain2');
@@ -12143,7 +12144,6 @@
                             player.$draw(cards.length);
                         }
                     }
-                    event.result=cards;
                 },
                 drawSkill:function(){
                     if(typeof event.minnum=='number'&&num<event.minnum){
@@ -44415,66 +44415,65 @@
         // 这里是怎么拿牌/获得牌堆顶的牌
         cards:function(num){
             if(_status.waitingForCards){
-                ui.create.cards.apply(ui.create,_status.waitingForCards);
-                delete _status.waitingForCards;
-            }
-            var list=[];
-            var card=false;
-            if(typeof num!='number') num=1;
-            if(num==0) {card=true;num=1;}
-            if(num<0) num=1;
-            while(num--){
-                if(ui.cardPile.hasChildNodes()==false){
-                    if(_status.maxShuffle!=undefined){
-                        if(_status.maxShuffle==0){
-                            if(_status.maxShuffleCheck){
-                                game.over(_status.maxShuffleCheck());
-                            }
-                            else{
-                                game.over('平局——无法摸牌');
-                            }
-                            return [];
-                        }
-                        _status.maxShuffle--;
-                    }
-                    game.shuffleNumber++;
-                    game.broadcast(function(num){
-                        _status.shuffleNumber = num;
-                    }, game.shuffleNumber);
-                    var cards=[],i;
-                    for(var i=0;i<lib.onwash.length;i++){
-                        if(lib.onwash[i]()=='remove'){
+				ui.create.cards.apply(ui.create,_status.waitingForCards);
+				delete _status.waitingForCards;
+			}
+			var list=[];
+			var card=false;
+			if(typeof num!='number') num=1;
+			if(num==0) {card=true;num=1;}
+			if(num<0) num=1;
+			while(num--){
+				if(ui.cardPile.hasChildNodes()==false){
+					if(_status.maxShuffle!=undefined){
+						if(_status.maxShuffle==0){
+							if(_status.maxShuffleCheck){
+								game.over(_status.maxShuffleCheck());
+							}
+							else{
+								game.over('平局');
+							}
+							return [];
+						}
+						_status.maxShuffle--;
+					}
+					game.shuffleNumber++;
+					var cards=[],i;
+					for(var i=0;i<lib.onwash.length;i++){
+						if(lib.onwash[i]()=='remove'){
 							lib.onwash.splice(i--,1);
 						}
 					}
 					if(_status.discarded){
 						_status.discarded.length=0;
-                    }
-                    for(i=0;i<ui.discardPile.childNodes.length;i++){
-                        var currentcard=ui.discardPile.childNodes[i];
-                        currentcard.vanishtag.length=0;
-                        if(get.info(currentcard).vanish||currentcard.storage.vanish){
-                            console.log(get.info(currentcard));
-                            currentcard.remove();
-                            continue;
-                        }
-                        cards.push(currentcard);
-                    }
-                    cards.randomSort();
-                    for(var i=0;i<cards.length;i++){
-                        ui.cardPile.appendChild(cards[i]);
-                    }
-                    _status.event.trigger('onWash');
-                }
-                if(ui.cardPile.hasChildNodes()==false){
-                    game.over('平局');
-                    return [];
-                }
-                list.push(ui.cardPile.removeChild(ui.cardPile.firstChild));
-            }
-            if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
-            if(card) return list[0];
-            return list;
+					}
+					for(i=0;i<ui.discardPile.childNodes.length;i++){
+						var currentcard=ui.discardPile.childNodes[i];
+						currentcard.vanishtag.length=0;
+						if(get.info(currentcard).vanish||currentcard.storage.vanish){
+							currentcard.remove();
+							continue;
+						}
+						cards.push(currentcard);
+					}
+					cards.randomSort();
+					for(var i=0;i<cards.length;i++){
+						ui.cardPile.appendChild(cards[i]);
+					}
+				}
+				if(ui.cardPile.hasChildNodes()==false){
+					game.over('平局');
+					return [];
+				}
+				var cardx=ui.cardPile.removeChild(ui.cardPile.firstChild);
+				cardx.original='c';
+				list.push(cardx);
+			}
+			game.broadcastAll(function(num1,num2){
+				if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=num1+'轮 剩余牌: '+num2;
+			},game.roundNumber,ui.cardPile.childNodes.length);
+			if(card) return list[0];
+			return list;
         },
         judge:function(card){
             if(card.viewAs) return lib.card[card.viewAs].judge;
