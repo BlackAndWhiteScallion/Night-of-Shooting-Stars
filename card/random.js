@@ -265,7 +265,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                 },
                 modTarget:true,
                 content:function(){
-                    target.addTempSkill('chaoyue_skill');
+                    target.addTempSkill('chaoyue_skill', {player:'phaseBegin'});
                 },
                 ai:{
                     basic:{
@@ -405,9 +405,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                 type:'trick',
                 subtype:'disrupt',
                 enable:true,
-                selectTarget:-1,
+                selectTarget:1,
                 filterTarget:function(card,player,target){
-                    return target == player.nextSeat;
+                    return target == player.next;
                 },
                 content:function(){
                     target.addSkill('skipfirst');
@@ -431,9 +431,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
                 type:'trick',
                 subtype:'disrupt',
                 enable:true,
-                selectTarget:-1,
+                selectTarget:1,
                 filterTarget:function(card,player,target){
-                    return target == player.nextSeat;
+                    return target == player.next;
                 },
                 content:function(){
                     target.draw(2);

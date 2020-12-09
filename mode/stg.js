@@ -1104,8 +1104,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_maid:['female','2',1,['saochu'],['hiddenboss','bossallowed']],
 				stg_bookshelf:['female','3',5,['juguang'],['hiddenboss','bossallowed']],
 				stg_bat:['female','1',1,['xixue'],['hiddenboss','bossallowed']],
-				stg_ghost:['female', '5', 1, [''], ['hiddenboss', 'bossallowed']],
+				stg_ghost:['female', '3', 1, ['stg_ghost_skill'], ['hiddenboss', 'bossallowed']],
 				stg_shanghai:['female', '1', 2, ['stg_shanghai_skill'], ['hiddenboss', 'bossallowed']],
+				stg_shanghai_shanghai:['female', '2', 2, ['stg_shanghai_shanghai_skill'], ['hiddenboss', 'bossallowed']],
 				//stg_bunny:['female','2',2,[],['hiddenboss','bossallowed']],
 			}
 		},
@@ -1865,12 +1866,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					var num = [1, 2, 3, 5, 6, 7];
 					for (var i = 0; i < game.players.length; i ++){
-						if (game.players[i].identity == 'zhu' || game.players[i].identity == 'zhong') num.splice(num.indexOf(game.players[i].dataset.position), 1);
+						if (game.players[i].identity == 'zhu' || game.players[i].identity == 'zhong') num.splice(num.indexOf(parseInt(game.players[i].dataset.position)), 1);
 					}
 					if (game.me.storage.reinforce.length > 1){
 						game.addBossFellow(num.randomGet(),game.me.storage.reinforce[0],parseInt(lib.character[game.me.storage.reinforce[0]][1]));
 						game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
-					} else {
+					} else {	
 						game.boss.addSkill('boss_chiyan2');
 					}
 				},
@@ -2771,9 +2772,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+						line = '';
 					} else if (game.me.name == 'marisa'){
-						line = '难道说，除了人类以外都不是十指吗';
+						line = '';
+					} else if (game.me.name == 'sakuya'){
+						line = '';
 					}
 					var dialog = ui.create.dialog();
 					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
@@ -2798,13 +2801,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                lib.init.onfree();
 	                'step 3'
 					game.addBossFellow(3,'stg_yousei',1);
-					game.addBossFellow(5,'stg_maoyu',2);
+					game.addBossFellow(5,'stg_yousei',2);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.reinforce = ['stg_maoyu', 'chen', 'stg_ghost', 'stg_yousei', 'chen'];
 					game.me.storage.stage = 'boss_cherry3';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -2823,9 +2826,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.removeSkill('boss_cherry2');
-					game.me.storage.unskill = ['perfect'];
+					game.me.storage.unskill = ['shuanggui'];
 					ui.background.setBackgroundImage('image/background/baka.jpg');
-					lib.character['daiyousei'][1] = '2';
 					game.resetSkills();
 					_status.paused=false;
 					_status.event.player=game.me;
@@ -2858,9 +2860,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+						line = '';
 					} else if (game.me.name == 'marisa'){
-						line = '难道说，除了人类以外都不是十指吗';
+						line = '';
+					} else if (game.me.name == 'sakuya'){
+						line = '';
 					}
 					var dialog = ui.create.dialog();
 					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
@@ -2884,14 +2888,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 3'
-					game.addBossFellow(3,'stg_yousei',1);
-					game.addBossFellow(5,'stg_maoyu',2);
+					game.addBossFellow(3,'stg_shanghai',2);
+					game.addBossFellow(5,'stg_shanghai',2);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.reinforce = ['alice','stg_shanghai','stg_shanghai', 'alice'];
 					game.me.storage.stage = 'boss_cherry3';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -2948,6 +2952,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
 					} else if (game.me.name == 'marisa'){
 						line = '难道说，除了人类以外都不是十指吗';
+					} else if (game.me.name == 'sakuya'){
+						line = '';
 					}
 					var dialog = ui.create.dialog();
 					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
@@ -2978,7 +2984,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.reinforce = ['stg_ghost','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
+					if (game.me.name == 'reimu'){
+						game.me.storage.reinforce.push('lunasa');
+					} else if (game.me.name == 'marisa'){
+						game.me.storage.reinforce.push('lyrica');
+					} else if (game.me.name == 'sakuya'){
+						game.me.storage.reinforce.push('merlin');
+					} else {
+						game.me.storage.reinforce.push('lunasa');
+					}
 					game.me.storage.stage = 'boss_cherry3';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -3058,14 +3073,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 3'
-					game.addBossFellow(3,'stg_yousei',1);
-					game.addBossFellow(5,'stg_maoyu',2);
+					game.addBossFellow(3,'stg_ghost',3);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.reinforce = ['stg_ghost','youmu','stg_ghost', 'stg_ghost', 'youmu'];
 					game.me.storage.stage = 'boss_cherry3';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -4310,6 +4324,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.drawSkill();
 				},
 			},
+			stg_shanghai_shanghai_skill:{
+				group:'stg_shanghai_skill',
+				mod:{
+					maxHandcard:function(player,num){
+						return num + 1;
+					},
+				}
+			},
+			stg_ghost_skill:{
+				trigger:{player:'damageBefore'},
+				forced:true,
+				group:'stg_ghost_skill2',
+				filter:function(event, player){
+					return !event.nature || event.nature != 'thunder';
+				},
+				content:function(){
+					trigger.nature = 'thunder';
+				},
+			},
+			stg_ghost_skill2:{
+				trigger:{player:'phaseEnd'},
+				forced:true,
+				content:function(){
+					player.loselili(1);
+				},
+			},
 		},
 		forbidstg:[
 			['stg_scarlet', 'reimu', 'marisa'],
@@ -4474,7 +4514,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 			stg_ghost:'幽灵',
 			stg_ghost_skill:'怨念',
-			stg_ghost_skill_info:'锁定技，你因伤害进入决死状态时，若有伤害来源，其对你造成1点灵击伤害，然后你回复1点体力。',
+			stg_ghost_skill_info:'锁定技，你受到弹幕伤害时，改为灵击伤害；结束阶段，你消耗1点灵力。',
 
 			stg_shanghai:'人形',
 			stg_shanghai_skill:'变形',

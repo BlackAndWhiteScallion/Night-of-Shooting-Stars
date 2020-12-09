@@ -3,6 +3,8 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'boss',
 		init:function(){
+			lib.characterPack.mode_extension_boss={
+			}
 			lib.characterIntro['boss_zhaoyun'] = '幻想乡是一切皆有可能的地方。<br>即使是原本不可能打得过的人物……！';
 			if (lib.config.gameRecord.boss){
 				lib.characterPack.mode_extension_boss={
@@ -28,9 +30,9 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				if (lib.config.gameRecord.boss.data['boss_saitama'] && lib.config.gameRecord.boss.data['boss_saitama'][0] >= 5){
 					lib.characterPack.mode_extension_boss.boss_saitama = ['male','0',Infinity,['punch'],[],'shen'];
 				}
-				if (lib.config.gameRecord.boss.data['boss_fapaiji'] && lib.config.gameRecord.boss.data['boss_fapaiji'][0] >= 5){
+				//if (lib.config.gameRecord.boss.data['boss_fapaiji'] && lib.config.gameRecord.boss.data['boss_fapaiji'][0] >= 5){
 					lib.characterPack.mode_extension_boss.boss_fapaiji = ['female','5', 3,['huanri', 'toutian'],[],'shen'];
-				}
+				//}
 				for(var i in lib.characterPack.mode_extension_boss){
 					lib.characterPack.mode_extension_boss[i][4].push('mode:boss');
 					lib.character[i]=lib.characterPack.mode_extension_boss[i];
@@ -40,6 +42,16 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				}
 				var list={
 					mode_extension_boss_character_config:'大魔王！',
+					boss_saitama:'斗篷光头',
+					boss_cirno2:'琪露诺',
+					boss_zhaoyun:'赵云',
+					boss_nianshou:'年兽',
+					boss_fapaiji:'发牌姬',
+					boss_reimu2:'灵梦',
+					boss_mokou2:'妹红',
+					yuri:'由理',
+					tamamo:'玉藻前',
+					priestress:'女神官',
 				};
 				if(get.mode()!='boss'){
 					for(var i in list){
