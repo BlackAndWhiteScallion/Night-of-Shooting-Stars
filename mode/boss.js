@@ -2947,7 +2947,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				mod:{
 					maxHandcard:function(player,num){
 						return num + 2 * game.countPlayer(function(current){
-							return current.isFriendOf(player) && current.hasSkill('boss_gushou');
+							return current.isFriendOf(player) && current.hasSkill('boss_gushou_skill');
 						});
 					},
 				}

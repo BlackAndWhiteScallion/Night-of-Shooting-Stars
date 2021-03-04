@@ -13278,14 +13278,13 @@
                         // 然后插入技能牌node里去
                         cards[0].style.transform='';
                         cards[0].classList.add('drawinghidden');
-                        player.node.judges.insertBefore(cards[0],player.node.judges.firstChild);
-                        // 在这里追加效果就OK了吧
                         var info=get.info(cards[0]);
                         if(info.skills){
                             for(var i=0;i<info.skills.length;i++){
                                 player.addSkill(info.skills[i]);
                             }
                         }
+                        player.node.judges.insertBefore(cards[0],player.node.judges.firstChild);
                         // 多了就扔掉
                         if (player.num('j',{type:'delay'})>player.maxjudge){
                             var num = player.num('j',{type:'delay'}) - player.maxjudge;
@@ -13314,7 +13313,7 @@
                             ui.updatej(player);
                             if(card.clone&&(card.clone.parentNode==player.parentNode||card.clone.parentNode==ui.arena)){
                                 card.clone.moveDelete(player);
-                                game.addVideo('gain2',player,get.cardsInfo([card]));
+                                game.addVideo('gains2',player,get.cardsInfo([card]));
                             }
                         },player,cards[0],viewAs);
                         //如果这张卡是复制的？鉴于后面跳过了，似乎是无意义？
@@ -42661,6 +42660,8 @@
                 ui.arena.classList.add('paused');
                 ui.window.classList.add('touchinfohidden');
                 ui.time.hide();
+                ui.backgroundMusic.pause();
+                game.playAudio('effect', 'pause');
                 if(game.onpause){
                     game.onpause();
                 }
@@ -42672,6 +42673,7 @@
                 this.delete();
                 ui.system.show();
                 ui.time.show();
+                ui.backgroundMusic.play();
                 ui.historybar.classList.remove('paused');
                 ui.arena.classList.remove('paused');
                 ui.window.classList.remove('touchinfohidden');

@@ -641,7 +641,18 @@ content:function(config, pack){
 					game.cardsDiscard(cards[0]);
 				} else {
 					cards[0].style.transform = '';
-					player.node.judges.insertBefore(cards[0], player.node.judges.firstChild);
+					player.node.judges.insertBefore(cards[0],player.node.judges.firstChild);
+					var info=get.info(cards[0]);
+					if(info.skills){
+						for(var i=0;i<info.skills.length;i++){
+							player.addSkill(info.skills[i]);
+						}
+					}
+					// 多了就扔掉
+					if (player.num('j',{type:'delay'})>player.maxjudge){
+						var num = player.num('j',{type:'delay'}) - player.maxjudge;
+						player.chooseToDiscard('技能牌数量达到上限，请弃置'+num+'张技能牌',num, {type:'delay'},'j',true);
+					}
 					if (_status.discarded){
 						_status.discarded.remove(cards[0]);
 					}
@@ -688,11 +699,11 @@ content:function(config, pack){
 					if (cards[0].viewAs && cards[0].viewAs != cards[0].name){
 						cards[0].classList.add('fakejudge');
 						cards[0].node.judgeMark.node.judge.innerHTML = get.translation(cards[0].viewAs)[0];
-						game.log(player, '被贴上了<span class="yellowtext">' + get.translation(cards[0].viewAs) + '</span>（', cards, '）');
+						game.log(player, '贴上了<span class="yellowtext">' + get.translation(cards[0].viewAs) + '</span>（', cards, '）');
 					} else {
 						cards[0].classList.remove('fakejudge');
 						cards[0].node.judgeMark.node.judge.innerHTML = get.translation(cards[0].name)[0];
-						game.log(player, '被贴上了', cards);
+						game.log(player, '贴上了', cards);
 					}
 					
 					game.addVideo('addJudge', player, [get.cardInfo(cards[0]), cards[0].viewAs]);

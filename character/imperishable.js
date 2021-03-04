@@ -16,7 +16,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   mokou:['female','1',4,['yuhuo','businiao']],
 		},
 		characterIntro:{
-			   wriggle:'全名莉格露·奈特巴格。萤火虫妖怪，并且是虫王，可以操纵大量的各种虫子（和听起来一样恶心）。但是惧怕虫子的人越来越少，妖力下降到只是个萝莉，还是个笨蛋。<br> <b>画师：羽々斩</b>',
+			          wriggle:'全名莉格露·奈特巴格。萤火虫妖怪，并且是虫王，可以操纵大量的各种虫子（和听起来一样恶心）。但是惧怕虫子的人越来越少，妖力下降到只是个萝莉，还是个笨蛋。<br> <b>画师：羽々斩</b>',
                 mystia:'全名米斯蒂娅·萝蕾拉。夜雀妖怪，可以通过歌声让人疯狂或是变成夜盲。以前以吃人为生，现在因种种原因在开烧烤店。<br> <b>画师：鶖（かしどり）</b>',
                 keine:'全名上白泽慧音。虽然是妖怪，平时与人类住在一起，并给人类孩子们教书。在月圆之夜会变身成兽人，然后做些……不可描述的事情。<br> <b>画师：にしもん</b>',
                 reimu:'全名博丽灵梦。东方project的主角，博丽神社的巫女，符卡规则的创建人。因为是巫女，在幻想乡是绝对权威势力。但是平常懒到连异变都不去解决……<br> <b>画师：萩原</b>',
@@ -1021,8 +1021,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           var card = {name:result.links[0][2]};
                           event.fakecard=card;
                           player.chooseTarget(function(card,player,target){
-                             // var event = _status.event;
-                              return player.canUse(card,target,true) && !target.hasSkill('huanshi_3');
+                            return player.canUse(_status.event.parent.fakecard,target,true) && !target.hasSkill('huanshi_3');
                           },true,'选择'+get.translation(card.name)+'的目标').set('ai',function(target){
                               return get.effect(target,event.fakecard,_status.event.player);
                           });
