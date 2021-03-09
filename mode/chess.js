@@ -4075,7 +4075,147 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
     				player.damage('nosource');
     				player.draw(2);
     			}
-    		},
+			},
+			wushuang:{
+				audio:'wushuang1',
+				forced:true,
+				locked:true,
+				group:['wushuang1','wushuang2']
+			},
+			wushuang1:{
+				audio:2,
+				audioname:['re_lvbu','shen_lvbu'],
+				trigger:{player:'useCardToPlayered'},
+				forced:true,
+				filter:function(event,player){
+					return event.card.name=='sha'&&!event.getParent().directHit.contains(event.target);
+				},
+				//priority:-1,
+				logTarget:'target',
+				content:function(){
+					var id=trigger.target.playerid;
+					var map=trigger.getParent().customArgs;
+					if(!map[id]) map[id]={};
+					if(typeof map[id].shanRequired=='number'){
+						map[id].shanRequired++;
+					}
+					else{
+						map[id].shanRequired=2;
+					}
+				}
+			},
+			wushuang2:{
+				audio:2,
+				audioname:['re_lvbu','shen_lvbu'],
+				trigger:{player:'useCardToPlayered',target:'useCardToTargeted'},
+				forced:true,
+				logTarget:function(trigger,player){
+					return player==trigger.player?trigger.target:trigger.player
+				},
+				filter:function(event,player){
+					return event.card.name=='juedou';
+				},
+				//priority:-1,
+				content:function(){
+					var id=(player==trigger.player?trigger.target:trigger.player)['playerid'];
+					var idt=trigger.target.playerid;
+					var map=trigger.getParent().customArgs;
+					if(!map[idt]) map[idt]={};
+					if(!map[idt].shaReq) map[idt].shaReq={};
+					if(!map[idt].shaReq[id]) map[idt].shaReq[id]=1;
+					map[idt].shaReq[id]++;
+				},
+				ai:{
+					result:{
+						target:function(card,player,target){
+							if(card.name=='juedou'&&target.countCards('h')>0) return [1,0,0,-1];
+						}
+					}
+				}
+			},
+			pojun:{
+				trigger:{player:'useCardToPlayered'},
+				direct:true,
+				filter:function(event,player){
+					return event.card.name=='sha'&&player.isPhaseUsing()&&event.target.hp>0&&event.target.countCards('he')>0;
+				},
+				audio:2,
+				content:function(){
+					'step 0'
+					player.choosePlayerCard(trigger.target,'he',
+						[1,Math.min(trigger.target.countCards('he'),trigger.target.hp)],get.prompt('xinpojun',trigger.target));
+					'step 1'
+					if(result.bool&&result.links.length){
+						player.logSkill('xinpojun',trigger.target);
+						if(trigger.target.storage.xinpojun2){
+							trigger.target.storage.xinpojun2=trigger.target.storage.xinpojun2.concat(result.links);
+						}
+						else{
+							trigger.target.storage.xinpojun2=result.links;
+						}
+						game.addVideo('storage',trigger.target,['xinpojun2',get.cardsInfo(trigger.target.storage.xinpojun2),'cards']);
+						trigger.target.addSkill('xinpojun2');
+						trigger.target.lose(result.links,ui.special,'toStorage');
+					}
+				},
+				ai:{
+					expose:0.2
+				}
+			},
+			pojun2:{
+				trigger:{global:'phaseEnd'},
+				forced:true,
+				audio:false,
+				mark:true,
+				intro:{
+					content:'cardCount'
+				},
+				content:function(){
+					if(player.storage.xinpojun2){
+						player.gain(player.storage.xinpojun2,'fromStorage');
+						delete player.storage.xinpojun2;
+					}
+					player.removeSkill('xinpojun2');
+				},
+				group:'xinpojun3'
+			},
+			pojun3:{
+				trigger:{player:'dieBegin'},
+				forced:true,
+				popup:false,
+				content:function(){
+					player.$throw(player.storage.xinpojun2,1000);
+					for(var i=0;i<player.storage.xinpojun2.length;i++){
+						game.cardsDiscard(player.storage.xinpojun2);
+					}
+					game.log(player,'弃置了',player.storage.xinpojun2);
+					delete player.storage.xinpojun2;
+					player.removeSkill('xinpojun2');
+				}
+			},
+			jiuchi:{
+				audio:2,
+				enable:'chooseToUse',
+				filterCard:function(card){
+					return get.suit(card)=='spade';
+				},
+				viewAs:{name:'jiu'},
+				viewAsFilter:function(player){
+					if(!player.countCards('h',{suit:'spade'})) return false;
+				},
+				prompt:'将一张黑桃手牌当酒使用',
+				check:function(card){
+					if(_status.event.type=='dying') return 1;
+					return 4-get.value(card);
+				},
+				ai:{
+					skillTagFilter:function(player){
+						return player.countCards('h',{suit:'spade'})>0&&player.hp<=0;
+					},
+					threaten:1.5,
+					save:true,
+				}
+			},
     		jiqishi:{
     			global:'jiqishi2',
 				/*
@@ -5235,6 +5375,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
+			biyue:{
+				audio:2,
+				trigger:{player:'phaseJieshuBegin'},
+				frequent:true,
+				content:function(){
+					player.draw();
+				},
+			},
 			/*
     		boss_wushang:{
     			trigger:{player:'phaseBegin'},
@@ -5508,7 +5656,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
             gongji:'弓骑',
             gongji_info:'出牌阶段，你可以弃置一张牌，令你的攻击范围无限，直到回合结束，然后若你以此法弃置的牌为装备牌，你可以弃置一名其他角色的一张牌。每回合限一次。',
-            
+			
+			xinpojun:'破军',
+			xinpojun2:'破军',
+			xinpojun_info:'当你于出牌阶段内使用【杀】指定一个目标后，你可以将其至多X张牌扣置于该角色的武将牌旁（X为其体力值）。若如此做，当前回合结束后，该角色获得其武将牌旁的所有牌。',
+
+			wushuang:'无双',
+			wushuang1:'无双',
+			wushuang2:'无双',
+			wushuang_info:'锁定技，你使用的【杀】或【决斗】需要两张【闪】或【杀】响应。',
+			
+			jiuchi:'酒池',
+			jiuchi_info:'你可以将一张♠手牌当作【酒】使用。<br> (酒到底是什么？)',
+
+			biyue:'闭月',
+			biyue_info:'结束阶段，你可以摸一张牌。',
+			
     		mode_chess_character_config:'战棋模式',
     		mode_chess_card_config:'战棋模式',
     	},
@@ -5802,7 +5965,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
             chess_dongzhuo:'',
             chess_xingtian:'',
 
-            treasure_dubiaoxianjing:'虽然陨石很值钱，但也不要冒着生命危险去捡啊……',
+			treasure_dubiaoxianjing:'虽然陨石很值钱，但也不要冒着生命危险去捡啊……',
             treasure_jiqishi:'“这个石头有神奇的，治愈人心的力量！”<br>“这就是你用300块钱换了块石头的理由吗……”',
             treasure_shenmidiaoxiang:'规则34：凡是存在的东西，都有R18表现<br>画师：メンヤンん',
             treasure_shenpanxianjing:'',

@@ -86,6 +86,18 @@ window.config={
 		pantsu:2,
 		jingxia:1
 		},
+		{
+		sha:3,
+		tao:2,
+		guohe:3,
+		danmakucraze:2,
+		wuzhong:3,
+		shunshou:3,
+		reidaisai:3,
+		wuxie:2,
+		juedou:3,
+		caifang:2,
+		},
 	],
 	gameRecord:{},
 	extensionInfo:{},

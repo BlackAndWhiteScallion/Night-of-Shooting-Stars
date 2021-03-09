@@ -547,6 +547,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var players = game.players;
 					for (var i = 0; i<game.players.length; i ++){
 						if (game.players[i].identity != 'cai'){
+							console.log(game.players[i]);
 							game.players[i].hide();
 							game.addVideo('hidePlayer',game.players[i]);
 							game.players[i].delete();
@@ -638,10 +639,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				skills:['stg_watch_skill']
 			},
 			stg_louguan:{
-
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				modeimage:'stg',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_louguan_skill']
 			},
 			stg_bailou:{
-
+				fullskin:true,
+				type:'equip',
+				subtype:'equip4',
+				modeimage:'stg',
+				ai:{
+					basic:{
+						equipValue:6
+					}
+				},
+				skills:['stg_bailou_skill']
 			},
 			stg_waterbook:{
 				fullskin:true,
@@ -805,6 +824,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return target == player;
 				},
 				contentBefore:function(){
+					game.playAudio('effect', 'slash');
 					player.$skill('灵击');
 				},
 				content:function(){
@@ -978,16 +998,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fullskin:true,
 				type:'jinji',
 				enable:true,
-				selectTarget:-1,
+				selectTarget:1,
 				filterTarget:function(card,player,target){
-					return target == player && target==game.me && game.me.storage.fuhuo;
+					return player==game.me && game.me.storage.fuhuo;
 				},
 				modTarget:true,
 				content:function(){
 					game.me.storage.fuhuo--;
-					player.draw(4);
-					player.gainlili(4);
-					player.recover(4);
+					target.loseHp(3);
 				},
 				ai:{
 					basic:{
@@ -1106,7 +1124,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_bat:['female','1',1,['xixue'],['hiddenboss','bossallowed']],
 				stg_ghost:['female', '3', 1, ['stg_ghost_skill'], ['hiddenboss', 'bossallowed']],
 				stg_puppet:['female', '1', 1, ['stg_shanghai_skill'], ['hiddenboss', 'bossallowed']],
-				stg_shanghai_shanghai:['female', '2', 1, ['stg_shanghai_shanghai_skill'], ['hiddenboss', 'bossallowed']],
+				stg_shanghai:['female', '2', 1, ['stg_shanghai_shanghai_skill'], ['hiddenboss', 'bossallowed']],
 				//stg_bunny:['female','2',2,[],['hiddenboss','bossallowed']],
 			}
 		},
@@ -1114,7 +1132,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			mode_stg:['stg_yinyangyu','stg_bagua','stg_missile','stg_needle','stg_deck','stg_watch',
 			'stg_firebook','stg_waterbook','stg_woodbook','stg_dirtbook','stg_goldbook', 'stg_mingyun', 'stg_bawu', 'stg_lingji',
 			'stg_fengyin', 'stg_pohuai', 'stg_juedi', 'stg_chongci', 'stg_zhuanzhu', 'stg_sidie', 'stg_louxie',
-			'stg_jiejie'],
+			'stg_jiejie', 'stg_bailou', 'stg_louguan'],
 		},
 		init:function(){
 			for(var i in lib.characterPack.mode_stg){
@@ -1510,12 +1528,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						['music_default', 3980],
 					];
 					lib.config.currentMusic = 0;
-					for (i in lib.config.skinSet[1]){
-						if (lib.config.skinSet[1][i] == 0){
-							delete lib.config.skin[i];
+					for (var i1 in lib.config.skinSet[1]){
+						if (lib.config.skinSet[1][i1] == 0){
+							delete lib.config.skin[i1];
 						} else {
-							lib.config.skin[i] = lib.config.skinSet[i];
+							lib.config.skin[i1] = lib.config.skinSet[1][i1];
 						}
+					}
+					for(var f=0;f<ui.cardPile.childElementCount;f++){
+						ui.cardPile.childNodes[f].node.image.setBackground(ui.cardPile.childNodes[f].name, 'card');
 					}
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
@@ -1587,6 +1608,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						['death', 0],
 					];
 					lib.config.currentMusic=0;
+					for (var i1 in lib.config.skinSet[1]){
+						if (lib.config.skinSet[1][i1] == 0){
+							delete lib.config.skin[i1];
+						} else {
+							lib.config.skin[i1] = lib.config.skinSet[1][i1];
+						}
+					}
+					for(var f=0;f<ui.cardPile.childElementCount;f++){
+						ui.cardPile.childNodes[f].node.image.setBackground(ui.cardPile.childNodes[f].name, 'card');
+					}
 					game.playBackgroundMusic('magicalgirl');
 					ui.backgroundMusic.play();
 					//ui.backgroundMusic.removeEventListener("timeupdate", swapMusic, true);
@@ -1619,6 +1650,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						else lib.card[list[i]].forbid.push('stg');
 						game.removeCard(list[i], map[list[i]]);
 					}
+					ui.create.card(ui.skillPile).init([null, 0, 'stg_jiejie']);
+					ui.create.card(ui.skillPile).init([null, 0, 'stg_jiejie']);
 					game.addGlobalSkill('stg_lingji');
 					game.addGlobalSkill('stg_sidie');
 					game.addGlobalSkill('stg_cherry_effect');
@@ -1656,22 +1689,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.fuhuo = 1;
 					game.me.storage.unskill = ['baofengxue'];
 					lib.config.musiccchange=[
-						['music_cherry', 223],
-						['music_cherry', 562],
-						['music_cherry', 730],
-						['music_cherry', 928],
-						['music_cherry', 1080],
-						['music_cherry', 1311],
-						['music_cherry', 1601],
-						['music_cherry', 2147],
-						['music_cherry', 2559],
-						['music_cherry', 2722],
-						['music_cherry', 2898],
-						['music_cherry', 3073],
-						['music_cherry', 3381],
+						['music_cherry', 226],
+						['music_cherry', 570],
+						['music_cherry', 733],
+						['music_cherry', 935],
+						['music_cherry', 1093],
+						['music_cherry', 1314],
+						['music_cherry', 1602],
+						['music_cherry', 2154],
+						['music_cherry', 2562],
+						['music_cherry', 2729],
+						['music_cherry', 2902],
+						['music_cherry', 3079],
+						['music_cherry', 3383],    // 反魂蝶BGM
 						['music_cherry', 3548],
 					];
 					lib.config.currentMusic = 0;
+					for (var i1 in lib.config.skinSet[0]){
+						if (lib.config.skinSet[0][i1] == 0){
+							delete lib.config.skin[i1];
+						} else {
+							lib.config.skin[i1] = lib.config.skinSet[0][i1];
+						}
+					}
+					for(var f=0;f<ui.cardPile.childElementCount;f++){
+						ui.cardPile.childNodes[f].node.image.setBackground(ui.cardPile.childNodes[f].name, 'card');
+					}
 					game.swapMusic();
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
@@ -1833,13 +1876,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}, 1000);
 				},
 			},
-			revive_boss:{
+			_revive_boss:{
 				trigger:{player:'dieBefore'},
 				direct:true,
 				locked:true,
 				fixed:true,
 				filter:function(event,player){
-					return game.me.storage.reskill && game.me.storage.reskill.length > 0;
+					return game.me.storage.reskill && game.me.storage.reskill.length > 0 && player == game.boss;
 				},
 				content:function(){
 					game.log(player,'进入下一个阶段！');
@@ -2228,7 +2271,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.removeSkill('boss_chiyan3x');
-					game.me.storage.skill = ['revive_boss'];
 					game.me.storage.unskill = ['jicai'];
 					game.me.storage.reskill = ['shogon'];
 					game.resetSkills();
@@ -2320,7 +2362,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.removeSkill('boss_chiyan4x');
-					game.me.storage.skill = ['revive_boss'];
 					game.me.storage.unskill = ['xianzhe'];
 					game.me.storage.reskill=['patchyspell'];
 					game.resetSkills();
@@ -2417,7 +2458,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.removeSkill('boss_chiyan5x');
-					game.me.storage.skill = ['revive_boss', 'sakuyainit'];
+					game.me.storage.skill = ['sakuyainit'];
 					game.me.storage.unskill = ['world'];
 					game.me.storage.reskill=['perfectSquare'];
 					ui.background.setBackgroundImage('image/background/stg_scarletstairs.jpg');
@@ -2516,7 +2557,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.removeSkill('boss_chiyan6x');
-					game.me.storage.skill = ['revive_boss'];
 					game.me.storage.unskill = ['feise','feise_start'];
 					game.me.storage.reskill=['gungirs','gens'];
 					game.resetSkills();
@@ -2633,7 +2673,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			flaninit:{
 				init:function(player){
 					game.me.storage.reskill = ['fourof','starbow','chiyan_ex_win'];
-					player.addSkill('revive_boss');
 					player.equip(game.createCard('laevatein'));
 					game.addBossFellow(2,'stg_bat',0);
 					game.addBossFellow(3,'stg_bat',0);
@@ -2720,7 +2759,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					"step 1"
 					var list = [];
 					if (event.target.name == 'marisa'){
-						list = ['stg_missile', 'stg_bagua'];
+						//list = ['stg_missile', 'stg_bagua'];
+						list = ['stg_louguan', 'stg_bailou'];
 						event.target.removeSkill('stardust');
 					} else if (event.target.name == 'reimu'){
 						list = ['stg_needle','stg_yinyangyu'];
@@ -2895,7 +2935,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					lib.character['alice'][3] = ['alicedie'];
+					lib.character['alice'][3] = ['huanfa', 'alicedie'];
 					game.me.storage.reinforce = ['alice','stg_puppet','stg_puppet', 'alice'];
 					game.me.storage.stage = 'boss_cherry4';
 					if (game.me.name == 'reimu'){
@@ -2977,7 +3017,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                lib.init.onfree();
 	                'step 3'
 					game.addBossFellow(3,'stg_yousei',1);
-					game.addBossFellow(5,'stg_maoyu',2);
+					game.addBossFellow(5,'stg_yousei',2);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
@@ -2985,7 +3025,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.tongguan ++; 
 					game.me.storage.fuhuo ++;
 					game.log(game.me,'获得了一个残机！');
-					game.me.storage.reinforce = ['stg_ghost','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
+					game.me.storage.reinforce = ['stg_yousei','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.reinforce.push('lunasa');
 					} else if (game.me.name == 'marisa'){
@@ -2995,7 +3035,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					} else {
 						game.me.storage.reinforce.push('lunasa');
 					}
-					game.me.storage.stage = 'boss_cherry3';
+					game.me.storage.reskill=['dahezou'];
+					game.me.storage.stage = 'boss_cherry5';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
 							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
@@ -3078,8 +3119,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['stg_ghost','youmu','stg_ghost', 'stg_ghost', 'youmu'];
-					game.me.storage.stage = 'boss_cherry3';
+					game.me.storage.reinforce = ['stg_ghost', 'youmu', 'stg_ghost', 'stg_ghost', 'youmu'];
+					game.me.storage.stage = 'boss_cherry6';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
 							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
@@ -3096,9 +3137,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							],
 						];
 					}
-					game.me.removeSkill('boss_cherry2');
-					game.me.storage.unskill = ['perfect'];
-					ui.background.setBackgroundImage('image/background/baka.jpg');
+					game.me.removeSkill('boss_cherry5');
+					ui.background.setBackgroundImage('image/background/stg_stairs.jpg');
 					game.resetSkills();
 					_status.paused=false;
 					_status.event.player=game.me;
@@ -3164,7 +3204,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['daiyousei','stg_yousei','cirno'];
+					game.me.storage.reinforce = ['stg_ghost', 'youmu', 'stg_ghost', 'yuyuko'];
+					game.me.storage.reskill=['mingfa', ''];
 					game.me.storage.stage = 'boss_cherry3';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -3772,22 +3813,30 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return player.lili > lib.skill.privateSquare.cost;
 				},
 				content:function(){
-                      player.loselili(lib.skill.privateSquare.cost);
-                      player.turnOver();
-                  },
+					if(lib.config.background_audio){
+						setTimeout(function(){
+							game.playAudio('effect','timestop');
+							ui.backgroundMusic.pause();
+						}, 1000);
+					}
+					player.loselili(lib.skill.privateSquare.cost);
+					player.turnOver();
+                },
 			},
 			private2:{
 				audio:2,
 				forced:true,
 				trigger:{player:'phaseAfter'},
 				content:function(){
+					ui.backgroundMusic.play();
 					player.insertPhase();
 				},
 			},
 			private3:{
 				direct:true,
-				trigger:{source:'damageBegin',player:'changelili'},
+				trigger:{source:'damageBegin',player:'loseliliBefore'},
 				content:function(){
+					trigger.num = 0;
 					trigger.cancel();
 				},
 			},
@@ -3998,7 +4047,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.useSkill('silent');
 						game.me.storage.reskill = ['royal'];
 						game.me.storage.reinforce = [];
-						player.addSkill('revive_boss');
 						player.equip(game.createCard('book'));
 						ui.boss.style.display = 'initial';
 					}
@@ -4344,7 +4392,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				group:'stg_ghost_skill2',
 				filter:function(event, player){
-					return !event.nature || event.nature != 'thunder' && player.lili > 0;
+					return (!event.nature || event.nature != 'thunder') && player.lili > 0;
 				},
 				content:function(){
 					trigger.nature = 'thunder';
@@ -4375,7 +4423,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				infinite:true,
 				cost:0,
-				spell:['shanghai_alice1'],
+				spell:['shanghai_alice1', 'shanghai_alice2'],
 				skillAnimation:true,
 				init:function(player){
 					player.useSkill('shanghai_alice');
@@ -4388,8 +4436,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			shanghai_alice1:{
 				audio:2,
 				init:function(){
-					game.addBossFellow(3, 'stg_shanghai', 1);
-					game.addBossFellow(5, 'stg_shanghai', 1);
+					game.addBossFellow(3, 'stg_shanghai', 2);
+					game.addBossFellow(5, 'stg_shanghai', 2);
 				},
 				forced:true,
 				trigger:{global:'die'},
@@ -4405,12 +4453,206 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addVideo('gain2',player,get.cardsInfo([event.togain]));
 					game.log(player,'将',result.cards.length,'张牌置为“手办”');
 				},
-			}
+			},
+			shanghai_alice2:{
+				audio:2,
+				trigger:{player:'phaseBegin'},
+				forced:true,
+				filter:function(event){
+					return !game.countPlayer(function(current){
+						if (current.name == 'stg_shanghai'){
+							return true;
+						}
+						return false;
+					});
+				},
+				content:function(){
+					game.addBossFellow(3, 'stg_shanghai', 2);
+					game.addBossFellow(5, 'stg_shanghai', 2);
+				},
+			},
+			dahezou:{
+				audio:2,
+				infinite:true,
+				cost:0,
+				spell:['dahezou_skill1'],
+				skillAnimation:true,
+				init:function(player){
+				},
+				content:function(){
+					player.loselili(lib.skill.dahezou.cost);
+					player.turnOver();
+				}
+			},
+			dahezou_skill1:{
+
+			},
+			stg_louguan_skill:{
+				trigger:{source:'damageEnd'},
+				audio:2,
+				filter:function(event){
+					return (event.card && get.subtype(event.card) == 'attack' && event.nature != 'thunder' && event.player.isAlive() && event.player.countCards('hej'));
+				},
+				content:function(){
+					"step 0"
+					if (trigger.player.num('h')) player.discardPlayerCard('h',trigger.player,true);
+					"step 1"
+					if (trigger.player.num('e')) player.discardPlayerCard('e',trigger.player,true);
+					"step 2"
+					if (trigger.player.num('j')) player.discardPlayerCard('j',trigger.player,true);
+				},
+			},
+			stg_bailou_skill:{
+				group:'stg_bailou_skill1',
+				audio:2,
+				enable:['chooseToRespond','chooseToUse'],
+				filterCard:function(card,player){
+					return get.bonus(card) && get.bonus(card) > 0;
+				},
+				position:'he',
+				viewAs:{name:'sha'},
+				prompt:'将一张有灵力的牌当【轰！】使用或打出',
+				check:function(card){return 4-get.value(card)},
+				ai:{
+					skillTagFilter:function(player){
+						if(!player.countCards('he',function(card){
+							return get.bonus(card) > 0;	
+						})) return false;
+					},
+					respondSha:true,
+				},
+			},
+			stg_bailou_skill1:{
+				trigger:{source:'damageEnd'},
+				forced:true,
+				filter:function(event){
+					return event.nature != 'thunder' && event.player.isAlive();
+				},
+				content:function(){
+					trigger.player.damage('thunder');
+				},
+				ai:{
+					thunderDamage:1,
+				},
+			},
+			mingfa:{
+				audio:2,
+				infinite:true,
+				cost:0,
+				spell:['mingfa_skill'],
+				skillAnimation:true,
+				init:function(player){
+					player.useSkill('mingfa');
+				},
+				content:function(){
+					player.loselili(lib.skill.mingfa.cost);
+					player.turnOver();
+				}
+			},
+			mingfa_skill:{
+				audio:2,
+				global:'mingfa_skill1',
+				trigger:{global:'phaseEnd'},
+				forced:true,
+				filter:function(event, player){
+					return event.player == game.me;
+				},
+				content:function(){
+					if (trigger.player.storage.mingfa){
+						trigger.player.storage.mingfa = false;
+					} else {
+						trigger.player.loseHp();
+					}
+				},
+			},
+			mingfa_skill1:{
+				trigger:{source:'damageEnd'},
+				filter:function(event, player){
+					return player == game.me && event.player.hasSkill('mingfa_skill');
+				},
+				content:function(){
+					player.storage.mingfa = true;
+				},
+			},
+			hualing:{
+				audio:2,
+				infinite:true,
+				cost:0,
+				spell:['hualing_skill'],
+				skillAnimation:true,
+				init:function(player){
+					player.useSkill('hualing');
+				},
+				content:function(){
+					player.loselili(lib.skill.hualing.cost);
+					player.turnOver();
+				}
+			},
+			hualing_skill:{
+				audio:2,
+				trigger:{global:'phaseBegin'},
+				forced:true,
+				filter:function(event, player){
+					return event.player == game.me & !game.countPlayer(function(current){
+						return current.name == 'stg_ghost';
+					});
+				},
+				content:function(){
+					game.addBossFellow(3, 'stg_ghost', 3);
+				},
+			},
+			stg_fanhun:{
+				audio:2,
+				infinite:true,
+				cost:0,
+				spell:['stg_fanhun_skill', 'stg_fanhun_skill2'],
+				skillAnimation:true,
+				init:function(player){
+					player.useSkill('stg_fanhun');
+				},
+				content:function(){
+					player.loselili(lib.skill.hualing.cost);
+					player.turnOver();
+				}
+			},
+			stg_fanhun_skill:{
+				init:function(player){
+                    player.nodying=true;
+                    if (player.hp <= 0) player.hp=0;
+                    player.update();
+                },
+                onremove:function(player){
+                    delete player.nodying;
+                    if (player.hp <= 0) {
+						player.hp=0;
+						player.dying({});
+                    }
+                    player.update();
+				},
+				trigger:{player:'phaseDiscardAfter'},
+				content:function(){
+					player.loselili();
+					player.draw();
+				},
+			},
+			stg_fanhun_skill2:{
+				audio:2,
+				direct:true,
+				trigger:{player:['damageBefore','loseHpBefore','loseliliBefore']},
+				filter:function(event,player){
+					return event.num > 0 && event.skill != 'stg_fanhun';
+				},
+				content:function(){
+					trigger.num = 0;
+					//trigger.cancel();
+				},
+			},
 		},
 		forbidstg:[
 			['stg_scarlet', 'reimu', 'marisa'],
 			['stg_scarlet_ex', 'reimu', 'marisa'],
 			['stg_cherry', 'reimu', 'marisa', 'sakuya'],
+			['stg_cherry_ex', 'reimu', 'marisa', 'sakuya'],
 		],
 		translate:{
 			zhu:'BOSS',
@@ -4465,7 +4707,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			fengmo_info:'符卡技（2）符卡发动时，弃置所有其他角色各一张牌；其他角色不能使用/打出手牌，技能和装备技能无效。',
 			stg_watch:'血月时针',
 			stg_watch_skill:'血月时针',
-			stg_watch_info:'【时静】中的“3”视为“4”；你造成伤害后，防止你的灵力和体力扣减，直到回合结束。',
+			stg_watch_info:'【时静】中的“3”视为“手牌上限”；你造成伤害后，防止你的灵力和体力扣减，直到回合结束。',
 			stg_deck:'魔术卡片',
 			stg_deck_skill:'魔术卡片',
 			stg_deck_info:'一回合一次，一名其他角色在其摸牌阶段外获得牌后，你可以弃置其一张牌。',
@@ -4566,7 +4808,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_louxie_info:'出牌阶段，对自己使用；获得一张【森罗结界】。',
 
 			stg_sidie:'死蝶之佑',
-			stg_sidie_info:'出牌阶段，对自机身份的你使用；你减少一个残机，摸4张牌，获得4点灵力，并回复4点体力。<br><u>追加效果：你造成伤害时，可以展示此牌，防止该伤害，改为令受伤角色失去1点体力。</u>',
+			stg_sidie_info:'出牌阶段，对一名角色使用；你减少一个残机，令目标失去3点体力。<br><u>追加效果：你造成伤害时，可以展示此牌，防止该伤害，改为令受伤角色失去1点体力。</u>',
 
 			stg_ghost:'幽灵',
 			stg_ghost_skill:'怨念',
@@ -4576,12 +4818,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_shanghai:'上海',
 			stg_shanghai_skill:'变装',
 			stg_shanghai_skill_info:'锁定技，你入场时，摸一张技能牌。',
-			stg_shanghai_shanghai_skill:'上海',
+			stg_shanghai_shanghai_skill:'变装·改',
 			stg_shanghai_shanghai_skill_info:'锁定技，你入场时，摸一张技能牌；你的手牌上限+1。',
+
+			shanghai_alice:'诅咒「魔彩光的上海人形」',
+			shanghai_alice_info:'符卡技（0）<极意>符卡发动时，或准备阶段，若场上没有上海人形，召唤2个上海人形；上海人形坠机时，你将其所有牌加入“手办”',
 
 			stg_jiejie:'森罗结界',
 			stg_jiejie_info:'锁定技，你受到伤害时，弃置此牌，防止该伤害；准备阶段，弃置此牌，摸两张牌。',
 			stg_jiejie_skill2:'森罗结界（摸牌）',
+
+			stg_bailou:'破魂之白楼',
+			stg_bailou_skill:'破魂之白楼',
+			stg_bailou_info:'你可以将有灵力的牌当做【轰！】使用；锁定技，你造成弹幕伤害后，对受伤角色造成1点灵击伤害。',
+			stg_louguan:'断命之楼观',
+			stg_louguan_skill:'断命之楼观',
+			stg_louguan_info:'你使用【轰！】造成弹幕伤害后，可以弃置受伤角色每个区域各一张牌。',
+
+			mingfa:'畜趣剑「无为无策之冥罚」',
+			mingfa_info:'符卡技（0）<极意>锁定技，自机的结束阶段，若其本回合没有对你造成伤害，其失去1点体力。',
+
+			stg_fanhun:'反魂蝶-三分咲',
+			stg_fanhun_skill:' 符卡技（0）<极意>防止你坠机；弃牌阶段结束时，你消耗1点灵力，并摸一张牌；你不能以此法以外的方式扣减灵力。',
 		},
 		get:{
 			rawAttitude:function(from,to){

@@ -1568,18 +1568,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 trigger:{global:'phaseEnd'},
                 init:function(player){
-                      player.nodying=true;
-                      if (player.hp <= 0) player.hp=0;
-                      player.update();
-                    },
-                    onremove:function(player){
-                      delete player.nodying;
-                      if (player.hp <= 0) {
-                        player.hp=0;
-                        player.dying({});
-                      }
-                      player.update();
-                    },
+                    player.nodying=true;
+                    if (player.hp <= 0) player.hp=0;
+                    player.update();
+                },
+                onremove:function(player){
+                    delete player.nodying;
+                    if (player.hp <= 0) {
+                    player.hp=0;
+                    player.dying({});
+                    }
+                    player.update();
+                },
                 filter:function(event,player){
                     return true;
                 },

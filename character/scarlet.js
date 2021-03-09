@@ -8,7 +8,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             meiling:['female','2',4,['xingmai','dizhuan','jicai']],
             koakuma:['female','4',3,['qishu','anye']],
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
-            sakuya:['female','2',3,['huanzang','shijing','world']],
+            sakuya:['female','5',3,['huanzang','shijing','world']],
             remilia:['female','5',4,['mingyun','feise']],
             flandre:['female','1',4,['kuangyan','zhihou']],
 		},
@@ -821,7 +821,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 content:function(){
                     'step 0'
                     var eff=get.effect(player,trigger.card,trigger.player,trigger.player);
-                    player.chooseToDiscard('he','你可以用一把与'+get.translation(trigger.card)+'相同花色/点数的飞刀把它砍断',function(card){
+                    player.chooseToDiscard('he','请选择一张与'+get.translation(trigger.card)+'相同花色/点数的牌',function(card){
                         return (get.suit(card) == get.suit(trigger.card) || get.number(card) == get.number(trigger.card));
                     }).set('ai',function(card){
                         if (get.subtype(card) == 'support') return -1;
@@ -908,16 +908,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 intro:{
                     content:'cards'
                 },
-                prompt:'是否把今天用出去的飞刀捡起来？',
                 filter:function(event,player){
                     if (player.lili == 0 || !player.storage.shijing || player.storage.shijing.length == 0) return false;
-                    if (player.countCards('e',{name:'stg_watch'})) return player.countCards('h') < 4;
+                    if (player.countCards('e',{name:'stg_watch'})) return player.countCards('h') < player.getHandcardLimit();
                     else return player.countCards('h') < 3;
                 },
                 content:function(){
                     'step 0'
                     event.num = 3 - player.countCards('h');
-                    if (player.countCards('e',{name:'stg_watch'})) event.num++;
+                    if (player.countCards('e',{name:'stg_watch'})) event.num = player.getHandcardLimit() - player.countCards('h');
                     if (event.num < 0) event.finish();
                     player.chooseCardButton(player.storage.shijing,'捡回'+event.num+'张牌',[1,event.num],true).ai=function(button){
                         return get.value({name:button.link[2]});
@@ -1001,7 +1000,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                     if (trigger.target.name == 'remilia') game.trySkillAudio('world_skill',player,true,3);
                     if (trigger.target.name == 'flandre') game.trySkillAudio('world_skill',player,true,4);
                     if (trigger.target.name == 'meiling') game.trySkillAudio('world_skill',player,true,5);
-                    player.chooseTarget('弃置一名角色一张牌，作为世界的食粮',function(card,player,target){
+                    player.chooseTarget('弃置一名角色一张牌',function(card,player,target){
                         return target.countCards('hej');
                     }).set('ai',function(target){
                         return get.attitude(player,target)<0;
@@ -1020,7 +1019,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                 check:function(event,player){
                     return -get.attitude(player, event.player) && get.attitude(player, event.target) && event.target.hp < 3;
                 },
-                prompt:'要不要使用The World的力量？',
             },
             mingyun:{
                 audio:2,

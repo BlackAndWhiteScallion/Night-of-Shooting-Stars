@@ -29098,7 +29098,7 @@
                 }
                 if(!lib.card[info.viewAs.name]){
                     lib.skill[i]={};
-                    lib.translate[i+'_info']='技能不可用';
+                    lib.translate[i+'_info']='技能不可用（转化的牌不存在）';
                     return;
                 }
                 if(info.ai==undefined) info.ai={};
