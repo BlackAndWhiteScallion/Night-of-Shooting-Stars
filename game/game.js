@@ -20814,7 +20814,7 @@
                             return this;
                         }
                         if(ui.dialogs[i].static) ui.dialogs[i].unfocus();
-                        else ui.dialogs[i].hide();
+                        //else ui.dialogs[i].hide();
                     }
                     ui.dialog=this;
                     var translate;
@@ -29427,7 +29427,9 @@
         notify:function(str){
             var dialog=ui.create.dialog(str);
             dialog.videoId=lib.status.videoId++;
-        
+            dialog.style.top = '150px';
+            dialog.style.zIndex = 10;
+
             game.broadcast(function(str,id){
                 var dialog=ui.create.dialog(str);
                 dialog.videoId=id;
@@ -29435,7 +29437,7 @@
             setTimeout(function(){
                 game.broadcast('closeDialog',dialog.videoId);
                 dialog.close();
-            },get.delayx(1000,2000));
+            }, 1500);
         },
         log:function(){
             var str='',logvid=null;

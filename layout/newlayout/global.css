@@ -455,15 +455,17 @@
 }
 .dialog.nobutton{
 	bottom:auto !important;
-	top:200px !important;
+	top:250px;
 }
 #arena.stone:not(.choose-character) .dialog{
 	width: calc(90% - 440px);
 	left: calc(5% + 220px);
 }
+/*
 .dialog.removing{
 	top:auto;
 }
+*/
 #control{
 	z-index:5;
 	top:auto;

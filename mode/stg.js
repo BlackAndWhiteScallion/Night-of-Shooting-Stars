@@ -2759,8 +2759,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					"step 1"
 					var list = [];
 					if (event.target.name == 'marisa'){
-						//list = ['stg_missile', 'stg_bagua'];
-						list = ['stg_louguan', 'stg_bailou'];
+						list = ['stg_missile', 'stg_bagua'];
 						event.target.removeSkill('stardust');
 					} else if (event.target.name == 'reimu'){
 						list = ['stg_needle','stg_yinyangyu'];
@@ -2957,7 +2956,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
 							],
 						];
-					} else if (game.me.name == 'sakuta'){
+					} else if (game.me.name == 'sakuya'){
 						
 					}
 					game.me.removeSkill('boss_cherry3');
