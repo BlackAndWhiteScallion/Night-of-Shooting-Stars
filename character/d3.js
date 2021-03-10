@@ -139,7 +139,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							}
 						} else if (get.mode() == 'stg'){
 							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">来一个打爆一个就行了！</div></div>');
-							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你有三次复活机会（右上角可以查看）</div></div>');
+							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">你有三个残机（右上角可以查看）</div></div>');
 							ui.dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">还有一些特殊规则也在右上角查看</div></div>');
 						} else if (get.mode() == 'boss'){
 							if (game.me.identity == 'zhu'){

@@ -396,7 +396,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				//td=ui.create.div(tr);
 				
 				if(game.me.storage.fuhuo){
-					td.innerHTML='剩余'+game.me.storage.fuhuo+'次复活机会';
+					td.innerHTML='剩余'+game.me.storage.fuhuo+'个残机';
 				}
 				else{
 					td.innerHTML='不剩残机了'
@@ -413,7 +413,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				return uiintro;
 			},180);
 
-			ui.boss = ui.create.system('BOSS剩余符卡',null,true);
+			ui.boss = ui.create.system('剩余符卡',null,true);
 			lib.setPopped(ui.boss,function(){
 				var uiintro=ui.create.dialog('hidden');
 				var str = '';
@@ -2852,8 +2852,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.stage = 'boss_cherry3';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu',''],
-							['chen','','end'],
+							['reimu','怎么，这种地方也会有人家吗？','','终结？','','那个，什么终结？','','是吗。','不过，的确，说到迷途之家, 据说把这里的东西拿回去能让人变幸运….',
+							'', '那好，掠夺开始～～', '', '迷路了的话就无法再回去…这个设定哪去了？'],
+							['chen','在这里迷路的话就是终结！','','先不管那些，欢迎来到迷途之家～','','迷路的话就是终结，无法再回去了。',
+							'','会的哦～','', '你说什么？！', '这里可是我们的村庄哦, 人类能给我们出去吗？', 'end'],
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
@@ -2900,7 +2902,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '';
+						line = '总之，先在附近找点轻巧的日用品啦～～';
 					} else if (game.me.name == 'marisa'){
 						line = '';
 					} else if (game.me.name == 'sakuya'){
@@ -2940,10 +2942,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.stage = 'boss_cherry4';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
-								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
-							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
-							,'end'],
+							['reimu','夜里好冷啊，视线也是最差的','','哎呀，虽然可能的确是不足','','刚刚才见过面的吧？','',
+							'有段时间巨人？', '', '先不管那些，春度是什么？', '', '太高了也不好呢。不过为什么这次的冬天会这么久？','',
+							'就是说和你没关系？', '', '那，再见', '', '谁会和你这种七色魔法笨蛋是旧友', ''],
+							['alice','会冷的话是因为你的春度不足的缘故啦～难道不是吗？','','有段时间没见了','','不是，不是那个意思','',
+							'不记得我了吗？...算了，反正也无所谓', '', '就是说，你头脑里究竟有多春的程度啊', '', '因为有个收集春度的家伙在',
+							'', '当然没关系', '', '等等！', '明明好不容易遇见旧友, 见面礼就只有你的性命吗？', '', '巫女到底不过二色', '这种力量连我的二成八分六厘都不到','end'],
 						]; 
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
@@ -2953,6 +2957,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
 							],
 						];
+					} else if (game.me.name == 'sakuta'){
+						
 					}
 					game.me.removeSkill('boss_cherry3');
 					ui.background.setBackgroundImage('image/background/snow.jpg');
@@ -4478,6 +4484,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				spell:['dahezou_skill1'],
 				skillAnimation:true,
 				init:function(player){
+					if (player == game.boss){
+						if (game.boss.name == 'lunasa'){
+							game.addBossFellow(3, 'merlin', 3);
+							game.addBossFellow(5, 'lyrica', 3);
+						} else if (game.boss.name == 'merlin'){
+							game.addBossFellow(3, 'lunasa', 3);
+							game.addBossFellow(5, 'lyrica', 3);
+						} else if (game.boss.name == 'lyrica'){
+							game.addBossFellow(3, 'lunasa', 3);
+							game.addBossFellow(5, 'merlin', 3);
+						}
+					}
+					player.useSkill('dahezou');
 				},
 				content:function(){
 					player.loselili(lib.skill.dahezou.cost);
@@ -4485,7 +4504,28 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			},
 			dahezou_skill1:{
-
+				trigger:{global:'shaBegin'},
+				filter:function(event, player){
+					return player.countCards('h') > 0 && (!player.storage.mingzhi || player.storage.mingzhi.length < player.countCards('h')) && !event.directHit;
+				},
+				content:function(){
+					"step 0"
+					player.chooseCard('h', function(card){
+						var player=_status.event.player;
+						return (!player.storage.mingzhi || !player.storage.mingzhi.contains(card)) && get.color(card) == get.color(trigger.card);
+					});
+					"step 1"
+					player.mingzhiCard(result.cards[0]);
+					if(typeof trigger.shanRequired=='number'){
+						trigger.shanRequired+=1;
+					}
+					else{
+						trigger.shanRequired=1;
+					}
+				},
+				check:function(event, player){
+					return -get.attitude(player,event.target);
+				}
 			},
 			stg_louguan_skill:{
 				trigger:{source:'damageEnd'},
@@ -4599,6 +4639,31 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					game.addBossFellow(3, 'stg_ghost', 3);
+				},
+			},
+			wangwo:{
+				audio:2,
+				infinite:true,
+				cost:0,
+				spell:['wangwo_skill'],
+				skillAnimation:true,
+				init:function(player){
+					player.useSkill('wangwo');
+				},
+				content:function(){
+					player.loselili(lib.skill.wangwo.cost);
+					player.turnOver();
+				}
+			},
+			wangwo_skill:{
+				trigger:{global:'phaseEnd'},
+				forced:true,
+				filter:function(event, player){
+					return event.player == game.me;
+				},
+				content:function(){
+					"step 0"
+
 				},
 			},
 			stg_fanhun:{
@@ -4772,10 +4837,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			gungirs_info:'符卡技（0）<极意> 符卡发动时，你创建并装备一张【冈格尼尔】；你失去装备区内的【冈格尼尔】后，创建一张【冈格尼尔】并装备之。',
 		
 			boss_chiyan:'红雾异变',
-			boss_chiyan_info:'幻想乡被红雾包围了，去红雾源头的洋馆找出元凶吧！ <br><br> 关卡数：6 <br><br> 复活机会：1       第3关和第5关后追加1次<br><br>特殊规则：通关时，获得一张【拔雾开天】。',
+			boss_chiyan_info:'幻想乡被红雾包围了，去红雾源头的洋馆找出元凶吧！ <br><br> 关卡数：6 <br><br> 残机：1       第3关和第5关后追加1个<br><br>特殊规则：通关时，获得一张【拔雾开天】。',
 
 			boss_chiyan_ex:'红魔乡EX关卡',
-			boss_chiyan_ex_info:'异变结束后，蕾米来到博丽神社玩，然后因为回不去而赖着不走了。<br>去红魔馆检查一下情况（来把蕾米赶走）吧！<br><br> 关卡数：1 <br><br> 复活机会：0       道中击破后追加1次。',
+			boss_chiyan_ex_info:'异变结束后，蕾米来到博丽神社玩，然后因为回不去而赖着不走了。<br>去红魔馆检查一下情况（来把蕾米赶走）吧！<br><br> 关卡数：1 <br><br> 残机：0       道中击破后追加1个。',
 			silent:'月符「寂静月神」',
 			silent_info:'符卡技（0）<极意>结束阶段，你令一名其他角色选择一项：受到1点弹幕伤害，或令其对你造成的下一次伤害值-1。',
 			silent1:'月符「寂静月神」',
@@ -4802,7 +4867,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 		
 			stg_cherry:'妖妖梦',
 			boss_cherry:'春雪异变',
-			boss_cherry_info:'都5月份了，怎么还在下大雪？这是谁干的好事？ <br><br> 关卡数：6 <br><br> 复活机会：1       第3关和第5关后追加1次<br><br>特殊规则：每造成7点伤害，获得一张【森罗结界】。<br> 注：长按/悬浮角色可以查看已造成伤害值',
+			boss_cherry_info:'都5月份了，怎么还在下大雪？这是谁干的好事？ <br><br> 关卡数：6 <br><br> 残机：1       第3关和第5关后追加1个<br><br>特殊规则：每造成7点伤害，获得一张【森罗结界】。<br> 注：长按/悬浮角色可以查看已造成伤害值',
 
 			stg_louxie:'春光漏泄',
 			stg_louxie_info:'出牌阶段，对自己使用；获得一张【森罗结界】。',
@@ -4824,6 +4889,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			shanghai_alice:'诅咒「魔彩光的上海人形」',
 			shanghai_alice_info:'符卡技（0）<极意>符卡发动时，或准备阶段，若场上没有上海人形，召唤2个上海人形；上海人形坠机时，你将其所有牌加入“手办”',
 
+			dahezou:'大合葬「灵车大协奏曲」',
+			dahezou_info:'符卡技（0）<极意>一名角色使用【轰！】指定目标后，你可以明置一张与之相同颜色的手牌，令该【轰！】需要一张额外的【躲~】才能抵消。',
+
 			stg_jiejie:'森罗结界',
 			stg_jiejie_info:'锁定技，你受到伤害时，弃置此牌，防止该伤害；准备阶段，弃置此牌，摸两张牌。',
 			stg_jiejie_skill2:'森罗结界（摸牌）',
@@ -4837,9 +4905,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 			mingfa:'畜趣剑「无为无策之冥罚」',
 			mingfa_info:'符卡技（0）<极意>锁定技，自机的结束阶段，若其本回合没有对你造成伤害，其失去1点体力。',
+			wushuai:'天上剑「天人之五衰」',
+			wushuai_info:'符卡技（0）<极意>结束阶段，你可以声明一种攻击牌或防御牌；直到你下次声明，所有角色不能使用声明的牌。',
+
+			wuliang:'六道剑「一念无量劫」',
+			wuliang_info:'符卡技（0）<极意>你可以将一张【轰！】当作【灵击】使用。',
+
+			hualing:'华灵「扬羽蝶」',
+			hualing_info:'符卡技（0）<极意>自机的准备阶段，若场上没有幽灵，召唤一只幽灵。',
+
+			wangwo:'樱符「完全墨染的樱花 -亡我-」',
+			wangwo_info:'符卡技（0）<极意>自机的结束阶段，其选择X项（X为你已受伤值+1）：失去1点体力；弃置两张牌；或受到2点灵击伤害。',
 
 			stg_fanhun:'反魂蝶-三分咲',
-			stg_fanhun_skill:' 符卡技（0）<极意>防止你坠机；弃牌阶段结束时，你消耗1点灵力，并摸一张牌；你不能以此法以外的方式扣减灵力。',
+			stg_fanhun_info:' 符卡技（0）<极意>防止你坠机；弃牌阶段结束时，你消耗1点灵力，并摸一张牌；你不能以此法以外的方式扣减灵力。',
 		},
 		get:{
 			rawAttitude:function(from,to){

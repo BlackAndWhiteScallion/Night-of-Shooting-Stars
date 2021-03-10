@@ -60,7 +60,7 @@ window.noname_package={
         town:'小镇',
         stg_sakura:'樱花树',
         snow:'雪夜',
-        stg_barrier:'冥界结界',
+        stg_barrier:'幽明结界',
     },
     music:{
         music_default:'默认',

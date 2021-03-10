@@ -8,7 +8,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
             meiling:['female','2',4,['xingmai','dizhuan','jicai']],
             koakuma:['female','4',3,['qishu','anye']],
             patchouli:['female','2',3,['qiyao','riyin','xianzhe']],
-            sakuya:['female','5',3,['huanzang','shijing','world']],
+            sakuya:['female','2',3,['huanzang','shijing','world']],
             remilia:['female','5',4,['mingyun','feise']],
             flandre:['female','1',4,['kuangyan','zhihou']],
 		},
