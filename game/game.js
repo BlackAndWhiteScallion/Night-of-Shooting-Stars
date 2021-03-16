@@ -5225,6 +5225,14 @@
                             }
                         }
                     },
+                    practice_mode:{
+                        name:'练习模式',
+                        init:false,
+                        intro:'起始残机数为10，但通关不计数',
+                        onclick:function(bool){
+                            game.saveConfig('practice_mode',bool,this._link.config.mode);
+                        }
+                    },
                     die_lili:{
                         name:'击坠角色后，来源获得1点灵力',
                         init:false,
