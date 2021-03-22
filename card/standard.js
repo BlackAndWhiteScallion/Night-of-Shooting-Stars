@@ -2895,7 +2895,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			'step 1'
 				if(result.bool){
 					player.addSkill('lingbi2');
-					game.log(get.translation(player)+'声明了'+get.translation(result.links[0][2])+'不可以使用。');
+					event.str = get.translation(player)+'声明了'+get.translation(result.links[0][2])+'不可以使用。';
+					game.log(event.str);
+					game.notify(event.str);
 					if (!player.storage._lingbi2) player.storage._lingbi2=[];
 					if (!player.storage.lingbi2) player.storage.lingbi2=[];
 					player.showCards(result.links);

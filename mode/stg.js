@@ -1670,7 +1670,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.background.setBackgroundImage('image/background/baka.jpg');
 
 					lib.character['cirno'] = ['female', '2', 2, ['jidong', 'bingbi']];
-					game.me.storage.reinforce = ['stg_yousei','cirno','stg_yousei', 'letty'];
+					game.me.storage.reinforce = ['stg_yousei','stg_yousei', 'cirno','stg_yousei', 'stg_yousei', 'letty'];
 					//game.me.storage.reinforce = ['rumia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -1694,7 +1694,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_cherry2';
+					game.me.storage.stage = 'boss_cherry5';
 					game.me.storage.fuhuo = 1;
 					if (get.config('practice_mode')){
 						game.me.storage.fuhuo = 10;
@@ -1974,7 +1974,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return true;
 				},
 				content:function(){
-					targets[0].damage(Infinity);
+					targets[0].damage(10);
 				}
 			},
 			// 红魔乡 （正常），直到1951行
@@ -3217,14 +3217,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 3'
-					game.addBossFellow(3,'stg_yousei',1);
-					game.addBossFellow(5,'stg_maoyu',2);
+					game.addBossFellow(3,'stg_ghost',1);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
-					game.me.storage.reinforce = ['stg_ghost', 'youmu', 'stg_ghost', 'yuyuko'];
+					game.me.storage.reinforce = ['stg_ghost', 'youmu', 'yuyuko'];
 					game.me.storage.reskill=['hualing', 'wangwo'];
 					game.me.storage.stage = 'boss_cherry3';
 					lib.character['youmu'][3] = ["yishan", "liudaojian"];
@@ -3247,8 +3246,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.removeSkill('boss_cherry6');
-					game.me.storage.unskill = ['perfect'];
-					ui.background.setBackgroundImage('image/background/baka.jpg');
+					ui.background.setBackgroundImage('image/background/stg_sakura.jpg');
 					game.resetSkills();
 					_status.paused=false;
 					_status.event.player=game.me;
@@ -4626,6 +4624,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			mingfa_skill1:{
+				direct:true,
 				trigger:{source:'damageEnd'},
 				filter:function(event, player){
 					return player == game.me && event.player.hasSkill('mingfa_skill');
@@ -4641,6 +4640,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				spell:['tianshangjian_skill'],
 				skillAnimation:true,
 				init:function(player){
+					player.classList.remove('turnedover');
+					player.removeSkill('mingfa');
+					player.removeSkill('mingfa_skill');
 					player.useSkill('tianshangjian');
 				},
 				content:function(){
@@ -4652,7 +4654,66 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				trigger:{player:"phaseEnd"},
 				content:function(){
-
+					'step 0'
+					var list = [];
+					var packs = lib.config.all.cards.diff(lib.config.cards);
+					for (var i in lib.card){
+						if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+						if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+						//if(lib.card[i].type == 'trick' || lib.card[i].type == 'basic' || lib.card[i].type == "jinji" || lib.card[i].type == "equip"){
+						if (packs){
+							var f = false;
+							for (var j = 0; j < packs.length; j ++){
+								if (lib.cardPack[packs[j]].contains(i)){
+									f = true;
+									break;
+								}
+							}
+							if (f) continue;
+						}
+						if (lib.translate[i] && (lib.card[i].subtype == 'attack' || lib.card[i].subtype == "defense")){
+							list.add(i);
+						}
+					}
+					player.chooseButton(['选择不让使用打出的牌',[list,'vcard']], true).set('filterButton',function(button){
+							return true;
+						}).set('ai',function(button){
+							var rand=_status.event.rand*2;
+							switch(button.link[2]){
+								case 'sha':return 5+rand[1];
+								case 'shan':return 4.5+rand[3];
+								case 'juedou':return 4+rand[4];
+								case 'wuxie':return 3+rand[5];
+								default:return rand[6];
+							}
+						}).set('rand',[Math.random(),Math.random(),Math.random(),Math.random(),
+						Math.random()],Math.random());
+					'step 1'
+					if(result.bool){
+						player.addSkill('tianshangjian_skill_2');
+						game.log(get.translation(player)+'声明了'+get.translation(result.links[0][2]));
+						game.notify(get.translation(player)+'声明了'+get.translation(result.links[0][2]));
+						if (!player.storage.tianshangjian_skill_2) player.storage.tianshangjian_skill_2=[];
+						player.showCards(result.links);
+						player.storage.tianshangjian_skill_2.add(game.createCard(result.links[0][2], '',''));
+						//player.storage.tianjian.add(game.createCard(result.links[0][2],'',''));
+						player.markSkill('tianshangjian_skill_2');
+						player.syncStorage('tianshangjian_skill_2');							
+					}
+				},
+			},
+			tianshangjian_skill_2:{
+				trigger:{global:'useCardBefore'},
+				intro:{
+					content:'cards'
+				},
+				forced:true,
+				filter:function(event, player){
+					if (!player.storage.tianshangjian_skill_2) return false;
+					return player.storage.tianshangjian_skill_2.contains(event.card.name);
+				},
+				content:function(){
+					trigger.player.loseHp();
 				},
 			},
 			liudaojian:{
@@ -4731,6 +4792,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				spell:['wangwo_skill'],
 				skillAnimation:true,
 				init:function(player){
+					player.classList.remove('turnedover');
+					player.removeSkill('hualing');
+					player.removeSkill('hualing_skill');
 					player.useSkill('wangwo');
 				},
 				content:function(){
@@ -4770,6 +4834,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				spell:['stg_fanhun_skill', 'stg_fanhun_skill2'],
 				skillAnimation:true,
 				init:function(player){
+					player.classList.remove('turnedover');
+					player.removeSkill('wangwo');
+					player.removeSkill('wangwo_skill');
 					player.useSkill('stg_fanhun');
 				},
 				content:function(){
@@ -4836,7 +4903,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			youmuinit:{
 				group:'handcard_max',
-				init:function(){
+				init:function(player){
 					player.equip(game.createCard('stg_louguan'));
 	                player.equip(game.createCard('stg_bailou'));
 				},
@@ -5041,15 +5108,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_bailou_info:'你可以将有灵力的牌当做【轰！】使用；锁定技，你造成弹幕伤害后，对受伤角色造成1点灵击伤害。',
 			stg_louguan:'断命之楼观',
 			stg_louguan_skill:'断命之楼观',
-			stg_louguan_info:'你使用【轰！】造成弹幕伤害后，可以弃置受伤角色每个区域各一张牌。',
+			stg_louguan_info:'你使用【轰！】造成弹幕伤害后，可以弃置受伤角色所有区域各一张牌。',
 
 			mingfa:'畜趣剑「无为无策之冥罚」',
 			mingfa_info:'符卡技（0）<极意>锁定技，自机的结束阶段，若其本回合没有对你造成伤害，其失去1点体力。',
-			wushuai:'天上剑「天人之五衰」',
-			wushuai_info:'符卡技（0）<极意>结束阶段，你可以声明一种攻击牌或防御牌；直到你下次声明，所有角色不能使用声明的牌。',
+			tianshangjian:'天上剑「天人之五衰」',
+			tianshangjian_info:'符卡技（0）<极意>结束阶段，你可以声明一种攻击牌或防御牌；直到你下次声明，一名角色使用声明的牌时，其失去1点体力。',
 
-			wuliang:'六道剑「一念无量劫」',
-			wuliang_info:'符卡技（0）<极意>你可以将一张【轰！】当作【灵击】使用。',
+			liudaojian:'六道剑「一念无量劫」',
+			liudaojian_info:'符卡技（0）<极意>出牌阶段，你可以将一张【轰！】当作【灵击】使用。',
 
 			hualing:'华灵「扬羽蝶」',
 			hualing_info:'符卡技（0）<极意>自机的准备阶段，若场上没有幽灵，召唤一只幽灵。',
