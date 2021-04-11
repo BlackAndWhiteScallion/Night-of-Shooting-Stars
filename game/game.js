@@ -9692,6 +9692,7 @@
                                 }
                                 else{
                                     str='请选择要使用的牌';
+                                    event.main = true;
                                 }
                                 if (!lib.config.new_tutorial || get.mode() == 'tutorial'){
                                     str += '<br><br><div><div style="width:100%;text-align:center;font-size:14px">在牌上浮空或右键可以查看效果<br>在角色上浮空，右键，或双击可以查看技能';
@@ -9703,6 +9704,7 @@
                                 }
                                 else if(typeof event.skillDialog!='string'){
                                     event.dialog=ui.create.dialog(str);
+                                    event.dialog.classList.add('main');
                                 }
                                 else{
                                     event.dialog=str;
@@ -20822,6 +20824,9 @@
                             return this;
                         }
                         if(ui.dialogs[i].static) ui.dialogs[i].unfocus();
+                        else if (ui.dialogs[i].classList.contains('main')){
+                            ui.dialogs[i].hide();
+                        }
                         //else ui.dialogs[i].hide();
                     }
                     ui.dialog=this;

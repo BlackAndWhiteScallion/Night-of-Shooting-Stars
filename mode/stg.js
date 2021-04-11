@@ -1,4 +1,5 @@
 'use strict';
+
 game.import('mode',function(lib,game,ui,get,ai,_status){
 	return {
 		name:'stg',
@@ -345,7 +346,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				}
 			}
 			ui.create.me();
-			if (!ui.arena.classList.contains('decadeUI')){
+			if (!ui.arena.classList.contains('decadeUI') && !get.is.newLayout()){
 				ui.fakeme=ui.create.div('.avatar',ui.me);
 			}
 			if(game.me!==boss){
@@ -971,6 +972,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				subtype:'support',
 				enable:true,
 				selectTarget:-1,
+				bonus:1,
 				filterTarget:function(card,player,target){
 					return target==player;
 				},
@@ -986,8 +988,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					},
 					result:{
 						target:function(player,target){
-							if (!target.getStat('damage') && get.attitude(player, target) > 0) return -1;
-							return target.getStat('damage');
+							return 1;
 						}
 					},
 					tag:{
@@ -1125,7 +1126,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_maid:['female','2',1,['saochu'],['hiddenboss','bossallowed']],
 				stg_bookshelf:['female','3',5,['juguang'],['hiddenboss','bossallowed']],
 				stg_bat:['female','1',1,['xixue'],['hiddenboss','bossallowed']],
-				stg_ghost:['female', '3', 1, ['stg_ghost_skill'], ['hiddenboss', 'bossallowed']],
+				stg_ghost:['female', '2', 1, ['stg_ghost_skill'], ['hiddenboss', 'bossallowed']],
 				stg_puppet:['female', '1', 1, ['stg_shanghai_skill'], ['hiddenboss', 'bossallowed']],
 				stg_shanghai:['female', '2', 1, ['stg_shanghai_shanghai_skill'], ['hiddenboss', 'bossallowed']],
 				//stg_bunny:['female','2',2,[],['hiddenboss','bossallowed']],
@@ -1694,7 +1695,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_cherry5';
+					game.me.storage.stage = 'boss_cherry2';
 					game.me.storage.fuhuo = 1;
 					if (get.config('practice_mode')){
 						game.me.storage.fuhuo = 10;
@@ -1950,7 +1951,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if (nums != 0) return num;
 						return Infinity;
 						*/
-						return num + player.storage.tongguan;
+						return num + (player.storage.tongguan || 0);
 					},
 					canBeDiscarded:function(card,player,target,event){
 						if(get.is.altered('handcard_max')&&get.subtype(card) == 'equip4') return false;
@@ -2354,6 +2355,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.tongguan ++; 
 					game.me.storage.fuhuo ++;
 					game.log(game.me,'获得了一个残机！');
+					game.notify(get.translation(game.me) + '获得了一个残机');
 					game.me.storage.reinforce = ['koakuma','patchouli'];
 					game.me.storage.stage = 'boss_chiyan5x';
 					if (game.me.name == 'reimu'){
@@ -2546,6 +2548,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.tongguan ++; 
 					game.me.storage.fuhuo ++;
 					game.log(game.me,'获得了一个残机！');
+					game.notify(get.translation(game.me) + '获得了一个残机');
 					game.me.storage.reinforce = ['sakuya','remilia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [ 
@@ -3043,13 +3046,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                lib.init.onfree();
 	                'step 3'
 					game.addBossFellow(3,'stg_yousei',1);
-					game.addBossFellow(5,'stg_yousei',2);
+					game.addBossFellow(5,'stg_yousei',1);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
 					game.me.storage.fuhuo ++;
+					game.notify(get.translation(game.me) + '获得了一个残机');
 					game.log(game.me,'获得了一个残机！');
 					lib.character["lilywhite"][3].push("lilywhitedieafter");
 					game.me.storage.reinforce = ['stg_yousei','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
@@ -3131,7 +3135,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 3'
-					game.addBossFellow(3,'stg_ghost',3);
+					game.addBossFellow(3,'stg_ghost', 2);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
@@ -3217,16 +3221,19 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                });
 	                lib.init.onfree();
 	                'step 3'
-					game.addBossFellow(3,'stg_ghost',1);
+					game.addBossFellow(3,'stg_ghost',2);
 					'step 4'
 					while(_status.event.name!='phaseLoop'){
 						_status.event=_status.event.parent;
 					}
 					game.me.storage.tongguan ++; 
+					game.me.storage.fuhuo ++;
+					game.notify(get.translation(game.me) + '获得了一个残机');
+					game.log(game.me,'获得了一个残机！');
 					game.me.storage.reinforce = ['stg_ghost', 'youmu', 'yuyuko'];
-					game.me.storage.reskill=['hualing', 'wangwo'];
+					game.me.storage.reskill=['hualing', 'wangwo', 'stg_fanhun'];
 					game.me.storage.stage = 'boss_cherry3';
-					lib.character['youmu'][3] = ["yishan", "liudaojian"];
+					lib.character['youmu'][3] = ["yishan", "liudaojian", "youmudieafter2"];
 					lib.character['yuyuko'][3] = ["youdie", "moyin"];
 					lib.skill['youdie'].forced = true;
 					if (game.me.name == 'reimu'){
@@ -3303,7 +3310,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 cost:0,
                 infinite:true,
                  spell:['mercury1'],
-                 skillAnimation:true,
+                 
                  trigger:{},
                   init:function(player){
                   	var target = game.findPlayer(function(current){
@@ -3348,7 +3355,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 cost:0,
                 infinite:true,
                 spell:['emerald1'],
-                skillAnimation:true,
+                
                 init:function(player){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
@@ -3397,7 +3404,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 cost:0,
                 infinite:true,
                  spell:['waterfairy1'],
-                 skillAnimation:true,
+                 
                    init:function(player){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
@@ -3436,7 +3443,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['perfectSquare1','perfectSquare2'],
-				skillAnimation:true,
+				
 				init:function(player){
 	                  player.useSkill('perfectSquare');
 				},
@@ -3469,7 +3476,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				cost:0,
 				trigger:{player:'phaseBegin'},
 				spell:['gungirs1'],
-				skillAnimation:true,
+				
 				init:function(player){
 					if (get.mode()=='stg'){
 						player.useSkill('gungirs');
@@ -3789,7 +3796,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				cost:2,
 				spell:['doll2'],
-				skillAnimation:true,
+				
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > lib.skill.doll.cost;
@@ -3824,7 +3831,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				cost:2,
 				roundi:true,
-				skillAnimation:true,
+				
 				spell:['private2', 'private3'],
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
@@ -3862,7 +3869,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
                 cost:1,
                 spell:['spark1'],
-                skillAnimation:true,
+                
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.masterspark.cost;
@@ -3892,7 +3899,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 audio:2,
                 cost:2,
                 spell:['fengmo1'],
-                skillAnimation:true,
+                
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.fengmo.cost;
@@ -4115,7 +4122,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				infinite:true,
 				cost:0,
-				skillAnimation:true,
+				
 				trigger:{player:'phaseBeginStart'},
 				spell:['royal1', 'royal_die'],
 				init:function(player){
@@ -4170,6 +4177,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.reinforce = ['stg_maid', 'stg_maid','stg_maid','flandre'];
 					game.me.recover(game.me.maxHp);
 					game.me.storage.fuhuo ++;
+					game.notify(get.translation(game.me) + '获得了一个残机');
 					game.log(game.me,'获得了一个残机！');
 					ui.boss.style.display = 'none';
 				}
@@ -4322,7 +4330,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				trigger:{source:'damageAfter'},
 				filter:function(event, player){
-					if (player.countCards('j', {name:'stg_jiejie'}) > 0) return false;
+					//if (player.countCards('j', {name:'stg_jiejie'}) > 0) return false;
 					var data = 0;
 					for(var j=0;j<player.stat.length;j++){
 						if(player.stat[j].damage != undefined) data += player.stat[j].damage;
@@ -4442,7 +4450,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['shanghai_alice1', 'shanghai_alice2'],
-				skillAnimation:true,
+				
 				init:function(player){
 					player.useSkill('shanghai_alice');
 				},
@@ -4494,24 +4502,24 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['dahezou_skill1'],
-				skillAnimation:true,
+				
 				init:function(player){
 					if (player == game.boss){
 						if (game.boss.name == 'lunasa'){
+							lib.character["merlin"][3] = ["mingguan", "dahezou"];
+							lib.character["lyrica"][3] = ["mingjian", "dahezou"];
 							game.addBossFellow(3, 'merlin', 3);
 							game.addBossFellow(5, 'lyrica', 3);
-							lib.character["merlin"][3] = ["mingguan", "dahezou"];
-							lib.character["lyrica"][3] = ["mingjian", "dahezou"];
 						} else if (game.boss.name == 'merlin'){
+							lib.character["lunasa"][3] = ["shenxuan", "dahezou"];
+							lib.character["lyrica"][3] = ["mingjian", "dahezou"];
 							game.addBossFellow(3, 'lunasa', 3);
 							game.addBossFellow(5, 'lyrica', 3);
-							lib.character["lunasa"][3] = ["shenxuan", "dahezou"];
-							lib.character["lyrica"][3] = ["mingjian", "dahezou"];
 						} else if (game.boss.name == 'lyrica'){
-							game.addBossFellow(3, 'lunasa', 3);
-							game.addBossFellow(5, 'merlin', 3);
 							lib.character["lunasa"][3] = ["shenxuan", "dahezou"];
 							lib.character["merlin"][3] = ["mingguan", "dahezou"];
+							game.addBossFellow(3, 'lunasa', 3);
+							game.addBossFellow(5, 'merlin', 3);
 						}
 					}
 					player.useSkill('dahezou');
@@ -4533,12 +4541,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						return (!player.storage.mingzhi || !player.storage.mingzhi.contains(card)) && get.color(card) == get.color(trigger.card);
 					});
 					"step 1"
-					player.mingzhiCard(result.cards[0]);
-					if(typeof trigger.shanRequired=='number'){
-						trigger.shanRequired+=1;
-					}
-					else{
-						trigger.shanRequired=1;
+					if (result.bool){
+						player.mingzhiCard(result.cards[0]);
+						if(typeof trigger.shanRequired=='number'){
+							trigger.shanRequired+=1;
+						}
+						else{
+							trigger.shanRequired=1;
+						}
 					}
 				},
 				check:function(event, player){
@@ -4598,7 +4608,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['mingfa_skill'],
-				skillAnimation:true,
+				
 				init:function(player){
 					player.useSkill('mingfa');
 				},
@@ -4638,7 +4648,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['tianshangjian_skill'],
-				skillAnimation:true,
 				init:function(player){
 					player.classList.remove('turnedover');
 					player.removeSkill('mingfa');
@@ -4672,22 +4681,25 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							if (f) continue;
 						}
 						if (lib.translate[i] && (lib.card[i].subtype == 'attack' || lib.card[i].subtype == "defense")){
-							list.add(i);
+							if (player.storage.tianshangjian_skill_2){
+								for (var j = 0; j < player.storage.tianshangjian_skill_2.length; j ++){
+									if (player.storage.tianshangjian_skill_2[j].name == i){
+										break;
+									}
+									if (j == player.storage.tianshangjian_skill_2.length - 1){
+										list.add(i);
+									}
+								}
+							} else {
+								list.add(i);
+							}
 						}
 					}
 					player.chooseButton(['选择不让使用打出的牌',[list,'vcard']], true).set('filterButton',function(button){
 							return true;
 						}).set('ai',function(button){
-							var rand=_status.event.rand*2;
-							switch(button.link[2]){
-								case 'sha':return 5+rand[1];
-								case 'shan':return 4.5+rand[3];
-								case 'juedou':return 4+rand[4];
-								case 'wuxie':return 3+rand[5];
-								default:return rand[6];
-							}
-						}).set('rand',[Math.random(),Math.random(),Math.random(),Math.random(),
-						Math.random()],Math.random());
+							return button.link[2] == _status.event.rand;
+						}).set('rand', list.randomGet());
 					'step 1'
 					if(result.bool){
 						player.addSkill('tianshangjian_skill_2');
@@ -4710,7 +4722,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				filter:function(event, player){
 					if (!player.storage.tianshangjian_skill_2) return false;
-					return player.storage.tianshangjian_skill_2.contains(event.card.name);
+					for (var i = 0; i < player.storage.tianshangjian_skill_2.length; i ++){
+						if (player.storage.tianshangjian_skill_2[i].name == event.card.name)
+						return true;
+					}
 				},
 				content:function(){
 					trigger.player.loseHp();
@@ -4721,7 +4736,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['liudaojian_skill'],
-				skillAnimation:true,
+				
 				init:function(player){
 					//这里需要对话
 					player.equip(game.createCard('stg_bailou'));
@@ -4763,7 +4778,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['hualing_skill'],
-				skillAnimation:true,
+				
 				init:function(player){
 					player.useSkill('hualing');
 				},
@@ -4782,7 +4797,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					});
 				},
 				content:function(){
-					game.addBossFellow(3, 'stg_ghost', 3);
+					game.addBossFellow(3, 'stg_ghost', 2);
 				},
 			},
 			wangwo:{
@@ -4790,7 +4805,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['wangwo_skill'],
-				skillAnimation:true,
+				
 				init:function(player){
 					player.classList.remove('turnedover');
 					player.removeSkill('hualing');
@@ -4809,10 +4824,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return event.player == game.me;
 				},
 				content:function(){
-					event.num = player.maxHp - player.hp + 1;
 					"step 0"
-					trigger.player.choosecontrol('弃两张牌', '失去1点体力', '受到2点灵击伤害', true);
+					event.num = player.maxHp - player.hp + 1;
 					"step 1"
+					trigger.player.chooseControl('弃两张牌', '失去1点体力', '受到2点灵击伤害', true);
+					"step 2"
 					if (result.control == "弃两张牌"){
 						trigger.player.chooseToDiscard('hej', 2, true);
 					} else if (result.control == "失去1点体力"){
@@ -4820,10 +4836,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					} else if (result.control == "受到2点灵击伤害"){
 						trigger.player.damage(2, "thunder");
 					}
-					"step 2"
+					"step 3"
 					event.num --;
-					if (event.num != 0){
-						event.goto(0);
+					if (event.num > 0){
+						event.goto(1);
 					}
 				},
 			},
@@ -4832,22 +4848,42 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['stg_fanhun_skill', 'stg_fanhun_skill2'],
-				skillAnimation:true,
 				init:function(player){
+					player.hide();
+					ui.backgroundMusic.pause();
+					game.pause();
 					player.classList.remove('turnedover');
 					player.removeSkill('wangwo');
 					player.removeSkill('wangwo_skill');
-					player.useSkill('stg_fanhun');
+					setTimeout(function(){
+						game.swapMusic(true);
+						ui.backgroundMusic.play();
+						player.show();
+						player.useSkill('stg_fanhun');
+						game.resume();
+					}, 2000);
+					
 				},
 				content:function(){
-					player.loselili(lib.skill.hualing.cost);
+					player.loselili(lib.skill.stg_fanhun.cost);
+					/*
+					ui.backgroundMusic.pause();
+					game.pause();
+					setTimeout(function(){
+						game.swapMusic(true);
+						ui.backgroundMusic.play();
+						game.resume();
+						player.turnOver();
+					}, 2000);
+					*/
 					player.turnOver();
 				}
 			},
 			stg_fanhun_skill:{
 				init:function(player){
                     player.nodying=true;
-                    if (player.hp <= 0) player.hp=0;
+					if (player.hp <= 0) player.hp=0;
+					player.maxHp = 0;
                     player.update();
                 },
                 onremove:function(player){
@@ -4869,7 +4905,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				trigger:{player:['damageBefore','loseHpBefore','loseliliBefore']},
 				filter:function(event,player){
-					return event.num > 0 && event.skill != 'stg_fanhun';
+					return event.num > 0 && event.parent.skill != 'stg_fanhun_skill';
 				},
 				content:function(){
 					trigger.num = 0;
@@ -4917,6 +4953,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					game.me.storage.reinforce.push('stg_ghost', 'stg_ghost', 'youmu');
 					lib.character["youmu"][3] = ['youmuinit', 'yishan'];
+				},
+			},
+			youmudieafter2:{
+				trigger:{player:'dieBefore'},
+				direct:true,
+				init:function(){
+					game.me.storage.reinforce = [];
+				},
+				content:function(){
+					game.me.storage.reinforce.push('yuyuko');
 				},
 			},
 		},
@@ -5083,7 +5129,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_sidie_info:'出牌阶段，对一名角色使用；你减少一个残机，令目标失去3点体力。<br><u>追加效果：你造成伤害时，可以展示此牌，防止该伤害，改为令受伤角色失去1点体力。</u>',
 
 			stg_ghost:'幽灵',
-			stg_ghost_skill:'怨念',
+			stg_ghost_skill:'残念',
 			stg_ghost_skill_info:'锁定技，你受到弹幕伤害时，若你有灵力，改为灵击伤害；结束阶段，你消耗1点灵力。',
 
 			stg_puppet:'人形',
@@ -5094,7 +5140,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			stg_shanghai_shanghai_skill_info:'锁定技，你入场时，摸一张技能牌；你的手牌上限+1。',
 
 			shanghai_alice:'诅咒「魔彩光的上海人形」',
-			shanghai_alice_info:'符卡技（0）<极意>符卡发动时，或准备阶段，若场上没有上海人形，召唤2个上海人形；上海人形坠机时，你将其所有牌加入“手办”',
+			shanghai_alice_info:'符卡技（0）<极意>符卡发动时，或准备阶段，若场上没有上海人形，召唤2个上海人形。',
 
 			dahezou:'大合葬「灵车大协奏曲」',
 			dahezou_info:'符卡技（0）<极意>一名角色使用【轰！】指定目标后，你可以明置一张与之相同颜色的手牌，令该【轰！】需要一张额外的【躲~】才能抵消。',
@@ -5113,7 +5159,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			mingfa:'畜趣剑「无为无策之冥罚」',
 			mingfa_info:'符卡技（0）<极意>锁定技，自机的结束阶段，若其本回合没有对你造成伤害，其失去1点体力。',
 			tianshangjian:'天上剑「天人之五衰」',
-			tianshangjian_info:'符卡技（0）<极意>结束阶段，你可以声明一种攻击牌或防御牌；直到你下次声明，一名角色使用声明的牌时，其失去1点体力。',
+			tianshangjian_skill_2:'妖梦声明的牌',
+			tianshangjian_info:'符卡技（0）<极意>结束阶段，你可以声明一种攻击牌或防御牌；一名角色使用声明的牌时，其失去1点体力。',
 
 			liudaojian:'六道剑「一念无量劫」',
 			liudaojian_info:'符卡技（0）<极意>出牌阶段，你可以将一张【轰！】当作【灵击】使用。',
@@ -5125,7 +5172,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			wangwo_info:'符卡技（0）<极意>自机的结束阶段，其选择X项（X为你已受伤值+1）：失去1点体力；弃置两张牌；或受到2点灵击伤害。',
 
 			stg_fanhun:'反魂蝶-三分咲',
-			stg_fanhun_info:' 符卡技（0）<极意>防止你坠机；弃牌阶段结束时，你消耗1点灵力，并摸一张牌；你不能以此法以外的方式扣减灵力。',
+			stg_fanhun_info:' 符卡技（0）<极意>防止你坠机；你不能获得灵力；弃牌阶段结束时，你消耗1点灵力，并摸一张牌；你不能以此法以外的方式扣减灵力。',
 		},
 		get:{
 			rawAttitude:function(from,to){

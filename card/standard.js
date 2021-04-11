@@ -1707,6 +1707,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					}
 				},
 			},
+			prompt:'弃置一张防御牌，对1~2名角色各造成1点灵击伤害',
 		},
 		penglaiyao_skill:{
 			audio:true,
@@ -1717,20 +1718,20 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		frog_skill:{
-				enable:['chooseToUse'],
-				filterCard:function(card,player){
-					return card.name=='frog';
+			enable:['chooseToUse'],
+			filterCard:function(card,player){
+				return card.name=='frog';
+			},
+			position:'e',
+			viewAs:{name:'sha'},
+			prompt:'将一张青蛙扔出去！',
+			check:function(card){return 4-get.value(card)},
+			ai:{
+				skillTagFilter:function(player){
+					return true;
 				},
-				position:'e',
-				viewAs:{name:'sha'},
-				prompt:'将一张青蛙扔出去！',
-				check:function(card){return 4-get.value(card)},
-				ai:{
-					skillTagFilter:function(player){
-						return true;
-					},
-					respondSha:'use',
-				}
+				respondSha:'use',
+			}
 		},
 		zhiyuu_skill:{
 			audio:true,
@@ -1809,7 +1810,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					thunderDamage:1,
 					order:7,
 				}
-			}
+			},
+			prompt:'令一名角色展示一张手牌；然后你可以弃置一张相同花色的牌，对其造成1点灵击伤害。',
 		},
 		book_skill:{
 			audio:2,
@@ -1883,6 +1885,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					game.log(get.translation(cards[0])+'改为'+get.translation(result.control)||result.control);
 				}
 			},
+			prompt:'展示一张牌，改变它的点数或者花色，直到回合结束',
 		},
 		houraiyuzhi_skill2:{
 			mod:{
@@ -1979,7 +1982,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						return -1;
 					}
 				},
-			}
+			},
+			prompt:'消耗1点灵力，令一名角色不能使用/打出手牌，直到回合结束。',
 		},
 		lunadial2:{
 			trigger:{global:'phaseAfter'},
@@ -2069,7 +2073,8 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 						return get.effect(target,{name:'sha'},player);
 					}
 				},
-			}
+			},
+			prompt:'消耗1点灵力，视为使用一张轰！',
 		},
 		lantern_skill:{
 			audio:2,
@@ -3029,6 +3034,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 		feixiang:'绯想之剑',
 		feixiang_info:'锁定技，你使用攻击牌时，获得1点灵力。',
 		bailou:'白楼剑',
+		bailou_skill:'白楼剑',
 		bailou_info:'锁定技，你使用攻击牌造成弹幕伤害后，对受伤角色造成1点灵击伤害。',
 		book:'魔导书',
 		book_skill:'魔导书',
