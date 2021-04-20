@@ -1122,7 +1122,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_cherry:['male', '0', 0, ['boss_cherry'], ['boss'], 'zhu'],
 				//stg_next:['male','0',0,[],['boss'],'zhu'],
 				stg_maoyu:['male','2',2,[],['hiddenboss','bossallowed']],
-				stg_yousei:['female','1',1,[],['hiddenboss','bossallowed']],
+				stg_yousei:['female','1',1,['lilywhitedieafter'],['hiddenboss','bossallowed']],
 				stg_maid:['female','2',1,['saochu'],['hiddenboss','bossallowed']],
 				stg_bookshelf:['female','3',5,['juguang'],['hiddenboss','bossallowed']],
 				stg_bat:['female','1',1,['xixue'],['hiddenboss','bossallowed']],
@@ -1160,6 +1160,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			},
 			addRecord:function(bool){
 				if(typeof bool=='boolean'){
+					if (get.config('practice_mode')) return;
 					if (!lib.config.gameRecord.stg) lib.config.gameRecord["stg"] = {data:{}};
 					var data=lib.config.gameRecord.stg.data;
 					var name = _status.bosschoice.name;
@@ -2637,6 +2638,55 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					step1();
 				}
 			},
+			cherry_win:{
+				trigger:{player:'dieBefore'},
+				direct:true,
+				content:function(){
+					game.boss.hide();
+					var clear=function(){
+							ui.dialog.close();
+							while(ui.controls.length) ui.controls[0].close();
+					};
+					var clear2=function(){
+						ui.auto.show();
+						ui.arena.classList.remove('only_dialog');
+					};
+					var step1=function(){
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">就这样，红雾异变的黑幕被击退了。没过几天，红雾就从幻想乡彻底的散去了。恭喜你闯关成功！');
+						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+						ui.create.control('呼……累死人了',step3);
+					}
+					var step3=function(){
+						clear();
+						if (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 1){
+							step5();
+						} else {
+							ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">总之呢，作为通关奖励解锁了在其他模式中使用蕾米莉亚（神枪符卡）和带了五本魔导书的魔导书架。这些可以在左上角[扩展]打开或关闭。</div></div><div><div style="width:280px;margin-left:120px;font-size:8px">将联机昵称改为“路人”可以不通关也解锁这些角色哟。</div></div>');
+							ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+							ui.create.control('不错不错',step4);
+						}
+					};
+					var step4=function(){
+						clear();
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">还会继续更新更多关卡的。下次再见？</div></div>');
+						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+						ui.create.control('下次再见！',step6);
+					};
+					var step5=function(){
+						clear();
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">下次欺负蕾米的时候轻一点啊人家也是很累的。</div></div>');
+						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
+						ui.create.control('哎，好吧',step6);
+					};
+					var step6=function(){
+						clear();
+						clear2();
+						game.resume();
+					};
+					game.pause();
+					step1();
+				}
+			},
 			// 红魔乡EX
 			boss_chiyan_ex:{
 				trigger:{global:'gameStart'},
@@ -2889,7 +2939,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							],
 						];
 					} else if (game.me.name == 'sakuya'){
-
+						game.me.storage.dialog = [
+							['sakuya','怎么，这种地方也会有人家吗？','','终结？','','那个，什么终结？','','是吗。','不过，的确，说到迷途之家, 据说把这里的东西拿回去能让人变幸运….',
+							'', '那好，掠夺开始～～', '', '迷路了的话就无法再回去…这个设定哪去了？'],
+							['chen','在这里迷路的话就是终结！','','先不管那些，欢迎来到迷途之家～','','迷路的话就是终结，无法再回去了。',
+							'','会的哦～','', '你说什么？！', '这里可是我们的村庄哦, 人类能给我们出去吗？', 'end'],
+						];
 					}
 					game.me.removeSkill('boss_cherry2');
 					ui.background.setBackgroundImage('image/background/town.jpg');
@@ -2981,7 +3036,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							],
 						];
 					} else if (game.me.name == 'sakuya'){
-						
+						game.me.storage.dialog = [
+							['sakuya','怎么，这种地方也会有人家吗？','','终结？','','那个，什么终结？','','是吗。','不过，的确，说到迷途之家, 据说把这里的东西拿回去能让人变幸运….',
+								'', '那好，掠夺开始～～', '', '迷路了的话就无法再回去…这个设定哪去了？'],
+							['alice','在这里迷路的话就是终结！','','先不管那些，欢迎来到迷途之家～','','迷路的话就是终结，无法再回去了。',
+								'','会的哦～','', '你说什么？！', '这里可是我们的村庄哦, 人类能给我们出去吗？', 'end'],
+						];	
 					}
 					game.me.removeSkill('boss_cherry3');
 					ui.background.setBackgroundImage('image/background/snow.jpg');
@@ -4915,9 +4975,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			lilywhitedieafter:{
 				trigger:{player:'dieBefore'},
 				direct:true,
-				init:function(){
+				init:function(player){
 					// 这里调背景
 					game.me.storage.reinforce = [];
+					player.dataset.position = 4;
 				},
 				content:function(){
 					game.me.storage.reinforce.push('stg_yousei', 'stg_yousei', 'stg_ghost');
@@ -4960,6 +5021,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				direct:true,
 				init:function(){
 					game.me.storage.reinforce = [];
+					player.dataset.position = 4;
 				},
 				content:function(){
 					game.me.storage.reinforce.push('yuyuko');

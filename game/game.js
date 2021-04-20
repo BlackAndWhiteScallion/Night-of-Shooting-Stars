@@ -27,7 +27,7 @@
         mirrorURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
         //mirrorURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
         //hallURL:'47.100.162.52',
-        hallURL:'noname.pub',
+        hallURL:'47.99.105.222',
         assetURL:'',
         backgroundmusicURL:'',
         changeLog:[],
