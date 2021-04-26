@@ -2036,7 +2036,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				unique:true,
 				fixed:true,
 				init:function(event,character){
-					var a = [1,1];					// 记录玩家和敌人对话位置
+					var a = [];					// 创建一个对话人数数量长的数列，用于记录玩家和敌人对话位置
+					for (var h = 0; h < game.me.storage.dialog.length; h++){
+						a.push(1);
+					}
 					var name = game.me.name;		// 记录当前检测名字的
 					var j = 0;						// 记录当前检测谁的对话的
 					var step1=function(){
@@ -2044,20 +2047,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						var dialog = ui.create.dialog();
 						for (var i = 0; i < game.me.storage.dialog.length; i ++){
 							if (game.me.storage.dialog[i][0] == name){
+								// '' = 只有两个人的时候，切换说话人物
 								if (game.me.storage.dialog[i][a[j]] == ''){
 									a[j] ++;
 									if (name == game.boss.name){
-										j = 0;
+										j = 0;		// 切换到主角
 										name = game.me.name;
 									} else {
-										j ++;
+										j ++;		// 切换到boss
+										// 没boss的话把boss刷出来
 										if (game.me.storage.reinforce[0] && game.boss.name != game.me.storage.reinforce[0]){
 											game.changeBoss(game.me.storage.reinforce[0]);
 											game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
 										}
 										name = game.boss.name;
 									}
-									i = -1;
+									i = -1;		// 换完了之后从头再来一次
+								// 有多少个人的时候，一个数字 = 切换对话人物（切换到dialog[数字]）
+								} else if (Number.isInteger(game.me.storage.dialog[i][a[j]])){
+									a[j] ++;
+									name = game.me.storage.dialog[game.me.storage.dialog[i][a[j]]][0];		// 切换到记录的数字的位置的[0]
+									// 如果是boss的话把boss刷出来
+									if (game.me.storage.reinforce[0] && name == game.me.storage.reinforce[0] && game.boss.name != game.me.storage.reinforce[0]){
+										game.changeBoss(game.me.storage.reinforce[0]);
+										game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
+									}
+									i = -1;		// 换完了之后从头再来一次
 								} else if (game.me.storage.dialog[i][a[j]] == 'end'){
 									game.resume();
 									return;
@@ -2076,14 +2091,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						ui.create.control('继续',function(){
 							ui.dialog.close();
 							while(ui.controls.length) ui.controls[0].close();
+							// 检查是否还剩对话
 							var num1 = -1;
 							for (var i = 0; i < game.me.storage.dialog.length; i ++){
+								// 如果对话结束就继续游戏，要不然的话继续对话
 								if (game.me.storage.dialog[i][0] == name){
 									num1 = i;
 									if (game.me.storage.dialog[i][a[j]] == 'end') num1 = -2;
 									break;
 								}
 							}
+							// 如果玩家使用的角色并没有对话，跳出boss然后直接跳过所有对话
 							if (num1 == -1){
 								if (game.me.storage.reinforce[0]){
 									game.changeBoss(game.me.storage.reinforce[0]);
@@ -2652,13 +2670,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						ui.arena.classList.remove('only_dialog');
 					};
 					var step1=function(){
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">就这样，红雾异变的黑幕被击退了。没过几天，红雾就从幻想乡彻底的散去了。恭喜你闯关成功！');
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">春雪异变的黑幕终究被击退了。虽然迟了，但是春天还是慢慢的回到了幻想乡。恭喜你闯关成功！');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
-						ui.create.control('呼……累死人了',step3);
+						ui.create.control('这次是真的累死了',step3);
 					}
 					var step3=function(){
 						clear();
-						if (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 1){
+						if (get.config('practice_mode') || (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_cherry'] && lib.config.gameRecord.stg.data['stg_cherry'][0] > 1)){
 							step5();
 						} else {
 							ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">总之呢，作为通关奖励解锁了在其他模式中使用蕾米莉亚（神枪符卡）和带了五本魔导书的魔导书架。这些可以在左上角[扩展]打开或关闭。</div></div><div><div style="width:280px;margin-left:120px;font-size:8px">将联机昵称改为“路人”可以不通关也解锁这些角色哟。</div></div>');
@@ -2668,15 +2686,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					};
 					var step4=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">还会继续更新更多关卡的。下次再见？</div></div>');
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">异变不会就这么终结的。下次再见？</div></div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('下次再见！',step6);
 					};
 					var step5=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">下次欺负蕾米的时候轻一点啊人家也是很累的。</div></div>');
+						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">幽幽子大人平常蛮无聊的，所以请多来玩玩！</div></div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
-						ui.create.control('哎，好吧',step6);
+						ui.create.control('哎，好的',step6);
 					};
 					var step6=function(){
 						clear();
@@ -4838,8 +4856,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['hualing_skill'],
-				
 				init:function(player){
+					setTimeout(function(){
+						ui.background.setBackgroundImage('image/background/stg_yuyuko.jpg');
+					}, 1000);
 					player.useSkill('hualing');
 				},
 				content:function(){
@@ -4865,7 +4885,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['wangwo_skill'],
-				
 				init:function(player){
 					player.classList.remove('turnedover');
 					player.removeSkill('hualing');
@@ -4920,22 +4939,14 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						ui.backgroundMusic.play();
 						player.show();
 						player.useSkill('stg_fanhun');
+						player.addSkill('cherry_win');
+						ui.background.setBackgroundImage('stg_yuyuko');
 						game.resume();
 					}, 2000);
 					
 				},
 				content:function(){
 					player.loselili(lib.skill.stg_fanhun.cost);
-					/*
-					ui.backgroundMusic.pause();
-					game.pause();
-					setTimeout(function(){
-						game.swapMusic(true);
-						ui.backgroundMusic.play();
-						game.resume();
-						player.turnOver();
-					}, 2000);
-					*/
 					player.turnOver();
 				}
 			},
@@ -4979,6 +4990,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					// 这里调背景
 					game.me.storage.reinforce = [];
 					player.dataset.position = 4;
+					setTimeout(function(){
+						
+					}, 10000);
 				},
 				content:function(){
 					game.me.storage.reinforce.push('stg_yousei', 'stg_yousei', 'stg_ghost');
