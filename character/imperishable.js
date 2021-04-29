@@ -479,14 +479,20 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         trigger:{global:'phaseEnd'},
                         //frequent:true,
                         filter:function(event,player){
-                              return player.storage.yinyang && !_status.currentPhase.isDead();
+                          if (player.storage.yinyang){
+                             player.storage.yinyang = false;
+                             return !_status.currentPhase.isDead();
+                          } else {
+                            return false
+                          }
                         },
                         check:function(event,player){
-                              if (player.getCards('h').length <= (player.maxHp - player.hp) && event.player.getCards('hej').length) return get.attitude(player, event.player)<0;
-                              return true;
+                            if (player.getCards('h').length <= (player.maxHp - player.hp) && event.player.getCards('hej').length) return get.attitude(player, event.player)<0;
+                            return true;
                         },
                         content:function(){
                               'step 0'
+                              player.storage.yinyang = false;
                               var controls=['draw_card'];
                               if(trigger.player.countCards('hej')){
                                     controls.push('spin_card');
@@ -526,7 +532,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                                   ui.cardPile.appendChild(event.card);
                                 }
                               }
-                              player.storage.yinyang = false;
                         },
                         ai:{
                           threaten:0.7,

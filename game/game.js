@@ -13986,6 +13986,8 @@
                     else{
                         dialog.content.firstChild.style.textAlign='left';
                     }
+                    // 可以透过对话框点击
+                    dialog.style.pointerEvents = "none";
                     // 下限宽度，原数值：+16
                     dialog.style.width=(width+40)+'px';
                     var refnode;

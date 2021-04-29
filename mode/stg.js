@@ -1122,7 +1122,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				stg_cherry:['male', '0', 0, ['boss_cherry'], ['boss'], 'zhu'],
 				//stg_next:['male','0',0,[],['boss'],'zhu'],
 				stg_maoyu:['male','2',2,[],['hiddenboss','bossallowed']],
-				stg_yousei:['female','1',1,['lilywhitedieafter'],['hiddenboss','bossallowed']],
+				stg_yousei:['female','1',1,[],['hiddenboss','bossallowed']],
 				stg_maid:['female','2',1,['saochu'],['hiddenboss','bossallowed']],
 				stg_bookshelf:['female','3',5,['juguang'],['hiddenboss','bossallowed']],
 				stg_bat:['female','1',1,['xixue'],['hiddenboss','bossallowed']],
@@ -1696,7 +1696,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_cherry2';
+					game.me.storage.stage = 'boss_cherry4';
 					game.me.storage.fuhuo = 1;
 					if (get.config('practice_mode')){
 						game.me.storage.fuhuo = 10;
@@ -2048,7 +2048,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						for (var i = 0; i < game.me.storage.dialog.length; i ++){
 							if (game.me.storage.dialog[i][0] == name){
 								// '' = 只有两个人的时候，切换说话人物
-								if (game.me.storage.dialog[i][a[j]] == ''){
+								if (game.me.storage.dialog[i][a[j]] === ''){
 									a[j] ++;
 									if (name == game.boss.name){
 										j = 0;		// 切换到主角
@@ -2065,12 +2065,24 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 									i = -1;		// 换完了之后从头再来一次
 								// 有多少个人的时候，一个数字 = 切换对话人物（切换到dialog[数字]）
 								} else if (Number.isInteger(game.me.storage.dialog[i][a[j]])){
-									a[j] ++;
 									name = game.me.storage.dialog[game.me.storage.dialog[i][a[j]]][0];		// 切换到记录的数字的位置的[0]
+									a[j] ++;
+									j = game.me.storage.dialog[i][a[j] - 1];
 									// 如果是boss的话把boss刷出来
 									if (game.me.storage.reinforce[0] && name == game.me.storage.reinforce[0] && game.boss.name != game.me.storage.reinforce[0]){
 										game.changeBoss(game.me.storage.reinforce[0]);
 										game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
+									} 
+									if (!game.findPlayer(function(current){
+										return current.name == name;
+									})){
+										if (game.findPlayer(function(current){
+											return current.dataset.position == 3;
+										})){
+											game.addBossFellow(5, name, 0);
+										} else {
+											game.addBossFellow(3, name, 0);
+										}
 									}
 									i = -1;		// 换完了之后从头再来一次
 								} else if (game.me.storage.dialog[i][a[j]] == 'end'){
@@ -2109,15 +2121,49 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								}
 								game.resume();
 							}
-							else if (num1 == -2) game.resume();
+							// 已经结束的话，结束对话流程然后游戏继续
+							else if (num1 == -2){
+								// 如果对话人多的话就把额外的人给删掉
+								if (game.me.storage.dialog.length > 2){
+									for (var i = 2; i < game.me.storage.dialog.length; i ++){
+										for (var k = 0; k < game.players.length; k ++){
+											if (game.players[k].name == game.me.storage.dialog[i][0]){
+												game.players[k].hide();
+												game.addVideo('hidePlayer', game.players[k]);
+												game.players[k].delete();
+												game.players.remove(game.players[k]);
+												k = 10;
+											}
+										}	
+									}
+								}
+								game.resume();
+							}
 							else step1();
 						});
 						ui.create.control('跳过',function(){
 							ui.dialog.close();
 							while(ui.controls.length) ui.controls[0].close();
+							// 如果跳过的时候，boss还没刷出来的话，把boss刷出来
 							if (game.me.storage.reinforce[0]){
 								game.changeBoss(game.me.storage.reinforce[0]);
 								game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
+							}
+							// 如果跳过的时候，刷出来了对话露脸的人，把那些人刷掉
+							if (game.me.storage.dialog.length > 2){
+								for (var i = 2; i < game.me.storage.dialog.length; i ++){
+									for (var k = 0; k < game.players.length; k ++){
+										console.log(game.players[k]);
+										console.log(game.me.storage.dialog[i]);
+										if (game.players[k].name == game.me.storage.dialog[i][0]){
+											game.players[k].hide();
+											game.addVideo('hidePlayer', game.players[k]);
+											game.players[k].delete();
+											game.players.remove(game.players[k]);
+											k = 10;
+										}
+									}	
+								}
 							}
 							game.resume();
 						});
@@ -3134,23 +3180,27 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.notify(get.translation(game.me) + '获得了一个残机');
 					game.log(game.me,'获得了一个残机！');
 					lib.character["lilywhite"][3].push("lilywhitedieafter");
-					game.me.storage.reinforce = ['stg_yousei','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
+					//game.me.storage.reinforce = ['stg_yousei','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
+					game.me.storage.reinforce = ['lunasa'];
 					game.me.storage.reskill=['dahezou'];
 					game.me.storage.stage = 'boss_cherry5';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
-								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
-							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
-							,'end'],
+							['reimu','不过说起来，连云端之上都是樱花飞舞是怎么一回事呀？', '......', '要是平常的话，早该有人出来回答了。', 1,
+							'好像失去干劲了呢。', 1, '不行哦，我还有事情要办，所以不能回去。', 1, '不管怎么样，这个门的里面怎么看都像是目的地呢～', 2,
+							'我估计，八成是你们搞错了?', '等等，你们是什么人？这里又是哪儿？', 3, '我也想去赏樱呀～', 2, '被幽灵邀请………这个，还真是不太想呀～', 1,
+							'' ],
+							['lunasa', '啊啊，知道了', '你看，就是那个啦。', '这附近一到这个季节气压就会...', '下降', 0, '......', 0,
+							'谁也没想说那些事情。', '我不过是想说上升气流而已。', 0, '上升气流。', 3, '但是，你不会演奏……', 0, '是杂音就要消灭掉！', 3, '欢迎随时帮忙哦', 'end'],
+							['merlin', '那个，是谁？', 1, '等下房子里会有一场赏樱会，我们要在那里做盛大的表演。', 1, '你也没被邀请……', 0],
+							['lyrica', '是我们的天敌呢~', 0, '我们是骚灵演奏队～是受邀请而来的。', 2, '加油呀～', 1],
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
 							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
 							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
 							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
-							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
-							],
+							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''],
 						];
 					}
 					game.me.removeSkill('boss_cherry4');
@@ -5083,6 +5133,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			xixue_info:'锁定技，你造成伤害后：令蕾米莉亚获得1点灵力；然后若其灵力等于上限，或其为符卡状态，令其摸一张牌。',
 			revive_boss:'阶段切换！',
 			stg_needle:'封魔针',
+			stg_needle_skill:'封魔针',
 			stg_needle_info:'锁定技，你的手牌上限+1；若你已受伤，你的摸牌数+1；你使用【轰！】指定目标后，目标的技能无效，直到结算完毕。',
 			stg_yinyangyu:'鬼神阴阳玉',
 			stg_yinyangyu_skill:'鬼神阴阳玉',

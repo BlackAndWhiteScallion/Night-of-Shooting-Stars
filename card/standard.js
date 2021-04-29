@@ -2632,7 +2632,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					if (player.countCards('h') < i){
 						return false;
 					}
-					console.log(player.getCards('h')[i]);
 					if (player.getCards('h')[i].name == 'tianguo'){
 						return true;
 					}

@@ -1660,7 +1660,7 @@ div:not(.handcards)>.card>.info>span,
 	word-break: break-all;
 	margin-bottom: 3px;
 	margin-left: 10px;
-	width: calc(100% - 20px)
+	width: calc(100% - 20px);
 }
 .caption>.text.textlink {
 	margin-left: 10px;
