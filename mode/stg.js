@@ -1696,7 +1696,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_cherry4';
+					game.me.storage.stage = 'boss_cherry2';
 					game.me.storage.fuhuo = 1;
 					if (get.config('practice_mode')){
 						game.me.storage.fuhuo = 10;
@@ -3180,8 +3180,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.notify(get.translation(game.me) + '获得了一个残机');
 					game.log(game.me,'获得了一个残机！');
 					lib.character["lilywhite"][3].push("lilywhitedieafter");
-					//game.me.storage.reinforce = ['stg_yousei','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
-					game.me.storage.reinforce = ['lunasa'];
+					game.me.storage.reinforce = ['stg_yousei','stg_yousei','lilywhite', 'stg_yousei', 'stg_yousei', 'stg_ghost'];
+					//game.me.storage.reinforce = ['lunasa'];
 					game.me.storage.reskill=['dahezou'];
 					game.me.storage.stage = 'boss_cherry5';
 					if (game.me.name == 'reimu'){
@@ -3237,7 +3237,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+						line = '太好了，赏樱权确保！';
 					} else if (game.me.name == 'marisa'){
 						line = '难道说，除了人类以外都不是十指吗';
 					}
@@ -3275,10 +3275,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.stage = 'boss_cherry6';
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
-								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
-							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
-							,'end'],
+							['reimu','','…虽然还不是很确定，难道说这里是…','',
+								'冥界？我果然还是被邀请来了啊…','','不过话说回来','普通的人类也能这么普通地出入这里，不是太危险了吗。', '',
+								'那种结界很普通地被打破了哦', '', '这幽灵话真多', '', '你吐槽的居然是那个吗？', '', '半吊子幽灵的话真多', '',
+								'如果死在冥界，也会逝往冥界呢', '', '这里难道不是地狱吗？', ''],
+							['youmu','我说怎么大家那么吵闹的。','原来是有活人来这里啊', '',
+							'曾经活着的人所住的地方哦','','你还没有被邀请来这里呢。','','你这家伙不是打破结界进来的吗！', '',
+							'就是为了不让别人进来，所以才张开结界的吧。比如写有「不要攀爬，危险」的铁塔，小孩子是不会去爬的','怎么可以随便就破坏结界，随便说很危险呢','',
+							'','我有一半不是幽灵啊！','','不管怎样，再收集一点点春的话', '这里的西行妖就可以完全盛开了', '就用你身上的那一点春来为盛开再加把劲吧', '',
+							'听到我的话了吗？你要被斩于此地了哦', '', '你只会逝往地狱！', '', '…妖怪所锻造的这把楼观剑，无法斩断的东西，几乎不存在！', 'end'],
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
@@ -3366,10 +3371,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					lib.skill['youdie'].forced = true;
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
-							['reimu','这座湖原来是如此宽广的吗？浓雾遮天视野不良真麻烦啊。难不成我是路痴？','',
-								'啊啦是吗？那么，带个路吧？这附近有岛对不对？','','靶子？这还真是令人吃惊啊',''],
-							['cirno','如果迷路，定是妖精所为','','你啊 可别吓着了喔，在你面前可是有个强敌呢!','','开什么玩笑啊~','像你这样的人，就和英吉利牛肉一起冰冻冷藏起来吧！！'
-							,'end'],
+							['reimu','啊啊不行了！光是死灵都玩腻了','', '！？','','好了，我是为什么而来的呢？现在被这美丽的樱花迷住了啊','',
+							'啊，是吗？那么，就来赏樱吧', '', '对了对了，我想起来了', '', '我是要在自己的神社里赏樱来着啊', '', '所以说，虽然是很美丽的樱花，不过', '能把你们收集的春还回来吗？', '',
+							'是什么呀，那个西行妖', '', '就因为是特意封印起来的吧。', '那样的话，是不是不要解开会更好呢？也不知道究竟是封印了什么', '', '算了不说这个，要是封印解开了会怎么样呢？', '',
+							'…', '', '出于兴趣使其复活，那可不行啊，还不知道是谁', '', '怎么能把返魂跟死混为一谈。', '要是复活了什么麻烦的东西怎么办呀?', '', '我就算是死了也还能赏樱呢', '', 
+							'好了，玩笑到此结束，', '现在就请把幻想乡的春都还回来吧', '', '在一开始的第2位就说了', '', '回归于花下好了，春之亡灵！', ''],
+							['yuyuko','随便就侵入到人家的庭院里, 还四处抱怨的家伙～','','真奇怪','嘛，虽然我这里的话的确是只有死灵而已', '',
+							'是来赏樱的吗？地方还有空出来的呢', '', '但是，你没有被邀请啊', '', '想起什么？', '', '…', '', '就差一点了哦。', '再有一点，西行妖就能盛开了',
+							'', '我们家的妖怪樱树', '这种程度的春的话，是没法解开这个樱花树的封印的哦', '', '这种话越过结界的你说得出口吗？', '', '很漂亮的盛开～', '', '同时，好像会有什么人会复活…',''
+							, '哎呀，我是可以出于兴趣就把人或妖怪诱向死亡的哦', '', '不试试看的话怎么知道的。', '不管怎么说，没有被邀请的你站在这里，就和死亡没什么分别了，或者说，在这里这件事本身就是死亡',
+							'', '要是有了你身上所仅有的那一点点的春的话，', '就能看到真正的樱花……托什么人之福呢', '', '一开始就那么说不就好了', '', '最后的最后才是最重要的哦', '', '沉眠于花下好了，红白之蝶！', 'end'],
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
