@@ -2996,10 +2996,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
-							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
-							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
-							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
-							['chen','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
+							['marisa','啊啊烦死了。', '这里貌似是某些和人类类似的东西住的地方。像猫呀狗呀狐狸呀什么的','',
+							'……是「枪打出头鸟」、吗？','', '不关四只脚的生物什么事','','虽然说根本没有所谓的路','', '这样啊，风向改变了啊。怪不得', '',
+							'怪不得', 'end'],
+							['chen','应呼飞出...','','那个，有什么事？','','听起来好像哪里不对...','', '来到这个迷途之家的话，不就说明你迷路了吗～？','',
+								'因为刚才起就一直吹雪导致视线不良，而且风向也经常改变呢～', '', '已经找不到回去的路了吧', '', 
 							],
 						];
 					} else if (game.me.name == 'sakuya'){
@@ -3046,7 +3047,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if (game.me.name == 'reimu'){
 						line = '总之，先在附近找点轻巧的日用品啦～～';
 					} else if (game.me.name == 'marisa'){
-						line = '';
+						line = '怪不得，我会遇上这种没用的家伙';
 					} else if (game.me.name == 'sakuya'){
 						line = '';
 					}
@@ -3093,10 +3094,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						]; 
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
-							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
-							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
-							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
-							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''
+							['marisa','总感觉，这里蛮爽的', '', '很好的','','比起温室魔法使不是要好吗？','','啊？欢迎来到边境','',
+							'让春天还有这样的雪天气的，到底是谁啊','', '是吗', '不过，看起来一点点春的话，应该还是有的', '',],
+							['alice','像这样的杀戮之夜真的好吗？','','毕竟，你是个野生魔法使','','是都市派魔法使','', '农村春天寒冷得让人讨厌', '',
+							'顺便说句，不是因为我的原因', '', '我也这么想，你那一点点的春能交给我吗？', 'end',
 							],
 						];
 					} else if (game.me.name == 'sakuya'){
@@ -3197,10 +3198,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
-							['marisa','我记着岛屿明明是在这附近来着…难道说那个岛屿移动了不成？',
-							'而且……现在可是夏天呢为什么天气会这么冷的说？','','是你吧。让天这么冷','',
-							'寒酸的家伙','','不对的地方有很多很多哦？','end'],
-							['cirno','不会再让你回到陆地上了啊！','','这比热不是要好得多吗？','','听起来好像哪里不对...',''],
+							['marisa', '这个结界很厉害啊，要是外行的话完全没法解开哦', '究竟藏了些什么东西', 1, 
+							'"芝麻开门"...',1,'虽然无所谓，还是问下，你是谁呀？', 1, '啊啊，无所谓', '反正，打倒你了，门就会自动开了吧？', 2,
+							'朋友呀', 1, '这个，有点仓促，不过看在朋友的交情上把这个结界给解开吧', 2, '不管怎么看，你们都不能把这个结界解开的样子呢', 1, '帮忙嘛，不需要啦', 'end'],
+							['lyrica','嘿嘿嘿～','商业机密', 0, '那么做，是打不开这个结界的', 0, '反正无所谓', 0, '朋友哦～', 3, '交情～', 0, '那么演奏开始～姐姐，要上了！', 3, '呜～', 2],
+							['lunasa', '莉莉卡的朋友？', 0, '代价是听过之后就回去哦，因为朋友的交情', 1, '知道了啦，我们随时准备帮忙', 0],
+							['merlin', '那真是太好了, 莉莉卡终于也能交到朋友了', 0, '在那之前能先听我们演奏一曲吗？ 看在朋友的交情上', 2, '她是你的朋友呀，偶尔也用用独奏来解决吧', 1],
 						];
 					}
 					game.me.removeSkill('boss_cherry4');
@@ -4875,7 +4878,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['liudaojian_skill'],
-				
 				init:function(player){
 					//这里需要对话
 					player.equip(game.createCard('stg_bailou'));
@@ -5084,7 +5086,21 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'dieBefore'},
 				direct:true,
 				init:function(){
-					game.me.storage.reinforce = [];
+					if (get.mode()=='stg'){
+						game.pause();
+						setTimeout(function(){
+								player.say('你是，人类呢。');
+								setTimeout(function(){
+									player.say('来的正好。把你手里的那一点春');
+				                	setTimeout(function(){
+										player.say('全部都交出来！');
+										game.resume();
+									}, 2500);
+				                }, 2500);
+						}, 0);
+						game.me.storage.reinforce = [];
+						player.dataset.position = 4;
+					}
 				},
 				content:function(){
 					game.me.storage.reinforce.push('stg_ghost', 'stg_ghost', 'youmu');
@@ -5095,8 +5111,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				trigger:{player:'dieBefore'},
 				direct:true,
 				init:function(){
-					game.me.storage.reinforce = [];
-					player.dataset.position = 4;
+					if (get.mode()=='stg'){
+						game.pause();
+						setTimeout(function(){
+							player.say('如果你再继续向前，即使你被大小姐杀掉我也不管啦');
+							setTimeout(function(){
+								game.resume();
+							}, 2500);
+						}, 0);
+						game.me.storage.reinforce = [];
+						player.dataset.position = 4;
+					}
 				},
 				content:function(){
 					game.me.storage.reinforce.push('yuyuko');
