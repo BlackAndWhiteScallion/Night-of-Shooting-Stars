@@ -117,7 +117,6 @@ body[data-background_color_music='blue'] #arena.mobile:not(.chess) .player[data-
 .dialog.withbg{
 	background: rgba(255, 255, 255);
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
-	min-height:200px;
 }
 .marks>.card:not(.fullskin){
 	color: black;

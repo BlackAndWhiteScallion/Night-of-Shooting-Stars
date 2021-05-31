@@ -1486,7 +1486,6 @@ div:not(.handcards)>.card>.info>span,
 	width: 400px;
 	left: calc(50% - 200px);
 	bottom: auto !important;
-	min-height: 0px !important;
 }
 .dialog.forcebutton{
 	width: 400px;
@@ -4115,7 +4114,6 @@ div:hover>.wunature {
 	background: rgba(0,0,0,0.2);
 	box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
 	border-radius: 8px;
-	min-height: 200px;
 }
 
 #window[data-radius_size='reduce'] .dialog.scroll1,
