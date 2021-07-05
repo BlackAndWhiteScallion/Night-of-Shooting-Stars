@@ -2629,10 +2629,10 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{player:'drawEnd'},
 			filter:function(event,player){
 				for (var i = 0; i < event.num; i ++){
-					if (player.countCards('h') < i){
+					if (player.countCards('h') <= i){
 						return false;
 					}
-					if (player.getCards('h')[i].name == 'tianguo'){
+					if (player.getCards('h')[i] && player.getCards('h')[i].name == 'tianguo'){
 						return true;
 					}
 				}

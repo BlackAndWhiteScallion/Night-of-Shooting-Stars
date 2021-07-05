@@ -66,17 +66,9 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                               }
                         },
                         onremove:function(player){
-                                var es=player.getCards('e');
-                                for(var j=0;j<es.length;j++){
-                                    var info=get.info(es[j]);
-                                    if(info.skills && es[j] == player.storage.jidong_2[0]){
-                                        for(var i=0;i<info.skills.length;i++){
-                                            player.addSkillTrigger(info.skills[i]);
-                                        }
-                                    }
-                                }
-                                delete player.storage.jidong_2;
-                            },
+                              player.addEquipTrigger();
+                              delete player.storage.jidong_2;
+                        },
                         enable:'chooseToUse',
                         filterCard:function(card, player){
                               return card == player.storage.jidong_2[0];

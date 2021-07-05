@@ -21656,7 +21656,7 @@
             },
             // 免疫：防止所有伤害
             mianyi:{
-                trigger:{player:'damageBefore'},
+                trigger:{player:['damageBefore', 'loseHpBefore']},
                 mark:true,
                 forced:true,
                 content:function(){
@@ -22083,6 +22083,9 @@
                     } else {
                         if (player.storage.spell){
                             var info = lib.skill[player.storage.spell];
+                            if (info.init){
+                                info.init = null;
+                            }
                             if (info.spell){
                                 game.log(player,'的【'+get.translation(player.storage.spell)+'】符卡结束。');
                                 for (var i = 0; i < info.spell.length; i ++){
@@ -22093,7 +22096,6 @@
                                     player.die();
                                 }
                             }
-
                             delete player.storage.spell;
                         }
                     }

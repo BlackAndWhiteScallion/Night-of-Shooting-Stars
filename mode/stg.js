@@ -1464,6 +1464,35 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.backgroundMusic.currentTime=lib.config.musiccchange[lib.config.currentMusic][1];
 				}, 0);
 			},
+			playConvo:function(lines){
+				var num = 0;
+				var step1 = function(){
+					var dialog = ui.create.dialog();
+					var player = ui.create.div('.avatar', dialog).setBackground(lines[num][0],'character');
+					dialog.style.minHeight = '120px';
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px;">'+lines[num][1]+'</div></div>');
+					player.style.float = 'left';
+					ui.auto.hide();
+					dialog.open();
+					ui.create.control('继续',function(){
+						ui.dialog.close();
+						while(ui.controls.length) ui.controls[0].close();
+						num ++;
+						if (num >= lines.length){
+							game.resume();
+						} else {
+							step1();
+						}
+					});
+					ui.create.control('跳过',function(){
+						ui.dialog.close();
+						while(ui.controls.length) ui.controls[0].close();
+						game.resume();
+					});
+				};
+				game.pause();
+				step1();
+			},
 		},
 		boss:{
 			stg_scarlet:{
@@ -1672,7 +1701,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					ui.background.setBackgroundImage('image/background/baka.jpg');
 
 					lib.character['cirno'] = ['female', '2', 2, ['jidong', 'bingbi']];
-					game.me.storage.reinforce = ['stg_yousei','stg_yousei', 'cirno','stg_yousei', 'stg_yousei', 'letty'];
+					game.me.storage.reinforce = ['stg_yousei','stg_yousei', 'cirno', 'stg_yousei', 'letty'];
 					//game.me.storage.reinforce = ['rumia'];
 					if (game.me.name == 'reimu'){
 						game.me.storage.dialog = [
@@ -1696,7 +1725,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_cherry2';
+					game.me.storage.stage = 'boss_cherry4';
 					game.me.storage.fuhuo = 1;
 					if (get.config('practice_mode')){
 						game.me.storage.fuhuo = 10;
@@ -2037,6 +2066,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				fixed:true,
 				init:function(event,character){
 					var a = [];					// 创建一个对话人数数量长的数列，用于记录玩家和敌人对话位置
+					if (!game.me.storage.dialog){	// 没对话就刷出boss然后直接跳过
+						if (game.me.storage.reinforce[0]){
+							game.changeBoss(game.me.storage.reinforce[0]);
+							game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
+						}
+						return ;
+					}
 					for (var h = 0; h < game.me.storage.dialog.length; h++){
 						a.push(1);
 					}
@@ -2091,7 +2127,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 								} else {
 									var player = ui.create.div('.avatar',dialog).setBackground(name,'character');
 									dialog.style.minHeight = '120px';
-									dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px;">'+game.me.storage.dialog[i][a[j]]+'</div></div>');
+									dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px;">'+game.me.storage.dialog[i][a[j]]+'</div></div>');
 									player.style.float = 'left';
 									//dialog.style.overflow = 'auto';
 									a[j] ++;
@@ -2215,7 +2251,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						line = '黑幕，好弱啊。得赶快去找下一个黑幕了～';
 					}
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
 					dialog.open();
 	                game.pause();
@@ -2303,7 +2339,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						line = '啊啊，短袖对身体不好赶快去找个能招待我喝茶的房子好了嗯，就这么办';
 					}
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
 					dialog.open();
 	                game.pause();
@@ -2390,7 +2426,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					'step 1'
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+event.list[0]+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+event.list[0]+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');
 					dialog.open();
 	                game.pause();
@@ -2484,7 +2520,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					'step 1'
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+event.list[0]+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+event.list[0]+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(event.string,'character');
 					dialog.open();
 	                game.pause();
@@ -2581,7 +2617,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					'step 1'
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;">'+event.list[0]+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;">'+event.list[0]+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(event.string,'character');
 					dialog.open();
 	                game.pause();
@@ -2667,7 +2703,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						ui.arena.classList.remove('only_dialog');
 					};
 					var step1=function(){
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">就这样，红雾异变的黑幕被击退了。没过几天，红雾就从幻想乡彻底的散去了。恭喜你闯关成功！');
+						ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">就这样，红雾异变的黑幕被击退了。没过几天，红雾就从幻想乡彻底的散去了。恭喜你闯关成功！');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('呼……累死人了',step3);
 					}
@@ -2676,20 +2712,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 1){
 							step5();
 						} else {
-							ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">总之呢，作为通关奖励解锁了在其他模式中使用蕾米莉亚（神枪符卡）和带了五本魔导书的魔导书架。这些可以在左上角[扩展]打开或关闭。</div></div><div><div style="width:280px;margin-left:120px;font-size:8px">将联机昵称改为“路人”可以不通关也解锁这些角色哟。</div></div>');
+							ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">总之呢，作为通关奖励解锁了在其他模式中使用蕾米莉亚（神枪符卡）和带了五本魔导书的魔导书架。这些可以在左上角[扩展]打开或关闭。</div></div><div><div style="width:260px;margin-left:120px;font-size:8px">将联机昵称改为“路人”可以不通关也解锁这些角色哟。</div></div>');
 							ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 							ui.create.control('不错不错',step4);
 						}
 					};
 					var step4=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">还会继续更新更多关卡的。下次再见？</div></div>');
+						ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">还会继续更新更多关卡的。下次再见？</div></div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('下次再见！',step6);
 					};
 					var step5=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">下次欺负蕾米的时候轻一点啊人家也是很累的。</div></div>');
+						ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">下次欺负蕾米的时候轻一点啊人家也是很累的。</div></div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('哎，好吧',step6);
 					};
@@ -2716,7 +2752,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						ui.arena.classList.remove('only_dialog');
 					};
 					var step1=function(){
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">春雪异变的黑幕终究被击退了。虽然迟了，但是春天还是慢慢的回到了幻想乡。恭喜你闯关成功！');
+						ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">春雪异变的黑幕终究被击退了。虽然迟了，但是春天还是慢慢的回到了幻想乡。恭喜你闯关成功！');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('这次是真的累死了',step3);
 					}
@@ -2725,20 +2761,20 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if (get.config('practice_mode') || (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_cherry'] && lib.config.gameRecord.stg.data['stg_cherry'][0] > 1)){
 							step5();
 						} else {
-							ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">总之呢，作为通关奖励解锁了在其他模式中使用蕾米莉亚（神枪符卡）和带了五本魔导书的魔导书架。这些可以在左上角[扩展]打开或关闭。</div></div><div><div style="width:280px;margin-left:120px;font-size:8px">将联机昵称改为“路人”可以不通关也解锁这些角色哟。</div></div>');
+							ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">总之呢，作为通关奖励解锁了在其他模式中使用蕾米莉亚（神枪符卡）和带了五本魔导书的魔导书架。这些可以在左上角[扩展]打开或关闭。</div></div><div><div style="width:260px;margin-left:120px;font-size:8px">将联机昵称改为“路人”可以不通关也解锁这些角色哟。</div></div>');
 							ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 							ui.create.control('不错不错',step4);
 						}
 					};
 					var step4=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">异变不会就这么终结的。下次再见？</div></div>');
+						ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">异变不会就这么终结的。下次再见？</div></div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('下次再见！',step6);
 					};
 					var step5=function(){
 						clear();
-						ui.create.dialog('<div><div style="width:280px;margin-left:120px;font-size:18px">幽幽子大人平常蛮无聊的，所以请多来玩玩！</div></div>');
+						ui.create.dialog('<div><div style="width:260px;margin-left:120px;font-size:18px">幽幽子大人平常蛮无聊的，所以请多来玩玩！</div></div>');
 						ui.create.div('.avatar',ui.dialog).setBackground('akyuu','character');
 						ui.create.control('哎，好的',step6);
 					};
@@ -2947,25 +2983,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addVideo('hidePlayer',game.boss);
 					game.delay();
 					'step 1'
-					var line;
 					if (game.me.name == 'reimu'){
-						line = '';
+						game.playConvo([['reimu', '就算是这样的家伙，打倒了的话春度也应该能增加一点吧？']]);
 					} else if (game.me.name == 'marisa'){
-						line = '';
+						game.playConvo([['marisa', '就算是这样的家伙，打倒了的话春度也应该能增加一点吧？']]);
 					} else if (game.me.name == 'sakuya'){
-						line = '';
+						game.playConvo([['sakuya', '就算是这样的家伙，打倒了的话春度也应该能增加一点吧？']]);
 					}
-					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
-					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
-					dialog.open();
-	                game.pause();
-	                var control=ui.create.control('下一关',function(){
-	                    dialog.close();
-	                    control.close();
-	                    game.resume();
-	                });
-	                lib.init.onfree();
 	                'step 2'
 					var dialog=ui.create.dialog("第二关<br><br>迷途之家的黑猫");
 					dialog.open();
@@ -3045,14 +3069,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '总之，先在附近找点轻巧的日用品啦～～';
+						game.playConvo([['reimu', '总之，先在附近找点轻巧的日用品啦～～'],
+									]);
 					} else if (game.me.name == 'marisa'){
-						line = '怪不得，我会遇上这种没用的家伙';
+						game.playConvo([['marisa', '怪不得我会遇上这种没用的家伙'],
+									]);
 					} else if (game.me.name == 'sakuya'){
-						line = '南无～极乐净土一定是一个温暖且幸福的地方，不会错啦～';
+						game.playConvo([['sakuya', '南无～极乐净土一定是一个温暖且幸福的地方，不会错啦～'],
+									]);
 					}
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
 					dialog.open();
 	                game.pause();
@@ -3109,7 +3136,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							['alice','有时间关心别人的话是不是先关心下自己？','','在关心自己什么？','','带来了啊', '',
 								'带了吗？','','失礼啊！不是很少，我根本就没有烦恼！', '', '什么？', '', '大概，有点线索', '', 
 								'那种琐碎的小事，怎样都好', '',
-							'end'],
+							],
 						];	
 					}
 					game.me.removeSkill('boss_cherry3');
@@ -3141,28 +3168,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				content:function(){
 					'step 0'
 					game.boss.hide();
-					game.addVideo('hidePlayer',game.boss);
+					game.addVideo('hidePlayer', game.boss);
 					game.delay();
 					'step 1'
-					var line;
 					if (game.me.name == 'reimu'){
-						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+						game.playConvo([['reimu', '说起春度的话，是不是就是指那些樱花的花瓣？'],
+										['alice', '你不是知道所以才搜集的吗？'], 
+										['reimu', '不是的，这个，也对'],
+									]);
 					} else if (game.me.name == 'marisa'){
-						line = '难道说，除了人类以外都不是十指吗';
+						game.playConvo([['marisa', '冬天一直这么喧闹吗？'],
+										['marisa', '基本上，普通人类这时候不会出现在外面'],
+										['alice', '不要把我和普通的人类相提并论'], 
+										['marisa', '是异常的人类吗？'],
+										['alice', '是普通的非人类！！'],
+									]);
 					} else if (game.me.name == 'sakuya'){
-						line = '';
+						game.playConvo([['sakuya', '说，引起这次骚动的真凶究竟是什么家伙？'],
+										['alice', '在下风方向有个萧条的神社'],
+										['alice', '那里住着一位满脑子都是春的巫女，就是那家伙没错'], 
+										['sakuya', '我觉得恐怕不对'],
+										['alice', '不开玩笑了。'],
+										['alice', '你在收集樱花的同时，难道没有注意到春已经在靠近了吗？'],
+										['sakuya', '...往上风的方向'],
+										['alice', '我还什么都没说……']
+									]);
 					}
-					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
-					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
-					dialog.open();
-	                game.pause();
-	                var control=ui.create.control('下一关',function(){
-	                    dialog.close();
-	                    control.close();
-	                    game.resume();
-	                });
-	                lib.init.onfree();
 	                'step 2'
 					var dialog=ui.create.dialog("第四关<br><br>云上的樱花结界");
 					dialog.open();
@@ -3213,12 +3244,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.storage.dialog = [
 							['sakuya', '上空竟然如此的温暖，感动得都要流泪了', 1, '那么，这里是哪里？你是？', 1, '也对，那么你很强吗？', 1, '',
 							'向上风方向前进，最后到达这里而已，风貌似沉淀在这里了的样子', 3, '嗯？', 2, '说什么呢，等一下这里要举行赏樱会吗？', 1,
-							'那似乎很有趣啊', 3, '要我来负责呀', 0, ],
+							'那似乎很有趣啊', 3, '要我来负责呀', 1, '我希望能没事呢～', 2, '人肉！', 'end'],
 							['merlin', '真的呢～', '这片云层下面都还是狂风暴雪的说。', 0, '问题要一个一个的来～', 0, '我很普通啦。', 
-							'虽然问不问无所谓，你是谁？', 0, '嘛，要办个小型的宴会吗？', 0, '要开赏樱会哦～', 3, '听了我的演奏之后还能没事的食物是不存在的',  
+							'虽然问不问无所谓，你是谁？', 0, '嘛，要办个小型的宴会吗？', 0, '要开赏樱会哦～', 3, '听了我的演奏之后还能没事的食物是不存在的', 0,
 							],
-							['lyrica', '宴会的时间～', 1, '赏樱会的前夜祭哦', ],
-							['lunasa', '离宴会还早', 0, '因为在那之前似乎能弄到宴会的原料呢', 2, '你是负责食物的', ],
+							['lyrica', '宴会的时间～', 1, '赏樱会的前夜祭哦', 0, '狗肉，狗肉～', 0],
+							['lunasa', '离宴会还早', 0, '因为在那之前似乎能弄到宴会的原料呢', 2, '你是负责食物的', 0],
 						];
 					}
 					game.me.removeSkill('boss_cherry4');
@@ -3255,12 +3286,27 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '太好了，赏樱权确保！';
+						game.playConvo([['reimu', '太好了，赏樱权确保！'],
+										['lunasa', '难道，目的是赏樱劫持？'],
+										['reimu', '总感觉有点不对劲…………'],
+									]);
 					} else if (game.me.name == 'marisa'){
-						line = '难道说，除了人类以外都不是十指吗';
+						game.playConvo([['marisa', '那么，把门打开吧？'],
+										['lyrica', '这个门打不开啊'],
+										['marisa', '你们，不是进去过了吗？'],
+										['lyrica', '我们是从那上面飞过去的啊'],
+										['marisa', '~~~哈'],
+									]);
+					} else if (game.me.name == 'sakuya'){
+						game.playConvo([['sakuya', '怎样，我已经没太多的时间在这里耗了'],
+							['merlin', '离赏樱的时间还早呢'],
+							['sakuya', '虽然赏樱也很不错，不过前提是春天呢'],
+							['merlin', '春的话，房子里到处都是啦'],
+							['sakuya', '这种程度的结界，很简单就能钻过去了呀'],
+						]);
 					}
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
 					dialog.open();
 	                game.pause();
@@ -3317,6 +3363,15 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							'···妖怪所锻造的这把楼观剑，无法斩断的东西，基本不存在！', 'end'
 							],
 						];
+					} else if (game.me.name == 'sakuya'){
+						game.me.storage.dialog = [
+							['sakuya', '出来', '', '好像终于到要找的地方了。', '整整花了一天呀。', '', '死无对证', '老老实实地把春还回来', '', '差一点也不行', '',
+							'都说了不行哦', '', '你有在听吗？', '就为了这种东西，我可是受苦受冻了', '', '算了不说了', '死无对证', '', '我的飞刀也能斩断幽灵吗？', '',],
+							['youmu', '我说怎么大家那么吵闹的，原来是有活人来这里呀', '', '来到这里还能如此的不慌不忙', '这里是白玉楼，是死者们住的地方。', '用活人考虑问题的方法来对待这里是会遭遇不幸的',
+							'', '就差一点了哦。', '', '仅仅差一点西行妖就能盛开了。', '普通的春的话是绝对不可能盛开的。', '', '有了你手中的那一点点春之后，西行妖一定就可以盛开了！',
+							'', '这里不是很暖和吗？', '', '死无对证', '把你那些春全部交出来！', '', '妖怪所锻造的这把楼观剑，无法斩断的东西，只有一点！', 'end'
+							],
+						];
 					}
 					game.me.removeSkill('boss_cherry5');
 					ui.background.setBackgroundImage('image/background/stg_stairs.jpg');
@@ -3352,12 +3407,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '不过就算说是良药如果不喝了试试的话又怎么知道';
+						game.playConvo([['reimu', '这里不是已经很春了吗'],
+										['reimu', '你们到底想做些什么呀？'],
+										['youmu', '大小姐今年想要樱花盛开，不过想要西行妖盛开的话'],
+										['youmu', '仅仅这点程度的春根本…'],
+										['reimu', '难道盛开后会发生什么好事不成'],
+									]);
 					} else if (game.me.name == 'marisa'){
-						line = '难道说，除了人类以外都不是十指吗';
+						game.playConvo([['marisa', '那么，就把我带到那个妖怪樱花树那里吧。'],
+										['youmu', '不管怎样只要西行妖能盛开的话就无所谓'],
+										['youmu', '虽然这样说，总觉得有点没法接受……'], 
+										['marisa', '谁想让它盛开了？'],
+										['marisa', '我只是想赏樱罢了。'],
+									]);
 					}
 					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:280px;margin-left:120px;font-size:18px">'+line+'</div></div>');
+					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
 					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
 					dialog.open();
 	                game.pause();
@@ -3408,7 +3473,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
-							['marisa','不管走到何处都是盛开的呀～','','！','是你吧。让天这么冷','',
+							['marisa','不管走到何处都是盛开的呀～','','！','', '是你吧。让天这么冷','',
 							'我拿来了。那个，最后一点的春','','怎么会，我还不想在这样偏远的地方了却余生', '', '你有在听我说吗？',
 							'', '说什么让人摸不着头脑的话呀？', '', '所以说，让你那么做的话会发生什么好事吗？', '', '不能白白给你', '',
 							'在刚刚，好像打倒了一群热闹的家伙来到这里的样子………', '', '啊啊，这附近到处充斥着尸臭的气息呀', '',
@@ -3419,6 +3484,22 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							'', '不知道', '', '让你赏樱如何，我们这里的赏樱很热闹很有趣哦', '', '不管怎么说，冥界的樱花对人类来说都是稀罕物吧？', '',
 							'哎呀，你用眼睛来闻气味啊', '', '失礼哦。在这里的那些春，可都是你们住的幻想乡里的春哦', '', '对话跑题了跑题了～', '',
 							'那太遗憾了，现在把空气的温度提高一些然后说话吧', '', '但是，好不容易的', '', '最后一点的春我都拿走了哦，黑色之魔！', 'end'
+							],
+						];
+					} else if (game.me.name == "sakuya"){
+						game.me.storage.dialog = [
+							['sakuya', '冥界里……', '难道就没有「死无对证」这句话吗？', '', '！', '', '华丽难道不是因为夺走了幻想乡的春的缘故？',
+							'', '就是喜欢才会生气呀。', '为什么要夺走幻想乡的春度？', '', '……刚才的死人说你似乎想和我战斗', '', 
+							'那个樱花树，不是枯萎了么？', '', '没兴趣。', '比起这里，我更在意来这里花了整整一天的时间', '', '订正刚才的话，不是想来到这里',
+							'是为了让幻想乡进入春天才来的', '', '不要说樱花了，连侧金盏花都还没开', '', '不会麻烦', '说到底，家里的大小姐也不可能会心脏不好', '',
+							'遗憾？', '算了，花的事情到此为止。', '我也差不多想要过温暖的日子了，能把温暖的日子还回来吗？', '', '不过亡骸毕竟不美丽', '', 
+							'必定在地上举办赏樱会，公主的亡骸！', '',
+							],
+							['yuyuko', '哎呀～当然，没有那种话啦','', '冥界可一直都是热闹华丽的地方哦～', '', '哎呀，你讨厌春天？', '',
+								'春的话其实是怎样都好', '但是，还有一点点不足哦', '', '再有一点点，最后的樱花树，西行妖就能绽放了。', 
+								'只要它一绽放，一切疑问就能解开了', '', '再一点似乎就能绽放了呀。', '妖梦她，一定是想用你手中的那一点点春让它开花呢～'
+								, '', '哎呀，那我立刻送你回去吧。', '你还没有被邀请', '', '哎呀，地上的樱花还没有开放吗？', '', '那样的话，心脏病发的时候可就麻烦了',
+								'', '那真是太遗憾了呢', '', '亡骸就是要集中在一个地方才会美丽哦～', '春和樱花也一样……', '', '所以说呢', '', '必定把封印解开给你看，恶魔的走狗！', 'end'
 							],
 						];
 					}
@@ -3480,7 +3561,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 cost:0,
                 infinite:true,
                  spell:['mercury1'],
-                 
                  trigger:{},
                   init:function(player){
                   	var target = game.findPlayer(function(current){
@@ -3524,8 +3604,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
                 cost:0,
                 infinite:true,
-                spell:['emerald1'],
-                
+                spell:['emerald1'],                
                 init:function(player){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
@@ -3574,7 +3653,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 cost:0,
                 infinite:true,
                  spell:['waterfairy1'],
-                 
                    init:function(player){
                   	var target = game.findPlayer(function(current){
                   		return current.name == 'stg_bookshelf';
@@ -3613,7 +3691,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['perfectSquare1','perfectSquare2'],
-				
 				init:function(player){
 	                  player.useSkill('perfectSquare');
 				},
@@ -3646,7 +3723,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				cost:0,
 				trigger:{player:'phaseBegin'},
 				spell:['gungirs1'],
-				
 				init:function(player){
 					if (get.mode()=='stg'){
 						player.useSkill('gungirs');
@@ -3784,14 +3860,25 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                 },
                 chooseButton:{
                     dialog:function(event,player){
-                        var list = [];
+						var list = [];
+						var packs = lib.config.all.cards.diff(lib.config.cards);
                         for (var i in lib.card){
                             if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
-                            if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+							if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+							if (packs){
+								var f = false;
+								for (var j = 0; j < packs.length; j ++){
+									if (lib.cardPack[packs[j]].contains(i)){
+										f = true;
+										break;
+									}
+								}
+								if (f) continue;
+							}
                             if(lib.card[i].type == 'basic' && event.filterCard({name:i},player,event)){
                                 list.add(i);
                             }
-                        }
+						}
                         for(var i=0;i<list.length;i++){
                             list[i]=[get.type(list[i]),'',list[i]];
                         }
@@ -4997,6 +5084,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					"step 0"
 					event.num = player.maxHp - player.hp + 1;
 					"step 1"
+					player.line(trigger.player, 'pink');
 					trigger.player.chooseControl('弃两张牌', '失去1点体力', '受到2点灵击伤害', true);
 					"step 2"
 					if (result.control == "弃两张牌"){
@@ -5025,16 +5113,17 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.classList.remove('turnedover');
 					player.removeSkill('wangwo');
 					player.removeSkill('wangwo_skill');
+					ui.background.setBackgroundImage('image/background/stg_sakura.jpg');
+					player.node.avatar.setBackgroundImage('image/mode/stg/character/stg_yuyuko.jpg');
 					setTimeout(function(){
 						game.swapMusic(true);
 						ui.backgroundMusic.play();
 						player.show();
 						player.useSkill('stg_fanhun');
 						player.addSkill('cherry_win');
-						ui.background.setBackgroundImage('stg_yuyuko');
+						ui.background.setBackgroundImage('image/background/stg_tree.jpg');
 						game.resume();
 					}, 2000);
-					
 				},
 				content:function(){
 					player.loselili(lib.skill.stg_fanhun.cost);
@@ -5052,9 +5141,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
                     delete player.nodying;
                     if (player.hp <= 0) {
 						player.hp=0;
-						player.dying({});
+						player.die();
                     }
-                    player.update();
 				},
 				trigger:{player:'phaseDiscardAfter'},
 				content:function(){
@@ -5111,7 +5199,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			youmudieafter:{
-				trigger:{player:'dieBefore'},
+				trigger:{player:'die'},
 				direct:true,
 				init:function(){
 					if (get.mode()=='stg'){
@@ -5136,16 +5224,16 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			youmudieafter2:{
-				trigger:{player:'dieBefore'},
+				trigger:{player:'die'},
 				direct:true,
-				init:function(){
+				init:function(player){
 					if (get.mode()=='stg'){
 						game.pause();
 						setTimeout(function(){
-							player.say('如果你再继续向前，即使你被大小姐杀掉我也不管啦');
+							player.say('如果你再继续向前，即使你被大小姐杀掉我也不管啦！');
 							setTimeout(function(){
 								game.resume();
-							}, 2500);
+							}, 2000);
 						}, 0);
 						game.me.storage.reinforce = [];
 						player.dataset.position = 4;
@@ -5342,6 +5430,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 
 			stg_bailou:'破魂之白楼',
 			stg_bailou_skill:'破魂之白楼',
+			stg_bailou_skill1:'破魂之白楼',
 			stg_bailou_info:'你可以将有灵力的牌当做【轰！】使用；锁定技，你造成弹幕伤害后，对受伤角色造成1点灵击伤害。',
 			stg_louguan:'断命之楼观',
 			stg_louguan_skill:'断命之楼观',
