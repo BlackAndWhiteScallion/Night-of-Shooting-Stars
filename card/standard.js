@@ -2884,18 +2884,9 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     			}
 				player.chooseButton(['选择不让使用打出的牌',[list,'vcard']], true).set('filterButton',function(button){
     					return true;
-    				}).set('ai',function(button){
-    					var rand=_status.event.rand*2;
-    					switch(button.link[2]){
-    						case 'sha':return 5+rand[1];
-    						case 'tao':return 4+rand[2];
-    						case 'shan':return 4.5+rand[3];
-    						case 'juedou':return 4+rand[4];
-    						case 'shunshou':return 3+rand[5];
-    						default:return rand[6];
-    					}
-    				}).set('rand',[Math.random(),Math.random(),Math.random(),Math.random(),
-    				Math.random()],Math.random());
+					}).set('ai', function(button){
+						return button.link[2] == rand;
+					}).set('rand', ['sha', 'tao', 'shan', 'juedou', 'shunshou', 'wuzhong'].randomGet());
     			'step 1'
 				if(result.bool){
 					player.addSkill('lingbi2');

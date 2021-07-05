@@ -78,16 +78,32 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				ui.create.dialog('欢迎您，'+lib.config.connect_nickname+'! <br>这是第一次来到幻想乡吗？');
 				//game.saveConfig('new_tutorial',true);
 				ui.auto.hide();
-				ui.create.control('怎么可能',function(){
+				ui.create.control('怎么可能',step25);
+				ui.create.control('是的',step2);
+			}
+			var step25 = function(){
+				clear();
+				ui.create.dialog('哎，那打牌也会打吗？')
+				ui.create.control('不会', function(){
 					clear();
 					clear2();
-					ui.create.dialog('欢迎回来！<br>祝你在幻想乡玩的愉快！');
-					ui.dialog.add('<div class="text center">你可以在左上角的选项-其它中重置新手向导');
+					ui.create.dialog('那，我们这就来试试打牌吧！');
 					setTimeout(function(){
 						game.resume();
 					}, 2500);
 				});
-				ui.create.control('是的',step2);
+				ui.create.control('当然', function(){
+					clear();
+					clear2();
+					ui.create.dialog('欢迎回来！<br>祝你在幻想乡玩的愉快！');
+					ui.dialog.add('<div class="text center">你可以在左上角的选项-其它中重置新手向导');
+					game.saveConfig('new_tutorial',true);
+					game.saveConfig('show_splash','always');
+					setTimeout(function(){
+						game.reload();
+					}, 2500);
+				});
+
 			}
 			var step2 = function(){
 				clear();
