@@ -19,7 +19,8 @@
         dying:[]
     };
     var lib={
-        configprefix:'star_1.9_',
+        configprefix:'noname_0.9_',
+        //configprefix:'star_1.9_',
         versionOL:27,
         //updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
         updateURL:'https://bws.coding.net/p/Night-of-Shooting-Stars/d/Night-of-Shooting-Stars/git/raw',
@@ -22576,10 +22577,8 @@
 					_status.enteringroom=false;
 					ui.create.connecting(true);
 				},
-				roomlist:function(list,events,clients,wsid){
-                    //game.send('server','key',[game.onlineKey,lib.version]);
-                    game.send('server','key',[594676110, '1.9.110.8.1']);
-					//game.send('server','key', game.onlineKey);
+                roomlist:function(list,events,clients,wsid){
+					game.send('server','key',[game.onlineKey,lib.version]);
 					game.online=true;
 					game.onlinehall=true;
 					lib.config.recentIP.remove(_status.ip);
@@ -22588,65 +22587,68 @@
 					if(!lib.config.reconnect_info||lib.config.reconnect_info[0]!=_status.ip){
 						game.saveConfig('reconnect_info',[_status.ip,null]);
 					}
-                    game.saveConfig('recentIP',lib.config.recentIP);
-                    _status.connectMode=true;
+					game.saveConfig('recentIP',lib.config.recentIP);
+					_status.connectMode=true;
 
-                    game.clearArena();
-                    game.clearConnect();
-                    ui.pause.hide();
-                    ui.auto.hide();
+					game.clearArena();
+					game.clearConnect();
+					ui.pause.hide();
+					ui.auto.hide();
 
-                    clearTimeout(_status.createNodeTimeout);
-                    game.send('server','changeAvatar',lib.config.connect_nickname,lib.config.connect_avatar);
+					clearTimeout(_status.createNodeTimeout);
+					game.send('server','changeAvatar',lib.config.connect_nickname,lib.config.connect_avatar);
 
-                    var proceed=function(){
-                        ui.rooms=[];
-                        game.ip=get.trimip(_status.ip);
-                        for(var i=0;i<list.length;i++){
-                            var player=ui.create.player(ui.window).animate('start');
-                            player.dataset.position='c'+i;
-                            player.classList.add('connect');
-                            player.roomindex=i;
-                            player.node.hp.classList.add('room');
-                            ui.rooms.push(player);
-                        }
-                        if(events){
+					var proceed=function(){
+						ui.rooms=[];
+						game.ip=get.trimip(_status.ip);
+						for(var i=0;i<list.length;i++){
+							var player=ui.create.player(ui.window).animate('start');
+							if(list.length==8) player.dataset.position=i.toString();
+							else player.dataset.position='c'+i;
+							player.classList.add('connect');
+							player.roomindex=i;
+							player.node.hp.classList.add('room');
+							ui.rooms.push(player);
+						}
+						if(events){
 							ui.connectRoom=ui.create.div('.forceopaque.menubutton.large.connectevents.server.pointerdiv','创建服务器',ui.window,function(){
 								if(confirm('通过此选项可创建一个新房间但不加入游戏。是否继续？')){
 									localStorage.setItem(lib.configprefix+'asserver','hall');
 									game.reload();
 								}
 							});
-                            ui.connectRoom.style.right = '200px';
 							if(!get.config('room_button')){
 								ui.connectRoom.style.display='none';
 							}
-                            ui.connectEvents=ui.create.div('.forceopaque.menubutton.large.connectevents.pointerdiv','约战',ui.window,ui.click.connectEvents);
-                            ui.connectEventsCount=ui.create.div('.forceopaque.menubutton.icon.connectevents.highlight.hidden','',ui.window);
-                            ui.connectClients=ui.create.div('.forceopaque.menubutton.large.connectevents.pointerdiv.left','在线',ui.window,ui.click.connectClients);
-                            ui.connectClientsCount=ui.create.div('.forceopaque.menubutton.icon.connectevents.highlight.left','1',ui.window);
-                            if(events.length){
-                                ui.connectEventsCount.innerHTML=events.length;
-                                ui.connectEventsCount.show();
-                            }
-                        }
-                        game.wsid=wsid;
-                        lib.message.client.updaterooms(list,clients);
-                        lib.message.client.updateevents(events);
-                        ui.exitroom=ui.create.system('退出房间',function(){
+
+							ui.connectEvents=ui.create.div('.forceopaque.menubutton.large.connectevents.pointerdiv','约战',ui.window,ui.click.connectEvents);
+							ui.connectEventsCount=ui.create.div('.forceopaque.menubutton.icon.connectevents.highlight.hidden','',ui.window);
+							ui.connectClients=ui.create.div('.forceopaque.menubutton.large.connectevents.pointerdiv.left','在线',ui.window,ui.click.connectClients);
+							ui.connectClientsCount=ui.create.div('.forceopaque.menubutton.icon.connectevents.highlight.left','1',ui.window);
+							if(events.length){
+								ui.connectEventsCount.innerHTML=events.filter(function(evt){
+									return evt.creator==game.onlineKey||!get.is.banWords(evt.content)
+								}).length;
+								ui.connectEventsCount.show();
+							}
+						}
+						game.wsid=wsid;
+						lib.message.client.updaterooms(list,clients);
+						lib.message.client.updateevents(events);
+						ui.exitroom=ui.create.system('退出房间',function(){
 							game.saveConfig('tmp_owner_roomId');
 							game.saveConfig('tmp_user_roomId');
-                            if(ui.rooms){
-                                game.saveConfig('reconnect_info');
-                            }
-                            else{
-                                if(lib.config.reconnect_info){
-                                    lib.config.reconnect_info.length=1;
-                                    game.saveConfig('reconnect_info',lib.config.reconnect_info);
-                                }
-                            }
-                            game.reload();
-                        },true);
+							if(ui.rooms){
+								game.saveConfig('reconnect_info');
+							}
+							else{
+								if(lib.config.reconnect_info){
+									lib.config.reconnect_info.length=1;
+									game.saveConfig('reconnect_info',lib.config.reconnect_info);
+								}
+							}
+							game.reload();
+						},true);
 
 						if(typeof lib.config.tmp_owner_roomId=='number'){
 							if(typeof game.roomId!='number'&&ui.rooms[lib.config.tmp_owner_roomId].roomempty){
@@ -22683,25 +22685,26 @@
 							}
 							game.saveConfig('tmp_user_roomId');
 						}
-                        if(window.isNonameServer){
-                            var cfg='pagecfg'+window.isNonameServer;
-                            if(lib.config[cfg]){
-                                lib.configOL=lib.config[cfg][0];
-                                game.send('server','server',lib.config[cfg].slice(1));
-                                game.saveConfig(cfg);
-                                _status.protectingroom=true;
-                                setTimeout(function(){
-                                    _status.protectingroom=false;
-                                    if(!lib.node||!lib.node.clients||!lib.node.clients.length){
-                                        game.reload();
-                                    }
-                                },15000);
-                            }
-                            else{
-                                game.send('server','server');
-                            }
-                        }
-                        else if(typeof game.roomId=='number'){
+
+						if(window.isNonameServer){
+							var cfg='pagecfg'+window.isNonameServer;
+							if(lib.config[cfg]){
+								lib.configOL=lib.config[cfg][0];
+								game.send('server','server',lib.config[cfg].slice(1));
+								game.saveConfig(cfg);
+								_status.protectingroom=true;
+								setTimeout(function(){
+									_status.protectingroom=false;
+									if(!lib.node||!lib.node.clients||!lib.node.clients.length){
+										game.reload();
+									}
+								},15000);
+							}
+							else{
+								game.send('server','server');
+							}
+						}
+						else if(typeof game.roomId=='number'){
 							var room=ui.rooms[game.roomId];
 							if(game.roomIdServer&&(room.serving||!room.version)){
 								console.log();
@@ -22715,15 +22718,15 @@
 								game.send('server','enter',game.roomId,lib.config.connect_nickname,lib.config.connect_avatar);
 							}
 						}
-                        lib.init.onfree();
-                    }
-                    if(_status.event.parent){
-                        game.forceOver('noover',proceed);
-                    }
-                    else{
-                        proceed();
-                    }
-                },
+						lib.init.onfree();
+					}
+					if(_status.event.parent){
+						game.forceOver('noover',proceed);
+					}
+					else{
+						proceed();
+					}
+				},
                 updaterooms:function(list,clients){
                     if(ui.rooms){
                         ui.window.classList.add('more_room');
@@ -22744,20 +22747,23 @@
                     }
                 },
                 updateevents:function(events){
-                    if(events&&ui.connectEvents){
-                        ui.connectEvents.info=events;
-                        if(events.length){
-                            ui.connectEventsCount.innerHTML=events.length;
-                            ui.connectEventsCount.show();
-                        }
-                        else{
-                            ui.connectEventsCount.hide();
-                        }
-                        if(_status.connectEventsCallback){
-                            _status.connectEventsCallback();
-                        }
-                    }
-                },
+					if(events&&ui.connectEvents){
+						ui.connectEvents.info=events;
+						var num=events.filter(function(evt){
+							return typeof evt.creator=='string'&&(evt.creator==game.onlineKey||!get.is.banWords(evt.content))
+						}).length;
+						if(num){
+							ui.connectEventsCount.innerHTML=num;
+							ui.connectEventsCount.show();
+						}
+						else{
+							ui.connectEventsCount.hide();
+						}
+						if(_status.connectEventsCallback){
+							_status.connectEventsCallback();
+						}
+					}
+				},
                 eventsdenied:function(reason){
                     var str='创建约战失败';
                     if(reason=='total'){
@@ -23110,11 +23116,16 @@
                     });
                 },
                 exec:function(func){
-                    if(typeof func=='function'){
-                        var args=Array.from(arguments);
-                        args.shift();
-                        func.apply(this,args);
-                    }
+                    var key=game.onlineKey;
+					if(typeof func=='function'){
+						var args=Array.from(arguments);
+						args.shift();
+						func.apply(this,args);
+					}
+					if(key){
+						game.onlineKey=key;
+						localStorage.setItem(lib.configprefix+'key',game.onlineKey);
+					}
                 },
                 denied:function(reason){
                     switch(reason){
@@ -35932,6 +35943,7 @@
                         var li1=document.createElement('li');
                         var li2=document.createElement('li');
                         var li3=document.createElement('li');
+                        var li4=document.createElement('li');
                         var trimurl=function(str){
                             if(str==lib.updateURL){
                                 return 'Coding';
@@ -35973,6 +35985,7 @@
                         li1.innerHTML='游戏版本：'+lib.version+'<p style="margin-top:8px;white-space:nowrap"></p>';
                         li2.innerHTML='素材版本：'+(lib.config.asset_version||'无')+'<p style="margin-top:8px"></p>';
                         li3.innerHTML='更新地址：<span>'+trimurl(lib.config.updateURL||lib.updateURL)+'</span><p style="margin-top:8px"></p>';
+                        li4.innerHTML='手机用更新键  ';
                         li3.style.whiteSpace='nowrap';
 
                         var button1,button2,button3,button4,button5;
@@ -36242,7 +36255,7 @@
                                     delete window.noname_animate_list;
                                     var asset_version=updates.shift();
 
-                                    var skipcharacter=[],skipcard=['tiesuo_mark'];
+                                    var skipcharacter=[],skipcard=[];
                                     if(!lib.config.asset_full){
                                         for(var i=0;i<lib.config.all.sgscharacters.length;i++){
                                             var pack=lib.characterPack[lib.config.all.sgscharacters[i]];
@@ -36471,6 +36484,15 @@
                         button2.onclick=game.checkForAssetUpdate;
                         li2.lastChild.appendChild(button2);
 
+                        var button15=document.createElement('button');
+                        button15.innerHTML='重新下载游戏';
+                        button15.onclick=function(){
+                            localStorage.removeItem('noname_inited');
+                            game.reload();
+                            return;
+                        };
+                        li4.appendChild(button15);
+
                         var span1=ui.create.div('.config.more','选项 <div>&gt;</div>');
                         span1.style.fontSize='small';
                         span1.style.display='inline';
@@ -36621,6 +36643,7 @@
 
                         ul.appendChild(li1);
                         ul.appendChild(li2);
+                        ul.appendChild(li4);
                         ul.appendChild(li3);
                         page.appendChild(ul);
 
@@ -39643,317 +39666,402 @@
             },
         },
         click:{
-			connectEvents:function(){
+            connectEvents:function(){
 				if(this.info){
-                    var button=this;
-                    var layer=ui.create.div('.poplayer',ui.window);
-                    var uiintro=ui.create.dialog('hidden','notouchscroll');
-                    this.classList.add('active');
-                    if(lib.config.touchscreen){
-                        lib.setScroll(uiintro.contentContainer);
-                    }
-                    layer.listen(function(){
-                        if(this.clicked){
-                            this.clicked=false;
-                            return;
-                        }
-                        button.classList.remove('active');
-                        uiintro.delete();
-                        this.delete();
-                    });
-                    uiintro.listen(function(){
-                        _status.clicked=true;
-                    });
-                    uiintro.style.zIndex=21;
-                    uiintro.classList.add('popped');
-                    uiintro.classList.add('static');
-                    uiintro.classList.add('onlineclient');
-                    uiintro.style.width='180px';
-                    uiintro.style.height='300px';
-                    uiintro.style.left='auto';
-                    uiintro.style.right='20px';
-                    uiintro.style.top='auto';
-                    uiintro.style.bottom='75px';
+					var button=this;
+					var layer=ui.create.div('.poplayer',ui.window);
+					var uiintro=ui.create.dialog('hidden','notouchscroll');
+					this.classList.add('active');
+					if(lib.config.touchscreen){
+						lib.setScroll(uiintro.contentContainer);
+					}
+					layer.listen(function(){
+						if(this.clicked){
+							this.clicked=false;
+							return;
+						}
+						button.classList.remove('active');
+						uiintro.delete();
+						this.delete();
+					});
+					uiintro.listen(function(){
+						_status.clicked=true;
+					});
+					uiintro.style.zIndex=21;
+					uiintro.classList.add('popped');
+					uiintro.classList.add('static');
+					uiintro.classList.add('onlineclient');
+					uiintro.style.width='180px';
+					uiintro.style.height='300px';
+					uiintro.style.left='auto';
+					uiintro.style.right='20px';
+					uiintro.style.top='auto';
+					uiintro.style.bottom='75px';
 
-                    uiintro.refresh=function(){
-                        if(button.focused) return;
-                        uiintro.content.innerHTML='';
-                        uiintro.addText('创建约战');
-                        button.textnode=uiintro.content.lastChild.lastChild;
-                        uiintro.add('<input type="text" style="width:calc(100% - 10px);resize: none;border: none;border-radius: 2px;box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;margin-top: -2px;margin-bottom: 2px;">');
-                        uiintro.content.lastChild.style.paddingTop=0;
-                        button.input=uiintro.content.lastChild.lastChild;
-                        button.input.onfocus=function(){
-                            button.focused=true;
-                        }
-                        button.input.onblur=function(){
-                            delete button.focused;
-                        }
-                        if(button.interval){
-                            button.input.disabled=true;
-                            button.input.style.opacity=0.6;
-                            if(button.intervaltext){
-                                button.textnode.innerHTML=button.intervaltext;
-                            }
-                        }
-                        var datenode=ui.create.div(uiintro.content);
-                        datenode.style.marginTop=0;
-                        datenode.style.whiteSpace='nowrap';
-                        var date=new Date();
-                        var days=[];
-                        var currentDay=date.getDay();
-                        if(currentDay==0) currentDay=7;
-                        for(var i=1;i<=7;i++){
-                            if(i<currentDay){
-                                days.push([i.toString(),'下周'+get.cnNumber(i,true)]);
-                            }
-                            else if(i==7){
-                                days.push([i.toString(),'周日']);
-                            }
-                            else if(i==currentDay){
-                                days.push([i.toString(),'今天']);
-                            }
-                            else{
-                                days.push([i.toString(),'周'+get.cnNumber(i,true)]);
-                            }
-                        }
-                        days=days.concat(days.splice(0,currentDay-1));
-                        var initday=currentDay+1;
-                        if(initday>7){
-                            initday-=7;
-                        }
-                        var daysselect=ui.create.selectlist(days,initday.toString(),datenode);
-                        daysselect.style.width='55px';
-                        var hours=[];
-                        for(var i=0;i<24;i++){
-                            hours.push([i.toString(),i.toString()+'点']);
-                        }
-                        var hoursselect=ui.create.selectlist(hours,date.getHours().toString(),datenode);
-                        hoursselect.style.marginLeft='5px';
-                        hoursselect.style.width='55px';
-                        var timeconfirm=ui.create.node('button','确定',datenode);
-                        timeconfirm.style.marginLeft='5px';
-                        timeconfirm.onclick=function(){
-                            if(!button.input.value){
-                                alert('请填写约战标题');
-                                return;
-                            }
-                            var date2=new Date();
-                            date2.setHours(parseInt(hoursselect.value));
-                            date2.setMinutes(0);
-                            date2.setSeconds(0);
-                            var deltaday=parseInt(daysselect.value)-currentDay;
-                            if(deltaday<0){
-                                deltaday+=7;
-                            }
-                            var utc=date2.getTime()+deltaday*24*3600000;
-                            if(utc<date.getTime()){
-                                alert('创建失败，时间已过');
-                                return;
-                            }
-                            game.send('server','events',{
-                                utc:utc,
-                                day:parseInt(daysselect.value),
-                                hour:parseInt(hoursselect.value),
-                                nickname:lib.config.connect_nickname,
-                                avatar:lib.config.connect_avatar,
-                                content:button.input.value
-                            },game.onlineKey);
-                        };
+					uiintro.refresh=function(){
+						if(button.focused) return;
+						uiintro.content.innerHTML='';
+						uiintro.addText('创建约战');
+						button.textnode=uiintro.content.lastChild.lastChild;
+						uiintro.add('<input type="text" style="width:calc(100% - 10px);resize: none;border: none;border-radius: 2px;box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;margin-top: -2px;margin-bottom: 2px;">');
+						uiintro.content.lastChild.style.paddingTop=0;
+						button.input=uiintro.content.lastChild.lastChild;
+						button.input.onfocus=function(){
+							button.focused=true;
+						}
+						button.input.onblur=function(){
+							delete button.focused;
+						}
+						if(button.interval){
+							button.input.disabled=true;
+							button.input.style.opacity=0.6;
+							if(button.intervaltext){
+								button.textnode.innerHTML=button.intervaltext;
+							}
+						}
+						var datenode=ui.create.div(uiintro.content);
+						datenode.style.marginTop=0;
+						datenode.style.whiteSpace='nowrap';
+						var date=new Date();
+						var days=[];
+						var currentDay=date.getDay();
+						if(currentDay==0) currentDay=7;
+						for(var i=1;i<=7;i++){
+							if(i<currentDay){
+								days.push([i.toString(),'下周'+get.cnNumber(i,true)]);
+							}
+							else if(i==7){
+								days.push([i.toString(),'周日']);
+							}
+							else if(i==currentDay){
+								days.push([i.toString(),'今天']);
+							}
+							else{
+								days.push([i.toString(),'周'+get.cnNumber(i,true)]);
+							}
+						}
+						days=days.concat(days.splice(0,currentDay-1));
+						var initday=currentDay+1;
+						if(initday>7){
+							initday-=7;
+						}
+						var daysselect=ui.create.selectlist(days,initday.toString(),datenode);
+						daysselect.style.width='55px';
+						var hours=[];
+						for(var i=0;i<24;i++){
+							hours.push([i.toString(),i.toString()+'点']);
+						}
+						var hoursselect=ui.create.selectlist(hours,date.getHours().toString(),datenode);
+						hoursselect.style.marginLeft='5px';
+						hoursselect.style.width='55px';
+						var timeconfirm=ui.create.node('button','确定',datenode);
+						timeconfirm.style.marginLeft='5px';
+						timeconfirm.onclick=function(){
+							if(!button.input.value){
+								alert('请填写约战标题');
+								return;
+							}
+							var date2=new Date();
+							date2.setHours(parseInt(hoursselect.value));
+							date2.setMinutes(0);
+							date2.setSeconds(0);
+							var deltaday=parseInt(daysselect.value)-currentDay;
+							if(deltaday<0){
+								deltaday+=7;
+							}
+							var utc=date2.getTime()+deltaday*24*3600000;
+							if(utc<date.getTime()){
+								alert('创建失败，时间已过');
+								return;
+							}
+							if(get.is.banWords(button.input.value)){
+								var eventnode=ui.create.div('.menubutton.videotext.onlineevent.pointerdiv',function(){
+									var that=this;
+									setTimeout(function(){
+										if(that.classList.contains('active')){
+											if(confirm('确定要离开'+that.info.content+'？')){
+												that.classList.remove('active');
+											}
+										}
+										else{
+											if(confirm('确定要加入'+that.info.content+'？')){
+												that.classList.add('active');
+											}
+										}
+									});
+								},uiintro.content,4);
+								var fakeinfo={
+									utc:utc,
+									day:parseInt(daysselect.value),
+									hour:parseInt(hoursselect.value),
+									nickname:lib.config.connect_nickname,
+									avatar:lib.config.connect_avatar,
+									content:button.input.value,
+									create:game.onlineKey,
+									members:[game.onlineKey],
+								};
+								eventnode.info=fakeinfo;
+								ui.create.div('.title',fakeinfo.content,eventnode);
+								var str;
+								if(fakeinfo.day<currentDay){
+									str='下周';
+								}
+								else{
+									str='周';
+								}
+								if(fakeinfo.day==7){
+									str+='日'
+								}
+								else{
+									str+=get.cnNumber(fakeinfo.day,true);
+								}
+								str+=' ';
+								var hour=fakeinfo.hour;
+								if(hour<=12){
+									if(hour<=5){
+										str+='凌晨';
+									}
+									else if(hour<12){
+										str+='上午';
+									}
+									else{
+										str+='中午';
+									}
+									str+=fakeinfo.hour+'点';
+								}
+								else{
+									if(hour<=17){
+										str+='下午';
+									}
+									else{
+										str+='晚上';
+									}
+									str+=(fakeinfo.hour-12)+'点';
+								}
+								ui.create.div('','已有'+(fakeinfo.members.length)+'人加入',eventnode);
+								ui.create.div('','时间：'+str,eventnode);
+								if(fakeinfo.members.contains(game.onlineKey)){
+									eventnode.classList.add('active');
+								}
+								button.input.value='';
+								return;
+							}
+							game.send('server','events',{
+								utc:utc,
+								day:parseInt(daysselect.value),
+								hour:parseInt(hoursselect.value),
+								nickname:lib.config.connect_nickname,
+								avatar:lib.config.connect_avatar,
+								content:button.input.value
+							},game.onlineKey);
+						};
 
-                        var num=0;
-                        for(var i=0;i<button.info.length;i++){
-                            if(button.info[i].creator==game.onlineKey&&button.info[i].members.contains(game.onlineKey)){
-                                num++;
-                            }
-                            var eventnode=ui.create.div('.menubutton.videotext.onlineevent.pointerdiv',function(){
-                                var that=this;
-                                setTimeout(function(){
-                                    if(that.classList.contains('active')){
-                                        if(confirm('确定要离开'+that.info.content+'？')){
-                                            game.send('server','events',that.info.id,game.onlineKey,'leave');
-                                        }
-                                    }
-                                    else{
-                                        if(confirm('确定要加入'+that.info.content+'？')){
-                                            game.send('server','events',that.info.id,game.onlineKey,'join');
-                                        }
-                                    }
-                                });
-                            },uiintro.content);
-                            eventnode.info=button.info[i];
-                            ui.create.div('.title',button.info[i].content,eventnode);
-                            var str;
-                            if(button.info[i].day<currentDay){
-                                str='下周';
-                            }
-                            else{
-                                str='周';
-                            }
-                            if(button.info[i].day==7){
-                                str+='日'
-                            }
-                            else{
-                                str+=get.cnNumber(button.info[i].day,true);
-                            }
-                            str+=' ';
-                            var hour=button.info[i].hour;
-                            if(hour<=12){
-                                if(hour<=5){
-                                    str+='凌晨';
-                                }
-                                else if(hour<12){
-                                    str+='上午';
-                                }
-                                else{
-                                    str+='中午';
-                                }
-                                str+=button.info[i].hour+'点';
-                            }
-                            else{
-                                if(hour<=17){
-                                    str+='下午';
-                                }
-                                else{
-                                    str+='晚上';
-                                }
-                                str+=(button.info[i].hour-12)+'点';
-                            }
-                            ui.create.div('','已有'+(button.info[i].members.length)+'人加入',eventnode);
-                            ui.create.div('','时间：'+str,eventnode);
-                            if(button.info[i].members.contains(game.onlineKey)){
-                                eventnode.classList.add('active');
-                            }
-                        }
-                        if(num>=3){
-                            button.input.disabled=true;
-                            button.input.style.opacity=0.6;
-                            hoursselect.disabled=true;
-                            daysselect.disabled=true;
-                            timeconfirm.disabled=true;
-                        }
-                    }
-                    uiintro.refresh();
-                    ui.window.appendChild(uiintro);
-                    _status.connectEventsCallback=function(){
-                        if(uiintro.parentNode==ui.window){
-                            uiintro.refresh();
-                        }
-                    };
-                }
-            },
+						var num=0;
+						for(var i=0;i<button.info.length;i++){
+							if(typeof button.info[i].creator=='string'&&button.info[i].creator!=game.onlineKey&&get.is.banWords(button.info[i].content)) continue;
+							if(button.info[i].creator==game.onlineKey){
+								num++;
+							}
+							var eventnode=ui.create.div('.menubutton.videotext.onlineevent.pointerdiv',function(){
+								var that=this;
+								if(typeof that.info.creator!='string') return;
+								setTimeout(function(){
+									if(that.classList.contains('active')){
+										if(confirm('确定要离开'+that.info.content+'？')){
+											game.send('server','events',that.info.id,game.onlineKey,'leave');
+										}
+									}
+									else{
+										if(confirm('确定要加入'+that.info.content+'？')){
+											game.send('server','events',that.info.id,game.onlineKey,'join');
+										}
+									}
+								});
+							},uiintro.content);
+							eventnode.info=button.info[i];
+							if(typeof button.info[i].creator=='string'){
+								ui.create.div('.title',button.info[i].content,eventnode);
+								var str;
+								if(button.info[i].day<currentDay){
+									str='下周';
+								}
+								else{
+									str='周';
+								}
+								if(button.info[i].day==7){
+									str+='日'
+								}
+								else{
+									str+=get.cnNumber(button.info[i].day,true);
+								}
+								str+=' ';
+								var hour=button.info[i].hour;
+								if(hour<=12){
+									if(hour<=5){
+										str+='凌晨';
+									}
+									else if(hour<12){
+										str+='上午';
+									}
+									else{
+										str+='中午';
+									}
+									str+=button.info[i].hour+'点';
+								}
+								else{
+									if(hour<=17){
+										str+='下午';
+									}
+									else{
+										str+='晚上';
+									}
+									str+=(button.info[i].hour-12)+'点';
+								}
+								ui.create.div('','创建者：'+(button.info[i].nickname),eventnode);
+								//ui.create.div('','创建者：'+(button.info[i].nickname)+'<br>ID：'+button.info[i].creator,eventnode);
+								ui.create.div('','已有'+(button.info[i].members.length)+'人加入',eventnode);
+								ui.create.div('','时间：'+str,eventnode);
+								if(button.info[i].members.contains(game.onlineKey)){
+									eventnode.classList.add('active');
+								}
+							}
+							else{
+								ui.create.div('.title',button.info[i].title,eventnode);
+								ui.create.div('',button.info[i].content,eventnode);
+								ui.create.div('','创建者：'+(button.info[i].nickname),eventnode);
+							}
+						}
+						if(num>=3){
+							button.input.disabled=true;
+							button.input.style.opacity=0.6;
+							hoursselect.disabled=true;
+							daysselect.disabled=true;
+							timeconfirm.disabled=true;
+						}
+					}
+					uiintro.refresh();
+					ui.window.appendChild(uiintro);
+					_status.connectEventsCallback=function(){
+						if(uiintro.parentNode==ui.window){
+							uiintro.refresh();
+						}
+					};
+				}
+			},
             connectClients:function(){
-                if(this.info){
-                    var button=this;
-                    var layer=ui.create.div('.poplayer',ui.window);
-                    var uiintro=ui.create.dialog('hidden','notouchscroll');
-                    this.classList.add('active');
-                    if(lib.config.touchscreen){
-                        lib.setScroll(uiintro.contentContainer);
-                    }
-                    layer.listen(function(){
-                        if(this.clicked){
-                            this.clicked=false;
-                            return;
-                        }
-                        button.classList.remove('active');
-                        uiintro.delete();
-                        this.delete();
-                    });
-                    uiintro.listen(function(){
-                        _status.clicked=true;
-                    });
-                    uiintro.style.zIndex=21;
-                    uiintro.classList.add('popped');
-                    uiintro.classList.add('static');
-                    uiintro.classList.add('onlineclient');
-                    uiintro.style.width='180px';
-                    uiintro.style.height='300px';
-                    uiintro.style.left='auto';
-                    uiintro.style.right='20px';
-                    uiintro.style.top='auto';
-                    uiintro.style.bottom='75px';
+				if(this.info){
+					var button=this;
+					var layer=ui.create.div('.poplayer',ui.window);
+					var uiintro=ui.create.dialog('hidden','notouchscroll');
+					this.classList.add('active');
+					if(lib.config.touchscreen){
+						lib.setScroll(uiintro.contentContainer);
+					}
+					layer.listen(function(){
+						if(this.clicked){
+							this.clicked=false;
+							return;
+						}
+						button.classList.remove('active');
+						uiintro.delete();
+						this.delete();
+					});
+					uiintro.listen(function(){
+						_status.clicked=true;
+					});
+					uiintro.style.zIndex=21;
+					uiintro.classList.add('popped');
+					uiintro.classList.add('static');
+					uiintro.classList.add('onlineclient');
+					uiintro.style.width='180px';
+					uiintro.style.height='300px';
+					uiintro.style.left='auto';
+					uiintro.style.right='20px';
+					uiintro.style.top='auto';
+					uiintro.style.bottom='75px';
 
-                    uiintro.refresh=function(){
-                        if(button.focused) return;
-                        uiintro.content.innerHTML='';
-                        uiintro.addText('发状态');
-                        button.textnode=uiintro.content.lastChild.lastChild;
-                        uiintro.add('<input type="text" style="width:calc(100% - 10px);resize: none;border: none;border-radius: 2px;box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;margin-top: -2px;margin-bottom: 2px;">');
-                        uiintro.content.lastChild.style.paddingTop=0;
-                        button.input=uiintro.content.lastChild.lastChild;
-                        button.input.onfocus=function(){
-                            button.focused=true;
-                        }
-                        button.input.onblur=function(){
-                            delete button.focused;
-                        }
-                        if(button.interval){
-                            button.input.disabled=true;
-                            button.input.style.opacity=0.6;
-                            if(button.intervaltext){
-                                button.textnode.innerHTML=button.intervaltext;
-                            }
-                        }
-                        button.input.onkeydown=function(e){
-                            if(e.keyCode==13&&!this.disabled){
-                                game.send('server','status',this.value);
-                                this.blur();
-                                this.disabled=true;
-                                this.style.opacity=0.6;
-                                button.textnode.innerHTML='发状态(3)';
-                                button.intervaltext=button.textnode.innerHTML;
-                                var num=3;
-                                var that=this;
-                                button.input.disabled=true;
-                                button.input.style.opacity=0.6;
-                                this.value='';
-                                button.interval=setInterval(function(){
-                                    num--;
-                                    if(num>0){
-                                        button.textnode.innerHTML='发状态('+num+')';
-                                        button.intervaltext=button.textnode.innerHTML;
-                                    }
-                                    else{
-                                        button.textnode.innerHTML='发状态';
-                                        button.input.disabled=false;
-                                        button.input.style.opacity='';
-                                        clearInterval(button.interval);
-                                        delete button.interval;
-                                        delete button.intervaltext;
-                                    }
-                                },1000);
-                            }
-                        }
+					uiintro.refresh=function(){
+						if(button.focused) return;
+						uiintro.content.innerHTML='';
+						uiintro.addText('发状态');
+						button.textnode=uiintro.content.lastChild.lastChild;
+						uiintro.add('<input type="text" style="width:calc(100% - 10px);resize: none;border: none;border-radius: 2px;box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 1px;margin-top: -2px;margin-bottom: 2px;">');
+						uiintro.content.lastChild.style.paddingTop=0;
+						button.input=uiintro.content.lastChild.lastChild;
+						button.input.onfocus=function(){
+							button.focused=true;
+						}
+						button.input.onblur=function(){
+							delete button.focused;
+						}
+						if(button.interval){
+							button.input.disabled=true;
+							button.input.style.opacity=0.6;
+							if(button.intervaltext){
+								button.textnode.innerHTML=button.intervaltext;
+							}
+						}
+						button.input.onkeydown=function(e){
+							if(e.keyCode==13&&!this.disabled){
+								game.send('server','status',this.value);
+								this.blur();
+								this.disabled=true;
+								this.style.opacity=0.6;
+								button.textnode.innerHTML='发状态(10)';
+								button.intervaltext=button.textnode.innerHTML;
+								var num=10;
+								var that=this;
+								button.input.disabled=true;
+								button.input.style.opacity=0.6;
+								this.value='';
+								button.interval=setInterval(function(){
+									num--;
+									if(num>0){
+										button.textnode.innerHTML='发状态('+num+')';
+										button.intervaltext=button.textnode.innerHTML;
+									}
+									else{
+										button.textnode.innerHTML='发状态';
+										button.input.disabled=false;
+										button.input.style.opacity='';
+										clearInterval(button.interval);
+										delete button.interval;
+										delete button.intervaltext;
+									}
+								},1000);
+							}
+						}
 
-                        for(var i=0;i<button.info.length;i++){
-                            var node=ui.create.div('.menubutton.videonode.pointerdiv',uiintro.content);
-                            ui.create.div('.menubutton.videoavatar',node).setBackground(button.info[i][1]||'reimu','character');
-                            if(button.info[i][4]==game.wsid){
-                                ui.create.div('.name','<span class="thundertext thunderauto">'+(button.info[i][0]||'黑白葱fans'),node);node.isme=true;
-                            }
-                            else if(button.info[i][2]){
-                                ui.create.div('.name',(button.info[i][0]||'黑白葱fans'),node);
-                            }
-                            else{
-                                ui.create.div('.name','<span style="opacity:0.6">'+(button.info[i][0]||'黑白葱fans'),node);
-                            }
-                            if(button.info[i][3]){
-                            	ui.create.div('.videostatus',node,button.info[i][3].slice(0,80));
+						for(var i=0;i<button.info.length;i++){
+							var node=ui.create.div('.menubutton.videonode.pointerdiv',uiintro.content);
+							ui.create.div('.menubutton.videoavatar',node).setBackground(button.info[i][1]||'caocao','character');
+							if(button.info[i][4]==game.wsid){
+								ui.create.div('.name','<span class="thundertext thunderauto">'+(button.info[i][0]||'无名玩家'),node);node.isme=true;
+							}
+							else if(button.info[i][2]){
+								ui.create.div('.name',(button.info[i][0]||'无名玩家'),node);
+							}
+							else{
+								ui.create.div('.name','<span style="opacity:0.6">'+(button.info[i][0]||'无名玩家'),node);
+							}
+							//ui.create.div('.videostatus',node,button.info[i][5]);
+							//node.classList.add('videonodestatus');
+							if(button.info[i][3]){
+								ui.create.div('.videostatus',node,button.info[i][3].slice(0,80));
 								node.classList.add('videonodestatus')
-                            }
-                        }
-                    };
+							}
+						}
+					};
 
-                    uiintro.refresh();
-                    ui.window.appendChild(uiintro);
-                    _status.connectClientsCallback=function(){
-                        if(uiintro.parentNode==ui.window){
-                            uiintro.refresh();
-                        }
-                    };
-                }
-            },
+					uiintro.refresh();
+					ui.window.appendChild(uiintro);
+					_status.connectClientsCallback=function(){
+						if(uiintro.parentNode==ui.window){
+							uiintro.refresh();
+						}
+					};
+				}
+			},
             skin:function(avatar,name,callback){
                 var num=1;
                 if(name.indexOf('gz_')==0){
