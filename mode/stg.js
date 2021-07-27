@@ -3920,7 +3920,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						event.cards.length==1&&event.cards[0].name=='stg_yinyangyu';
 				},
 				content:function(){
-					trigger.num++;
+					trigger.num+=3;
 				}
 			},
 			stg_bagua_skill:{
@@ -4865,7 +4865,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['mingfa_skill'],
-				
 				init:function(player){
 					player.useSkill('mingfa');
 				},
@@ -4993,6 +4992,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['liudaojian_skill'],
+				trigger:{player:['phaseBegin']},
 				init:function(player){
 					//这里需要对话
 					player.equip(game.createCard('stg_bailou'));
@@ -5170,7 +5170,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.me.storage.reinforce = [];
 					player.dataset.position = 4;
 					setTimeout(function(){
-						
+						ui.background.setBackgroundImage('image/background/stg_sky.jpg');
 					}, 10000);
 				},
 				content:function(){
@@ -5188,6 +5188,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.storage.reinforce.push('lunasa');
 						lib.character["lunasa"][3] = ["shenxuan", "zhenhun"];
 					}
+					setTimeout(function(){
+						ui.background.setBackgroundImage('image/background/stg_barrier.jpg');	
+					}, 10000);
 					// 死后顺便也调背景
 				},
 			},

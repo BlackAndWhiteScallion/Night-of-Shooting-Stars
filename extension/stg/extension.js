@@ -16,6 +16,10 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				lib.characterPack.mode_extension_stg_scarlet['stg_patchouli']=['female','2',3,['qiyao','riyin','royal'],[]],
 				lib.characterIntro['stg_patchouli']='“喂，帕琪，你就算自己能做一个假太阳，不代表你就可以成天躲着不晒太阳了啊？”<br>“无路赛。”<br>画师：60枚';
 			}
+			if (lib.config.gameRecord.stg && lib.config.gameRecord.stg.data['stg_scarlet'] && lib.config.gameRecord.stg.data['stg_scarlet'][0] > 0){
+				lib.characterPack.mode_extension_stg_scarlet['stg_youmu']=['female','2', 4, ['yishan','liudaojian'],[]],
+				lib.characterIntro['stg_yomu']='“”<br>“由妖怪锻造的这把楼观剑，斩不断的东西。。。是不是太多了些？”<br>画师：カイザ閣下';
+			}
 			for(var i in lib.characterPack.mode_extension_stg_scarlet){
 				lib.characterPack.mode_extension_stg_scarlet[i][4].push('mode:stg');
 				lib.character[i]=lib.characterPack.mode_extension_stg_scarlet[i];
@@ -26,8 +30,10 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 			var list={
 				stg_remilia:'蕾米莉亚',
 				stg_patchouli:'帕秋莉',
+				stg_youmu:'妖梦',
 
 				stg_bookshelf:'魔导书塔',
+				liudaojian_info:'符卡技（0）<极意>符卡发动时，装备【破魂之白楼】和【断命之楼观】；出牌阶段，你可以将一张【轰！】当作【灵击】使用。',
 				juguang_info:'游戏开始时，你装备5种魔导书；你可以跳过你的所有阶段，并消耗1点灵力，视为使用一张【轰！】；锁定技，你的装备区上限+2。',
 				mode_extension_stg_scarlet_character_config:'闯关角色',
 			};
@@ -52,6 +58,9 @@ game.import('play',function(lib,game,ui,get,ai,_status){
 				}
 				if(get.mode()!='stg'){
 					lib.skill['juguang'].forced = false;
+					lib.skill['liudaojian'].spell = ['liudaojian_skill', 'youmuinit'];
+					lib.skill['liudaojian'].init = null;
+					lib.skill['youmuinit'].group = null;
 				}
 				for(var i in mode.card){
 					if(lib.card[i]) console.log(i);
