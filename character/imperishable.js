@@ -482,6 +482,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                           if (player.storage.yinyang){
                             console.log(!_status.currentPhase.isDead());
                             console.log(game.players);
+                            player.storage.yinyang = false;
                              return !_status.currentPhase.isDead() && game.players.contains(_status.currentPhase);
                           } else {
                             return false;

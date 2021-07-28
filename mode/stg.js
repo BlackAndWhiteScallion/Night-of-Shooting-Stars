@@ -524,7 +524,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.players.remove(this);
 						this.delete();
 					}
-					if (this==game.boss){
+					if (this==game.boss && !game.me.storage.reinforce){
 						ui.cardPile.innerHTML='';
             			ui.discardPile.innerHTML='';
 						ui.create.cardsAsync();
@@ -1587,6 +1587,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			stg_scarlet_ex:{
+				checkResult:function(player){
+					if(player==game.boss&&game.boss.name!='flandre'){
+						return false;
+					}
+				},
 				init:function(){
 					//lib.init.layout('newlayout');
 					var list=['reidaisai', 'saiqianxiang', 'caifang'];
@@ -2895,7 +2900,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					} else if (game.me.name == 'marisa'){
 						game.me.storage.dialog = [
 							['marisa','啊，满足了吧！','','啊啊、可能是骗人的','不过，我今天也该回去了','','？！剩你一个人了的话就会去上吊吗？','',
-							'She went and hanged herselfand then there were none.','','一个有名的童谣','','在刚才的攻击中，你消失的时候吧','','没命中，真不好意思呐。很遗憾，我擅长的就是躲避弹幕呢','',
+							'She went and hanged herself and then there were none.','','一个有名的童谣','','在刚才的攻击中，你消失的时候吧','','没命中，真不好意思呐。很遗憾，我擅长的就是躲避弹幕呢','',
 							'上吊的尸体很丑陋的老老实实地按照那首童谣来啊','','喂喂，真的不知道啊？','She got marriedand then there were none...','','给你介绍那个神社的女孩哦','end'],
 							['flandre','不敢相信，我竟然会输了……','','但是结果最后还是剩下我一个了','','为什么？',''
 							,'那些你都是从谁那里听说的啊','','我本来预定好最后的那一个人就是你哦？','','She died by the bulletand then there were none.','','算了，无所谓了反正即使上吊我也不会死',
@@ -4331,10 +4336,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.storage.reinforce = [];
 						player.equip(game.createCard('book'));
 						ui.boss.style.display = 'initial';
+						player.dataset.position = 4;
 					}
 				},
 				content:function(){
 					player.turnOver();
+					game.boss = player;
 				},
 			},
 			silent1:{
@@ -4379,12 +4386,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				infinite:true,
 				cost:0,
-				
 				trigger:{player:'phaseBeginStart'},
 				spell:['royal1', 'royal_die'],
 				init:function(player){
 					if (get.mode() == 'stg'){
-						player.classList.toggle('turnedover');
+						player.classList.remove('turnedover');
 						player.removeSkill('silent');
 						player.removeSkill('silent1');
 						player.useSkill('royal');
@@ -4430,13 +4436,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					return get.mode() == 'stg';
 				},
 				content:function(){
-					game.me.storage.reskill = ['fourof','starbow','chiyan_ex_win'];
 					game.me.storage.reinforce = ['stg_maid', 'stg_maid','stg_maid','flandre'];
 					game.me.recover(game.me.maxHp);
 					game.me.storage.fuhuo ++;
 					game.notify(get.translation(game.me) + '获得了一个残机');
 					game.log(game.me,'获得了一个残机！');
 					ui.boss.style.display = 'none';
+					/*
+					this.hide();
+					game.addVideo('hidePlayer',this);
+					game.players.remove(this);
+					this.delete();
+					*/
 				}
 			},
 			fourof:{
