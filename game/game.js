@@ -5077,6 +5077,12 @@
                             game.saveConfig('connect_avatar',item,'connect');
                         }
                     },
+                    version_number:{
+                        name:'版本号',
+                        init:'1.9.110.8.2',
+                        input:true,
+                        frequent:true,
+                    },
                     hall_ip:{
                         name:'联机大厅',
                         input:true,
@@ -22578,7 +22584,7 @@
 				},
 				roomlist:function(list,events,clients,wsid){
                     //game.send('server','key',[game.onlineKey,lib.version]);
-                    game.send('server','key',[594676110, '1.9.110.8.1']);
+                    game.send('server','key',[594676110, lib.config.version_number]);
 					//game.send('server','key', game.onlineKey);
 					game.online=true;
 					game.onlinehall=true;
@@ -43443,12 +43449,13 @@
             pos:function(str){
                 return (str=='h'||str=='e'||str=='j'||str=='he'||str=='hj'||str=='ej'||str=='hej');
             },
+            //检测技能是否为非锁定技
             locked:function(skill){
                 var info=lib.skill[skill];
-                if(info.fixed) return true;
+                if(info.fixed) return true;   
                 if(info.locked==false) return false;
-                //if(info.trigger&&info.forced) return true;
-                if(info.mod) return true;
+                //if(info.trigger&&info.forced) return true;  //技能为锁定技
+                //if(info.mod) return true;                     // 技能是更改状态的
                 if(info.locked) return true;
                 return false;
             },

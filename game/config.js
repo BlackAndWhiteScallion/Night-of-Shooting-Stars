@@ -31,6 +31,7 @@ window.config={
 
 	connect_avatar:'reimu',
 	connect_nickname:'黑白葱fans',
+	version_number:'1.9.110.8.2',
 	config_menu:true,
 	directstartmode:false,
 	auto_popped_config:true,

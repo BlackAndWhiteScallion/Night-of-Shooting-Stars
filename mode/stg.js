@@ -524,7 +524,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.players.remove(this);
 						this.delete();
 					}
-					if (this==game.boss && !game.me.storage.reinforce){
+					if (this == game.boss && !game.me.storage.reinforce){
 						ui.cardPile.innerHTML='';
             			ui.discardPile.innerHTML='';
 						ui.create.cardsAsync();
@@ -1730,7 +1730,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					}
 					game.me.storage.tongguan = 0;
-					game.me.storage.stage = 'boss_cherry4';
+					game.me.storage.stage = 'boss_cherry2';
 					game.me.storage.fuhuo = 1;
 					if (get.config('practice_mode')){
 						game.me.storage.fuhuo = 10;
@@ -1934,6 +1934,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					game.log(player,'进入下一个阶段！');
+					if (player.maxHp <= 0){
+						player.maxHp = 1;
+					}
 					player.hp = player.maxHp;
 					player.lili = player.maxlili;
 					player.update();
@@ -2075,6 +2078,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						if (game.me.storage.reinforce[0]){
 							game.changeBoss(game.me.storage.reinforce[0]);
 							game.me.storage.reinforce.remove(game.me.storage.reinforce[0]);
+							game.me.addSkill(game.me.storage.stage);
 						}
 						return ;
 					}
@@ -2249,15 +2253,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					var line;
 					if (game.me.name == 'reimu'){
-						line = '也没有变得多暖和呢<br>刚才要是再稍微攻击得激烈一点就好了';
+						line = '不过就算说是良药<br>如果不试试的话又怎么知道';
 					} else if (game.me.name == 'marisa'){
 						line = '就算是这样的家伙<br>打倒了的话春度也应该能增加一点吧？';
-					} else if (game.me.name == 'sakuya'){
-						line = '黑幕，好弱啊。得赶快去找下一个黑幕了～';
 					}
 					var dialog = ui.create.dialog();
 					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
-					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
+					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');
 					dialog.open();
 	                game.pause();
 	                var control=ui.create.control('下一关',function(){
@@ -2265,9 +2267,9 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	                    control.close();
 	                    game.resume();
 	                });
-	                lib.init.onfree();
+					lib.init.onfree();
 	                'step 2'
-					var dialog=ui.create.dialog("第二关<br><br>迷途之家的黑猫");
+					var dialog=ui.create.dialog("第二关<br><br>湖上的魔精");
 					dialog.open();
 	                game.pause();
 	                var control=ui.create.control('走起！',function(){
@@ -2989,11 +2991,11 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.delay();
 					'step 1'
 					if (game.me.name == 'reimu'){
-						game.playConvo([['reimu', '就算是这样的家伙，打倒了的话春度也应该能增加一点吧？']]);
+						game.playConvo([['reimu', '也没有变得多暖和呢。刚才要是再稍微攻击得激烈一点就好了']]);
 					} else if (game.me.name == 'marisa'){
 						game.playConvo([['marisa', '就算是这样的家伙，打倒了的话春度也应该能增加一点吧？']]);
 					} else if (game.me.name == 'sakuya'){
-						game.playConvo([['sakuya', '就算是这样的家伙，打倒了的话春度也应该能增加一点吧？']]);
+						game.playConvo([['sakuya', '黑幕，好弱啊。得赶快去找下一个黑幕了～']]);
 					}
 	                'step 2'
 					var dialog=ui.create.dialog("第二关<br><br>迷途之家的黑猫");
