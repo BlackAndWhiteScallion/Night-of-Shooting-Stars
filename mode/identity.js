@@ -2212,7 +2212,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						var index = 0;
 						// indexOf 如果没有找到的话就返回-1。
 						if (name) index = player.storage.mengji.indexOf(name);
-						if (index == player.storage.mengji.length-1 || index < 0){
+						if (player.storage.mengji[index] == 'death') index ++;
+						if (index >= player.storage.mengji.length-1 || index < 0){
 							index = -1;
 						}
 						index ++;

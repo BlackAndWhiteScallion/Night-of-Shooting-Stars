@@ -6,14 +6,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			homura:['female', '2', 3, ['time3', 'time', 'homuraworld'], ['forbidai']],
 			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']],
 			monika:['female', '2', 3, ['miaohui', 'kehua'], ['forbidai']],
+			//haruhi:['female', '2', 3, ['haruhi1','haruhi2'], ['forbidai']],
 			aliceWLD:['female', '0', 3, ['WLD2', 'WLD1'], []],
-			//haruhi:['female', '2', 3, [], ['forbidai']],
 		},
 		characterIntro:{
 			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
 			diva:'1. 进入男主的一群萌妹的后宫<br>2. 亮出自己百合的身份<br>3. ???<br>4. 发了发了！<br><b>出自：Date-A-Live! 画师：干物A太</b>',
 			monika:'问题：如果其他人已经不再是人了，那对她们做多残忍的事情都是没问题的，对吧？<br><b>出自：心跳文学部 画师：はっく</b>',
 			aliceWLD:'<br><b>出自：爱丽丝漫游仙境 画师：夕凪セシナ</b>',
+			haruhi:'如果有一个疯子，但是他说的狂话最后都成真了，那他还算一个疯子吗？<br><b>出自：凉宫春日的忧郁 画师：まとけち</b>',
 		},	   
 		perfectPair:{
 		},
@@ -799,6 +800,34 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					player.gain(game.createCard(list.randomGets(1)));
 				},
+			},
+			haruhi1:{
+				enable:'phaseUse',
+				content:function(){
+					'step 0'
+					player.chooseControl('移除牌', '创建牌');
+					'step 1'
+					if (result.control == '移除牌'){
+						var cards = [];
+						for(var i=0;i<ui.cardPile.childNodes.length;i++){
+							cards.push(ui.cardPile.childNodes[i]);
+						}
+						player.chooseCardButton([1, Infinity], '移除任意张牌', cards).set('filterButton',function(button){
+							return true;
+						});
+					} else if (result.control == '创建牌'){
+						event.goto();
+					}
+					'step 2'
+					if (result.bool){
+						for (var i = result.links.length-1; i >=0; i --){
+							
+						}
+					}
+				},
+			},
+			haruhi2:{
+
 			},
 		},
 		translate:{

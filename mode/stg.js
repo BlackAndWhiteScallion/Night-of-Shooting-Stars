@@ -524,7 +524,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.players.remove(this);
 						this.delete();
 					}
-					if (this == game.boss && !game.me.storage.reinforce){
+					if (this == game.boss && !game.me.storage.reinforce.length){
 						ui.cardPile.innerHTML='';
             			ui.discardPile.innerHTML='';
 						ui.create.cardsAsync();
@@ -547,7 +547,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					var players = game.players;
 					for (var i = game.players.length; i >= 0; i --){
 						if (!game.players[i]){
-
+							
 						} else if (game.players[i].identity != 'cai'){
 							console.log(game.players[i]);
 							game.players[i].hide();
@@ -1724,7 +1724,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						];
 					} else if (game.me.name == 'sakuya'){
 						game.me.storage.dialog = [
-						['sakuya','啊啊真是的，就算打倒再多这样的杂鱼也没任何意义！还是尽快让黑幕登场才好','','你就是黑幕啊<br>那么，快点','',
+							['sakuya','啊啊真是的，就算打倒再多这样的杂鱼也没任何意义！还是尽快让黑幕登场才好','','你就是黑幕啊<br>那么，快点','',
 							'在这种地方的话黑幕也好普通也好<br>都关系不大了的说～说起来，现在什么不普通你知道么？','','哎呀没错','','没错。<br>果然，你这家伙就是黑幕啊','end'],
 							['letty','黑幕～','','先稍微等一下！虽然我是黑幕不过是普通的','','比起历年来，雪的结晶都要大不少大概３倍左右','','还有一件事就是脑子不好使的女仆在空中飞',''],
 						];
@@ -3085,17 +3085,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.playConvo([['sakuya', '南无～极乐净土一定是一个温暖且幸福的地方，不会错啦～'],
 									]);
 					}
-					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
-					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
-					dialog.open();
-	                game.pause();
-	                var control=ui.create.control('下一关',function(){
-	                    dialog.close();
-	                    control.close();
-	                    game.resume();
-	                });
-	                lib.init.onfree();
 	                'step 2'
 					var dialog=ui.create.dialog("第三关<br><br>人偶租界之夜");
 					dialog.open();
@@ -3312,17 +3301,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 							['sakuya', '这种程度的结界，很简单就能钻过去了呀'],
 						]);
 					}
-					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
-					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
-					dialog.open();
-	                game.pause();
-	                var control=ui.create.control('下一关',function(){
-	                    dialog.close();
-	                    control.close();
-	                    game.resume();
-	                });
-	                lib.init.onfree();
 	                'step 2'
 					var dialog=ui.create.dialog("第五关<br><br>白玉楼阶梯的幻斗");
 					dialog.open();
@@ -3428,17 +3406,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 										['marisa', '我只是想赏樱罢了。'],
 									]);
 					}
-					var dialog = ui.create.dialog();
-					dialog.add('<div><div style="width:260px;margin-left:120px;font-size:18px">'+line+'</div></div>');
-					var playerui =ui.create.div('.avatar',dialog).setBackground(game.me.name,'character');;
-					dialog.open();
-	                game.pause();
-	                var control=ui.create.control('下一关',function(){
-	                    dialog.close();
-	                    control.close();
-	                    game.resume();
-	                });
-	                lib.init.onfree();
 	                'step 2'
 					var dialog=ui.create.dialog("最终关<br><br>冥界大小姐的尸骸");
 					dialog.open();
@@ -3857,6 +3824,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				init:function(player){
 					player.addSkill('mengxiang');
 					lib.skill['mengxiang'].skillAnimation = true;
+					ui.background.delete();
 				},
 				enable:['chooseToUse','chooseToRespond'],
 				hiddenCard:function(player,name){
@@ -3927,7 +3895,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						event.cards.length==1&&event.cards[0].name=='stg_yinyangyu';
 				},
 				content:function(){
-					trigger.num+=3;
+					trigger.num++;
 				}
 			},
 			stg_bagua_skill:{
@@ -4060,7 +4028,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				cost:2,
 				spell:['doll2'],
-				
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > lib.skill.doll.cost;
@@ -4133,7 +4100,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				audio:2,
                 cost:1,
                 spell:['spark1'],
-                
                 trigger:{player:'phaseBegin'},
                 filter:function(event,player){
                     return player.lili > lib.skill.masterspark.cost;
@@ -4720,7 +4686,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['shanghai_alice1', 'shanghai_alice2'],
-				
 				init:function(player){
 					player.useSkill('shanghai_alice');
 				},
@@ -4736,6 +4701,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addBossFellow(5, 'stg_shanghai', 2);
 				},
 				forced:true,
+				/*
 				trigger:{global:'die'},
 				filter:function(event){
 					return event.player.countCards('he') > 0;
@@ -4749,6 +4715,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addVideo('gain2',player,get.cardsInfo([event.togain]));
 					game.log(player,'将',result.cards.length,'张牌置为“手办”');
 				},
+				*/
 			},
 			shanghai_alice2:{
 				audio:2,
@@ -4772,7 +4739,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				infinite:true,
 				cost:0,
 				spell:['dahezou_skill1'],
-				
 				init:function(player){
 					if (player == game.boss){
 						if (game.boss.name == 'lunasa'){
@@ -5217,7 +5183,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 			youmudieafter:{
 				trigger:{player:'die'},
 				direct:true,
-				init:function(){
+				init:function(player){
 					if (get.mode()=='stg'){
 						game.pause();
 						setTimeout(function(){
