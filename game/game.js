@@ -7405,6 +7405,9 @@
                         var ia=connect_avatar_list[i];
                         lib.mode.connect.config.connect_avatar.item[ia]=lib.translate[ia];
                     }
+                    // 不是联机的话，检测独立牌堆
+                    // 牌堆是config里的，或者是“当前牌堆”
+                    // bannedpile在这里设置（不在lib.config里保存），是“当前牌堆”的前半, addedpile是后半
                     if(lib.config.mode!='connect'){
                         var pilecfg=lib.config.customcardpile[get.config('cardpilename')||'当前牌堆'];
                         if(pilecfg){
@@ -31007,6 +31010,17 @@
                                 }
                                 game.saveConfig('connect_nickname',input.innerHTML);
                                 game.saveConfig('connect_nickname',input.innerHTML,'connect');
+                            }
+                        }
+                        else if(config.name=='版本号'){
+                            input.innerHTML=config.init;
+                            input.onblur=function(){
+                                input.innerHTML=input.innerHTML.replace(/<br>/g,'');
+                                if(!input.innerHTML){
+                                    input.innerHTML=config.init;
+                                }
+                                game.saveConfig('version_number',input.innerHTML);
+                                game.saveConfig('version_number',input.innerHTML,'connect');
                             }
                         }
                         else if(config.name=='联机大厅'){

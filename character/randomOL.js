@@ -816,13 +816,64 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							return true;
 						});
 					} else if (result.control == '创建牌'){
-						event.goto();
+						event.goto(4);
 					}
 					'step 2'
 					if (result.bool){
+						game.removeCard(result.links);
 						for (var i = result.links.length-1; i >=0; i --){
-							
+							if (lib.config.addedpile){
+								//lib.cardPack[];
+							}
 						}
+
+						for(var i=0;i<lib.config.cards.length;i++){
+							if(!lib.cardPack[lib.config.cards[i]]) continue;
+							for(var j=0;j<lib.cardPack[lib.config.cards[i]].length;j++){
+								var cname=lib.cardPack[lib.config.cards[i]][j];
+								pileaddlist.push([cname,get.translation(cname)]);
+							}
+						}
+						lib.config.customcardpile[name]=[lib.config.bannedpile,lib.config.addedpile];
+						game.saveConfig('customcardpile',lib.config.customcardpile);
+					}
+					'step 3'
+					'step 4'
+					var list = [];
+					for (var i in lib.card){
+						list.add(i);
+					}
+					player.chooseButton(['选择一种牌加入',[list,'vcard']], true).set('filterButton',function(button){
+						return true;
+					});
+					'step 5'
+					if (result.bool){
+						event.card = result.links[0];
+						player.chooseControl('heart', 'spade', 'diamond', 'club').set('prompt','选择'+get.translation(event.card[2])+'的花色');
+					}
+					'step 6'
+					if (result.control){
+						event.color = result.control;
+						player.chooseControl(['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K']).set('prompt', '选择'+get.translation(event.card[2])+'的点数');
+					}
+					'step 7'
+					if (result.control){
+						var num = result.control;
+						switch(num){
+                            case 'A':num=1;break;
+                            case 'J':num=11;break;
+                            case 'Q':num=12;break;
+                            case 'K':num=13;break;
+                            default:num=num;
+                        }
+						lib.config.addedpile['standard'].push([event.color, num.toString(), event.card[2]]);
+						lib.config.customcardpile['当前牌堆']=[lib.config.bannedpile,lib.config.addedpile];
+                        game.saveConfig('customcardpile',lib.config.customcardpile);
+						game.saveConfig('cardpilename','当前牌堆',true);
+						ui.cardPile.appendChild(game.createCard(event.card.name, event.color, num));
+						game.broadcastAll(function(num1,num2){
+							if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=num1+'轮 剩余牌: '+num2;
+						},game.roundNumber,ui.cardPile.childNodes.length);
 					}
 				},
 			},
