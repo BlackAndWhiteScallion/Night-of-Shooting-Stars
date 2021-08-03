@@ -5154,7 +5154,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.dataset.position = 4;
 					setTimeout(function(){
 						ui.background.setBackgroundImage('image/background/stg_sky.jpg');
-					}, 10000);
+					}, 0);
 				},
 				content:function(){
 					game.me.storage.reinforce.push('stg_yousei', 'stg_yousei', 'stg_ghost');
@@ -5173,7 +5173,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					}
 					setTimeout(function(){
 						ui.background.setBackgroundImage('image/background/stg_barrier.jpg');	
-					}, 10000);
+					}, 0);
 					// 死后顺便也调背景
 				},
 			},
@@ -5185,7 +5185,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			youmudieafter:{
-				trigger:{player:'die'},
+				trigger:{player:'dieBefore'},
 				direct:true,
 				init:function(player){
 					if (get.mode()=='stg'){
@@ -5210,7 +5210,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				},
 			},
 			youmudieafter2:{
-				trigger:{player:'die'},
+				trigger:{player:'dieBefore'},
 				direct:true,
 				init:function(player){
 					if (get.mode()=='stg'){
