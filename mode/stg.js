@@ -3390,7 +3390,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.addVideo('hidePlayer',game.boss);
 					game.delay();
 					'step 1'
-					var line;
 					if (game.me.name == 'reimu'){
 						game.playConvo([['reimu', '这里不是已经很春了吗'],
 										['reimu', '你们到底想做些什么呀？'],
@@ -3404,6 +3403,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 										['youmu', '虽然这样说，总觉得有点没法接受……'], 
 										['marisa', '谁想让它盛开了？'],
 										['marisa', '我只是想赏樱罢了。'],
+									]);
+					} else if (game.me.name == 'sakuya'){
+						game.playConvo([['sakuya', '太好了，看来幽灵也能斩呀。因为是银的？'],
+										['youmu', '我有一半不是幽灵，不过，西行寺小姐可是完全的灵体'],
+										['youmu', '那样陈旧的武器，会起到作用吗？'], 
+										['sakuya', '我说，为什么话题转进到和那个大小姐对打了啊。'],
 									]);
 					}
 	                'step 2'
@@ -3428,7 +3433,6 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					game.log(game.me,'获得了一个残机！');
 					game.me.storage.reinforce = ['stg_ghost', 'youmu', 'yuyuko'];
 					game.me.storage.reskill=['hualing', 'wangwo', 'stg_fanhun'];
-					game.me.storage.stage = 'boss_cherry3';
 					lib.character['youmu'][3] = ["yishan", "liudaojian", "youmudieafter2"];
 					lib.character['yuyuko'][3] = ["youdie", "moyin"];
 					lib.skill['youdie'].forced = true;
