@@ -1997,7 +1997,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			onremove:function(player){
 				player.node.framebg.dataset.auto=player.storage.lunadial;
-				delete player.storage.lingbi;
+				delete player.storage.lunadial;
 			},
 			content:function(){
 				player.removeSkill('lunadial2');

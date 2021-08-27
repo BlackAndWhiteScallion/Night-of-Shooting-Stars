@@ -1608,7 +1608,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                         event.target.discard(result.links);
                         if (num == 1) event.target.loseHp();
                     }
-                    if(event.num>1 && player.lili > 1){
+                    if(event.num>=1 && player.lili > 1){
                         event.num--;
                         player.loselili();
                         event.goto(1);

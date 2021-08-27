@@ -2959,8 +2959,8 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					player.useSkill('boss_poxian_skill');
 				},
 				onremove:function(player){
-					if (!player.countCards('j', 'lianji')){
-						player.removeSkill('lianji_skill');
+					if (!player.countCards('j', 'boss_poxian')){
+						player.removeSkill('boss_poxian_lianji');
 					}
 					if (!player.countCards('j', 'ziheng')){
 						player.removeSkill('ziheng_skill');
@@ -2973,19 +2973,26 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					if (game.countPlayer(function(current){
 						return current.isFriendOf(player);
 					}) == 1){
-						player.addSkill('lianji_skill');
+						player.addSkill('boss_poxian_lianji');
 						player.addSkill('jinu_skill');
 						player.addSkill('ziheng_skill');
 					} else {
-						if (!player.countCards('j', 'lianji')){
-						player.removeSkill('lianji_skill');
+						if (!player.countCards('j', 'boss_poxian')){
+							player.removeSkill('boss_poxian_lianji');
+						}
+						if (!player.countCards('j', 'ziheng')){
+							player.removeSkill('ziheng_skill');
+						}
+						if (!player.countCards('j', 'jinu')){
+							player.removeSkill('jinu_skill');
+						}
 					}
-					if (!player.countCards('j', 'ziheng')){
-						player.removeSkill('ziheng_skill');
-					}
-					if (!player.countCards('j', 'jinu')){
-						player.removeSkill('jinu_skill');
-					}
+				},
+			},
+			boss_poxian_lianji:{
+				mod:{
+					cardUsable:function(card,player,num){
+						if(card.name=='sha') return num + player.countCards('j', {name:'boss_poxian'});
 					}
 				},
 			},

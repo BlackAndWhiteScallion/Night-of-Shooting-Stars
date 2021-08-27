@@ -965,7 +965,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				forced:true,
 				trigger:{target:'useCardToBegin'},
 				filter:function(event,player){
-					return event.card && get.suit(event.card) == 'heart' && get.subtype(event.card) == 'support' && player.lili > 1;
+					return event.card && get.suit(event.card) == 'heart' && get.subtype(event.card) == 'support' && player.lili >= 1;
 				}, 
 				content:function(){
 					player.loselili();
@@ -3519,7 +3519,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					threaten:-1,
 					order:1,
 					result:{
-						player:function(card, player, target){
+						player:function(player, target){
 							if ((player.maxHp - player.hp) > 1){
 								return 2;
 							}
@@ -3560,7 +3560,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				mod:{
 					maxHandcard:function(player,num){
 						return num - 2 * game.countPlayer(function(current){
-							return current.hasSkill('weimo_1') && current.isMinHandCard();
+							return current.hasSkill('weimo_1') && current.isMinHandcard();
 						});
 					}
 				}

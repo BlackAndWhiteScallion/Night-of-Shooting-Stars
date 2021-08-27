@@ -400,7 +400,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			lianji_skill:{
 				mod:{
 					cardUsable:function(card,player,num){
-						if(card.name=='sha') return num+player.countCards('j', {name:'lianji'});
+						if(card.name=='sha') return num + player.countCards('j', {name:'lianji'}) + player.countCards('e', {name:'holysword'});
 					}
 				},
 			},

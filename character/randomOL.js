@@ -805,7 +805,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				enable:'phaseUse',
 				content:function(){
 					'step 0'
-					player.chooseControl('移除牌', '创建牌');
+					player.chooseControl('移除牌', '创建牌', '世界线重置');
 					'step 1'
 					if (result.control == '移除牌'){
 						var cards = [];
@@ -817,25 +817,37 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						});
 					} else if (result.control == '创建牌'){
 						event.goto(4);
+					} else if (result.control == '世界线重置'){
+
 					}
 					'step 2'
 					if (result.bool){
 						game.removeCard(result.links);
+						var mode = 'standard';
 						for (var i = result.links.length-1; i >=0; i --){
+							var card = [get.suit(result.links[i]), result.links[i].number, result.links[i].name];
 							if (lib.config.addedpile){
 								//lib.cardPack[];
+								for (var j = lib.config.addedpile['standard'].length - 1; j >= 0; j --){
+									if (lib.config.addedpile['standard'][j] == card){
+										lib.config.addedpile['standard'].remove(card);
+										continue;
+									}
+								}
+							}
+							for(var h=0; h < lib.cardPile[mode].length; h++){
+								var c = lib.cardPile[mode][h];
+								if (c[0] == card[0] && c[1] == card[1] && c[2] == card[2]){
+									console.log(h);
+									lib.config.bannedpile[mode].push(h);
+									break;
+								}
 							}
 						}
-
-						for(var i=0;i<lib.config.cards.length;i++){
-							if(!lib.cardPack[lib.config.cards[i]]) continue;
-							for(var j=0;j<lib.cardPack[lib.config.cards[i]].length;j++){
-								var cname=lib.cardPack[lib.config.cards[i]][j];
-								pileaddlist.push([cname,get.translation(cname)]);
-							}
-						}
-						lib.config.customcardpile[name]=[lib.config.bannedpile,lib.config.addedpile];
-						game.saveConfig('customcardpile',lib.config.customcardpile);
+						lib.config.customcardpile['当前牌堆']=[lib.config.bannedpile,lib.config.addedpile];
+                        game.saveConfig('customcardpile',lib.config.customcardpile);
+						game.saveConfig('cardpilename','当前牌堆',true);
+						return true;
 					}
 					'step 3'
 					'step 4'
