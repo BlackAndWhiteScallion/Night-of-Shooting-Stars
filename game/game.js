@@ -5433,6 +5433,12 @@
             brawl:{
                 name:'场景',
                 config:{
+                    zigui:{
+                        name:'子规安静！',
+                        intro:'对战练习中关闭子规的开场对话',
+                        init:false,
+                        frequent:false
+                    },
                     /*
                     practise:{
                         name:'对战练习',
@@ -23364,6 +23370,55 @@
             for(var i=0;i<list.length;i++){
                 list[i].remove();
             }
+            if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
+        },
+        // 按照div移除卡牌
+        removeCardByObject:function(cards){
+            if (Array.isArray(cards)){
+                for (var i = 0; i < cards.length; i++){
+                    game.removeCardByObject(cards[i]);
+                }
+            } else {
+                cards.remove();
+                if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
+                /*
+                for(var i=0;i<ui.cardPile.childElementCount;i++){
+                    if(ui.cardPile.childNodes[i] == cards){
+                        list.push(ui.cardPile.childNodes[i]);
+                    }
+                }
+                for(var i=0;i<list.length;i++){
+                    list[i].remove();
+                }
+                if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=game.roundNumber+'轮 剩余牌: '+ui.cardPile.childNodes.length;
+                */
+            }
+            /*
+            for(var i=0;i<lib.card.list.length;i++){
+                if(lib.card.list[i][2]==card){
+                    if (replace){
+                        var c = lib.card.list[i];
+                        c[2] = replace;
+                        lib.card.list.push(c);
+                    }
+                    lib.card.list.splice(i--,1);
+                }
+            }
+            
+            var list=[];
+            for(var i=0;i<ui.cardPile.childElementCount;i++){
+                if(ui.cardPile.childNodes[i] == ){
+                    if (replace){
+                        ui.cardPile.replaceChild(game.createCard(replace, ui.cardPile.childNodes[i].suit, ui.cardPile.childNodes[i].number), ui.cardPile.childNodes[i]);
+                    } else {
+                        list.push(ui.cardPile.childNodes[i]);
+                    }
+                }
+            }
+            for(var i=0;i<list.length;i++){
+                list[i].remove();
+            }
+          */  
         },
         // 这是联机时使用的座位分配
         // 还包括了启动选将

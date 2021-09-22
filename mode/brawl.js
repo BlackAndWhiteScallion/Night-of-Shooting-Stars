@@ -399,13 +399,18 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 	        	submode:'1v1',
 	        	intro:[
 	        		'不会用角色？不熟悉牌堆？不熟悉游戏操作？',
-	        		'来和5血<s>稻草人</s>子规老师练习一下吧？',
+					'来和5血<s>稻草人</s>子规老师练习一下吧？',
+					'',
+					'注：子规的开场对话可在设置中关闭',
 	        	],
 	        	init:function(){
 					lib.config.mode_config['old_identity']['player_number'] = '2';
 					lib.config.mode_config['old_identity']['free_choose'] = true;
 					lib.config.mode_config['old_identity']['change_identity'] = true;
 					lib.config.mode_config['old_identity']['continue_game'] = true;
+					if (get.config('zigui')){
+						lib.character['zigui'][3] = [];
+					}
 				},
 	        	content:{
 					//chooseCharacterFixed:true,

@@ -6,7 +6,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			homura:['female', '2', 3, ['time3', 'time', 'homuraworld'], ['forbidai']],
 			diva:['female', '3', 3, ['duzou', 'lunwu', 'tiaoxian'], ['forbidai']],
 			monika:['female', '2', 3, ['miaohui', 'kehua'], ['forbidai']],
-			//haruhi:['female', '2', 3, ['haruhi1','haruhi2'], ['forbidai']],
+			haruhi:['female', '2', 3, ['haruhi1','haruhi2'], ['forbidai']],
 			aliceWLD:['female', '0', 3, ['WLD2', 'WLD1'], []],
 		},
 		characterIntro:{
@@ -818,27 +818,32 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					} else if (result.control == '创建牌'){
 						event.goto(4);
 					} else if (result.control == '世界线重置'){
-
+						delete lib.config.customcardpile['当前牌堆'];
+						game.saveConfig('customcardpile',lib.config.customcardpile);
+						game.saveConfig('cardpilename','默认牌堆',true);
+						return;
 					}
 					'step 2'
 					if (result.bool){
-						game.removeCard(result.links);
-						var mode = 'standard';
+						console.log(result.links);
+						game.removeCardByObject(result.links);
+						let mode = 'standard';
 						for (var i = result.links.length-1; i >=0; i --){
-							var card = [get.suit(result.links[i]), result.links[i].number, result.links[i].name];
+							var card = [get.suit(result.links[i]), result.links[i].number.toString(), result.links[i].name];
 							if (lib.config.addedpile){
 								//lib.cardPack[];
 								for (var j = lib.config.addedpile['standard'].length - 1; j >= 0; j --){
-									if (lib.config.addedpile['standard'][j] == card){
-										lib.config.addedpile['standard'].remove(card);
-										continue;
+									if (JSON.stringify(lib.config.addedpile['standard'][j]) === JSON.stringify(card)){
+										lib.config.addedpile['standard'].splice(j, 1);
+										var flag = true;
+										break;
 									}
 								}
+								if (flag) continue;
 							}
 							for(var h=0; h < lib.cardPile[mode].length; h++){
 								var c = lib.cardPile[mode][h];
 								if (c[0] == card[0] && c[1] == card[1] && c[2] == card[2]){
-									console.log(h);
 									lib.config.bannedpile[mode].push(h);
 									break;
 								}
@@ -850,9 +855,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						return true;
 					}
 					'step 3'
+					event.goto(8);
 					'step 4'
 					var list = [];
 					for (var i in lib.card){
+						if (!lib.card[i].type) continue;
+						if (lib.card[i].type == 'delay') continue;
 						list.add(i);
 					}
 					player.chooseButton(['选择一种牌加入',[list,'vcard']], true).set('filterButton',function(button){
@@ -878,19 +886,55 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                             case 'K':num=13;break;
                             default:num=num;
                         }
-						lib.config.addedpile['standard'].push([event.color, num.toString(), event.card[2]]);
+						lib.config.addedpile['standard'].push([event.color, num, event.card[2]]);
 						lib.config.customcardpile['当前牌堆']=[lib.config.bannedpile,lib.config.addedpile];
                         game.saveConfig('customcardpile',lib.config.customcardpile);
 						game.saveConfig('cardpilename','当前牌堆',true);
-						ui.cardPile.appendChild(game.createCard(event.card.name, event.color, num));
+						ui.cardPile.appendChild(game.createCard(event.card[2], event.color, num));
 						game.broadcastAll(function(num1,num2){
 							if(ui.cardPileNumber) ui.cardPileNumber.innerHTML=num1+'轮 剩余牌: '+num2;
 						},game.roundNumber,ui.cardPile.childNodes.length);
+						return true;
 					}
+					'step 8'
 				},
 			},
 			haruhi2:{
-
+				forced:true,
+				trigger:{player:'phaseEnd'},
+				filter:function(event, player){
+					return player.lili > 0;
+				},
+				content:function(){
+					'step 0'
+					event.num = player.lili;
+					'step 1'
+					player.chooseTarget('选择一名角色（还剩'+event.num+'次）', true);
+					'step 2'
+					if (result.targets){
+						event.target = result.targets[0];
+						var list = ['从牌堆随机位置获得一张牌','获得随机一个技能'];
+						player.chooseControlList(list, true).set('prompt','为'+get.translation(event.target)+'选择一项，还剩'+event.num+'次');
+					}
+					'step 3'
+					if (result.index == 0){
+						event.target.gain(ui.cardPile.childNodes[Math.floor(Math.random() * ui.cardPile.childNodes.length)]);
+					} else if (result.index == 1){
+						var lis = Object.keys(lib.skill);
+						for (;;){
+							var s = lis.randomGet();
+							if (lib.translate[s] && lib.translate[s+"_info"]){
+								event.target.addSkill(s);
+								break;
+							}
+						}
+					}
+					'step 4'
+					event.num --;
+					if (event.num){
+						event.goto(1);
+					}
+				},
 			},
 		},
 		translate:{
@@ -943,7 +987,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			WLD3:'奇缘',
 			WLD3_info:'锁定技，准备阶段，你随机创建并获得一张牌（包括其他模式，其他游戏，技能牌，和异变牌）。',
 			haruhi:'春日',
-			
+			haruhi1:'再组',
+			haruhi1_info:'出牌阶段，你可以创建任意张牌，将这些牌加入牌堆；或观看牌堆，并移除其中任意张牌；这些改动在以后所有非联机模式的游戏中有效。',
+			haruhi2:'梦现',
+			haruhi2_info:'锁定技，结束阶段，你指定一名角色，令其执行以下一项：从牌堆随机位置获得一张牌；或随机获得游戏内一项技能；重复此流程X次（X为你的灵力值）。',
 		},
 	};
 });
