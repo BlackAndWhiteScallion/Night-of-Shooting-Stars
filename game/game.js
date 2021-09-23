@@ -5079,7 +5079,7 @@
                     },
                     version_number:{
                         name:'版本号',
-                        init:'1.9.110.8.2',
+                        init:'1.9.110.9',
                         input:true,
                         frequent:true,
                     },
