@@ -36452,7 +36452,12 @@
                         };
 
                         button1=document.createElement('button');
-                        button1.innerHTML='检查游戏更新';
+                        button1.innerHTML='重新下载游戏';
+                        button1.onclick=function(){
+                            localStorage.removeItem('noname_inited');
+                            game.reload();
+                            return;
+                        }
                         button1.onclick=game.checkForUpdate;
                         li1.lastChild.appendChild(button1);
 
