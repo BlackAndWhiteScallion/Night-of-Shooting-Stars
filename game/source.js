@@ -27,6 +27,7 @@ window.noname_source_list=[
     'game/pressure.js',
     'game/server.js',
     'game/source.js',
+    'game/source_all.js',
     'game/update.js',
     'game/guide.pdf',
     'layout/default/codemirror.css',
@@ -151,5 +152,4 @@ window.noname_source_list=[
     'node_modules/ultron/test.js',
     'node_modules/options/package.json',
     'node_modules/options/lib/options.js',
-    'image/*'
 ];
