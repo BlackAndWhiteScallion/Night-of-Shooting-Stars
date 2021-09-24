@@ -485,6 +485,7 @@ window.noname_skin_list={
     miku:2,
     diva:1,
     jack:1,
+    icetea:2,
 };
 window.noname_animate_list={
     /*
