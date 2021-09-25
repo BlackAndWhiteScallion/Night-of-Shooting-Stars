@@ -39121,7 +39121,7 @@
                         setTimeout(function(){
                             // game.download指的是，游戏需不需要下载
                             // 比如，电脑版（自带资源）就会触发这段，而手机版不会。
-                            if(!game.download){
+                            if(!game.download || localStorage.getItem('noname_asseted')){
                                 game.saveConfig('asset_version','无');
                             }
                             else{
