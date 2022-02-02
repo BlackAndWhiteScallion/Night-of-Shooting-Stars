@@ -7864,11 +7864,13 @@
                     if (!lib.config.gameRecord.incident) {
                         list.add(lib.config.intro_character+'_noincident');
                     }
-                    if (lib.config.gameRecord.incident && !lib.config.gameRecord.general.data['akyuu']) {
+                    /*
+                    else if (lib.config.gameRecord.incident && !lib.config.gameRecord.general.data['akyuu']) {
                         list.add(lib.config.intro_character+'_noakyuu');
                     } else {
                         list.add(lib.config.intro_character+'_akyuu');
                     }
+                    */
                     var date = new Date();
                     if (date.getMonth() == 11){
                         setDialog(lib.config.intro_character+'_christmas');

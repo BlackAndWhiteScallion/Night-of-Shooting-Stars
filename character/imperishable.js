@@ -2147,7 +2147,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
                   lanyue_audio1:'药也可以这么用的呢。',
                   lanyue_audio2:'即使是月亮，也不会离开我的手心之中。',
                   lanyue_audio3:'即使是我也逃不出永琳的手掌心呢w',
-                  lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同',
+                  lanyue_info:'一回合一次，出牌阶段，你可以令攻击范围内离你最远的一名角色选择：体力值或灵力值中与你不同的一项，然后将该项调整至与你相同。',
                   tianwen:'天文秘葬法',
                   tianwen_audio1:'秘術「天文密葬法」。',
                   tianwen_audio2:'所谓星空，也只不过是试验场罢了。',

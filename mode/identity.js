@@ -1106,7 +1106,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						game.me.node.identity.firstChild.innerHTML=get.translation(game.me.special_identity+'_bg');
 					}
 					else{
-						dialog.setCaption('选择角色（'+get.translation(game.me.identity)+'）');
+						dialog.setCaption('选择角色（'+get.translation(game.me.identity+'2')+'）');
 						game.me.setIdentity();
 					}
 					if(!event.chosen.length){
@@ -2437,7 +2437,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						player.node.identity.classList.remove('guessing');
 					}, player, player.identity);
 					game.log(player,'的身份是','#g'+get.translation(player.identity+'2'));
-					game.notify(get.translation(player)+'的身份是#g'+get.translation(player.identity+'2'));
+					game.notify(get.translation(player)+'的身份是'+get.translation(player.identity+'2'));
 					player.disableSkill('_tanpai');
 					player.removeSkill('_tanpai');
 					/*

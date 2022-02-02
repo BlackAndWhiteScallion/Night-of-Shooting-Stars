@@ -1565,6 +1565,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						['music_default', 3980],
 					];
 					lib.config.currentMusic = 0;
+					/* 这里是把牌换成红魔乡风格的。需要一个法子检测皮肤有没有下载。
 					for (var i1 in lib.config.skinSet[1]){
 						if (lib.config.skinSet[1][i1] == 0){
 							delete lib.config.skin[i1];
@@ -1575,6 +1576,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var f=0;f<ui.cardPile.childElementCount;f++){
 						ui.cardPile.childNodes[f].node.image.setBackground(ui.cardPile.childNodes[f].name, 'card');
 					}
+					*/
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
 					if (lib.config.connect_nickname == '黑白葱') game.me.addSkill('finalspark');
@@ -1653,6 +1655,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						['death', 0],
 					];
 					lib.config.currentMusic=0;
+					/* 这里是把牌换成红魔乡风格的。需要一个法子检测皮肤有没有下载。
 					for (var i1 in lib.config.skinSet[1]){
 						if (lib.config.skinSet[1][i1] == 0){
 							delete lib.config.skin[i1];
@@ -1663,6 +1666,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var f=0;f<ui.cardPile.childElementCount;f++){
 						ui.cardPile.childNodes[f].node.image.setBackground(ui.cardPile.childNodes[f].name, 'card');
 					}
+					*/
 					game.playBackgroundMusic('magicalgirl');
 					ui.backgroundMusic.play();
 					//ui.backgroundMusic.removeEventListener("timeupdate", swapMusic, true);
@@ -1753,6 +1757,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 						['music_cherry', 3548],
 					];
 					lib.config.currentMusic = 0;
+					/* 这里是把牌换成妖妖梦风格的。需要一个法子检测皮肤有没有下载。
 					for (var i1 in lib.config.skinSet[0]){
 						if (lib.config.skinSet[0][i1] == 0){
 							delete lib.config.skin[i1];
@@ -1763,6 +1768,7 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var f=0;f<ui.cardPile.childElementCount;f++){
 						ui.cardPile.childNodes[f].node.image.setBackground(ui.cardPile.childNodes[f].name, 'card');
 					}
+					*/
 					game.swapMusic();
 					game.me.addSkill('revive');
 					game.me.addSkill('reinforce');
