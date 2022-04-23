@@ -23143,7 +23143,8 @@
 							alert('您的游戏版本过低，请升级到最新版');
 							game.saveConfig('tmp_owner_roomId');
 							game.saveConfig('tmp_user_roomId');
-							game.saveConfig('reconnect_info');
+                            game.saveConfig('reconnect_info');
+                            
 							break;
                         case 'offline':
                         if(_status.paused&&_status.event.name=='game'){
