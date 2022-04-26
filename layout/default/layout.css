@@ -2954,8 +2954,15 @@ div:not(.handcards)>.card>.info>span,
 	right: 20px;
 	bottom: 20px;
 }
+.connectevents.server{
+	left: 20px;
+	right: auto;
+}
 .connectevents.left{
 	transform: translateX(-85px);
+}
+.connectevents.left2{
+	transform: translateX(-170px);
 }
 .connectevents.icon{
 	width: 20px;
