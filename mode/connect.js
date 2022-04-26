@@ -14,6 +14,33 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 				uiintro.add(ui.create.div('.placeholder.slim'))
 				return uiintro;
 			},400);
+			/* 自动检查版本号用的。没弄完呢。
+			lib.init.req('game/update.js',function(){
+				try{
+					eval(this.responseText);
+					if(!window.noname_update){
+						throw('err');
+					}
+				}
+				catch(e){
+					alert('版本号有问题');
+					console.log(e);
+					return;
+				}
+
+				var update=window.noname_update;
+				delete window.noname_update;
+				if(forcecheck===false){
+					if(update.version==lib.config.check_version){
+						return;
+					}
+				}
+				game.saveConfig('check_version',update.version);
+				var goon=true;
+			},function(){
+				alert('网络问题，自动更新版本号失败');
+			},true);
+			*/
 			var createNode=function(){
 				if(event.created) return;
 				if(directstartmode&&lib.node){

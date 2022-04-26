@@ -22632,7 +22632,7 @@
 					ui.create.connecting(true);
                 },
                 roomlist:function(list,events,clients,wsid){
-                    game.send('server','key',[game.onlineKey,lib.version]);
+                    game.send('server','key',[game.onlineKey,lib.config.version_number]);
                     //game.send('server','key',[594676110, lib.config.version_number]);
 					game.online=true;
 					game.onlinehall=true;
@@ -23269,7 +23269,7 @@
 						case 'number':alert('加入失败：房间已满');break;
 						case 'banned':alert('加入失败：房间拒绝你加入');break;
 						case 'key':
-							alert('您的游戏版本过低，请升级到最新版');
+							alert('您的游戏版本过低，请更改版本号');
 							game.saveConfig('tmp_owner_roomId');
 							game.saveConfig('tmp_user_roomId');
 							game.saveConfig('reconnect_info');
