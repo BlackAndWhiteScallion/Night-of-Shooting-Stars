@@ -36634,7 +36634,7 @@
                             game.reload();
                             return;
                         }
-                        button1.onclick=game.checkForUpdate;
+                        //button1.onclick=game.checkForUpdate;
                         li1.lastChild.appendChild(button1);
 
                         button3=document.createElement('button');
