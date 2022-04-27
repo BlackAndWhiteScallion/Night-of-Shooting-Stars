@@ -31415,7 +31415,11 @@
 								game.reload();
 							}
 						}
-					});
+                    });
+                    
+                    if (lib.device){
+                        startButton.classList.add('mobile');
+                    }
 
 					var clickMode=function(){
 						if(this.classList.contains('unselectable')) return;
