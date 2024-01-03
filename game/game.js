@@ -1,8 +1,49 @@
 "use strict";
-(function(){
-    var _status={
+{
+    const GeneratorFunction=(function*(){}).constructor;
+	// gnc: GeNCoroutine
+	const gnc={
+		of:fn=>gnc.is.generatorFunc(fn)?function genCoroutine(){
+			let gen=fn.apply(this,arguments);
+			gen.status="next";
+			gen.state=undefined;
+			const callback=(resolve,reject)=>{
+				let result,
+					nexts=resolve,
+					throws=reject;
+				try{
+					result=gen[gen.status](gen.state);
+				}catch(error){
+					reject(error);
+					return;
+				}
+				if(!result.done){
+					nexts=(item)=>{
+						gen.state=item;
+						gen.status="next";
+						callback(resolve,reject);
+					}
+					throws=(err)=>{
+						gen.state=err;
+						gen.status="throw";
+						callback(resolve,reject);
+					}
+				}
+				result=result.value;
+				Promise.resolve(result).then(nexts,throws);
+			}
+			return new Promise(callback);
+		}:(()=>{throw new TypeError("gnc.of needs a GeneratorFunction.")})(),
+		is:{
+			coroutine:item=>typeof item=="function"&&item.name=="genCoroutine",
+			generatorFunc:item=>item instanceof GeneratorFunction,
+			generator:item=>(typeof item=="object")&&("constructor" in item)&&item.constructor&&("constructor" in item.constructor)&&item.constructor.constructor===GeneratorFunction
+		}
+	};
+	const _status={
         paused:false,
         paused2:false,
+        paused3:false,
         over:false,
         clicked:false,
         auto:false,
@@ -16,9 +57,19 @@
         skillaudio:[],
         dieClose:[],
         dragline:[],
-        dying:[]
-    };
-    var lib={
+        dying:[],
+		globalHistory:[{
+			cardMove:[],
+			custom:[],
+			useCard:[],
+			changeHp:[],
+			everything:[],
+		}],
+		renku:[],
+		prehidden_skills:[],
+		postReconnect:{},
+	};
+    const lib={
         configprefix:'star_1.9_',
         versionOL:27,
         //updateURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
@@ -38,9 +89,13 @@
 		connectBanned:[],
 		characterIntro:{},
 		characterTitle:{},
-		characterPack:{},
+        characterPack:{},
 		characterFilter:{},
+        characterSort:{},
+		characterReplace:{},
+		dynamicTranslate:{},
         cardPack:{},
+        skin:{},
         onresize:[],
         onphase:[],
         onwash:[],
@@ -48,6 +103,13 @@
         ondb:[],
         ondb2:[],
         chatHistory:[],
+        animate:{
+			skill:{},
+			card:{},
+		},
+		onload:[],
+		onload2:[],
+		onprepare:[],
         arenaReady:[],
         onfree:[],
         inpile:[],
@@ -114,6 +176,8 @@
                             }
                         }
                     },
+
+
                     game_speed:{
                         name:'游戏速度',
                         init:'slow',
@@ -386,11 +450,14 @@
                             if(!node.created){
                                 node.created=true;
                                 node.style.overflow='hidden';
+                                node.firstChild.style.display='none';
+                                /*
                                 node.firstChild.classList.add('shadowed');
                                 node.firstChild.style.width='16px';
                                 node.firstChild.style.height='auto';
                                 node.firstChild.style.padding='2px';
                                 node.firstChild.style.textAlign='center';
+                                */
                                 var me=ui.create.div(node);
                                 me.style.top='auto';
                                 if(link=='default'||link=='newlayout'){
@@ -572,7 +639,7 @@
                                         editbg.call(node.lastChild);
                                     }
                                 }
-                            }).inputNode.accept='image/jpeg';
+                            }).inputNode.accept='image/*';
                             var editbg=function(){
                                 this.classList.toggle('active');
                                 var page=this.parentNode.parentNode;
@@ -683,38 +750,9 @@
                                     }
                                 }
                             }
-                            var animate=lib.config.image_background=='default';
                             game.saveConfig('image_background',background);
                             lib.init.background();
-                            ui.background.delete();
-                            ui.background=ui.create.div('.background');
-                            ui.background.style.filter='';
-                            ui.background.style.webkitFilter='';
-                            ui.background.style.transform='';
-
-                            document.body.insertBefore(ui.background,document.body.firstChild);
-                            if(animate) ui.background.animate('start');
-                            if(lib.config.image_background=='default'){
-                                ui.background.style.backgroundImage="none";
-                            }
-                            else if(lib.config.image_background.indexOf('custom_')==0){
-                                ui.background.style.backgroundImage="none";
-                                game.getDB('image',lib.config.image_background,function(fileToLoad){
-                                    if(!fileToLoad) return;
-                                    var fileReader = new FileReader();
-                                    fileReader.onload = function(fileLoadedEvent)
-                                    {
-                                        var data = fileLoadedEvent.target.result;
-                                        ui.background.style.backgroundImage='url('+data+')';
-                                    };
-                                    fileReader.readAsDataURL(fileToLoad, "UTF-8");
-                                });
-                            }
-                            else{
-                                ui.background.setBackgroundImage('image/background/'+lib.config.image_background+'.jpg');
-                            }
-                            ui.background.style.backgroundSize='cover';
-                            ui.background.style.backgroundPosition='50% 50%';
+                            game.updateBackground();
                         },
                     },
                     image_background_random:{
@@ -5522,6 +5560,7 @@
             globalId:0,
         },
         // lib.setIntro: 
+        path:{},
         setIntro:function(node,func,left){
 			if(lib.config.touchscreen){
 				if(left){
@@ -5541,19 +5580,17 @@
 				if(lib.config.right_info){
                     node.oncontextmenu=ui.click.rightplayer;
 				}
-			}
-			if(!left){
-				lib.setPressure(node,ui.click.rightpressure);
-			}
+            }
 			if(func){
 				node._customintro=func;
 			}
 		},
+        /*
         setPressure:function(node,func){
             if(window.Pressure){
                 window.Pressure.set(node,{change: func}, {polyfill: false});
             }
-        },
+        },*/
         setPopped:function(node,func,width,height,forceclick,paused2){
             node._poppedfunc=func;
             node._poppedwidth=width;
@@ -5574,11 +5611,12 @@
         },
         placePoppedDialog:function(dialog,e){
             if(dialog._place_text){
-                if(dialog._place_text.firstChild.offsetWidth>=190||
-                    dialog._place_text.firstChild.offsetHeight>=30){
-                    dialog._place_text.style.textAlign='left';
-                    dialog._place_text.style.marginLeft='14px';
-                }
+				if(dialog._place_text.firstChild.offsetWidth>=190||dialog._place_text.firstChild.offsetHeight>=30){
+					dialog._place_text.style.marginLeft='14px';
+					dialog._place_text.style.marginRight='14px';
+					dialog._place_text.style.textAlign='left';
+					dialog._place_text.style.width='calc(100% - 28px)';
+				}
             }
             if(e.touches&&e.touches[0]){
                 e=e.touches[0];
@@ -5594,10 +5632,10 @@
             else{
                 dialog.style.left=(e.clientX/game.documentZoom-dialog.offsetWidth-10)+'px';
             }
-            var idealtop=e.clientY/game.documentZoom-dialog.offsetHeight/2;
-            if(idealtop<10){
-                idealtop=10;
-            }
+			var idealtop=(e.clientY||0)/game.documentZoom-dialog.offsetHeight/2;
+			if(typeof idealtop!='number'||isNaN(idealtop)||idealtop<=5){
+				idealtop=5;
+			}
             else if(idealtop+dialog.offsetHeight+10>ui.window.offsetHeight){
                 idealtop=ui.window.offsetHeight-10-dialog.offsetHeight;
             }
@@ -5684,6 +5722,66 @@
                 game.export(lib.init.encode(JSON.stringify(_status.videoToSave)),
                 '流星夜 - 录像 - '+_status.videoToSave.name[0]+' - '+_status.videoToSave.name[1]);
                 //game.export(_status.videoToSave, '流星夜录像');
+            }
+		},
+		genAsync:fn=>gnc.of(fn),
+		genAwait:item=>gnc.is.generator(item)?gnc.of(function*(){for(const content of item){yield content;}})():Promise.resolve(item),
+		gnc:{
+			of:fn=>gnc.of(fn),
+			is:{
+				coroutine:item=>gnc.is.coroutine(item),
+				generatorFunc:item=>gnc.is.generatorFunc(item),
+				generator:item=>gnc.is.generator(item)
+			}
+		},
+		comparator:{
+			equals:function(){
+				if(arguments.length==0) return false;
+				if(arguments.length==1) return true;
+				for(let i=1;i<arguments.length;++i) if(arguments[i]!==arguments[0])return false;
+				return true;
+			},
+			equalAny:function(){
+				if(arguments.length==0) return false;
+				if(arguments.length==1) return true;
+				for(let i=1;i<arguments.length;++i) if(arguments[i]===arguments[0])return true;
+				return false;
+			},
+			notEquals:function(){
+				if(arguments.length==0) return false;
+				if(arguments.length==1) return true;
+				for(let i=1;i<arguments.length;++i) if(arguments[i]===arguments[0])return false;
+				return true;
+			},
+			notEqualAny:function(){
+				if(arguments.length==0) return false;
+				if(arguments.length==1) return true;
+				for(let i=1;i<arguments.length;++i) if(arguments[i]!==arguments[0])return true;
+				return false;
+			},
+			typeEquals:function(){
+				if(arguments.length==0)return false;
+				if(arguments.length==1)return arguments[0]!==null;
+				const type=typeof arguments[0];
+				for(let i=1;i<arguments.length;++i) if(type!==arguments[i])return false;
+				return true;
+			}
+		},
+		creation:{},
+		linq:{
+			cselector:{
+				hasAttr:name=>`[${name}]`,
+				isAttr:(name,item)=>`[${name}=${item}]`,
+				inAttr:(name,item)=>`[${name}~=${item}]`,
+				conAttr:(name,item)=>`[${name}*=${item}]`,
+				onAttr:(name,item)=>`[${name}|=${item}]`,
+				bgnAttr:(name,item)=>`[${name}^=${item}]`,
+				endAttr:(name,item)=>`[${name}^=${item}]`,
+				merge:function(){return Array.from(arguments).join(" ");},
+				of:function(){return Array.from(arguments).join("");},
+				class:function(){return `.${Array.from(arguments).join(".")}`;},
+				group:function(){return Array.from(arguments).join(",");},
+				media:type=>`@media ${type}`
             }
         },
         init:{
@@ -5827,86 +5925,77 @@
                     this.classList.remove('removing');
                     return this;
                 };
-                HTMLDivElement.prototype.setBackground=function(name,type,ext,subfolder){
-                    if(!name) return;
-                    var src;
-                    if(ext=='noskin'){
-                        ext='.jpg';
-                    }
-                    if (type == 'card'){
-                        ext='.png';
-                    }
-                    ext=ext||'.jpg';
-                    subfolder=subfolder||'default'
-                    if(type){
-                        var dbimage=null,extimage=null,modeimage=null;
-                        var nameinfo;
-                        var mode=get.mode();
-                        if(type=='character'){
-                            if(lib.characterPack['mode_'+mode]&&lib.characterPack['mode_'+mode][name]){
-                                    modeimage=mode;
-                            }
-                            else if(lib.character[name]){
-                                nameinfo=lib.character[name];
-                            }
-                            else if(name.indexOf('::')!=-1){
-                                name=name.split('::');
-                                modeimage=name[0];
-                                name=name[1];
-                            }
-                            if(!modeimage&&nameinfo&&nameinfo[4]){
-                                for(var i=0;i<nameinfo[4].length;i++){
-                                    if(nameinfo[4][i].indexOf('ext:')==0){
-                                        extimage=nameinfo[4][i];break;
-                                    }
-                                    else if(nameinfo[4][i].indexOf('db:')==0){
-                                        dbimage=nameinfo[4][i];break;
-                                    }
-                                    else if(nameinfo[4][i].indexOf('mode:')==0){
-                                        modeimage=nameinfo[4][i].slice(5);break;
-                                    }
-                                    else if(nameinfo[4][i].indexOf('character:')==0){
-                                        name=nameinfo[4][i].slice(10);break;
-                                    }
-                                }
-                            }
-                        }
-                        else if (type == 'card'){
-                            modeimage = lib.card[name].modeimage;
-                        }
-                        if(extimage){
-                            src=extimage.replace(/ext:/,'extension/');
-                        }
-                        else if(dbimage){
-                            this.setBackgroundDB(dbimage.slice(3));
-                            return this;
-                        }
-                        else if(modeimage){
-                            src='image/mode/'+modeimage+'/'+type+'/'+name+ext;
-                        }
-                        else if((type=='character' || type == 'card')&&lib.config.skin[name]&&arguments[2]!='noskin'){
-                            src='image/skin/'+name+'/'+lib.config.skin[name]+ext;
-                        }
-                        else{
-                            if(type=='character'){
-                                src='image/character/'+name+ext;
-                            } else if (type == 'card'){
-                                src = 'image/card/'+name+ext;
-                            }
-                            else{
-                                src='image/'+type+'/'+subfolder+'/'+name+ext;
-                            }
-                        }
-                    }
-                    else{
-                        src='image/'+name+ext;
-                    }
-                    this.setBackgroundImage(src);
-                    this.style.backgroundSize="cover";
-                    if (lib.card[name] && lib.card[name].type == 'delay' && lib.config.skin[name] == 2) this.style.backgroundSize = "115%";
-                     if (lib.card[name] && lib.card[name].type == 'delay' && !lib.config.skin[name]) this.classList.add('fullimage');
-                    return this;
-                };
+                Object.defineProperty(HTMLDivElement.prototype,'setBackground',{
+					configurable:true,
+					enumerable:false,
+					writable:true,
+					value:function(name,type,ext,subfolder){
+						if(!name) return;
+						let src;
+						if(ext=='noskin') ext='.jpg';
+						ext=ext||'.jpg';
+						subfolder=subfolder||'default';
+						if(type){
+							let dbimage=null,extimage=null,modeimage=null,nameinfo,gzbool=false;
+							const mode=get.mode();
+							if(type=='character'){
+								if(lib.characterPack[`mode_${mode}`]&&lib.characterPack[`mode_${mode}`][name]){
+									if(mode=='guozhan'){
+										nameinfo=lib.character[name];
+										if(name.indexOf('gz_shibing')==0) name=name.slice(3,11);
+										else{
+											if(lib.config.mode_config.guozhan.guozhanSkin&&lib.character[name]&&lib.character[name][4].contains('gzskin')) gzbool=true;
+											name=name.slice(3);
+										}
+									}
+									else modeimage=mode;
+								}
+								else if(name.indexOf('::')!=-1){
+									name=name.split('::');
+									modeimage=name[0];
+									name=name[1];
+								}
+								else{
+									nameinfo=get.character(name);
+								}
+							}
+							if(!modeimage&&nameinfo&&nameinfo[4]) for(const value of nameinfo[4]){
+								if(value.indexOf('ext:')==0){
+									extimage=value;
+									break;
+								}
+								else if(value.indexOf('db:')==0){
+									dbimage=value;
+									break;
+								}
+								else if(value.indexOf('mode:')==0){
+									modeimage=value.slice(5);
+									break;
+								}
+								else if(value.indexOf('character:')==0){
+									name=value.slice(10);
+									break;
+								}
+							}
+							if(extimage) src=extimage.replace(/ext:/,'extension/');
+							else if(dbimage){
+								this.setBackgroundDB(dbimage.slice(3));
+								return this;
+							}
+							else if(modeimage) src=`image/mode/${modeimage}/character/${name}${ext}`;
+							else if(type=='character'&&lib.config.skin[name]&&arguments[2]!='noskin') src=`image/skin/${name}/${lib.config.skin[name]}${ext}`;
+							else if(type=='character') src=`image/character/${gzbool?'gz_':''}${name}${ext}`;
+							else src=`image/${type}/${subfolder}/${name}${ext}`;
+						}
+						else src=`image/${name}${ext}`;
+						this.setBackgroundImage(src);
+						this.style.backgroundPositionX='center';
+						this.style.backgroundSize='cover';
+                        if (lib.card[name] && lib.card[name].type == 'delay' && lib.config.skin[name] == 2) this.style.backgroundSize = "115%";
+                        if (lib.card[name] && lib.card[name].type == 'delay' && !lib.config.skin[name]) this.classList.add('fullimage');    
+						return this;
+					}
+				});
                 HTMLDivElement.prototype.setBackgroundDB=function(img){
                     var node=this;
                     game.getDB('image',img,function(src){
@@ -5949,7 +6038,7 @@
                         }
                     };
                     this.addEventListener('webkitTransitionEnd',callback);
-                    setTimeout(callback,time||1000);
+                    return setTimeout(callback,time||1000);
                 };
                 HTMLDivElement.prototype.setPosition=function(){
                     var position;
