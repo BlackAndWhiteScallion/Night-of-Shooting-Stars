@@ -43508,6 +43508,32 @@
                 node.classList.add('fold0');
             }
         },
+        updated:function(){
+			if (document.documentElement.offsetWidth<900 || document.documentElement.offsetHeight < 500) {
+				game.deviceZoom=Math.min(
+					Math.round(document.documentElement.offsetWidth/98)/10,
+					Math.round(document.documentElement.offsetHeight/50)/10
+				);
+			}
+			else {
+				game.deviceZoom=1;
+			}
+		},
+        updatez:function(){
+			var width=document.documentElement.offsetWidth;
+			var height=document.documentElement.offsetHeight;
+			var zoom=game.documentZoom;
+			if(zoom!=1){
+				document.body.style.width=Math.round(width/zoom)+'px';
+				document.body.style.height=Math.round(height/zoom)+'px';
+				document.body.style.transform='scale('+(Math.floor(zoom*100)/100)+')';
+			}
+			else{
+				document.body.style.width=width+'px';
+				document.body.style.height=height+'px';
+				document.body.style.transform='';
+			}
+		},
         update:function(){
             for(var i=0;i<ui.updates.length;i++){
                 ui.updates[i]();
