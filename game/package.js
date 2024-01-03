@@ -24,6 +24,7 @@ window.noname_package={
         cardpile:'牌堆补充',
         coin:'金币系统',
         decadeUI:'十周年UI',
+        shoushaUI:'手杀UI',
     },
     mode:{
         library:'图鉴',
